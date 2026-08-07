@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+.expo/
+dist/
+web-build/
+
+# native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# misc
+.DS_Store
+Thumbs.db
+.env
+.env.local
