@@ -10,7 +10,6 @@ import DictionaryScreen from '../screens/DictionaryScreen';
 import TrainingScreen from '../screens/TrainingScreen';
 import ReaderScreen from '../screens/ReaderScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import WordSheetScreen from '../screens/WordSheetScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -39,7 +38,6 @@ export default function AppNavigator() {
       <Stack.Navigator screenOptions={{ headerShown: true }}>
         <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
         <Stack.Screen name="Reader" component={ReaderScreen} options={{ title: 'Чтение' }} />
-        <Stack.Screen name="WordSheet" component={WordSheetScreen} options={{ title: 'Слово' }} />
         <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Настройки' }} />
       </Stack.Navigator>
     </NavigationContainer>
