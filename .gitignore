@@ -23,3 +23,10 @@ yarn-error.*
 Thumbs.db
 .env
 .env.local
+
+# generated native project (restored via `expo prebuild`)
+android/
+ios/
+
+# local artifacts
+expo_qr.png
