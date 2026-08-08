@@ -1,5 +1,6 @@
 // screens/LibraryScreen.tsx
 // Загрузка книг с устройства (.epub/.txt), парсинг в предложения, сохранение в libraryStore.
+// На вебе document-picker не работает → используем <input type="file"> + FileReader.
 import React, { useState } from 'react';
 import {
   View,
@@ -7,16 +8,16 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  TextInput,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import { COLORS, SIZES, FONTS } from '../theme/constants';
 import { useLibraryStore, Book, BookParagraph } from '../store/libraryStore';
 import { parseEpub } from '../services/epubParser';
-import { parseTxt } from '../services/txtParser';
 import { splitIntoSentences } from '../utils/sentenceSplitter';
 import { langName } from '../utils/languages';
 import LanguagePicker from '../components/LanguagePicker';
@@ -38,6 +39,15 @@ function buildParagraphs(text: string): BookParagraph[] {
   }));
 }
 
+function readFileAsText(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsText(file);
+  });
+}
+
 export default function LibraryScreen() {
   const navigation = useNavigation<any>();
   const books = useLibraryStore((s) => s.books);
@@ -49,6 +59,24 @@ export default function LibraryScreen() {
   const [progress, setProgress] = useState(0);
   const [pickerVisible, setPickerVisible] = useState(false);
 
+
+  const processTxtText = (text: string, name: string) => {
+    setProgress(0.95);
+    const paragraphs = buildParagraphs(text);
+    setProgress(1);
+    if (paragraphs.length === 0) {
+      Alert.alert('Пусто', 'Не удалось извлечь текст из этого файла.');
+      return;
+    }
+    setDraft({
+      title: name.replace(/\.txt$/i, ''),
+      format: 'txt',
+      uri: name,
+      language: 'en',
+      paragraphs,
+    });
+  };
+
   const pickDocument = async () => {
     try {
       const res = await DocumentPicker.getDocumentAsync({
@@ -56,7 +84,6 @@ export default function LibraryScreen() {
         copyToCacheDirectory: true,
       });
       if (res.canceled || !res.assets?.length) return;
-
       const asset = res.assets[0];
       const lower = asset.name.toLowerCase();
       const format: 'epub' | 'txt' = lower.endsWith('.txt') ? 'txt' : 'epub';
@@ -67,9 +94,14 @@ export default function LibraryScreen() {
       if (format === 'epub') {
         parsed = await parseEpub(asset.uri, setProgress);
       } else {
-        parsed = await parseTxt(asset.uri, asset.name.replace(/\.txt$/i, ''), setProgress);
+        parsed = await (async () => {
+          const raw = await FileSystem.readAsStringAsync(asset.uri, {
+            encoding: FileSystem.EncodingType.UTF8,
+          });
+          const text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+          return { text, title: asset.name.replace(/\.txt$/i, '') };
+        })();
       }
-      // разбиение на предложения тоже отражаем как финальный штрих
       setProgress(0.95);
       const paragraphs = buildParagraphs(parsed.text);
       setProgress(1);
@@ -77,7 +109,6 @@ export default function LibraryScreen() {
         Alert.alert('Пусто', 'Не удалось извлечь текст из этого файла.');
         return;
       }
-
       setDraft({
         title: parsed.title || asset.name,
         author: parsed.author,
@@ -91,6 +122,31 @@ export default function LibraryScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Веб-фоллбэк: <input type="file">
+  const onWebFile = async (e: any) => {
+    const file: File | undefined = e.target?.files?.[0];
+    if (!file) return;
+    setLoading(true);
+    setProgress(0.1);
+    try {
+      const text = await readFileAsText(file);
+      setProgress(0.6);
+      processTxtText(text, file.name);
+    } catch (err: any) {
+      Alert.alert('Ошибка чтения', err?.message ?? String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onAddPress = () => {
+    if (Platform.OS === 'web') {
+      // на вебе клик по label-обёртке откроет диалог (input внутри label)
+      return;
+    }
+    pickDocument();
   };
 
   const saveDraft = () => {
@@ -113,15 +169,25 @@ export default function LibraryScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.addButton} onPress={pickDocument} disabled={loading}>
+      {/* Универсальная кнопка загрузки: на вебе label+input откроет диалог файла,
+          на нативе — document-picker через onPress */}
+      <View style={styles.addButton}>
         <Text style={styles.addButtonText}>Загрузить книгу</Text>
-      </TouchableOpacity>
+        {Platform.OS === 'web' ? (
+          <input
+            type="file"
+            accept=".txt,.epub,text/plain,application/epub+zip"
+            style={{ position: 'absolute', inset: 0, opacity: 0, width: '100%', height: '100%' }}
+            onChange={onWebFile}
+          />
+        ) : (
+          <TouchableOpacity style={StyleSheet.absoluteFill as any} onPress={pickDocument} />
+        )}
+      </View>
 
       {loading && (
         <View style={styles.progressCard}>
-          <Text style={styles.progressText}>
-            Читаем файл… {Math.round(progress * 100)}%
-          </Text>
+          <Text style={styles.progressText}>Читаем файл… {Math.round(progress * 100)}%</Text>
           <ProgressBar progress={progress} />
         </View>
       )}
@@ -162,7 +228,9 @@ export default function LibraryScreen() {
         data={books}
         keyExtractor={(b) => b.id}
         contentContainerStyle={styles.list}
-        ListEmptyComponent={<Text style={styles.empty}>Библиотека пуста. Загрузите первую книгу.</Text>}
+        ListEmptyComponent={
+          <Text style={styles.empty}>Библиотека пуста. Загрузите первую книгу.</Text>
+        }
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.bookRow} onPress={() => openReader(item.id)}>
             <View style={{ flex: 1 }}>
