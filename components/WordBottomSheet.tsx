@@ -1,9 +1,9 @@
 // components/WordBottomSheet.tsx
-// Настоящий BottomSheet (gorhom v5) по клику на слово:
-// перевод слова + контекст + кнопка сохранения в локальный словарь.
+// BottomSheet-контент по клику на слово: перевод + контекст + сохранение в словарь.
+// Нативные обёртки (BottomSheetView) заменены на View ради веб-совместимости —
+// на нативе этот компонент рендерится внутри BottomSheetModal, на вебе — внутри Modal.
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { COLORS, SIZES, FONTS } from '../theme/constants';
 import { useSettingsStore } from '../store/settingsStore';
 import { translateCached } from '../services/translationService';
@@ -61,7 +61,7 @@ export default function WordBottomSheet({ word, sentence, lang, onClose }: Props
   if (!word) return null;
 
   return (
-    <BottomSheetView style={styles.sheet}>
+    <View style={styles.sheet}>
       <Text style={styles.word}>{word}</Text>
       {loading ? (
         <ActivityIndicator color={COLORS.secondaryText} style={styles.indicator} />
@@ -80,7 +80,7 @@ export default function WordBottomSheet({ word, sentence, lang, onClose }: Props
       <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
         <Text style={styles.closeText}>Закрыть</Text>
       </TouchableOpacity>
-    </BottomSheetView>
+    </View>
   );
 }
 

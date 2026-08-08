@@ -1,12 +1,12 @@
 import { Platform } from 'react-native';
 
 export const COLORS = {
-  background: '#FFFFFF',
-  surface: '#F5F6F8',
+  background: '#EEF0F2',
+  surface: '#E3E6EA',
   primary: '#2F6FED',
   primaryText: '#1A1A1A',
-  secondaryText: '#6B7280',
-  border: '#E5E7EB',
+  secondaryText: '#5B626B',
+  border: '#D5D9DE',
   selected: '#EAF1FF',
   success: '#16A34A',
   danger: '#DC2626',

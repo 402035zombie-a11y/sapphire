@@ -14,6 +14,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { COLORS, SIZES, FONTS } from '../theme/constants';
 import { useDictionaryStore } from '../store/dictionaryStore';
+import { DictionaryEntry } from '../store/dictionaryStore';
 import { langName } from '../utils/languages';
 
 export default function DictionaryScreen() {
@@ -25,7 +26,7 @@ export default function DictionaryScreen() {
     const q = query.trim().toLowerCase();
     if (!q) return entries;
     return entries.filter(
-      (e) => e.word.toLowerCase().includes(q) || e.translation.toLowerCase().includes(q),
+      (e: DictionaryEntry) => e.word.toLowerCase().includes(q) || e.translation.toLowerCase().includes(q),
     );
   }, [entries, query]);
 

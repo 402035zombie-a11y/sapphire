@@ -2,8 +2,8 @@
 // Чтение: оригинал + параллельный перевод под каждым предложением.
 // - перевод ленивый: после остановки скролла (600мс) переводим видимое окно
 // - адаптация под широкие экраны: >720px → 2 колонки
-// - клик по слову → BottomSheet с переводом и сохранением в словарь
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+// - клик по слову → BottomSheet (native) / Modal (web) с переводом и сохранением в словарь
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -12,8 +12,9 @@ import {
   useWindowDimensions,
   ActivityIndicator,
   TouchableOpacity,
+  Modal,
+  Platform,
 } from 'react-native';
-import { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SIZES, FONTS } from '../theme/constants';
 import { useLibraryStore } from '../store/libraryStore';
@@ -39,9 +40,10 @@ export default function ReaderScreen({ route }: { route: any }) {
   const { width } = useWindowDimensions();
   const isWide = width >= 720;
   const numColumns = isWide ? 2 : 1;
+  const isWeb = Platform.OS === 'web';
 
   const [loadingSet, setLoadingSet] = useState<Set<number>>(new Set());
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const bottomSheetRef = useRef<any>(null);
   const [selected, setSelected] = useState<{ word: string; sentence: string } | null>(null);
 
   const visibleRef = useRef<{ first: number; last: number }>({ first: 0, last: 20 });
@@ -51,8 +53,8 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   const onWordPress = useCallback((word: string, sentence: string) => {
     setSelected({ word, sentence });
-    bottomSheetRef.current?.present();
-  }, []);
+    if (!isWeb) bottomSheetRef.current?.present();
+  }, [isWeb]);
 
   const translateBatch = useCallback(
     async (first: number, last: number) => {
@@ -112,13 +114,16 @@ export default function ReaderScreen({ route }: { route: any }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId]);
 
-  const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />,
-    [],
-  );
-
   const langForSheet = book?.language ?? 'auto';
   const selectedSentence = selected?.sentence ?? '';
+  const wordSheet = selected ? (
+    <WordBottomSheet
+      word={selected.word}
+      sentence={selectedSentence}
+      lang={langForSheet}
+      onClose={() => (isWeb ? setSelected(null) : bottomSheetRef.current?.dismiss())}
+    />
+  ) : null;
 
   if (!book) {
     return (
@@ -128,63 +133,83 @@ export default function ReaderScreen({ route }: { route: any }) {
     );
   }
 
+  const list = (
+    <FlatList
+      data={book.paragraphs}
+      keyExtractor={(p) => String(p.index)}
+      numColumns={numColumns}
+      key={numColumns}
+      contentContainerStyle={styles.list}
+      columnWrapperStyle={isWide ? styles.columnWrap : undefined}
+      onScrollBeginDrag={onScrollBeginDrag}
+      onMomentumScrollEnd={onMomentumScrollEnd}
+      initialNumToRender={BATCH}
+      ListFooterComponent={
+        loadingSet.size > 0 ? (
+          <ActivityIndicator style={styles.footer} color={COLORS.secondaryText} />
+        ) : null
+      }
+      renderItem={({ item }) => (
+        <SentenceRow
+          index={item.index}
+          original={item.original}
+          translation={item.translation}
+          loading={loadingSet.has(item.index)}
+          onTranslate={(idx) => translateBatch(idx, idx)}
+          onWordPress={onWordPress}
+        />
+      )}
+    />
+  );
+
+  const header = (
+    <View style={styles.header}>
+      <Text style={styles.title} numberOfLines={1}>
+        {book.title}
+      </Text>
+      <Text style={styles.subtitle}>
+        {book.language === 'auto' ? 'Авто' : book.language.toUpperCase()} → {targetLang.toUpperCase()}
+        {isWide ? ' · 2 колонки' : ''}
+      </Text>
+    </View>
+  );
+
+  // Web: используем Modal вместо нативного BottomSheet
+  if (isWeb) {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          {header}
+          {list}
+        </View>
+        <Modal visible={!!selected} transparent animationType="slide" onRequestClose={() => setSelected(null)}>
+          {wordSheet}
+        </Modal>
+      </GestureHandlerRootView>
+    );
+  }
+
+  const { BottomSheetModal } = require('@gorhom/bottom-sheet');
+  const { BottomSheetModalProvider } = require('@gorhom/bottom-sheet');
+  const { BottomSheetBackdrop } = require('@gorhom/bottom-sheet');
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.title} numberOfLines={1}>
-              {book.title}
-            </Text>
-            <Text style={styles.subtitle}>
-              {book.language === 'auto' ? 'Авто' : book.language.toUpperCase()} → {targetLang.toUpperCase()}
-              {isWide ? ' · 2 колонки' : ''}
-            </Text>
-          </View>
-
-          <FlatList
-            data={book.paragraphs}
-            keyExtractor={(p) => String(p.index)}
-            numColumns={numColumns}
-            key={numColumns}
-            contentContainerStyle={styles.list}
-            columnWrapperStyle={isWide ? styles.columnWrap : undefined}
-            onScrollBeginDrag={onScrollBeginDrag}
-            onMomentumScrollEnd={onMomentumScrollEnd}
-            initialNumToRender={BATCH}
-            ListFooterComponent={
-              loadingSet.size > 0 ? (
-                <ActivityIndicator style={styles.footer} color={COLORS.secondaryText} />
-              ) : null
-            }
-            renderItem={({ item }) => (
-              <SentenceRow
-                index={item.index}
-                original={item.original}
-                translation={item.translation}
-                loading={loadingSet.has(item.index)}
-                onTranslate={(idx) => translateBatch(idx, idx)}
-                onWordPress={onWordPress}
-              />
-            )}
-          />
+          {header}
+          {list}
         </View>
-
         <BottomSheetModal
           ref={bottomSheetRef}
           index={0}
           snapPoints={['50%']}
-          backdropComponent={renderBackdrop}
+          backdropComponent={(props: any) => (
+            <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
+          )}
           onDismiss={() => setSelected(null)}
         >
-          {selected && (
-            <WordBottomSheet
-              word={selected.word}
-              sentence={selectedSentence}
-              lang={langForSheet}
-              onClose={() => bottomSheetRef.current?.dismiss()}
-            />
-          )}
+          {wordSheet}
         </BottomSheetModal>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

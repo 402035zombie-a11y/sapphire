@@ -4,6 +4,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { COLORS, SIZES, FONTS } from '../theme/constants';
 import { useDictionaryStore } from '../store/dictionaryStore';
+import { DictionaryEntry } from '../store/dictionaryStore';
 import { useTrainingStore } from '../store/trainingStore';
 import QuizCard, { QuizItem } from '../components/QuizCard';
 
@@ -17,9 +18,9 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function TrainingScreen() {
-  const entries = useDictionaryStore((s) => s.entries);
-  const recordAnswer = useTrainingStore((s) => s.recordAnswer);
-  const dueWords = useTrainingStore((s) => s.dueWords);
+  const entries = useDictionaryStore((s) => s.entries) as DictionaryEntry[];
+  const recordAnswer = useTrainingStore((s) => s.recordAnswer) as (word: string, lang: string, correct: boolean) => void;
+  const dueWords = useTrainingStore((s) => s.dueWords) as (entries: DictionaryEntry[], now?: number) => any[];
 
   const [index, setIndex] = useState(0);
   const [stats, setStats] = useState({ correct: 0, total: 0 });
@@ -29,7 +30,7 @@ export default function TrainingScreen() {
   const queue = useMemo(() => {
     const due = dueWords(entries);
     if (due.length > 0) {
-      return entries.filter((e) => due.some((d) => d.word === e.word && d.lang === e.lang));
+      return entries.filter((e: DictionaryEntry) => due.some((d: DictionaryEntry) => d.word === e.word && d.lang === e.lang));
     }
     return entries; // первый заход — тренируем всё
   }, [entries, dueWords]);
@@ -37,8 +38,8 @@ export default function TrainingScreen() {
   const quiz: QuizItem | null = useMemo(() => {
     if (queue.length === 0 || index >= queue.length) return null;
     const current = queue[index];
-    const others = shuffle(entries.filter((e) => e.translation !== current.translation)).slice(0, 3);
-    const distractors = others.map((e) => e.translation);
+    const others = shuffle(entries.filter((e: DictionaryEntry) => e.translation !== current.translation)).slice(0, 3);
+    const distractors = others.map((e: DictionaryEntry) => e.translation);
     const options = shuffle([current.translation, ...distractors]);
     return { word: current.surfaceForm || current.word, correct: current.translation, options };
   }, [queue, index, entries]);

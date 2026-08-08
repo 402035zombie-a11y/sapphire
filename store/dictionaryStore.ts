@@ -1,16 +1,14 @@
 // store/dictionaryStore.ts
 // Локальный словарь: слово + контекст (предложение) + язык + дата.
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { persist } from './createStore';
 
 export interface DictionaryEntry {
   id: string;
-  word: string; // нормализованное слово (нижний регистр, без пунктуации)
-  surfaceForm: string; // как встретилось в тексте (сохраняем регистр/форму)
+  word: string;
+  surfaceForm: string;
   translation: string;
-  context: string; // предложение-контекст
-  lang: string; // ISO исходного языка
+  context: string;
+  lang: string;
   bookId?: string;
   createdAt: number;
 }
@@ -22,27 +20,22 @@ interface DictionaryState {
   hasWord: (word: string) => boolean;
 }
 
-export const useDictionaryStore = create<DictionaryState>()(
-  persist(
-    (set, get) => ({
-      entries: [],
-      addEntry: (entry) =>
-        set((s) =>
-          s.entries.some((e) => e.word === entry.word && e.lang === entry.lang)
-            ? s // уже есть такое слово на этом языке — не дублируем
-            : {
-                entries: [
-                  ...s.entries,
-                  { ...entry, id: `${entry.word}-${Date.now()}`, createdAt: Date.now() },
-                ],
-              },
-        ),
-      removeEntry: (id) => set((s) => ({ entries: s.entries.filter((e) => e.id !== id) })),
-      hasWord: (word) => get().entries.some((e) => e.word === word),
-    }),
-    {
-      name: 'bookreader-dictionary',
-      storage: createJSONStorage(() => AsyncStorage),
-    },
-  ),
+export const useDictionaryStore = persist<DictionaryState>(
+  (set, get) => ({
+    entries: [],
+    addEntry: (entry) =>
+      set((s) =>
+        s.entries.some((e) => e.word === entry.word && e.lang === entry.lang)
+          ? s
+          : {
+              entries: [
+                ...s.entries,
+                { ...entry, id: `${entry.word}-${Date.now()}`, createdAt: Date.now() },
+              ],
+            },
+      ),
+    removeEntry: (id) => set((s) => ({ entries: s.entries.filter((e) => e.id !== id) })),
+    hasWord: (word) => get().entries.some((e) => e.word === word),
+  }),
+  { name: 'bookreader-dictionary' },
 );
