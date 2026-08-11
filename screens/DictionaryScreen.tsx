@@ -305,7 +305,7 @@ export default function DictionaryScreen() {
         </View>
       )}
 
-      <View style={[styles.levelBar, neuInset(theme, a.radius)]}>
+      <View style={styles.levelBar}>
         {levelOptions.map((o) => {
           const active = levelFilter === o.id;
           return (
