@@ -243,7 +243,8 @@ export default function DictionaryScreen() {
             return sum + (tp?.correctCount ?? 0) + (tp?.wrongCount ?? 0);
           }, 0)}</Text>
         </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 10 }}>
+        <View style={[styles.filterBlock, neuRaised(theme, a.radius)]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 10 }}>
           <View style={styles.sortBar}>
             {sortOptions.map((o) => {
               const active = sortBy === o.id;
@@ -263,7 +264,7 @@ export default function DictionaryScreen() {
       </View>
 
       {source?.type === 'book' ? (
-        <View style={[styles.bookBar, neuInset(theme, a.radius)]}>
+        <View style={styles.bookBar}>
           <TouchableOpacity
             style={[styles.bookChip, selectedBookId === null && { backgroundColor: theme.primary }]}
             onPress={() => setSource({ type: 'book', bookId: selectedBookId! })}
@@ -278,7 +279,7 @@ export default function DictionaryScreen() {
           </TouchableOpacity>
         </View>
       ) : source?.type === 'general' ? (
-        <View style={[styles.bookBar, neuInset(theme, a.radius)]}>
+        <View style={styles.bookBar}>
           <TouchableOpacity
             style={[styles.bookChip, { backgroundColor: theme.primary }]}
             onPress={() => setSource({ type: 'book', bookId: selectedBookId! })}
@@ -289,7 +290,7 @@ export default function DictionaryScreen() {
       ) : null}
 
       {source?.type === 'book' && (
-        <View style={[styles.bookBar, neuInset(theme, a.radius)]}>
+        <View style={styles.bookBar}>
           {bookSources.map((b) => (
             <TouchableOpacity
               key={b.id}
@@ -317,6 +318,7 @@ export default function DictionaryScreen() {
             </TouchableOpacity>
           );
         })}
+      </View>
       </View>
 
       <FlatList
@@ -587,10 +589,12 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.tiny ? 4 : 6, gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.tiny ? 10 : 14 },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
-    sortBar: { ...neuInset(theme, a.radius), flexDirection: 'row', borderRadius: a.radius, padding: 2, flexWrap: 'wrap' },
+    // Единый объёмный блок: три фильтр-бара (статус/книга/уровень) слиты в один raised-блок
+    filterBlock: { padding: a.tiny ? 8 : 12, borderRadius: a.radius, gap: a.tiny ? 8 : 12 },
+    sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 2, flexWrap: 'wrap' },
     sortTab: { paddingVertical: a.tiny ? 3 : 5, paddingHorizontal: a.tiny ? 7 : 11, borderRadius: Math.max(4, a.radius - 4) },
     sortTabText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
-    levelBar: { ...neuInset(theme, a.radius), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.tiny ? 4 : 6 },
+    levelBar: { flexDirection: 'row', borderRadius: a.radius, padding: 2 },
     levelTab: { flex: 1, paddingVertical: a.tiny ? 3 : 5, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
     levelTabText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
     viewBar: { ...neuInset(theme, a.radius), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.gap },
