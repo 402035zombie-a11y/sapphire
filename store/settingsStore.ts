@@ -1,48 +1,76 @@
 // store/settingsStore.ts
-// Настройки перевода: целевой язык, бэкенд и пользовательский API-ключ.
+// Настройки перевода (только язык) + тема оформления (День/Ночь).
+// Поставщик перевода всегда бесплатный Google GTX (без ключа) — выбор убран.
 import { persist } from './createStore';
-import { configureTranslation, TranslationBackend } from '../services/translationService';
-
-export type AppTheme = 'system' | 'light' | 'dark';
+import { ThemeMode } from '../theme/themes';
 
 interface SettingsState {
-  targetLang: string;
-  backend: TranslationBackend;
-  apiKey: string;
-  theme: AppTheme;
-  apply: () => void;
+  appLang: string; // язык интерфейса приложения (ISO 639-1), дефолт 'en'
+  targetLang: string; // язык перевода книг по умолчанию
+  theme: ThemeMode;
+  reader: {
+    fontSize: number;
+    lineHeight: number; // множитель межстрочного интервала
+    margin: number;
+    justify: boolean;
+    fontFamily: string; // гарнитура: 'default' | 'serif' | 'sans' | 'mono'
+    fontWeight: number; // 300..800 — жирность
+    textAlign: 'left' | 'justify' | 'hyphenation';
+    pageFlip: 'horizontal' | 'vertical';
+    pageMargins: boolean; // вкл/выкл отступы по краям
+    highlightWords: boolean;
+    dictionaryOnDoubleTap: boolean;
+    showAllTranslations: boolean; // показывать перевод под каждым абзацем сразу
+    microPauses: boolean; // микропаузы после знаков препинания в скорочтении
+    pauseCommaMs: number; // пауза после запятой/точки-с-запятой/двоеточия/тире (0..1000, шаг 10)
+    pauseSentMs: number; // пауза после конца предложения (.!?…) (0..1000, шаг 10)
+    pauseBracketMs: number; // пауза у скобок (0..1000, шаг 10)
+    showSpeakButton: boolean; // показывать кнопку озвучки (▶) у абзаца
+    showTranslateButton: boolean; // показывать кнопку «Перевести» (⇄) у абзаца
+  };
   setTargetLang: (l: string) => void;
-  setBackend: (b: TranslationBackend) => void;
-  setApiKey: (k: string) => void;
-  setTheme: (t: AppTheme) => void;
+  setAppLang: (l: string) => void;
+  setTheme: (t: ThemeMode) => void;
+  setReader: (patch: Partial<SettingsState['reader']>) => void;
 }
 
 export const useSettingsStore = persist<SettingsState>(
-  (set, get) => ({
-    targetLang: 'ru',
-    backend: 'googleGtx',
-    apiKey: '',
-    theme: 'system',
-    apply: () => {
-      const { backend, apiKey } = get();
-      configureTranslation(backend, apiKey || undefined);
+  (set) => ({
+    appLang: 'auto', // дефолт интерфейса — авто (по системе; ru→en), можно сменить в настройках
+    targetLang: 'en', // дефолт перевода — английский (русский удалён)
+    // По умолчанию — тёмная тема (Ночь), как просил пользователь.
+    theme: 'night',
+    reader: {
+      fontSize: 18,
+      lineHeight: 1.4,
+      margin: 16,
+      justify: true,
+      fontFamily: 'default',
+      fontWeight: 400,
+      textAlign: 'justify',
+      pageFlip: 'vertical',
+      pageMargins: true,
+      highlightWords: true,
+      dictionaryOnDoubleTap: true,
+      showAllTranslations: false,
+      microPauses: true,
+      pauseCommaMs: 400, // пауза после запятой/точки-с-запятой/двоеточия/тире
+      pauseSentMs: 400, // пауза после конца предложения
+      pauseBracketMs: 400, // пауза у скобок (открывающая — на слове после, закрывающая — на слове перед)
+      showSpeakButton: true,
+      showTranslateButton: true,
     },
     setTargetLang: (l) => set({ targetLang: l }),
-    setBackend: (b) => {
-      set({ backend: b });
-      get().apply();
-    },
-    setApiKey: (k) => {
-      set({ apiKey: k });
-      get().apply();
-    },
+    setAppLang: (l) => set({ appLang: l }),
     setTheme: (t) => set({ theme: t }),
+    setReader: (patch) => set((s) => ({ reader: { ...s.reader, ...patch } })),
   }),
   {
     name: 'bookreader-settings',
-    partialize: (s) => ({ targetLang: s.targetLang, backend: s.backend, apiKey: s.apiKey, theme: s.theme }),
+    partialize: (s) => ({
+      targetLang: s.targetLang,
+      theme: s.theme,
+      reader: s.reader,
+    }),
   },
 );
-
-// применяем сохранённый бэкенд при старте
-useSettingsStore.getState().apply();

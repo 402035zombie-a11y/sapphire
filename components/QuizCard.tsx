@@ -1,51 +1,108 @@
 // components/QuizCard.tsx
-// Карточка тренировки: слово + 4 варианта перевода (викторина).
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { COLORS, SIZES, FONTS } from '../theme/constants';
+// Карточка тренировки: слово + 4 варианта перевода (викторина). Неоморфическая.
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+import { useAdaptive } from '../theme/useAdaptive';
+import { neuInset, neuRaised, neuCircle } from '../theme/neu';
+import { TrainingProgress } from '../store/trainingStore';
+import { useT } from '../i18n';
 
 export interface QuizItem {
   word: string;
   correct: string;
-  options: string[]; // 4 варианта, включая correct
+  options: string[];
+  fromLang?: string;
+  toLang?: string;
 }
 
 interface Props {
   item: QuizItem;
   onAnswer: (correct: boolean) => void;
+  onNext: () => void;
+  progress?: TrainingProgress | null;
+  resetKey?: string | number;
 }
 
-export default function QuizCard({ item, onAnswer }: Props) {
+const speak = (text: string, lang: string) => {
+  if (Platform.OS === 'web' && 'speechSynthesis' in window) {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang || 'en';
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }
+};
+
+export default function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
+  const theme = useTheme();
+  const t = useT();
+  const a = useAdaptive();
+  const styles = React.useMemo(() => makeStyles(a, theme), [a, theme]);
   const [picked, setPicked] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
+
+  useEffect(() => {
+    setPicked(null);
+    setAnswered(false);
+  }, [item.word, resetKey]);
 
   const choose = (opt: string) => {
     if (answered) return;
     setPicked(opt);
     setAnswered(true);
     const correct = opt === item.correct;
-    // небольшая задержка, чтобы пользователь увидел результат
-    setTimeout(() => onAnswer(correct), 600);
+    onAnswer(correct); // записываем сразу
+    setTimeout(() => onNext(), 1000);
   };
 
+  const c = progress?.correctCount ?? 0;
+  const w = progress?.wrongCount ?? 0;
+  const box = progress?.box ?? 1;
+
   return (
-    <View style={styles.card}>
-      <Text style={styles.word}>{item.word}</Text>
-      <Text style={styles.hint}>Выберите правильный перевод:</Text>
-      <View style={styles.options}>
+    <View style={[styles.card, neuInset(theme, a.radius)]}>
+      <View style={styles.wordRow}>
+        <View style={[styles.boxBadge, neuInset(theme, 8)]}>
+          <Text style={styles.boxText}>{t("lvl {n}").replace(/\{n\}/g, String(box))}</Text>
+        </View>
+        <Text style={styles.word}>{item.word}</Text>
+        <TouchableOpacity style={styles.speakBtn} onPress={() => speak(item.word, item.fromLang || 'en')} hitSlop={6}>
+          <Text style={styles.speakIcon}>▶</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.scoreLine}>
+        <Text style={{ color: theme.success }}>✓ {c}</Text>  <Text style={{ color: theme.danger }}>✗ {w}</Text>
+      </Text>
+
+      <Text style={styles.hint}>{t("Choose the correct translation:")}</Text>
+      <View style={[styles.options, a.width >= 700 && { flexDirection: 'row', flexWrap: 'wrap' }]}>
         {item.options.map((opt, i) => {
           const isPicked = picked === opt;
           const isCorrect = opt === item.correct;
-          let bg = COLORS.surface;
-          if (answered && isCorrect) bg = '#DCFCE7';
-          else if (answered && isPicked && !isCorrect) bg = '#FEE2E2';
           return (
             <TouchableOpacity
               key={i}
-              style={[styles.option, { backgroundColor: bg }]}
+              style={[
+                styles.option,
+                neuInset(theme, a.radius),
+                answered && isCorrect && { ...neuInset(theme, a.radius), backgroundColor: theme.success },
+                answered && isPicked && !isCorrect && { ...neuInset(theme, a.radius), backgroundColor: theme.danger },
+                a.width >= 700 && { flexBasis: '48%', flexGrow: 1 },
+              ]}
               onPress={() => choose(opt)}
             >
-              <Text style={styles.optionText}>{opt}</Text>
+              <Text
+                style={[
+                  styles.optionText,
+                  (answered && (isCorrect || (isPicked && !isCorrect))) && { color: '#fff' },
+                ]}
+              >
+                {opt}
+              </Text>
+              <TouchableOpacity style={styles.speakSmall} onPress={() => speak(opt, item.toLang || 'en')} hitSlop={6}>
+                <Text style={styles.speakIconSmall}>🔊</Text>
+              </TouchableOpacity>
             </TouchableOpacity>
           );
         })}
@@ -54,17 +111,29 @@ export default function QuizCard({ item, onAnswer }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: { backgroundColor: COLORS.background, padding: SIZES.padding },
-  word: { fontSize: 28, fontFamily: FONTS.bold, color: COLORS.primaryText, textAlign: 'center' },
-  hint: { color: COLORS.secondaryText, textAlign: 'center', marginTop: 8, marginBottom: SIZES.gap },
-  options: { gap: 10 },
-  option: {
-    borderRadius: SIZES.radius,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  optionText: { fontSize: 16, color: COLORS.primaryText, textAlign: 'center' },
-});
+function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof useTheme>) {
+  return StyleSheet.create({
+    card: { padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
+    wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' },
+    word: { fontSize: a.fs(26), fontFamily: 'System', fontWeight: '700', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },
+    speakBtn: { ...neuCircle(theme, a.icon(34)), padding: 0 },
+    speakIcon: { fontSize: a.fs(18), color: theme.primary },
+    speakSmall: { ...neuCircle(theme, a.icon(30)), padding: 0 },
+    speakIconSmall: { fontSize: a.fs(14) },
+    boxBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
+    boxText: { color: theme.primary, fontFamily: 'System', fontWeight: '700', fontSize: a.fs(12) },
+    scoreLine: { textAlign: 'center', marginTop: 6, fontSize: a.fs(14), fontFamily: 'System', fontWeight: '700', minHeight: 20 },
+    hint: { color: theme.secondaryText, textAlign: 'center', marginTop: 8, marginBottom: a.gap, fontSize: a.small_fs },
+    options: { gap: Math.max(8, Math.round(a.gap * 0.8)) },
+    option: {
+      paddingVertical: a.tiny ? 10 : Math.round(14 * a.scale) + 2,
+      paddingHorizontal: a.pad,
+      borderWidth: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      minHeight: a.hit,
+    },
+    optionText: { fontSize: a.body, color: theme.primaryText, textAlign: 'center', flex: 1 },
+  });
+}

@@ -1,28 +1,43 @@
 // components/WordBottomSheet.tsx
-// BottomSheet-контент по клику на слово: перевод + контекст + сохранение в словарь.
-// Нативные обёртки (BottomSheetView) заменены на View ради веб-совместимости —
-// на нативе этот компонент рендерится внутри BottomSheetModal, на вебе — внутри Modal.
+// Попап по слову (по референсу SmartBook): заголовок + транскрипция + часть речи (синяя)
+// + перевод + примеры + ряд иконок действий.
+// Транскрипцию/часть речи/примеры берём из бесплатного Free Dictionary API (en).
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { COLORS, SIZES, FONTS } from '../theme/constants';
-import { useSettingsStore } from '../store/settingsStore';
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+import { useAdaptive } from '../theme/useAdaptive';
 import { translateCached } from '../services/translationService';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
+import Icon from '../components/Icon';
+import { neuRaised, neuPrimary, neuCircle } from '../theme/neu';
+import { useT } from '../i18n';
 
 interface Props {
   word: string | null;
   sentence: string;
   lang: string;
+  targetLang: string;
+  bookId?: string;
   onClose: () => void;
 }
 
-export default function WordBottomSheet({ word, sentence, lang, onClose }: Props) {
-  const targetLang = useSettingsStore((s) => s.targetLang);
+interface DictMeaning {
+  partOfSpeech: string;
+  definitions: { definition: string; example?: string }[];
+  phonetic?: string;
+}
+
+export default function WordBottomSheet({ word, sentence, lang, targetLang, bookId, onClose }: Props) {
+  const theme = useTheme();
+  const t = useT();
+  const a = useAdaptive();
   const addEntry = useDictionaryStore((s) => s.addEntry);
   const hasWord = useDictionaryStore((s) => s.hasWord);
 
   const [translation, setTranslation] = useState('');
+  const [phonetic, setPhonetic] = useState('');
+  const [meanings, setMeanings] = useState<DictMeaning[]>([]);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -32,10 +47,50 @@ export default function WordBottomSheet({ word, sentence, lang, onClose }: Props
     setLoading(true);
     setSaved(false);
     setTranslation('');
-    const from = lang === 'auto' ? 'auto' : lang;
-    translateCached(word, from, targetLang)
-      .then((r) => active && setTranslation(r.text))
-      .finally(() => active && setLoading(false));
+    setPhonetic('');
+    setMeanings([]);
+    const from = lang === 'auto' ? 'en' : lang;
+    // перевод слова целиком
+    translateCached(word, from, targetLang).then((r) => active && setTranslation(r.text)).catch(() => {});
+    // словарная статья (en) — бесплатный Free Dictionary API
+    if (from === 'en') {
+      fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then(async (data) => {
+          if (!active || !Array.isArray(data)) return;
+          const entry = data[0];
+          const phonetic = entry?.phonetic ?? entry?.phonetics?.find((p: any) => p.text)?.text ?? '';
+          const rawMeanings: DictMeaning[] = (entry?.meanings ?? []).map((m: any) => ({
+            partOfSpeech: m.partOfSpeech,
+            phonetic: '',
+            definitions: (m.definitions ?? []).slice(0, 3).map((d: any) => ({
+              definition: d.definition,
+              example: d.example,
+            })),
+          }));
+          // переводим дефиниции и примеры на язык перевода (targetLang), а не показываем оригинал
+          const translated = await Promise.all(
+            rawMeanings.map(async (m) => ({
+              ...m,
+              definitions: await Promise.all(
+                m.definitions.map(async (d) => ({
+                  definition: (await translateCached(d.definition, 'en', targetLang)).text || d.definition,
+                  example: d.example
+                    ? (await translateCached(d.example, 'en', targetLang)).text || d.example
+                    : undefined,
+                })),
+              ),
+            })),
+          );
+          if (!active) return;
+          setPhonetic(phonetic);
+          setMeanings(translated);
+        })
+        .catch(() => {})
+        .finally(() => active && setLoading(false));
+    } else {
+      setLoading(false);
+    }
     return () => {
       active = false;
     };
@@ -54,6 +109,8 @@ export default function WordBottomSheet({ word, sentence, lang, onClose }: Props
       translation,
       context: sentence,
       lang: lang === 'auto' ? 'en' : lang,
+      bookId,
+      frequency: 1,
     });
     setSaved(true);
   }, [word, translation, sentence, lang, addEntry, hasWord]);
@@ -61,45 +118,96 @@ export default function WordBottomSheet({ word, sentence, lang, onClose }: Props
   if (!word) return null;
 
   return (
-    <View style={styles.sheet}>
-      <Text style={styles.word}>{word}</Text>
+    <View
+      style={[
+        neuRaised(theme, a.radius + 4),
+        {
+          backgroundColor: theme.popupBg,
+          padding: a.pad,
+          gap: Math.round(a.gap * 0.8),
+          width: '100%',
+          maxWidth: a.isDesktop ? 640 : undefined,
+          alignSelf: 'center',
+          maxHeight: a.height * (a.landscape ? 0.92 : 0.85),
+          borderTopLeftRadius: a.radius + 4,
+          borderTopRightRadius: a.radius + 4,
+        },
+      ]}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
+          <Text style={{ fontSize: a.fs(26), fontFamily: 'bold', color: theme.primaryText }}>{word}</Text>
+          {phonetic ? <Text style={{ fontSize: a.body, color: theme.secondaryText }}>[{phonetic}]</Text> : null}
+        </View>
+        <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]} onPress={onClose} hitSlop={12}>
+          <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
+        </TouchableOpacity>
+      </View>
+
       {loading ? (
-        <ActivityIndicator color={COLORS.secondaryText} style={styles.indicator} />
+        <ActivityIndicator color={theme.secondaryText} style={{ marginVertical: 12 }} />
       ) : (
-        <Text style={styles.translation}>{translation}</Text>
+        <ScrollView style={{ maxHeight: a.height * (a.landscape ? 0.5 : 0.48) }} showsVerticalScrollIndicator={false}>
+          {meanings.map((m, i) => (
+            <View key={i} style={{ marginBottom: 10 }}>
+              <Text style={{ fontSize: a.body, fontFamily: 'bold', marginBottom: 4, color: theme.posColor }}>{m.partOfSpeech}</Text>
+              {m.definitions.map((d, j) => (
+                <View key={j} style={{ marginBottom: 6 }}>
+                  <Text style={{ fontSize: a.body, lineHeight: a.body * 1.4, color: theme.primaryText }}>• {d.definition}</Text>
+                  {d.example ? (
+                    <Text style={{ fontSize: a.small_fs, fontStyle: 'italic', marginTop: 2, lineHeight: a.small_fs * 1.4, color: theme.secondaryText }}>
+                      «{d.example}»
+                    </Text>
+                  ) : null}
+                </View>
+              ))}
+            </View>
+          ))}
+          {translation ? (
+            <View style={{ marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#00000010' }}>
+              <Text style={{ fontSize: a.small_fs, marginBottom: 2, color: theme.secondaryText }}>{t("Translation:")}</Text>
+              <Text style={{ fontSize: a.h2, fontFamily: 'bold', color: theme.posColor }}>{translation}</Text>
+            </View>
+          ) : null}
+          {sentence ? (
+            <View style={{ marginTop: 8 }}>
+              <Text style={{ fontSize: a.small_fs, marginBottom: 2, color: theme.secondaryText }}>{t("Context:")}</Text>
+              <Text style={{ fontSize: a.fs(14), lineHeight: a.fs(14) * 1.45, color: theme.secondaryText }}>{sentence}</Text>
+            </View>
+          ) : null}
+        </ScrollView>
       )}
-      <Text style={styles.contextLabel}>Контекст:</Text>
-      <Text style={styles.context}>{sentence}</Text>
+
+      <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingVertical: a.tiny ? 4 : 8, gap: 8 }}>
+        <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]} onPress={onSave}>
+          <Icon name="star" size={a.icon(22)} color={theme.primaryText} />
+        </TouchableOpacity>
+        <View style={[neuCircle(theme, a.icon(40)), { padding: 0 }]}>
+          <Icon name="language" size={a.icon(22)} color={theme.primaryText} />
+        </View>
+        <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]}>
+          <Icon name="volume" size={a.icon(22)} color={theme.primaryText} />
+        </TouchableOpacity>
+        <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]}>
+          <Icon name="copy" size={a.icon(22)} color={theme.primaryText} />
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity
-        style={[styles.saveBtn, (saved || hasWord(normalizeWord(word))) && styles.savedBtn]}
+        style={[
+          saved || hasWord(normalizeWord(word)) ? neuRaised(theme, a.radius) : neuPrimary(theme, a.radius),
+          saved || hasWord(normalizeWord(word)) ? { backgroundColor: theme.success } : {},
+          {
+            paddingVertical: Math.max(10, Math.round(14 * a.scale)),
+            alignItems: 'center',
+            marginTop: 4,
+          },
+        ]}
         onPress={onSave}
         disabled={saved}
       >
-        <Text style={styles.saveText}>{saved ? 'В словаре ✓' : 'Сохранить в словарь'}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-        <Text style={styles.closeText}>Закрыть</Text>
+        <Text style={{ color: '#fff', fontFamily: 'bold', fontSize: a.body }}>{saved ? t("In dictionary ✓") : t("Save to dictionary")}</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  sheet: { backgroundColor: COLORS.background, padding: SIZES.padding, gap: 10 },
-  word: { fontSize: 24, fontFamily: FONTS.bold, color: COLORS.primaryText },
-  translation: { fontSize: 18, color: COLORS.primary, lineHeight: 24 },
-  indicator: { marginVertical: 8 },
-  contextLabel: { color: COLORS.secondaryText, fontSize: 13, marginTop: 6 },
-  context: { color: COLORS.secondaryText, fontSize: 14, lineHeight: 20 },
-  saveBtn: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: SIZES.radius,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  savedBtn: { backgroundColor: COLORS.success },
-  saveText: { color: '#fff', fontFamily: FONTS.bold, fontSize: 15 },
-  closeBtn: { alignItems: 'center', paddingVertical: 8 },
-  closeText: { color: COLORS.secondaryText },
-});

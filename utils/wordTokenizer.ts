@@ -3,8 +3,7 @@
 export function normalizeWord(raw: string): string {
   return raw
     .toLowerCase()
-    .replace(/^[^\p{L}]+/u, '') // убираем пунктуацию в начале
-    .replace(/[^\p{L}]+$/u, '') // и в конце
+    .replace(/[^\p{L}\p{M}]/gu, '') // оставляем ТОЛЬКО буквы и диакритику (убираем цифры, дефисы, пунктуацию)
     .trim();
 }
 

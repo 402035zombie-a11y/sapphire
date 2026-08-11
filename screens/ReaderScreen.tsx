@@ -1,8 +1,9 @@
 // screens/ReaderScreen.tsx
-// Чтение: оригинал + параллельный перевод под каждым предложением.
-// - перевод ленивый: после остановки скролла (600мс) переводим видимое окно
-// - адаптация под широкие экраны: >720px → 2 колонки
-// - клик по слову → BottomSheet (native) / Modal (web) с переводом и сохранением в словарь
+// Чтение: оригинал + per-paragraph перевод (раскрывается кнопкой «A»).
+// - ленивый перевод после остановки скролла (600мс)
+// - 2 колонки на широких экранах
+// - хедер: назад/языковой селектор/бургер-меню
+// - ▶ озвучка абзаца (Web Speech API на web)
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
@@ -14,47 +15,163 @@ import {
   TouchableOpacity,
   Modal,
   Platform,
+  ScrollView,
+  TextInput,
+  Alert,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { COLORS, SIZES, FONTS } from '../theme/constants';
+import Icon from '../components/Icon';
+import LanguageDropdown from '../components/LanguageDropdown';
+import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../theme/ThemeContext';
+import { useT } from '../i18n';
+import { useAdaptive } from '../theme/useAdaptive';
+import { neuRaised, neuInset, neuPrimary, neuCircle } from '../theme/neu';
+import { SIZES, FONTS } from '../theme/constants';
 import { useLibraryStore } from '../store/libraryStore';
 import { useSettingsStore } from '../store/settingsStore';
+import { useSupportStore } from '../store/supportStore';
 import { translateCached } from '../services/translationService';
+import { showSupportAd } from '../services/monetization';
+import SupportAuthorModal from '../components/SupportAuthorModal';
 import SentenceRow from '../components/SentenceRow';
 import WordBottomSheet from '../components/WordBottomSheet';
+import WordActionSheet from '../components/WordActionSheet';
+import { useDictionaryStore } from '../store/dictionaryStore';
+import { normalizeWord } from '../utils/wordTokenizer';
+import Marquee from '../components/Marquee';
+import BackFab from '../components/BackFab';
 
 interface RouteParams {
   bookId: string;
+  mode?: 'read' | 'dual';
 }
 
-const SCROLL_STOP_MS = 600;
 const BATCH = 8;
 
 export default function ReaderScreen({ route }: { route: any }) {
   const { bookId } = route.params as RouteParams;
+  const mode: 'read' | 'dual' = (route.params as RouteParams)?.mode === 'read' ? 'read' : 'dual';
+  const theme = useTheme();
+  const t = useT();
+  const navigation = useNavigation<any>();
+  const a = useAdaptive();
+  const styles = React.useMemo(() => makeStyles(a, theme), [a, theme]);
 
   const book = useLibraryStore((s) => s.books.find((b) => b.id === bookId));
-  const updateParagraphTranslation = useLibraryStore((s) => s.updateParagraphTranslation);
-  const targetLang = useSettingsStore((s) => s.targetLang);
+  const updateParagraphsTranslations = useLibraryStore((s) => s.updateParagraphsTranslations);
+  const setProgress = useLibraryStore((s) => s.setProgress);
+  const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
+  const settingsTarget = useSettingsStore((s) => s.targetLang);
+  const reader = useSettingsStore((s) => s.reader);
+  const addEntry = useDictionaryStore((s) => s.addEntry);
+  const hasWord = useDictionaryStore((s) => s.hasWord);
+  const targetLang = book?.targetLang ?? settingsTarget ?? 'en';
 
-  const { width } = useWindowDimensions();
-  const isWide = width >= 720;
-  const numColumns = isWide ? 2 : 1;
+  const { width, height } = useWindowDimensions();
+  const flipKey = `${reader.pageFlip}`;
   const isWeb = Platform.OS === 'web';
 
   const [loadingSet, setLoadingSet] = useState<Set<number>>(new Set());
+  const [langOpen, setLangOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const scrollRef = useRef<any>(null);
+  const setBookTargetLang = useLibraryStore((s) => s.setBookTargetLang);
   const bottomSheetRef = useRef<any>(null);
   const [selected, setSelected] = useState<{ word: string; sentence: string } | null>(null);
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [action, setAction] = useState<{ word: string; sentence: string } | null>(null);
+
+  const addToDictionary = useCallback(
+    (word: string, sentence: string) => {
+      if (!book) return;
+      const norm = normalizeWord(word);
+      const lang = book.language === 'auto' ? 'en' : book.language;
+      if (hasWord(norm)) return;
+      addEntry({ word: norm, surfaceForm: word, translation: '', context: sentence, lang, bookId: book.id });
+    },
+    [book, hasWord, addEntry],
+  );
+
+  const onWordPress = useCallback(
+    (word: string, sentence: string) => {
+      if (mode === 'read') {
+        setAction({ word, sentence });
+        return;
+      }
+      setSelected({ word, sentence });
+      if (!isWeb) bottomSheetRef.current?.present();
+    },
+    [isWeb, mode],
+  );
+
+  const speakFrom = useCallback(
+    (start: number) => {
+      if (!book || !isWeb || !('speechSynthesis' in window)) return;
+      const paras = book.paragraphs;
+      let i = start;
+      const lang = book.language === 'auto' ? 'en' : book.language;
+      const step = () => {
+        if (i >= paras.length) {
+          setIsSpeaking(false);
+          setPaused(false);
+          setCurrentIndex(0);
+          return;
+        }
+        const u = new SpeechSynthesisUtterance(paras[i].original);
+        u.lang = lang;
+        u.onend = () => {
+          i += 1;
+          setCurrentIndex(i);
+          step();
+        };
+        setCurrentIndex(i);
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+      };
+      setIsSpeaking(true);
+      setPaused(false);
+      step();
+    },
+    [book, isWeb],
+  );
+
+  const playBook = useCallback(() => {
+    if (!book) return;
+    if (isSpeaking) return;
+    if (paused) {
+      speakFrom(currentIndex);
+    } else {
+      speakFrom(0);
+    }
+  }, [book, isSpeaking, paused, currentIndex, speakFrom]);
+
+  const pauseBook = useCallback(() => {
+    if (!isWeb || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+    setPaused(true);
+  }, [isWeb]);
+
+  const stopBook = useCallback(() => {
+    if (!isWeb || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+    setPaused(false);
+    setCurrentIndex(0);
+  }, [isWeb]);
+
+  const viewableRef = useRef<Set<number>>(new Set());
+  const translateTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
 
   const visibleRef = useRef<{ first: number; last: number }>({ first: 0, last: 20 });
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bookRef = useRef(book);
   bookRef.current = book;
-
-  const onWordPress = useCallback((word: string, sentence: string) => {
-    setSelected({ word, sentence });
-    if (!isWeb) bottomSheetRef.current?.present();
-  }, [isWeb]);
 
   const translateBatch = useCallback(
     async (first: number, last: number) => {
@@ -70,22 +187,68 @@ export default function ReaderScreen({ route }: { route: any }) {
 
       setLoadingSet((prev) => new Set([...prev, ...indices]));
       try {
-        for (const idx of indices) {
-          const p = bookRef.current?.paragraphs[idx];
-          if (!p) continue;
-          const res = await translateCached(p.original, from, targetLang);
-          updateParagraphTranslation(b.id, idx, res.text);
-          setLoadingSet((prev) => {
-            const next = new Set(prev);
-            next.delete(idx);
-            return next;
-          });
-        }
+        // переводим чанком параллельно (до 8 за раз), без последовательного await на каждый
+        const results = await Promise.all(
+          indices.map(async (idx) => {
+            const p = bookRef.current?.paragraphs[idx];
+            if (!p) return null;
+            try {
+              const res = await translateCached(p.original, from, targetLang);
+              return { index: idx, translation: res.text } as { index: number; translation: string };
+            } catch {
+              return null;
+            }
+          }),
+        );
+        const ok = results.filter((r): r is { index: number; translation: string } => r !== null);
+        if (ok.length) updateParagraphsTranslations(b.id, ok);
       } catch {
-        setLoadingSet(new Set());
+        // игнорируем — перевод восстановится при следующем показе
+      } finally {
+        setLoadingSet((prev) => {
+          const next = new Set(prev);
+          indices.forEach((i) => next.delete(i));
+          return next;
+        });
       }
     },
-    [targetLang, updateParagraphTranslation],
+    [targetLang, updateParagraphsTranslations],
+  );
+
+  const scheduleTranslate = useCallback(
+    (idx: number, delayMs: number) => {
+      if ((bookRef.current?.paragraphs[idx]?.translation)) return; // уже переведён
+      if (translateTimers.current[idx]) return; // уже запланирован
+      translateTimers.current[idx] = setTimeout(() => {
+        delete translateTimers.current[idx];
+        translateBatch(idx, idx);
+      }, delayMs);
+    },
+    [translateBatch],
+  );
+
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems, changed }: any) => {
+      const set = new Set<number>();
+      for (const vi of viewableItems) {
+        const idx = vi.index;
+        if (typeof idx === 'number') set.add(idx);
+      }
+      viewableRef.current = set;
+      // абзац держится в окне >2с → переводим (если ещё нет перевода)
+      set.forEach((idx) => scheduleTranslate(idx, 2000));
+      // вышел из окна до 2с — отменяем отложенный перевод
+      if (Array.isArray(changed)) {
+        for (const c of changed) {
+          const idx = c?.index;
+          if (typeof idx === 'number' && !c?.isViewable && translateTimers.current[idx]) {
+            clearTimeout(translateTimers.current[idx]);
+            delete translateTimers.current[idx];
+          }
+        }
+      }
+    },
+    [scheduleTranslate],
   );
 
   const onScrollBeginDrag = useCallback(() => {
@@ -93,61 +256,249 @@ export default function ReaderScreen({ route }: { route: any }) {
   }, []);
 
   const onMomentumScrollEnd = useCallback(
-    (e: any) => {
-      const y = e.nativeEvent.contentOffset.y;
-      const approxFirst = Math.max(0, Math.floor(y / 80) - 2);
-      const approxLast = approxFirst + BATCH * 2;
-      visibleRef.current = { first: approxFirst, last: approxLast };
-      if (scrollTimer.current) clearTimeout(scrollTimer.current);
-      scrollTimer.current = setTimeout(() => {
-        translateBatch(visibleRef.current.first, visibleRef.current.last);
-      }, SCROLL_STOP_MS);
+    (_e: any) => {
+      // при скролле переводим всё видимое сразу (без задержки)
+      const visible = viewableRef.current;
+      const range: number[] = [];
+      if (visible.size === 0) {
+        for (let i = visibleRef.current.first; i <= visibleRef.current.last; i++) range.push(i);
+      } else {
+        visible.forEach((idx) => range.push(idx));
+      }
+      for (const idx of range) {
+        if (bookRef.current?.paragraphs[idx]?.translation) continue;
+        // снимаем отложенный 3с-таймер — переводим немедленно
+        if (translateTimers.current[idx]) {
+          clearTimeout(translateTimers.current[idx]);
+          delete translateTimers.current[idx];
+        }
+        translateBatch(idx, idx);
+      }
+      const total = bookRef.current?.paragraphs.length ?? 1;
+      const first = visible.size ? Math.min(...visible) : visibleRef.current.first;
+      const atEnd = first >= total - 2;
+      const pct = atEnd ? 1 : Math.min(1, Math.max(0, first / total));
+      setProgress(bookId, pct, Math.max(0, first));
     },
-    [translateBatch],
+    [translateBatch, bookId, setProgress],
   );
 
+  // Окно «Поддержать автора» — плата за бесплатное приложение.
+  // Показываем при открытии книги с задержкой 20с, если пользователь ещё не задонатил
+  // (флаг dontShowSupport в supportStore). Чтение не блокируется.
+  const dontShowSupport = useSupportStore((s) => s.dontShowSupport);
   useEffect(() => {
-    translateBatch(0, BATCH);
+    setSupportOpen(false);
+    if (dontShowSupport) return;
+    const t = setTimeout(() => setSupportOpen(true), 20000);
+    return () => clearTimeout(t);
+  }, [bookId, dontShowSupport]);
+
+  const onSupportConfirm = async () => {
+    setSupportOpen(false);
+    await showSupportAd();
+  };
+
+  // Донат/подписка: ставим флаг «больше не показывать» и запускаем платёж (mock в вебе).
+  const onDonate = () => {
+    setSupportOpen(false);
+    useSupportStore.getState().setDontShowSupport(true);
+    if (Platform.OS === 'web') {
+      window.alert(t("Thank you for your support! (donation/subscription is a stub in the web version)"));
+    }
+    // TODO (натив): здесь requestPurchase() из react-native-iap / открытие платёжной ссылки.
+  };
+
+  useEffect(() => {
+    // В режиме 'read' перевод не грузим (пользователь хочет читать оригинал).
+    if (mode === 'read') return;
+    // Перевод срабатывает по скролл-стопу (onMomentumScrollEnd) и при удержании абзаца в окне >2с.
+    for (let i = 0; i <= BATCH; i++) scheduleTranslate(i, 2000);
     return () => {
       if (scrollTimer.current) clearTimeout(scrollTimer.current);
+      Object.values(translateTimers.current).forEach((t) => clearTimeout(t));
+      translateTimers.current = {};
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookId]);
+  }, [bookId, mode]);
 
-  const langForSheet = book?.language ?? 'auto';
+  // прыжок к разделу/закладке из оглавления или списка закладок
+  useEffect(() => {
+    const jumpTo = (route.params as any)?.jumpTo;
+    if (jumpTo == null || !scrollRef.current) return;
+    const idx = Math.max(0, Math.min(jumpTo, bookRef.current?.paragraphs.length ?? 1));
+    const t = setTimeout(() => {
+      scrollRef.current?.scrollToIndex({ index: idx, animated: true, viewPosition: 0.2 });
+    }, 300);
+    return () => clearTimeout(t);
+  }, [route.params]);
+
+  const speak = useCallback(
+    (text: string) => {
+      if (isWeb && 'speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = book?.language && book.language !== 'auto' ? book.language : 'en';
+        u.onend = () => setIsSpeaking(false);
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+        setIsSpeaking(true);
+      }
+    },
+    [isWeb, book],
+  );
+
+  const copyParagraph = useCallback(
+    (text: string, translation?: string) => {
+      const payload = translation ? `${text}\n${translation}` : text;
+      if (isWeb && navigator.clipboard) {
+        navigator.clipboard.writeText(payload).then(
+          () => Alert.alert(t("Copied"), t("Paragraph (original + translation) copied to clipboard.")),
+          () => Alert.alert(t("Copy error"), t("Could not copy.")),
+        );
+      } else {
+        Alert.alert(t("Copied"), payload);
+      }
+    },
+    [isWeb],
+  );
+
+  const langForSheet = book?.language && book.language !== 'auto' ? book.language : 'en';
   const selectedSentence = selected?.sentence ?? '';
   const wordSheet = selected ? (
     <WordBottomSheet
       word={selected.word}
       sentence={selectedSentence}
       lang={langForSheet}
+      targetLang={book?.targetLang ?? settingsTarget}
+      bookId={book?.id ?? bookId}
       onClose={() => (isWeb ? setSelected(null) : bottomSheetRef.current?.dismiss())}
     />
   ) : null;
 
   if (!book) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.missing}>Книга не найдена.</Text>
+      <View style={[styles.center, { backgroundColor: theme.readerBg }]}>
+        <Text style={{ color: theme.readerText }}>{t("Book not found.")}</Text>
       </View>
     );
   }
 
-  const list = (
+  // --- Пагинация для горизонтального режима (обычное чтение) ---
+  const isPdf = book.format === 'pdf';
+  const paginated = reader.pageFlip === 'horizontal' && !isPdf;
+
+  const pages = React.useMemo(() => {
+    if (!paginated) return [] as number[][];
+    const margin = reader.pageMargins ? reader.margin : 0;
+    const availW = width - margin * 2;
+    const availH = height - 140; // хедер + футер с номером страницы
+    const lineH = reader.fontSize * reader.lineHeight;
+    const dualFactor = mode === 'dual' ? 0.5 : 1; // перевод занимает ~половину страницы
+    const charsPerLine = Math.max(10, Math.floor(availW / (reader.fontSize * 0.5)));
+    const linesPerPage = Math.max(3, Math.floor((availH / lineH) * dualFactor));
+    const charsPerPage = charsPerLine * linesPerPage;
+    const result: number[][] = [];
+    let cur: number[] = [];
+    let curLen = 0;
+    for (const p of book.paragraphs) {
+      const len = p.original.length;
+      if (curLen > 0 && curLen + len + 1 > charsPerPage) {
+        result.push(cur);
+        cur = [];
+        curLen = 0;
+      }
+      cur.push(p.index);
+      curLen += len + 1;
+    }
+    if (cur.length) result.push(cur);
+    return result;
+  }, [paginated, book.paragraphs, width, height, reader.fontSize, reader.lineHeight, reader.margin, reader.pageMargins]);
+
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const pageScrollRef = React.useRef<any>(null);
+  const onPageScrollEnd = (e: any) => {
+    const x = e.nativeEvent?.contentOffset?.x ?? 0;
+    const idx = Math.round(x / width);
+    setPageIndex(idx);
+  };
+
+  const renderPageRow = (index: number) => {
+    const p = book.paragraphs.find((x) => x.index === index);
+    if (!p) return null;
+    return (
+      <SentenceRow
+        index={p.index}
+        original={p.original}
+        translation={p.translation}
+        loading={loadingSet.has(p.index)}
+        showTranslation={false}
+        fontSize={reader.fontSize}
+        lineHeight={reader.lineHeight}
+        justify={reader.justify}
+        fontFamily={reader.fontFamily}
+        fontWeight={reader.fontWeight}
+        textAlign={reader.textAlign}
+        pageMargins={reader.pageMargins}
+        bookmarked={book.bookmarks?.includes(p.index) ?? false}
+        onToggleBookmark={() => toggleBookmark(book.id, p.index)}
+        onCopy={() => copyParagraph(p.original, p.translation)}
+        onSpeak={speak}
+        onTranslate={() => translateBatch(p.index, p.index)}
+        showSpeak={reader.showSpeakButton ?? true}
+        showTranslate={reader.showTranslateButton ?? true}
+        onWordPress={onWordPress}
+        forceHideTranslation={mode === 'read'}
+        mode={mode}
+        query={query}
+      />
+    );
+  };
+
+  const list = paginated ? (
     <FlatList
+      ref={pageScrollRef}
+      style={{ flex: 1 }}
+      data={pages}
+      keyExtractor={(_, i) => `pg-${i}`}
+      key={`paged-${reader.fontSize}-${reader.margin}-${reader.pageMargins}-${width}`}
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ backgroundColor: theme.readerBg }}
+      snapToInterval={width}
+      decelerationRate="fast"
+      initialScrollIndex={Math.min(pageIndex, Math.max(0, pages.length - 1))}
+      getItemLayout={(_, index) => ({ length: width, offset: width * index, index })}
+      onMomentumScrollEnd={onPageScrollEnd}
+      renderItem={({ item }) => (
+        <View style={{ width, flex: 1, paddingTop: a.small ? 4 : 8, paddingBottom: a.small ? 20 : 40, paddingHorizontal: reader.pageMargins ? reader.margin : 0, backgroundColor: theme.readerBg }}>
+          {item.map((idx) => (
+            <View key={idx} style={{ marginBottom: a.gap }}>
+              {renderPageRow(idx)}
+            </View>
+          ))}
+        </View>
+      )}
+    />
+  ) : (
+    <FlatList
+      ref={scrollRef}
+      style={{ flex: 1 }}
       data={book.paragraphs}
       keyExtractor={(p) => String(p.index)}
-      numColumns={numColumns}
-      key={numColumns}
-      contentContainerStyle={styles.list}
-      columnWrapperStyle={isWide ? styles.columnWrap : undefined}
+      numColumns={1}
+      key={flipKey}
+      horizontal={reader.pageFlip === 'horizontal'}
+      contentContainerStyle={[styles.list, { backgroundColor: theme.readerBg, paddingHorizontal: reader.pageMargins ? reader.margin : 0 }]}
       onScrollBeginDrag={onScrollBeginDrag}
       onMomentumScrollEnd={onMomentumScrollEnd}
       initialNumToRender={BATCH}
+      initialScrollIndex={Math.min(book.lastPosition ?? 0, book.paragraphs.length - 1)}
+      getItemLayout={(_, index) => ({ length: 80, offset: 80 * index, index })}
+      onViewableItemsChanged={onViewableItemsChanged}
+      viewabilityConfig={{ itemVisiblePercentThreshold: 50, minimumViewTime: 50 }}
       ListFooterComponent={
-        loadingSet.size > 0 ? (
-          <ActivityIndicator style={styles.footer} color={COLORS.secondaryText} />
-        ) : null
+        loadingSet.size > 0 ? <ActivityIndicator style={styles.footer} color={theme.secondaryText} /> : null
       }
       renderItem={({ item }) => (
         <SentenceRow
@@ -155,37 +506,179 @@ export default function ReaderScreen({ route }: { route: any }) {
           original={item.original}
           translation={item.translation}
           loading={loadingSet.has(item.index)}
-          onTranslate={(idx) => translateBatch(idx, idx)}
+          showTranslation={false}
+          fontSize={reader.fontSize}
+          lineHeight={reader.lineHeight}
+          justify={reader.justify}
+          fontFamily={reader.fontFamily}
+          fontWeight={reader.fontWeight}
+          textAlign={reader.textAlign}
+          pageMargins={reader.pageMargins}
+          bookmarked={book.bookmarks?.includes(item.index) ?? false}
+          onToggleBookmark={() => toggleBookmark(book.id, item.index)}
+          onCopy={() => copyParagraph(item.original, item.translation)}
+          onSpeak={speak}
+          onTranslate={() => translateBatch(item.index, item.index)}
+          showSpeak={reader.showSpeakButton ?? true}
+          showTranslate={reader.showTranslateButton ?? true}
           onWordPress={onWordPress}
+          forceHideTranslation={mode === 'read'}
+          mode={mode}
+          query={query}
         />
       )}
     />
   );
 
+  // Индикатор нумерации страниц (только в постраничном режиме)
+  const pageIndicator = paginated && pages.length > 0 ? (
+    <View style={[styles.pageIndicator, neuRaised(theme, 12)]}>
+      <Text style={[styles.pageIndicatorText, { color: theme.primaryText }]}>
+        {t("Page {n} of {m}").replace(/\{n\}/g, String(Math.min(pageIndex + 1, pages.length))).replace(/\{m\}/g, String(pages.length))}
+      </Text>
+    </View>
+  ) : null;
+
   const header = (
-    <View style={styles.header}>
-      <Text style={styles.title} numberOfLines={1}>
-        {book.title}
-      </Text>
-      <Text style={styles.subtitle}>
-        {book.language === 'auto' ? 'Авто' : book.language.toUpperCase()} → {targetLang.toUpperCase()}
-        {isWide ? ' · 2 колонки' : ''}
-      </Text>
+    <View style={[styles.header, neuRaised(theme, a.radius)]}>
+      <View style={[styles.headerRow, { paddingLeft: a.pad + a.icon(40), paddingRight: a.pad, paddingTop: a.small ? 4 : 6, paddingBottom: a.small ? 4 : 6, maxHeight: a.small ? 56 : 68 }]}>
+        <View style={styles.titleGroup}>
+          <Marquee text={book.title} textStyle={[styles.title, { color: theme.primaryText }]} />
+        </View>
+        {(mode === 'read' || mode === 'dual') && (
+          <View style={styles.centerPlay}>
+            {isSpeaking ? (
+              <React.Fragment>
+                <TouchableOpacity onPress={pauseBook} hitSlop={10} style={styles.playBtn}>
+                  <Icon name="pause" size={a.dim(0.034, 18, 28)} color={theme.primary} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={stopBook} hitSlop={10} style={styles.playBtn}>
+                  <Icon name="close" size={a.dim(0.034, 18, 28)} color={theme.primary} />
+                </TouchableOpacity>
+              </React.Fragment>
+            ) : (
+              <TouchableOpacity onPress={playBook} hitSlop={10} style={styles.playBtn}>
+                <Icon name="volume" size={a.dim(0.036, 20, 30)} color={theme.primary} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+        <View style={[styles.headerRight, { position: 'relative' }]}>
+          <TouchableOpacity
+            onPress={() => setLangOpen((v) => !v)}
+            hitSlop={8}
+            style={[neuCircle(theme, a.dim(0.038, 20, 28)), { padding: 0 }]}
+          >
+            <Icon name="settings" size={a.dim(0.03, 16, 24)} color={theme.primaryText} />
+          </TouchableOpacity>
+          {langOpen && (
+            <View style={styles.langDropdown}>
+              <LanguageDropdown
+                value={targetLang}
+                onSelect={(c) => { setBookTargetLang(book.id, c); setLangOpen(false); }}
+                onClose={() => setLangOpen(false)}
+              />
+            </View>
+          )}
+        </View>
+      </View>
     </View>
   );
 
-  // Web: используем Modal вместо нативного BottomSheet
-  if (isWeb) {
-    return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          {header}
-          {list}
+  // Выпадающий список языка перевода рендерится в headerRight (LanguageDropdown).
+
+  // Модалка поиска по книге
+  const searchModal = (
+    <Modal visible={searchOpen} transparent animationType="fade" onRequestClose={() => setSearchOpen(false)}>
+      <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setSearchOpen(false)}>
+        <View style={[styles.menuCard, neuInset(theme, a.radius + 4)]}>
+          <Text style={[styles.menuTitle, { color: theme.primaryText }]}>{t("Search in book")}</Text>
+          <TextInput
+            style={[styles.searchInput, neuInset(theme, 10)]}
+            value={query}
+            onChangeText={setQuery}
+            placeholder={t("enter a word or phrase")}
+            placeholderTextColor={theme.secondaryText}
+            autoFocus
+          />
+          <TouchableOpacity
+            style={[styles.searchClear, neuPrimary(theme, 10)]}
+            onPress={() => {
+              setQuery('');
+              setSearchOpen(false);
+            }}
+          >
+            <Text style={{ color: theme.primary }}>{t("Close")}</Text>
+          </TouchableOpacity>
         </View>
-        <Modal visible={!!selected} transparent animationType="slide" onRequestClose={() => setSelected(null)}>
-          {wordSheet}
-        </Modal>
-      </GestureHandlerRootView>
+      </TouchableOpacity>
+    </Modal>
+  );
+
+  // menuItems/menu (бургер) удалены — язык теперь в dropdown шестеренки.
+
+  // Web: Modal с бэкдропом (клик вне попапа = закрытие, скролл под попапом заблокирован).
+  if (isWeb) {
+    const wordSheetModal = selected ? (
+      <View style={styles.backdrop} onStartShouldSetResponder={() => true} onResponderRelease={() => setSelected(null)}>
+        <View style={styles.sheetWrap} onStartShouldSetResponder={() => true}>
+          <View style={styles.sheetCapture} onStartShouldSetResponder={() => true}>
+            {wordSheet}
+          </View>
+        </View>
+      </View>
+    ) : null;
+
+    const wordActionModal = action ? (
+      <WordActionSheet
+        visible={!!action}
+        word={action.word}
+        sentence={action.sentence}
+        onSpeakFromHere={(s) => speak(s)}
+        onAddToDictionary={(w, s) => addToDictionary(w, s)}
+        onClose={() => setAction(null)}
+      />
+    ) : null;
+
+    const content = isPdf ? (
+      <View style={{ flex: 1, backgroundColor: theme.readerBg }}>
+        {Platform.OS === 'web' ? (
+          <iframe
+            src={book.pdfUri}
+            style={{ width: '100%', height: '100%', borderWidth: 0 }}
+            title={book.title}
+          />
+        ) : (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+            <Text style={{ color: theme.readerText }}>
+              {t("PDF viewing is available only in the web version. On a device, open the file with an external app.")}
+            </Text>
+          </View>
+        )}
+      </View>
+    ) : (
+      list
+    );
+
+    return (
+      <View style={[styles.container, { backgroundColor: theme.readerBg }]}>
+        <BackFab onPress={() => navigation.goBack()} />
+        {header}
+        {content}
+        {pageIndicator}
+        {searchModal}
+        {wordSheetModal}
+        {wordActionModal}
+        <SupportAuthorModal
+          visible={supportOpen}
+          onSupport={onSupportConfirm}
+          onDonate={onDonate}
+          onDismiss={() => setSupportOpen(false)}
+        />
+        <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
+          <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
@@ -196,9 +689,10 @@ export default function ReaderScreen({ route }: { route: any }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.readerBg }]}>
+          <BackFab onPress={() => navigation.goBack()} />
           {header}
-          {list}
+          {isPdf ? <View style={{ flex: 1 }} /> : list}
         </View>
         <BottomSheetModal
           ref={bottomSheetRef}
@@ -211,19 +705,104 @@ export default function ReaderScreen({ route }: { route: any }) {
         >
           {wordSheet}
         </BottomSheetModal>
+        {searchModal}
+        <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
+          <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
+        </TouchableOpacity>
+        <SupportAuthorModal
+          visible={supportOpen}
+          onSupport={onSupportConfirm}
+          onDonate={onDonate}
+          onDismiss={() => setSupportOpen(false)}
+        />
+        <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
+          <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
+        </TouchableOpacity>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background, padding: SIZES.padding },
-  header: { paddingBottom: SIZES.gap },
-  title: { fontSize: 18, fontFamily: FONTS.bold, color: COLORS.primaryText },
-  subtitle: { color: COLORS.secondaryText, fontSize: 13, marginTop: 2 },
-  list: { paddingBottom: 40 },
-  columnWrap: { justifyContent: 'space-between' },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.background },
-  missing: { color: COLORS.secondaryText },
-  footer: { marginVertical: 16 },
-});
+function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof useTheme>) {
+  const playSz = Math.round(Math.max(34, Math.min(48, 44 * a.scale)));
+  const neuBtn = neuCircle(theme, playSz);
+  const neuUp = neuCircle(theme, Math.round(Math.max(34, Math.min(48, 44 * a.scale))));
+  return StyleSheet.create({
+    container: { flex: 1, position: 'relative', userSelect: 'none' },
+    header: {
+      flexDirection: 'column',
+      paddingHorizontal: a.pad,
+      paddingTop: a.landscape ? 6 : 10,
+      paddingBottom: a.landscape ? 4 : 8,
+      zIndex: 10,
+      maxHeight: a.landscape ? 64 : 96,
+      borderRadius: 0,
+    },
+    headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 4 : 8 },
+    // Название занимает всю свободную ширину: подпись экрана убрана, выравнивание по левому краю.
+    titleGroup: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      gap: a.tiny ? 4 : 8,
+      minWidth: 0,
+      maxHeight: a.landscape ? 40 : 56,
+    },
+    headerRight: { flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 12, flexShrink: 0 },
+    langDropdown: { position: 'absolute', top: '100%', right: 0, zIndex: 100 },
+    centerPlay: { flexShrink: 0, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: a.tiny ? 2 : 6 },
+    playBtn: { ...neuBtn, borderRadius: playSz / 2 },
+    title: { fontSize: a.h2, fontFamily: FONTS.bold },
+    langChip: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, ...neuInset(theme, 12) },
+    langChipText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
+    // Колонка текста ограничена по ширине на больших мониторах — иначе строки нечитаемо длинные.
+    list: { paddingVertical: 12, paddingBottom: 40, width: '100%', maxWidth: a.readerMaxW, alignSelf: 'center' },
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    footer: { marginVertical: a.gap },
+    modalBackdrop: { flex: 1, backgroundColor: '#00000066', justifyContent: 'flex-start' },
+    menuCard: {
+      maxHeight: a.height * (a.landscape ? 0.85 : 0.7),
+      borderBottomLeftRadius: a.radius + 4,
+      borderBottomRightRadius: a.radius + 4,
+      padding: a.pad,
+      width: '100%',
+      maxWidth: a.isDesktop ? 520 : undefined,
+      alignSelf: a.isDesktop ? 'center' : 'auto',
+    },
+    menuTitle: { fontSize: a.h2, fontFamily: FONTS.bold, marginBottom: 8 },
+    menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: a.tiny ? 9 : 12, borderBottomWidth: 0.5, gap: 12 },
+    menuItemText: { flex: 1, fontSize: a.body },
+    searchInput: { borderWidth: 0, paddingHorizontal: 12, paddingVertical: a.tiny ? 8 : 10, fontSize: a.body, marginTop: 8, color: theme.primaryText },
+    searchClear: { marginTop: 12, paddingVertical: 10, borderRadius: 10, alignItems: 'center' },
+    progressTrack: { height: 3, width: '100%', marginTop: 8 },
+    progressFill: { height: 3 },
+    upFab: {
+      position: 'absolute',
+      right: Math.max(12, a.pad),
+      bottom: Math.max(12, a.pad),
+      ...neuUp,
+      borderRadius: Math.round(Math.max(34, Math.min(48, 44 * a.scale))) / 2,
+    },
+    upFabText: { fontSize: a.fs(22), fontFamily: FONTS.bold, color: theme.primaryText },
+    pageIndicator: {
+      position: 'absolute',
+      bottom: 8,
+      alignSelf: 'center',
+      paddingVertical: 4,
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      opacity: 0.9,
+    },
+    pageIndicatorText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
+    backdrop: {
+      position: 'absolute',
+      top: 0, left: 0, right: 0, bottom: 0,
+      backgroundColor: '#00000066',
+      justifyContent: 'flex-start',
+      zIndex: 60,
+    },
+    sheetWrap: { width: '100%', maxWidth: a.isDesktop ? 640 : undefined, alignSelf: 'center' },
+    sheetCapture: { width: '100%' },
+  });
+}

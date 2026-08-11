@@ -1,0 +1,158 @@
+// components/AppSettingsModal.tsx
+// Модалка настроек ВСЕГО ПРИЛОЖЕНИЯ (не ридера): тема, язык перевода, бэкенд, ключ, бэкап.
+// Шрифты/отступы ридера живут внутри ридера (FontSettingsSheet) — здесь их нет.
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Modal, ScrollView, Platform, Alert } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+import { FONTS } from '../theme/constants';
+import { useAdaptive } from '../theme/useAdaptive';
+import { useSettingsStore } from '../store/settingsStore';
+import { useLibraryStore } from '../store/libraryStore';
+import { useDictionaryStore } from '../store/dictionaryStore';
+import { useT } from '../i18n';
+import { THEME_ORDER, THEME_LABELS, ThemeMode } from '../theme/themes';
+import { LANGUAGES, translatableLangs } from '../utils/languages';
+import { neuInset, neuPrimary, neuCircle, neuShadowPad } from '../theme/neu';
+import Icon from './Icon';
+import LanguagePicker from './LanguagePicker';
+
+interface Props {
+  visible: boolean;
+  onClose: () => void;
+}
+
+export default function AppSettingsModal({ visible, onClose }: Props) {
+  const theme = useTheme();
+  const a = useAdaptive();
+  const m = a.modal();
+  const t = useT();
+  const { targetLang, setTargetLang, setTheme, appLang, setAppLang } = useSettingsStore();
+  const currentTheme = useSettingsStore((s) => s.theme);
+  const books = useLibraryStore((s) => s.books);
+  const dictionary = useDictionaryStore((s) => s.entries);
+  const [langPicker, setLangPicker] = useState(false);
+  const [appLangPicker, setAppLangPicker] = useState(false);
+
+  const exportData = () => {
+    const payload = {
+      app: 'BookReader',
+      exportedAt: new Date().toISOString(),
+      library: books.map((b) => ({
+        id: b.id, title: b.title, author: b.author,
+        language: b.language, targetLang: b.targetLang,
+        progress: b.progress, lastPosition: b.lastPosition, bookmarks: b.bookmarks,
+      })),
+      dictionary,
+    };
+    const json = JSON.stringify(payload, null, 2);
+    if (Platform.OS === 'web') {
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const el = document.createElement('a');
+      el.href = url; el.download = 'bookreader-backup.json';
+      el.click();
+      URL.revokeObjectURL(url);
+    } else {
+      Alert.alert(t('Export'), t('On this platform export is available in the web version.'));
+    }
+  };
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <TouchableOpacity
+        style={{ flex: 1, backgroundColor: '#00000080', justifyContent: 'center', alignItems: 'center', padding: m.backdropPad }}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <View
+          onStartShouldSetResponder={() => true}
+          style={[
+            neuInset(theme, m.borderRadius),
+            { width: m.width, maxWidth: m.maxWidth, maxHeight: m.maxHeight, padding: m.padding, position: 'relative', overflow: 'visible' },
+          ]}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Text style={{ flex: 1, fontSize: a.h2, fontFamily: FONTS.bold, color: theme.primaryText }}>{t('App settings')}</Text>
+          </View>
+          <TouchableOpacity
+            onPress={onClose}
+            hitSlop={10}
+            style={[neuCircle(theme, a.icon(36)), { position: 'absolute', top: m.padding, right: m.padding, zIndex: 20, padding: 0 }]}
+          >
+            <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
+          </TouchableOpacity>
+
+          <ScrollView style={{ marginTop: a.gap }} contentContainerStyle={{ padding: neuShadowPad(12) }} showsVerticalScrollIndicator={false}>
+            <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8, marginTop: 4 }}>{t('Theme')}</Text>
+            <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap', marginBottom: a.gap }}>
+              {THEME_ORDER.map((tm: ThemeMode) => {
+                const active = currentTheme === tm;
+                return (
+                  <TouchableOpacity
+                    key={tm}
+                    style={[
+                      { flex: 1, minWidth: 84, paddingVertical: a.tiny ? 9 : 12, borderRadius: a.radius, alignItems: 'center', borderWidth: 1, borderColor: theme.border, backgroundColor: theme.surface },
+                      active && { borderColor: theme.primary, backgroundColor: theme.selected },
+                    ]}
+                    onPress={() => setTheme(tm)}
+                  >
+                    <Text style={{ fontSize: a.body, fontFamily: FONTS.bold, color: active ? theme.primary : theme.primaryText }}>{t(THEME_LABELS[tm])}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8 }}>{t('App language')}</Text>
+            <TouchableOpacity
+              style={[{ borderWidth: 1, borderColor: theme.border, backgroundColor: theme.surface, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: a.tiny ? 9 : 12, paddingHorizontal: 14, minHeight: a.hit, marginBottom: a.gap, borderRadius: a.radius }]}
+              onPress={() => setAppLangPicker(true)}
+            >
+              <Text style={{ fontSize: a.body, color: theme.primaryText }}>
+                {LANGUAGES.find((l) => l.code === appLang)?.name ?? appLang}
+              </Text>
+              <Text style={{ color: theme.secondaryText }}>▾</Text>
+            </TouchableOpacity>
+
+            <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8 }}>{t('Translation language')}</Text>
+            <TouchableOpacity
+              style={[{ borderWidth: 1, borderColor: theme.border, backgroundColor: theme.surface, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: a.tiny ? 9 : 12, paddingHorizontal: 14, minHeight: a.hit, marginBottom: a.gap, borderRadius: a.radius }]}
+              onPress={() => setLangPicker(true)}
+            >
+              <Text style={{ fontSize: a.body, color: theme.primaryText }}>
+                {translatableLangs().find((l) => l.code === targetLang)?.name ?? targetLang}
+              </Text>
+              <Text style={{ color: theme.secondaryText }}>▾</Text>
+            </TouchableOpacity>
+
+            <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8 }}>{t('Data')}</Text>
+            <TouchableOpacity style={[neuPrimary(theme, a.radius), { paddingVertical: a.tiny ? 10 : 14, alignItems: 'center' }]} onPress={exportData}>
+              <Text style={{ color: '#fff', fontSize: a.body, fontFamily: FONTS.bold }}>{t('Export backup (JSON)')}</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      </TouchableOpacity>
+
+      <LanguagePicker
+        visible={langPicker}
+        value={targetLang}
+        allowAuto={false}
+        exclude={['ru']}
+        onSelect={(code) => setTargetLang(code)}
+        onClose={() => setLangPicker(false)}
+      />
+
+      <LanguagePicker
+        visible={appLangPicker}
+        value={appLang}
+        allowAuto={false}
+        options={[
+          { code: 'auto', name: 'Auto', en: 'Auto' },
+          { code: 'system', name: 'As in system', en: 'As in system' },
+          ...LANGUAGES.filter((l) => l.code !== 'auto' && l.code !== 'ru'),
+        ]}
+        onSelect={(code) => setAppLang(code)}
+        onClose={() => setAppLangPicker(false)}
+      />
+    </Modal>
+  );
+}

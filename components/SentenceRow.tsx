@@ -1,66 +1,166 @@
 // components/SentenceRow.tsx
-// Одна строка: оригинал + параллельный перевод (если готов) или кнопка «перевести».
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { COLORS, SIZES, FONTS } from '../theme/constants';
+// Одна строка чтения: оригинал + per-paragraph перевод (перевод подгружается автоматически
+// при скролле/простое >3с), кнопка ▶ слева — озвучка абзаца. КАЖДОЕ слово (токен с буквами)
+// кликабельно -> словарь.
+// Кликабельность реализована через Text.onPress (валидно в RN/RN-web), а не TouchableOpacity
+// внутри текста, который ломает инлайн-вёрстку и часть слов перестаёт ловить тап.
+import React, { useMemo } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+import { FONTS } from '../theme/constants';
+import { useAdaptive } from '../theme/useAdaptive';
+import { neuCircle } from '../theme/neu';
 
 interface Props {
   index: number;
   original: string;
   translation?: string;
   loading?: boolean;
-  onTranslate: (index: number) => void;
+  showTranslation?: boolean;
+  fontSize?: number;
+  lineHeight?: number;
+  justify?: boolean;
+  query?: string;
+  bookmarked?: boolean;
+  forceHideTranslation?: boolean;
+  mode?: 'read' | 'dual';
+  fontFamily?: string;
+  fontWeight?: number;
+  textAlign?: 'left' | 'justify' | 'hyphenation';
+  pageMargins?: boolean;
+  onToggleBookmark?: () => void;
+  onCopy?: () => void;
+  onSpeak: (text: string) => void;
+  onTranslate?: () => void;
+  showSpeak?: boolean;
+  showTranslate?: boolean;
   onWordPress: (word: string, sentence: string) => void;
 }
 
-// разбиваем предложение на кликабельные токены (слова/пунктуация)
+// делим по пробелам, сохраняя сами пробелы как токены
 function tokenize(text: string): string[] {
   return text.split(/(\s+)/).filter((t) => t.length > 0);
 }
 
+// слово = токен, содержащий хотя бы одну букву (любого алфавита)
+function isWordToken(tok: string): boolean {
+  return /\p{L}/u.test(tok);
+}
+
 export default function SentenceRow({
-  index,
   original,
   translation,
-  loading,
+  showTranslation,
+  fontSize,
+  lineHeight,
+  query,
+  forceHideTranslation,
+  mode = 'dual',
+  fontFamily = 'default',
+  fontWeight = 400,
+  textAlign = 'justify',
+  pageMargins = true,
+  onSpeak,
   onTranslate,
+  showSpeak,
+  showTranslate,
   onWordPress,
 }: Props) {
-  return (
-    <View style={styles.row}>
-      <View style={styles.original}>
-        {tokenize(original).map((tok, i) =>
-          /^[^\s]+$/.test(tok) && /[A-Za-zА-Яа-яЁё]/.test(tok) ? (
-            <TouchableOpacity key={i} onPress={() => onWordPress(tok, original)}>
-              <Text style={styles.word}>{tok}</Text>
-            </TouchableOpacity>
-          ) : (
-            <Text key={i} style={styles.word}>
-              {tok}
-            </Text>
-          ),
-        )}
-      </View>
+  const theme = useTheme();
+  const a = useAdaptive();
+  const fs = fontSize ?? 18;
+  const lh = (lineHeight ?? 1.4) * fs;
+  const open = !forceHideTranslation && (!!translation || showTranslation);
+  const textAlignValue = textAlign === 'justify' ? 'justify' : textAlign === 'hyphenation' ? 'justify' : 'left';
+  const hyphenation = textAlign === 'hyphenation';
+  const fontFamilyValue =
+    fontFamily === 'serif' ? 'Georgia, "Times New Roman", serif'
+    : fontFamily === 'sans' ? 'Arial, Helvetica, sans-serif'
+    : fontFamily === 'mono' ? '"Courier New", monospace'
+    : undefined;
+  const baseText = {
+    fontFamily: fontFamilyValue,
+    fontWeight: fontWeight as any,
+    textAlign: textAlignValue as any,
+    ...(hyphenation ? { hyphenationFactor: 1, wordBreak: 'break-word' } as any : null),
+  };
+  const q = (query ?? '').trim().toLowerCase();
+  // токенизируем только когда меняется исходник (иначе пересоздание массива на каждый рендер)
+  const tokens = useMemo(() => tokenize(original), [original]);
 
-      {translation ? (
-        <Text style={styles.translation}>{translation}</Text>
-      ) : loading ? (
-        <ActivityIndicator style={styles.indicator} color={COLORS.secondaryText} />
-      ) : (
-        <TouchableOpacity style={styles.translateBtn} onPress={() => onTranslate(index)}>
-          <Text style={styles.translateText}>Перевести</Text>
+  const renderToken = (tok: string, i: number) => {
+    const isWord = isWordToken(tok);
+    const lower = tok.toLowerCase();
+    const hit = q.length > 0 && lower.includes(q);
+    const base = [styles.word, baseText, { color: theme.readerText, fontSize: fs, lineHeight: lh }];
+
+    if (hit) {
+      return (
+        <Text key={i} style={[styles.word, baseText, { backgroundColor: theme.highlight, color: theme.readerText, fontSize: fs, lineHeight: lh }]}>
+          {tok}
+        </Text>
+      );
+    }
+    if (isWord) {
+      return (
+        <TouchableOpacity key={i} onPress={() => onWordPress(tok, original)} hitSlop={2}>
+          <Text style={[...base, styles.tapWord]}>{tok}</Text>
         </TouchableOpacity>
+      );
+    }
+    // пунктуация / пробелы — обычный текст, не кликабельны
+    return <Text key={i} style={base}>{tok}</Text>;
+  };
+
+  const isPlain = mode === 'read';
+
+  return (
+    <View style={[styles.row, isPlain && styles.rowPlain, pageMargins ? { paddingHorizontal: Math.round(12 * a.scale) } : null, { borderBottomColor: theme.border }]}>
+      {!isPlain && (showSpeak || (onTranslate && !translation && showTranslate)) && (
+        <View style={styles.controls}>
+          {/* ▶ озвучка */}
+          {showSpeak && (
+            <TouchableOpacity style={[neuCircle(theme, a.icon(30)), { padding: 0 }]} onPress={() => onSpeak(original)} hitSlop={8}>
+              <Text style={[styles.playIcon, { color: theme.primary }]}>▶</Text>
+            </TouchableOpacity>
+          )}
+          {/* Перевести — по нажатию переводим этот абзац сразу */}
+          {onTranslate && !translation && showTranslate && (
+            <TouchableOpacity style={[neuCircle(theme, a.icon(30)), { padding: 0 }]} onPress={onTranslate} hitSlop={8}>
+              <Text style={[styles.translateIcon, { color: theme.primary }]}>⇄</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       )}
+
+      <View style={styles.body}>
+        <Text style={[styles.paragraph, baseText]}>
+          {tokens.map((tok, i) => renderToken(tok, i))}
+        </Text>
+
+        {open ? (
+          <Text style={[styles.translation, { color: theme.secondaryText, fontSize: fs - 2, lineHeight: lh - 2 }]}>
+            {translation}
+          </Text>
+        ) : null}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  row: { marginBottom: SIZES.gap },
-  original: { flexDirection: 'row', flexWrap: 'wrap' },
-  word: { fontSize: 16, color: COLORS.primaryText, lineHeight: 24 },
-  translation: { fontSize: 15, color: COLORS.secondaryText, marginTop: 4, lineHeight: 22 },
-  translateBtn: { alignSelf: 'flex-start', marginTop: 4 },
-  translateText: { color: COLORS.primary, fontSize: 14 },
-  indicator: { marginTop: 6, alignSelf: 'flex-start' },
+  row: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 10, borderBottomWidth: 0.5, width: '100%', alignSelf: 'center' },
+  rowPlain: { paddingVertical: 0, borderBottomWidth: 0 },
+  controls: { flexDirection: 'row', alignItems: 'center', marginRight: 8 },
+  playBtn: { paddingTop: 4, paddingRight: 8, width: 28 },
+  playIcon: { fontSize: 14 },
+  translateBtn: { paddingTop: 2, paddingRight: 6, width: 22 },
+  translateIcon: { fontSize: 16 },
+  bmBtn: { paddingTop: 2, paddingRight: 6, width: 22 },
+  body: { flex: 1, minWidth: 0 },
+  paragraph: { flexShrink: 1 },
+  justified: { textAlign: 'justify' },
+  word: { fontFamily: FONTS.regular },
+  tapWord: { textDecorationLine: 'underline', textDecorationColor: '#00000022' },
+  translation: { marginTop: 6, fontStyle: 'italic' },
 });

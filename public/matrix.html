@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Adaptive matrix</title>
+<style>
+ body{margin:0;background:#0b0d12;color:#eee;font:12px sans-serif}
+ .wrap{display:flex;flex-wrap:wrap;gap:14px;padding:14px;align-items:flex-start}
+ .cell{background:#111;border:1px solid #444}
+ .cap{padding:4px 6px;font-weight:bold}
+ iframe{border:0;display:block;background:#0b0d12}
+</style></head><body>
+<div class="wrap" id="w"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const sizes = JSON.parse(q.get('s') || '[]');
+const def = [[320,480],[360,640],[390,844],[480,320],[768,1024],[844,390],[1024,768],[1280,800],[1920,1080]];
+const list = sizes.length ? sizes : def;
+const w = document.getElementById('w');
+for (const [x,y] of list) {
+  const d=document.createElement('div'); d.className='cell';
+  d.innerHTML = `<div class="cap">${x}x${y}</div><iframe src="/" width="${x}" height="${y}"></iframe>`;
+  w.appendChild(d);
+}
+// helper: click element inside every iframe by text or css
+window.clickAll = (sel, text) => {
+  return [...document.querySelectorAll('iframe')].map(fr => {
+    const d = fr.contentDocument;
+    const nodes = [...d.querySelectorAll(sel)];
+    const el = text ? nodes.find(n => (n.innerText||'').includes(text)) : nodes[0];
+    if (el) { el.click(); return 'ok'; }
+    return 'miss';
+  });
+};
+window.overflowReport = () => [...document.querySelectorAll('iframe')].map(fr => {
+  const d = fr.contentDocument, de = d.documentElement;
+  const bad = [...d.querySelectorAll('*')].filter(e => {
+    const r = e.getBoundingClientRect();
+    return r.width > 0 && (r.right > de.clientWidth + 1 || r.left < -1 || r.bottom > de.clientHeight + 1);
+  }).slice(0, 8).map(e => ({ t: (e.innerText||'').slice(0,25), r: Math.round(e.getBoundingClientRect().right), b: Math.round(e.getBoundingClientRect().bottom) }));
+  return { size: fr.width+'x'+fr.height, scrollW: de.scrollWidth, clientW: de.clientWidth, overflowX: de.scrollWidth > de.clientWidth, bad };
+});
+</script></body></html>

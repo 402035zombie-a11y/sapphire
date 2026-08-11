@@ -3,6 +3,7 @@
 // берём spine в порядке чтения, извлекаем чистый текст из XHTML.
 import JSZip from 'jszip';
 import * as FileSystem from 'expo-file-system';
+import { tStatic } from '../i18n';
 
 export interface EpubParseResult {
   text: string;
@@ -55,19 +56,20 @@ export async function parseEpub(
 ): Promise<EpubParseResult> {
   onProgress?.(0.05);
   const base64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: FileSystem.EncodingType.Base64,
+    encoding: 'base64',
   });
   onProgress?.(0.25);
   const zip = await JSZip.loadAsync(base64, { base64: true });
 
   const containerFile = zip.file('META-INF/container.xml');
-  if (!containerFile) throw new Error('Некорректный EPUB: нет META-INF/container.xml');
+  if (!containerFile) throw new Error(tStatic('Invalid EPUB: missing META-INF/container.xml'));
   const containerXml = await containerFile.async('text');
   const opfRelPath = firstMatch(containerXml, /full-path="([^"]+)"/i);
-  if (!opfRelPath) throw new Error('Не найден путь к OPF в container.xml');
+  if (!opfRelPath) throw new Error(tStatic('OPF path not found in container.xml'));
+
 
   const opfFile = zip.file(opfRelPath);
-  if (!opfFile) throw new Error(`OPF не найден в архиве: ${opfRelPath}`);
+  if (!opfFile) throw new Error(tStatic('OPF not found in archive: {path}').replace('{path}', opfRelPath));
   const opfXml = await opfFile.async('text');
   const opfDir = opfRelPath.includes('/') ? opfRelPath.slice(0, opfRelPath.lastIndexOf('/')) : '';
 

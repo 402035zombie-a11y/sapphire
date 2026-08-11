@@ -1,19 +1,24 @@
 // components/ProgressBar.tsx
-// Простая шкала загрузки (0..1).
+// Шкала загрузки (0..1). Неоморфическая «утопленная дорожка» + заливка primary.
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { COLORS } from '../theme/constants';
+import { View } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+import { useAdaptive } from '../theme/useAdaptive';
+import { neuInset } from '../theme/neu';
 
 export default function ProgressBar({ progress }: { progress: number }) {
   const p = Math.max(0, Math.min(1, progress));
+  const theme = useTheme();
+  const a = useAdaptive();
+  const h = Math.round(Math.max(6, Math.min(10, 8 * a.scale)));
   return (
-    <View style={styles.track}>
-      <View style={[styles.fill, { width: `${p * 100}%` }]} />
+    <View
+      style={[
+        neuInset(theme, h / 2),
+        { height: h, overflow: 'hidden' },
+      ]}
+    >
+      <View style={{ height: '100%', width: `${p * 100}%`, backgroundColor: theme.primary, borderRadius: h / 2 }} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  track: { height: 8, backgroundColor: COLORS.border, borderRadius: 4, overflow: 'hidden' },
-  fill: { height: '100%', backgroundColor: COLORS.primary },
-});

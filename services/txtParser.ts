@@ -14,7 +14,7 @@ export async function parseTxt(
 ): Promise<TxtParseResult> {
   onProgress?.(0.3);
   const raw = await FileSystem.readAsStringAsync(uri, {
-    encoding: FileSystem.EncodingType.UTF8,
+    encoding: 'utf8',
   });
   onProgress?.(0.7);
   const text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();

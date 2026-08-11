@@ -1,12 +1,31 @@
 // screens/TrainingScreen.tsx
-// Тренировка: интервальное повторение сохранённых слов в формате викторины (4 варианта).
-import React, { useState, useMemo, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { COLORS, SIZES, FONTS } from '../theme/constants';
+// Тренировка: карточка слова → выбор перевода (4 варианта) или ввод.
+// Формула прохождения одного слова: 5 ВЕРНЫХ ответов ПОДРЯД (streak 0→5).
+// Неверный ответ сбрасывает streak до 0, но НЕ продвигает к следующему слову
+// и НЕ увеличивает счётчик слов — счётчик растёт только когда слово выучено.
+// Очередь взвешена по «редкости» (хуже выучено — чаще). Счётчик верных/неверных
+// на каждом слове берётся из trainingStore (correctCount / wrongCount / box).
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform, ScrollView } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import BackFab from '../components/BackFab';
+import { useTheme } from '../theme/ThemeContext';
+import { useT } from '../i18n';
+import { useAdaptive } from '../theme/useAdaptive';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { DictionaryEntry } from '../store/dictionaryStore';
 import { useTrainingStore } from '../store/trainingStore';
+import { useLibraryStore } from '../store/libraryStore';
 import QuizCard, { QuizItem } from '../components/QuizCard';
+import Icon from '../components/Icon';
+import SupportButton from '../components/SupportButton';
+import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad } from '../theme/neu';
+
+const TARGET_STREAK = 5;
+
+function normalize(s: string): string {
+  return s.trim().toLowerCase().replace(/[.,!?;:]/g, '');
+}
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -17,92 +36,445 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
+// вес по «редкости»: чем меньше box (хуже выучено), тем чаще
 export default function TrainingScreen() {
+  const theme = useTheme();
+  const t = useT();
+  const a = useAdaptive();
+  const route = useRoute<any>();
+  const routeBookId: string | undefined = route.params?.bookId;
+  const navigation = useNavigation<any>();
   const entries = useDictionaryStore((s) => s.entries) as DictionaryEntry[];
+  const books = useLibraryStore((s) => s.books);
   const recordAnswer = useTrainingStore((s) => s.recordAnswer) as (word: string, lang: string, correct: boolean) => void;
-  const dueWords = useTrainingStore((s) => s.dueWords) as (entries: DictionaryEntry[], now?: number) => any[];
+  const progress = useTrainingStore((s) => s.progress) as Record<string, any>;
 
-  const [index, setIndex] = useState(0);
-  const [stats, setStats] = useState({ correct: 0, total: 0 });
+  // уникальные книги, от которых есть слова в словаре
+  const bookSources = useMemo(() => {
+    const ids = Array.from(new Set(entries.map((e) => e.bookId).filter(Boolean) as string[]));
+    return ids.map((id) => ({ id, title: books.find((b) => b.id === id)?.title ?? id }));
+  }, [entries, books]);
+
+  const [source, setSource] = useState<'all' | string>(routeBookId ? routeBookId : 'all');
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: { flex: 1, padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
+    topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, flexWrap: 'wrap' },
+    counterBadges: { flexDirection: 'row', gap: 6 },
+    counter: { fontSize: a.small_fs },
+    counterBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
+    counterBadgeText: { color: '#fff', fontFamily: 'bold', fontSize: a.small_fs },
+    restart: { fontSize: a.small_fs, fontFamily: 'bold' },
+    restartBtn: {
+      width: Math.round(Math.max(30, 36 * a.scale)),
+      height: Math.round(Math.max(30, 36 * a.scale)),
+      borderRadius: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    // Стартовый экран: контент сверху, без «провала» пустоты в центре.
+    startScroll: {
+      flexGrow: 1,
+      padding: a.pad,
+      paddingTop: a.pad + Math.round(Math.max(34, 40 * a.scale)) + a.gap,
+      gap: a.gap,
+      width: '100%',
+      maxWidth: a.isTablet ? 720 : 560,
+      alignSelf: 'center',
+    },
+    heroCard: { ...neuRaised(theme, a.radius + 4), padding: a.tiny ? 12 : a.isTablet ? 22 : 16, gap: a.tiny ? 8 : 12 },
+    heroTop: { flexDirection: 'row', alignItems: 'baseline', gap: 10 },
+    heroFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' },
+    heroFooterText: { fontSize: a.small_fs },
+    heroFooterValue: { fontSize: a.small_fs, fontFamily: 'bold' },
+    progressTrack: { height: a.tiny ? 6 : 8, borderRadius: 4, overflow: 'hidden' },
+    progressFill: { height: '100%', borderRadius: 4 },
+    sourceCard: { ...neuRaised(theme, a.radius + 4), padding: a.tiny ? 10 : a.isTablet ? 18 : 14, gap: a.tiny ? 6 : 10 },
+    // На планшете/десктопе две CTA в ряд — заполняют ширину, нет пустоты сбоку.
+    actions: { gap: a.tiny ? 8 : 10, flexDirection: 'row' },
+    btnSub: { fontSize: a.tiny ? a.fs(11) : a.fs(12), color: '#ffffffcc', marginTop: 2, textAlign: 'center' },
+    finishStats: { fontSize: a.small_fs, marginTop: 2 },
+    sourceLabel: { fontSize: a.small_fs, fontFamily: 'bold' },
+    sourceTabs: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    sourceTab: {
+      paddingVertical: a.tiny ? 6 : 8,
+      paddingHorizontal: a.tiny ? 10 : 14,
+      borderRadius: 999,
+      maxWidth: '100%',
+      flexShrink: 1,
+    },
+    sourceTabText: { fontSize: a.small_fs, fontFamily: 'bold' },
+    streakRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: a.gap, flexWrap: 'wrap' },
+    streakLabel: { fontSize: a.small_fs },
+    dots: { flexDirection: 'row', gap: 6, flex: 1, flexWrap: 'wrap' },
+    dot: { width: a.icon(14), height: a.icon(14), borderRadius: a.icon(14) / 2 },
+    streakNum: { fontSize: a.body, fontFamily: 'bold' },
+    accuracy: { fontSize: a.small_fs, textAlign: 'center', marginBottom: a.gap },
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: a.pad },
+    empty: { textAlign: 'center', padding: 40, fontSize: a.body },
+    bigCount: { fontSize: a.fs(a.isTablet ? 60 : 44), fontFamily: 'bold', lineHeight: Math.round(a.fs(a.isTablet ? 60 : 44) * 1.05) },
+    countLabel: { fontSize: a.small_fs, lineHeight: Math.round(a.small_fs * 1.25), flexShrink: 1 },
+    result: { marginTop: 8, marginBottom: a.gap, fontSize: a.body },
+    finishBanner: { ...neuRaised(theme, a.radius + 4), alignItems: 'center', padding: a.pad, gap: 2, borderWidth: 0 },
+    finishTitle: { fontSize: a.title, fontFamily: 'bold' },
+    finishSub: { fontSize: a.body, marginTop: 4, marginBottom: 6 },
+    btn: { flex: 1, borderRadius: a.radius + 2, paddingVertical: a.tiny ? 10 : 14, paddingHorizontal: a.tiny ? 10 : 16, alignItems: 'center' },
+    btnText: { color: '#fff', fontFamily: 'bold', fontSize: a.body },
+    typeCard: { ...neuRaised(theme, a.radius), padding: a.pad, marginTop: 8 },
+    wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' },
+    typeWord: { fontSize: a.fs(28), fontFamily: 'bold', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },
+    speakBtn: { ...neuCircle(theme, a.icon(34)), padding: 0 },
+    speakIcon: { fontSize: a.fs(18), color: theme.primary },
+    typeHint: { fontSize: a.fs(14), textAlign: 'center', marginTop: 12, marginBottom: 8 },
+    typeInput: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: a.tiny ? 8 : 12, fontSize: a.body },
+    typeCheck: { borderRadius: a.radius, paddingVertical: a.tiny ? 10 : 14, alignItems: 'center', marginTop: 12 },
+    typeCorrect: { fontSize: a.small_fs, textAlign: 'center', marginTop: 10, fontStyle: 'italic' },
+  }), [a, theme]);
+
+  const [started, setStarted] = useState(false);
+  const [mode, setMode] = useState<'quiz' | 'type'>('quiz');
+  const [index, setIndex] = useState(0); // индекс уникального слова в очереди
+  const [stats, setStats] = useState({ correct: 0, wrong: 0 });
   const [finished, setFinished] = useState(false);
+  const [typed, setTyped] = useState('');
+  const [typeChecked, setTypeChecked] = useState(false); // показ результата после проверки
+  const [typeOk, setTypeOk] = useState(false); // верно/неверно для подсветки
+  const [, setStreak] = useState(0); // верные подряд по текущему слову
+  const [queue, setQueue] = useState<DictionaryEntry[]>([]); // фиксированная очередь на сессию
+  const typeInputRef = useRef<any>(null);
 
-  // слова к повторению (истёк интервал) либо все, если ещё нет прогресса
-  const queue = useMemo(() => {
-    const due = dueWords(entries);
-    if (due.length > 0) {
-      return entries.filter((e: DictionaryEntry) => due.some((d: DictionaryEntry) => d.word === e.word && d.lang === e.lang));
+  const learnedCount = useMemo(
+    () => Object.values(progress).filter((p) => (p?.box ?? 1) >= 5).length,
+    [progress],
+  );
+
+  // пул слов согласно источнику (вся библиотека / книга) и исключая выученные (box>=4)
+  const pool = useMemo(() => {
+    return entries.filter((e) => {
+      if (source !== 'all' && e.bookId !== source) return false;
+      const p = progress[`${e.word}|${e.lang}`];
+      if (p && p.box >= 4) return false; // выученные исключаем
+      return true;
+    });
+  }, [entries, source, progress]);
+
+  // перемешивание БЕЗ соседних повторов одного и того же слова
+  function shuffleNoAdjacentDup(arr: DictionaryEntry[]): DictionaryEntry[] {
+    const a = shuffle(arr);
+    for (let i = 1; i < a.length; i++) {
+      if (a[i].word === a[i - 1].word) {
+        // ищем подходящий не-соседний элемент для обмена
+        for (let j = i + 1; j < a.length; j++) {
+          if (a[j].word !== a[i].word && (j === 0 || a[j].word !== a[j - 1].word) && (j + 1 >= a.length || a[j + 1].word !== a[i].word)) {
+            [a[i], a[j]] = [a[j], a[i]];
+            break;
+          }
+        }
+      }
     }
-    return entries; // первый заход — тренируем всё
-  }, [entries, dueWords]);
+    return a;
+  }
+
+  // собираем фиксированную очередь НА СТАРТЕ (не пересобираем при каждом ответе!)
+  // дедуп по word|lang — одно слово НЕ дублируется подряд (иначе кажется "не меняется")
+  const buildQueue = useCallback((): DictionaryEntry[] => {
+    if (pool.length === 0) return [];
+    const seen = new Set<string>();
+    const unique: DictionaryEntry[] = [];
+    pool.forEach((e) => {
+      const k = `${e.word}|${e.lang}`;
+      if (seen.has(k)) return;
+      seen.add(k);
+      unique.push(e);
+    });
+    // взвешивание: новые/с ошибками — чаще (через повторение в отдельном массиве перед shuffle)
+    const weighted: DictionaryEntry[] = [];
+    unique.forEach((e) => {
+      const p = progress[`${e.word}|${e.lang}`];
+      const box = p?.box ?? 1;
+      const cw = p?.correctStreak ?? 0;
+      const weight = cw === 0 ? 3 : box <= 2 ? 2 : 1;
+      for (let i = 0; i < weight; i++) weighted.push(e);
+    });
+    return shuffleNoAdjacentDup(weighted).slice(0, Math.max(10, unique.length));
+  }, [pool, progress]);
+
+  // языки выбранной книги (оригинал → перевод), если источник — книга
+  const sourceBook = useMemo(
+    () => (source !== 'all' ? books.find((b) => b.id === source) : undefined),
+    [source, books],
+  );
+  const fromLang = sourceBook?.language === 'auto' ? 'en' : sourceBook?.language ?? 'en';
+  const toLang = sourceBook?.targetLang ?? 'en';
+
+  const [opts, setOpts] = useState<string[]>([]);
+  const current = queue[index];
+  useEffect(() => {
+    if (!current) { setOpts([]); return; }
+    const distractors = shuffle(pool.filter((e: DictionaryEntry) => e.translation !== current.translation)).slice(0, 3).map((e) => e.translation);
+    setOpts(shuffle([current.translation, ...distractors]));
+  }, [index, current?.word, current?.lang, pool]);
 
   const quiz: QuizItem | null = useMemo(() => {
-    if (queue.length === 0 || index >= queue.length) return null;
-    const current = queue[index];
-    const others = shuffle(entries.filter((e: DictionaryEntry) => e.translation !== current.translation)).slice(0, 3);
-    const distractors = others.map((e: DictionaryEntry) => e.translation);
-    const options = shuffle([current.translation, ...distractors]);
-    return { word: current.surfaceForm || current.word, correct: current.translation, options };
-  }, [queue, index, entries]);
+    if (queue.length === 0 || index >= queue.length || opts.length === 0) return null;
+    const c = queue[index];
+    return {
+      word: c.surfaceForm || c.word,
+      correct: c.translation,
+      options: opts,
+      fromLang: sourceBook ? fromLang : c.lang,
+      toLang: sourceBook ? toLang : 'en',
+    };
+  }, [queue, index, opts, sourceBook, fromLang, toLang]);
 
   const onAnswer = useCallback(
     (correct: boolean) => {
       const current = queue[index];
-      recordAnswer(current.word, current.lang, correct);
-      setStats((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }));
-      if (index + 1 >= queue.length) {
-        setFinished(true);
-      } else {
-        setIndex((i) => i + 1);
+      if (!current) return;
+      try {
+        recordAnswer(current.word, sourceBook ? fromLang : current.lang, correct);
+      } catch (e) {
+        console.warn('recordAnswer failed', e);
       }
+      setStats((s) => ({ correct: s.correct + (correct ? 1 : 0), wrong: s.wrong + (correct ? 0 : 1) }));
+      // смена слова — отдельно, через onNext (вызывается QuizCard через 1с)
     },
     [queue, index, recordAnswer],
   );
 
-  const restart = () => {
+  const onNext = useCallback(() => {
+    const next = index + 1;
+    if (next >= queue.length) setFinished(true);
+    else setIndex(next);
+  }, [queue, index]);
+
+  // сброс состояния проверки при смене слова
+  useEffect(() => {
+    setTypeChecked(false);
+    setTyped('');
+    if (mode === 'type') setTimeout(() => typeInputRef.current?.focus(), 50);
+  }, [index, mode]);
+
+  const start = (m: 'quiz' | 'type') => {
+    setMode(m);
     setIndex(0);
-    setStats({ correct: 0, total: 0 });
+    setStats({ correct: 0, wrong: 0 });
+    setStreak(0);
+    setTyped('');
     setFinished(false);
+    setQueue(buildQueue());
+    setStarted(true);
   };
 
   if (entries.length === 0) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.empty}>Нет слов для тренировки. Сохрани слова из чтения.</Text>
+      <View style={[styles.center, { backgroundColor: 'transparent' }]}>
+        <Text style={[styles.empty, { color: theme.secondaryText }]}>{t("No words to train. Save words while reading.")}</Text>
       </View>
     );
   }
 
-  if (finished) {
+  if (!started || finished) {
+    const pct = entries.length ? Math.round((learnedCount / entries.length) * 100) : 0;
     return (
-      <View style={styles.center}>
-        <Text style={styles.resultTitle}>Тренировка завершена!</Text>
-        <Text style={styles.result}>
-          Правильно: {stats.correct} из {stats.total}
-        </Text>
-        <TouchableOpacity style={styles.btn} onPress={restart}>
-          <Text style={styles.btnText}>Ещё раз</Text>
-        </TouchableOpacity>
-      </View>
+      <ScrollView
+        style={{ backgroundColor: 'transparent' }}
+        contentContainerStyle={[styles.startScroll, { paddingHorizontal: neuShadowPad(a.radius + 4), paddingBottom: neuShadowPad(a.radius + 4) }]}
+        showsVerticalScrollIndicator={false}
+      >
+        <BackFab onPress={() => navigation.goBack()} />
+        {finished && (
+          <View style={[styles.finishBanner, neuRaised(theme, a.radius + 4), { borderColor: theme.success }]}>
+            <Text style={[styles.finishTitle, { color: theme.success }]}>{t("Keep it up! 🎉")}</Text>
+            <Text style={[styles.finishSub, { color: theme.primaryText }]}>{t("All words from the book are learned!")}</Text>
+            <Text style={[styles.finishStats, { color: theme.secondaryText }]}>
+              {t("Correct: {c} · Wrong: {w}").replace(/\{c\}/g, String(stats.correct)).replace(/\{w\}/g, String(stats.wrong))}
+            </Text>
+          </View>
+        )}
+
+        {/* Карточка прогресса: число, шкала и счётчик собраны в один блок */}
+        <View style={[styles.heroCard, neuRaised(theme, a.radius + 4)]}>
+          <View style={styles.heroTop}>
+            <Text style={[styles.bigCount, { color: theme.primary }]}>{entries.length}</Text>
+            <Text style={[styles.countLabel, { color: theme.secondaryText }]}>{t("words")}{'\n'}{t("in dictionary")}</Text>
+          </View>
+          <View style={[styles.progressTrack, { backgroundColor: theme.border }]}>
+            <View style={[styles.progressFill, { width: `${pct}%`, backgroundColor: theme.success }]} />
+          </View>
+          <View style={styles.heroFooter}>
+            <Text style={[styles.heroFooterText, { color: theme.secondaryText }]}>{t("Learned (lvl 5)")}</Text>
+            <Text style={[styles.heroFooterValue, { color: theme.success }]}>
+              {learnedCount} / {entries.length} · {pct}%
+            </Text>
+          </View>
+        </View>
+
+        {/* Действия прижаты к контенту, а не разбросаны по низу экрана */}
+        <View style={styles.actions}>
+          <TouchableOpacity style={[styles.btn, neuPrimary(theme, a.radius + 2)]} onPress={() => start('quiz')}>
+            <Text style={styles.btnText}>{finished ? t("Again: multiple choice") : t("Multiple choice")}</Text>
+            <Text style={styles.btnSub}>{t("Find the translation among 4 cards")}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.btn, neuInset(theme, a.radius + 2), { borderWidth: 0 }]}
+            onPress={() => start('type')}
+          >
+            <Text style={[styles.btnText, { color: theme.primaryText }]}>
+              {finished ? t("Again: typing") : t("Type the translation")}
+            </Text>
+            <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Type the translation manually")}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {!routeBookId && (
+          <View style={[styles.sourceCard, neuRaised(theme, a.radius + 4)]}>
+            <Text style={[styles.sourceLabel, { color: theme.secondaryText }]}>{t("Train")}</Text>
+            <View style={styles.sourceTabs}>
+              <TouchableOpacity
+                style={[
+                  styles.sourceTab,
+                  neuRaised(theme, 999),
+                  source === 'all' && { backgroundColor: theme.primary, ...neuInset(theme, 999) },
+                ]}
+                onPress={() => setSource('all')}
+              >
+                <Text style={[styles.sourceTabText, { color: source === 'all' ? '#fff' : theme.primaryText }]}>
+                  {t("Whole dictionary")}
+                </Text>
+              </TouchableOpacity>
+              {bookSources.map((b) => (
+                <TouchableOpacity
+                  key={b.id}
+                  style={[
+                    styles.sourceTab,
+                    neuRaised(theme, 999),
+                    source === b.id && { backgroundColor: theme.primary, ...neuInset(theme, 999) },
+                  ]}
+                  onPress={() => setSource(b.id)}
+                >
+                  <Text
+                    style={[styles.sourceTabText, { color: source === b.id ? '#fff' : theme.primaryText }]}
+                    numberOfLines={1}
+                    ellipsizeMode="middle"
+                  >
+                    {b.title}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+      </ScrollView>
     );
   }
+
+  const backFabH = Math.round(Math.max(34, 40 * a.scale));
+
+  // стартовый / финишный экран: BackFab абсолютный, контент в ScrollView — отступ сверху
+  // делаем через paddingStart ScrollView (см. startScroll). В активном режиме (ниже) контент
+  // идёт сразу под абсолютный BackFab — поэтому container получает paddingTop с учётом его высоты.
+
+  const currentProgress = progress[`${current.word}|${current.lang}`] || null;
+
+  // точки прогресса КОНКРЕТНОГО слова из trainingStore (correctStreak 0..5), а не сессионный счётчик
+  const wordStreak = currentProgress?.correctStreak ?? 0;
+  const dots = [0, 1, 2, 3, 4].map((i) => (
+    <View
+      key={i}
+      style={[
+        styles.dot,
+        { backgroundColor: i < wordStreak ? theme.primary : theme.border },
+      ]}
+    />
+  ));
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.counter}>
-        Слово {index + 1} из {queue.length}
-      </Text>
-      {quiz && <QuizCard item={quiz} onAnswer={onAnswer} />}
+    <View style={[styles.container, { backgroundColor: 'transparent', paddingHorizontal: a.pad, paddingTop: a.pad + backFabH + a.gap, paddingBottom: a.pad }]}>
+      <BackFab onPress={() => navigation.goBack()} />
+      <View style={styles.topRow}>
+        <Text style={[styles.counter, { color: theme.secondaryText }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>
+        <View style={styles.counterBadges}>
+          <View style={[styles.counterBadge, { backgroundColor: '#16A34A' }]}>
+            <Text style={styles.counterBadgeText}>✓ {stats.correct}</Text>
+          </View>
+          <View style={[styles.counterBadge, { backgroundColor: '#DC2626' }]}>
+            <Text style={styles.counterBadgeText}>✗ {stats.wrong}</Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={[styles.restartBtn, neuRaised(theme, 18)]}
+          onPress={() => start(mode)}
+          hitSlop={8}
+        >
+          <Icon name="refresh" size={a.dim(0.028, 16, 24)} color={theme.primaryText} />
+        </TouchableOpacity>
+        <SupportButton />
+      </View>
+
+      <View style={styles.streakRow}>
+        <Text style={[styles.streakLabel, { color: theme.secondaryText }]}>{t("Progress of word")}</Text>
+        <View style={styles.dots}>{dots}</View>
+        <Text style={[styles.streakNum, { color: theme.primary }]}>{wordStreak}/{TARGET_STREAK}</Text>
+      </View>
+
+      {mode === 'quiz' && quiz && (
+        <QuizCard item={quiz} onAnswer={onAnswer} onNext={onNext} progress={currentProgress} resetKey={`${current.word}`} />
+      )}
+
+      {mode === 'type' && current && (
+        <View style={[styles.typeCard, neuRaised(theme, a.radius)]}>
+          <View style={styles.wordRow}>
+            <Text style={styles.typeWord}>{current.surfaceForm || current.word}</Text>
+            <TouchableOpacity style={styles.speakBtn} onPress={() => { if (Platform.OS === 'web' && 'speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(current.word); u.lang = current.lang || 'en'; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); } }} hitSlop={6}>
+              <Text style={styles.speakIcon}>▶</Text>
+            </TouchableOpacity>
+          </View>
+          {currentProgress && (currentProgress.correctCount > 0 || currentProgress.wrongCount > 0) && (
+            <Text style={[styles.typeHint, { color: theme.secondaryText }]}>
+              ✓ {currentProgress.correctCount}  ✗ {currentProgress.wrongCount}  ·  {t("lvl")}{currentProgress.box}
+            </Text>
+          )}
+          <Text style={[styles.typeHint, { color: theme.secondaryText }]}>{t("Enter the translation:")}</Text>
+          <TextInput
+            ref={typeInputRef}
+            style={[styles.typeInput, neuInset(theme, 10), { borderWidth: 0, color: theme.primaryText }]}
+            value={typed}
+            autoFocus
+            editable={!typeChecked}
+            onChangeText={setTyped}
+            placeholder={t("your translation")}
+            placeholderTextColor={theme.secondaryText}
+            onSubmitEditing={() => {
+              if (typeChecked) return;
+              const ok = normalize(typed) === normalize(current.translation);
+              setTypeOk(ok);
+              setTypeChecked(true);
+              onAnswer(ok);
+              setTimeout(() => onNext(), 500);
+            }}
+          />
+          <TouchableOpacity
+            style={[styles.typeCheck, neuPrimary(theme, a.radius)]}
+            onPress={() => {
+              if (typeChecked) return;
+              const ok = normalize(typed) === normalize(current.translation);
+              setTypeOk(ok);
+              setTypeChecked(true);
+              onAnswer(ok);
+              setTimeout(() => onNext(), 500);
+            }}
+          >
+            <Text style={styles.btnText}>{typeChecked ? (typeOk ? t("Correct ✓") : t("Wrong ✗")) : t("Check")}</Text>
+          </TouchableOpacity>
+          {typeChecked && (
+            <Text style={[styles.typeCorrect, { color: typeOk ? '#16A34A' : '#DC2626' }]}>
+              {t("Correct answer: ")}{current.translation}
+            </Text>
+          )}
+        </View>
+      )}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background, padding: SIZES.padding },
-  counter: { color: COLORS.secondaryText, marginBottom: SIZES.gap, textAlign: 'center' },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.background, padding: SIZES.padding },
-  empty: { color: COLORS.secondaryText, textAlign: 'center', padding: 40 },
-  resultTitle: { fontSize: 22, fontFamily: FONTS.bold, color: COLORS.primaryText },
-  result: { color: COLORS.secondaryText, marginTop: 8, marginBottom: SIZES.gap },
-  btn: { backgroundColor: COLORS.primary, borderRadius: SIZES.radius, paddingVertical: 12, paddingHorizontal: 24 },
-  btnText: { color: '#fff', fontFamily: FONTS.bold },
-});
