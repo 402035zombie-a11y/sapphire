@@ -3,9 +3,7 @@
 // Читает/пишет reader-секцию settingsStore.
 // Поля ввода с +/− по бокам вместо ползунков (по требованию).
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView } from 'react-native';
-// BottomSheetModal рендерится в RN-web (в отличие от Modal, который не показывается внутри навигатора)
-const { BottomSheetModal, BottomSheetBackdrop } = require('@gorhom/bottom-sheet');
+import { View, Text, StyleSheet, TouchableOpacity, Switch, Modal, ScrollView } from 'react-native';
 import { useAdaptive, Adaptive } from '../theme/useAdaptive';
 import { useTheme } from '../theme/ThemeContext';
 import { useSettingsStore } from '../store/settingsStore';
@@ -20,7 +18,6 @@ interface Props {
   visible: boolean;
   mode?: 'read' | 'dual';
   onClose: () => void;
-  onOpenLang?: () => void;
 }
 
 const THEMES: { id: ThemeMode; label: string }[] = [
@@ -72,7 +69,7 @@ function NumberStepper({
   );
 }
 
-export default function FontSettingsSheet({ visible, mode = 'dual', onClose, onOpenLang }: Props) {
+export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: Props) {
   const theme = useTheme();
   const t = useT();
   const a = useAdaptive();
@@ -83,25 +80,13 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose, onO
   const setTheme = useSettingsStore((s) => s.setTheme);
   const targetLang = useSettingsStore((s) => s.targetLang);
   const setTargetLang = useSettingsStore((s) => s.setTargetLang);
-  const ref = React.useRef<any>(null);
-  React.useEffect(() => {
-    const m = ref.current;
-    if (!m) return;
-    if (visible) m.present();
-    else m.dismiss();
-  }, [visible]);
+
+  if (!visible) return null;
 
   return (
-    <BottomSheetModal
-      ref={ref}
-      index={0}
-      snapPoints={[a.landscape ? '80%' : '88%']}
-      backdropComponent={(props: any) => (
-        <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
-      )}
-      onDismiss={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={[styles.backdrop, a.landscape && { paddingRight: 0 }]}>
+        <TouchableOpacity style={styles.capture} activeOpacity={1} onPress={onClose} />
         <View style={[styles.card]}>
           <View style={styles.head}>
             <Text style={[styles.title, { color: theme.primaryText }]}>{t("Reading view")}</Text>
@@ -257,18 +242,16 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose, onO
             </View>
           </View>
 
-          <TouchableOpacity
-            style={[styles.langBtn, neuInset(theme, a.radius)]}
-            onPress={() => onOpenLang && onOpenLang()}
-          >
-            <Text style={[styles.sectionLabel, { color: theme.primaryText }]}>{t('Translation language')}</Text>
-            <Text style={[styles.sectionLabel, { color: theme.secondaryText, fontSize: a.small_fs }]}>{langName(targetLang)}</Text>
-            <Icon name="chevron-forward" size={a.dim(0.03, 16, 22)} color={theme.secondaryText} />
-          </TouchableOpacity>
+          {mode === 'dual' && (
+            <View style={styles.sectionLabelWrap}>
+              <Text style={[styles.sectionLabel, { color: theme.secondaryText }]}>{t('Translation')}</Text>
+              <Text style={[styles.sectionLabel, { color: theme.secondaryText, fontSize: a.small_fs }]}>{langName(targetLang)}</Text>
+            </View>
+          )}
           </ScrollView>
         </View>
       </View>
-    </BottomSheetModal>
+    </Modal>
   );
 }
 
@@ -319,7 +302,6 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
     toggleLabel: { fontSize: a.fs(14), flex: 1 },
     sectionLabelWrap: { gap: 6, marginTop: 2 },
     sectionLabel: { fontSize: a.fs(12), fontFamily: FONTS.bold },
-    langBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingVertical: a.tiny ? 10 : 14, paddingHorizontal: 14, borderRadius: a.radius, marginBottom: a.tiny ? 8 : 12 },
     chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
     chip: {
       ...neuRaised(theme, 8),

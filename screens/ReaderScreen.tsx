@@ -21,8 +21,7 @@ import {
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Icon from '../components/Icon';
-import LanguagePicker from '../components/LanguagePicker';
-import FontSettingsSheet from '../components/FontSettingsSheet';
+import LanguageDropdown from '../components/LanguageDropdown';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useT } from '../i18n';
@@ -75,8 +74,7 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   const [loadingSet, setLoadingSet] = useState<Set<number>>(new Set());
   const [langOpen, setLangOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(true);
-  const [fontOpen, setFontOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const scrollRef = useRef<any>(null);
   const setBookTargetLang = useLibraryStore((s) => s.setBookTargetLang);
@@ -565,14 +563,23 @@ export default function ReaderScreen({ route }: { route: any }) {
             )}
           </View>
         )}
-        <View style={styles.headerRight}>
+        <View style={[styles.headerRight, { position: 'relative' }]}>
           <TouchableOpacity
-            onPress={() => setFontOpen(true)}
+            onPress={() => setLangOpen((v) => !v)}
             hitSlop={8}
             style={[neuCircle(theme, a.dim(0.038, 20, 28)), { padding: 0 }]}
           >
             <Icon name="settings" size={a.dim(0.03, 16, 24)} color={theme.primaryText} />
           </TouchableOpacity>
+          {langOpen && (
+            <View style={styles.langDropdown}>
+              <LanguageDropdown
+                value={targetLang}
+                onSelect={(c) => { setBookTargetLang(book.id, c); setLangOpen(false); }}
+                onClose={() => setLangOpen(false)}
+              />
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -680,8 +687,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   const { BottomSheetBackdrop } = require('@gorhom/bottom-sheet');
 
   return (
-    <>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
         <View style={[styles.container, { backgroundColor: theme.readerBg }]}>
           <BackFab onPress={() => navigation.goBack()} />
@@ -699,24 +705,10 @@ export default function ReaderScreen({ route }: { route: any }) {
         >
           {wordSheet}
         </BottomSheetModal>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
         {searchModal}
-        <FontSettingsSheet
-          visible={fontOpen}
-          mode={mode}
-          onClose={() => setFontOpen(false)}
-          onOpenLang={() => setLangOpen(true)}
-        />
-        <LanguagePicker
-          visible={langOpen}
-          value={targetLang}
-          allowAuto={false}
-          onSelect={(code) => {
-            if (book) setBookTargetLang(book.id, code);
-          }}
-          onClose={() => setLangOpen(false)}
-        />
+        <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
+          <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
+        </TouchableOpacity>
         <SupportAuthorModal
           visible={supportOpen}
           onSupport={onSupportConfirm}
@@ -726,7 +718,8 @@ export default function ReaderScreen({ route }: { route: any }) {
         <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
           <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
         </TouchableOpacity>
-      </>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -757,6 +750,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       maxHeight: a.landscape ? 40 : 56,
     },
     headerRight: { flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 12, flexShrink: 0 },
+    langDropdown: { position: 'absolute', top: '100%', right: 0, zIndex: 100 },
     centerPlay: { flexShrink: 0, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: a.tiny ? 2 : 6 },
     playBtn: { ...neuBtn, borderRadius: playSz / 2 },
     title: { fontSize: a.h2, fontFamily: FONTS.bold },

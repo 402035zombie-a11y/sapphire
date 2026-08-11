@@ -12,7 +12,6 @@ import {
   Modal,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-const { BottomSheetModalProvider } = require('@gorhom/bottom-sheet');
 import Icon from '../components/Icon';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -368,7 +367,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   }, [books, search, sortBy]);
 
   return (
-    <BottomSheetModalProvider>
     <View style={[styles.container, { backgroundColor: theme.background, padding: a.pad }]}>
       {/* Хедер библиотеки: объёмные кнопки поиска и настроек */}
       <View style={styles.libHead}>
@@ -566,7 +564,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       />
       <AppSettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </View>
-    </BottomSheetModalProvider>
   );
 }
 

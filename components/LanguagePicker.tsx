@@ -2,8 +2,7 @@
 // Попап выбора языка: «Auto-detect» + поиск. Адаптивный bottom-sheet
 // (на широких экранах — центрированная карточка ограниченной ширины). Неоморфизм.
 import React, { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, TextInput, FlatList, Pressable } from 'react-native';
-const { BottomSheetModal, BottomSheetBackdrop } = require('@gorhom/bottom-sheet');
+import { View, Text, Modal, TouchableOpacity, TextInput, FlatList, Pressable } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { useT } from '../i18n';
@@ -38,35 +37,29 @@ export default function LanguagePicker({ visible, value, onSelect, onClose, allo
   const centered = a.width >= 768;
   const sheetMaxH = a.height * (a.landscape ? 0.9 : 0.75);
 
-  const ref = React.useRef<any>(null);
-  React.useEffect(() => {
-    const m = ref.current;
-    if (!m) return;
-    if (visible) m.present();
-    else m.dismiss();
-  }, [visible]);
-
   return (
-    <BottomSheetModal
-      ref={ref}
-      index={0}
-      snapPoints={[centered ? '70%' : '80%']}
-      backdropComponent={(props: any) => (
-        <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
-      )}
-      onDismiss={onClose}
-    >
+    <Modal visible={visible} transparent animationType={centered ? 'fade' : 'slide'} onRequestClose={onClose}>
       <Pressable
-        style={[
-          neuRaised(theme, a.radius + 6),
-          {
-            width: centered ? Math.min(a.width - a.pad * 2, 520) : undefined,
-            maxHeight: sheetMaxH,
-            padding: a.pad,
-          },
-        ]}
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0,0,0,0.45)',
+          justifyContent: centered ? 'center' : 'flex-end',
+          alignItems: centered ? 'center' : 'stretch',
+          padding: centered ? a.pad : 0,
+        }}
+        onPress={onClose}
       >
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.gap }}>
+        <Pressable
+          style={[
+            neuRaised(theme, a.radius + 6),
+            {
+              width: centered ? Math.min(a.width - a.pad * 2, 520) : undefined,
+              maxHeight: sheetMaxH,
+              padding: a.pad,
+            },
+          ]}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.gap }}>
             <Text style={{ fontSize: a.h2, fontFamily: 'System', fontWeight: '700', color: theme.primaryText }}>{t('Choose language')}</Text>
             <TouchableOpacity onPress={onClose} hitSlop={12} style={[neuCircle(theme, a.icon(36)), { padding: 0 }]}>
               <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
@@ -126,7 +119,8 @@ export default function LanguagePicker({ visible, value, onSelect, onClose, allo
             )}
           />
         </Pressable>
-    </BottomSheetModal>
+      </Pressable>
+    </Modal>
   );
 }
 

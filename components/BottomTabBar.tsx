@@ -7,7 +7,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from './Icon';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuRaised, neuInset } from '../theme/neu';
+import { neuInset } from '../theme/neu';
 import { FONTS } from '../theme/constants';
 
 type RouteName = 'Library' | 'Dictionary' | 'Training';
@@ -38,8 +38,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
         marginTop: a.tiny ? 4 : 6,
         paddingVertical: a.tiny ? 6 : 8,
         paddingHorizontal: a.tiny ? 6 : 10,
-        borderRadius: Math.round(a.radius * 1.6),
-        ...neuRaised(theme, Math.round(a.radius * 1.6)),
+        backgroundColor: 'transparent',
       }}
     >
       {state.routes.map((route: any, index: number) => {
