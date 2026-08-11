@@ -71,7 +71,7 @@ export function useAdaptive(): Adaptive {
 
     // В landscape эталон считаем по высоте, иначе интерфейс раздувается на широком коротком экране.
     const ref = landscape ? Math.min(height * 1.35, minSide * 1.5) : minSide;
-    const scale = clamp(ref / 720, 0.58, 1.25);
+    const scale = clamp(ref / 720, 0.62, 1.25);
 
     const small = minSide < 640;
     const tiny = minSide < 380;
@@ -90,7 +90,7 @@ export function useAdaptive(): Adaptive {
     );
     // Высота таб-бара считается от содержимого: иконка + подпись + вертикальные отступы.
     // Иначе на маленьких экранах подпись схлопывается в height:0 и обрезается.
-    const iconSz = Math.round(clamp(26 * scale * (tiny ? 0.85 : 1), 18, 28));
+    const iconSz = Math.round(clamp(30 * scale * (tiny ? 0.94 : 1), 24, 32));
     const labelFs = Math.round(clamp(10 * scale, 9, 11));
     const showTabLabel = !(landscape && height < 420);
     // Иконка в react-navigation рендерится в контейнере ~28px независимо от size,
@@ -110,7 +110,10 @@ export function useAdaptive(): Adaptive {
     const fs = (base: number) => Math.round(clamp(base * fsScale, Math.max(11, base * 0.78), base * 1.2));
 
     const dim = (basePct: number, min: number, max: number) => Math.round(clamp(minSide * basePct, min, max));
-    const icon = (base = 22) => Math.round(clamp(base * scale, base * 0.72, base * 1.15));
+    // Иконки: держим почти полный размер на телефонах, не даём уменьшаться ниже 88%.
+    // Базовый коэффициент 0.88 + добавка от scale — иконки не «съезжают» в мелочь
+    // при сужении экрана (раньше scale floor 0.58 резал их до 72%).
+    const icon = (base = 22) => Math.round(clamp(base * (0.88 + 0.16 * scale), base * 0.88, base * 1.12));
 
     // Ширина контента: на больших экранах центрируем колонку, чтобы строки не были бесконечными.
     const contentMaxW = isDesktop ? 960 : bp === 'lg' ? 820 : width;
