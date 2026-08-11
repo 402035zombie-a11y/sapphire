@@ -591,18 +591,7 @@ function NativeAdBanner() {
 function makeStyles(a: ReturnType<typeof useAdaptive>) {
   const cover = { w: a.dim(0.065, 34, 54), h: a.dim(0.087, 46, 72) };
   return StyleSheet.create({
-    container: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      width: '100%',
-      maxWidth: a.contentMaxW,
-      alignSelf: 'center',
-      paddingTop: a.pad,
-      paddingBottom: 0,
-    },
+    container: { flex: 1, paddingTop: a.pad, paddingBottom: 0, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
     libHead: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginHorizontal: a.pad, marginBottom: a.gap },
     progressCard: { borderRadius: a.radius, padding: a.pad, marginHorizontal: a.pad, marginBottom: a.gap },
     progressText: { marginBottom: 8, fontSize: a.small_fs },

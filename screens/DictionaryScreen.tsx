@@ -262,32 +262,6 @@ export default function DictionaryScreen() {
         </View>
       </View>
 
-      {source?.type === 'book' ? (
-        <View style={[styles.bookBar, neuInset(theme, a.radius)]}>
-          <TouchableOpacity
-            style={[styles.bookChip, selectedBookId === null && { backgroundColor: theme.primary }]}
-            onPress={() => setSource({ type: 'book', bookId: selectedBookId! })}
-          >
-            <Text style={[styles.bookChipText, { color: theme.primaryText }]}>{t('Change book')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.bookChip, { backgroundColor: theme.primary }]}
-            onPress={() => setSource({ type: 'general' })}
-          >
-            <Text style={[styles.bookChipText, { color: '#fff' }]}>{t('General dictionary')}</Text>
-          </TouchableOpacity>
-        </View>
-      ) : source?.type === 'general' ? (
-        <View style={[styles.bookBar, neuInset(theme, a.radius)]}>
-          <TouchableOpacity
-            style={[styles.bookChip, { backgroundColor: theme.primary }]}
-            onPress={() => setSource({ type: 'book', bookId: selectedBookId! })}
-          >
-            <Text style={[styles.bookChipText, { color: '#fff' }]}>{t('Change book')}</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-
       {source?.type === 'book' && (
         <View style={[styles.bookBar, neuInset(theme, a.radius)]}>
           {bookSources.map((b) => (
@@ -437,6 +411,12 @@ export default function DictionaryScreen() {
         <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setBookPickOpen(false)}>
           <View style={[styles.pickCard, neuInset(theme, a.radius)]}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Select a book')}</Text>
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setSource({ type: 'general' }); setBookPickOpen(false); }}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]} numberOfLines={1}>{t('General dictionary')}</Text>
+            </TouchableOpacity>
             {books.map((b) => (
               <TouchableOpacity
                 key={b.id}
@@ -507,8 +487,7 @@ export default function DictionaryScreen() {
         <TouchableOpacity
           style={[styles.fab, { backgroundColor: theme.surface }]}
           onPress={() => {
-            if (source?.type === 'book') setSource({ type: 'general' });
-            else if (books.length > 0) setBookPickOpen(true);
+            if (books.length > 0) setBookPickOpen(true);
             else setSource({ type: 'general' });
           }}
           activeOpacity={0.85}
