@@ -80,7 +80,7 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     popupBg: '#171A1F',
     popupBorder: '#262A31',
     posColor: '#E08A45',
-    neu: { base: '#1C1F26', light: '#343943', dark: '#0C0E11', shadowDark: 'rgba(0,0,0,0.9)', shadowLight: 'rgba(80,88,100,0.55)', glow: 'rgba(80,88,100,0.25)' },
+    neu: { base: '#1C1F26', light: '#343943', dark: '#0C0E11', shadowDark: 'rgba(0,0,0,0.9)', shadowLight: 'rgba(120,132,150,0.8)', glow: 'rgba(120,132,150,0.4)' },
   },
 };
 

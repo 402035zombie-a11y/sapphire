@@ -18,14 +18,14 @@ export type NeuStyle = any;
 
 // выпуклый (raised): солнце сверху → блик вверх-влево (светлый), тёмная падающая тень вниз-вправо + внутренняя окантовка (объём)
 export function neuRaised(t: ThemePalette, radius: number, strength = 1): any {
-  const off = Math.max(2, Math.round((radius * 0.16 + 1.5) * strength)); // компактный сдвиг (не «размазывается»)
-  const blur = Math.round(off * 1.0); // меньше размытие
-  const x = Math.max(1, Math.round(off * 0.35));
+  const off = Math.max(3, Math.round((radius * 0.22 + 3) * strength)); // заметный сдвиг (читается на тёмном)
+  const blur = Math.round(off * 1.3);
+  const x = Math.max(2, Math.round(off * 0.4));
   const y = off;
   const { shadowDark: d, shadowLight: l } = t.neu;
-  const ix = Math.max(1, Math.round(off * 0.18));
-  const iy = Math.max(1, Math.round(off * 0.22));
-  const iblur = Math.round(off * 0.6);
+  const ix = Math.max(2, Math.round(off * 0.28));
+  const iy = Math.max(2, Math.round(off * 0.32));
+  const iblur = Math.round(off * 0.8);
   return {
     backgroundColor: t.neu.base,
     borderRadius: radius,
@@ -100,12 +100,12 @@ export function neuInsetCard(t: ThemePalette, radius: number): any {
 // круглая кнопка (play/fab/icon): raised — для круга равное смещение корректно (нет «боков»)
 // + внутренняя окантовка для объёма
 export function neuCircle(t: ThemePalette, size: number, filled = false): any {
-  const off = Math.max(2, Math.round(size * 0.08));
-  const blur = Math.round(off * 1.0);
+  const off = Math.max(3, Math.round(size * 0.12));
+  const blur = Math.round(off * 1.3);
   const { shadowDark: d, shadowLight: l } = t.neu;
-  const ix = Math.max(1, Math.round(off * 0.4));
-  const iy = Math.max(1, Math.round(off * 0.4));
-  const iblur = Math.round(off * 0.6);
+  const ix = Math.max(2, Math.round(off * 0.5));
+  const iy = Math.max(2, Math.round(off * 0.5));
+  const iblur = Math.round(off * 0.8);
   return {
     width: size,
     height: size,
