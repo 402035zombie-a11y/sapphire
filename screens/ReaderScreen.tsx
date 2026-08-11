@@ -567,7 +567,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           <TouchableOpacity
             onPress={() => setLangOpen((v) => !v)}
             hitSlop={8}
-            style={[neuCircle(theme, a.dim(0.038, 20, 28)), { padding: 0 }]}
+            style={[neuCircle(theme, Math.round(Math.max(34, Math.min(48, 44 * a.scale)))), { padding: 0 }]}
           >
             <Icon name="settings" size={a.dim(0.03, 16, 24)} color={theme.primaryText} />
           </TouchableOpacity>
