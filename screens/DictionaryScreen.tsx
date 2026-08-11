@@ -251,7 +251,7 @@ export default function DictionaryScreen() {
               return (
                 <TouchableOpacity
                   key={o.id}
-                  style={[styles.sortTab, active && { ...neuInset(theme, a.radius), margin: 3, backgroundColor: theme.selected }]}
+                  style={[styles.sortTab, active && { backgroundColor: theme.selected }]}
                   onPress={() => setSortBy(o.id)}
                 >
                   <Text style={[styles.sortTabText, { color: active ? theme.primaryText : theme.secondaryText }]}>{o.label}</Text>
@@ -263,55 +263,13 @@ export default function DictionaryScreen() {
         </View>
       </View>
 
-      {source?.type === 'book' ? (
-        <View style={styles.bookBar}>
-          <TouchableOpacity
-            style={[styles.bookChip, selectedBookId === null && { backgroundColor: theme.primary }]}
-            onPress={() => setSource({ type: 'book', bookId: selectedBookId! })}
-          >
-            <Text style={[styles.bookChipText, { color: theme.primaryText }]}>{t('Change book')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.bookChip, { backgroundColor: theme.primary }]}
-            onPress={() => setSource({ type: 'general' })}
-          >
-            <Text style={[styles.bookChipText, { color: '#fff' }]}>{t('General dictionary')}</Text>
-          </TouchableOpacity>
-        </View>
-      ) : source?.type === 'general' ? (
-        <View style={styles.bookBar}>
-          <TouchableOpacity
-            style={[styles.bookChip, { backgroundColor: theme.primary }]}
-            onPress={() => setSource({ type: 'book', bookId: selectedBookId! })}
-          >
-            <Text style={[styles.bookChipText, { color: '#fff' }]}>{t('Change book')}</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-
-      {source?.type === 'book' && (
-        <View style={styles.bookBar}>
-          {bookSources.map((b) => (
-            <TouchableOpacity
-              key={b.id}
-              style={[styles.bookChip, selectedBookId === b.id && { backgroundColor: theme.primary }]}
-              onPress={() => setSource({ type: 'book', bookId: b.id })}
-            >
-              <Text style={[styles.bookChipText, { color: selectedBookId === b.id ? '#fff' : theme.primaryText }]} numberOfLines={1}>
-                {b.title}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-
       <View style={styles.levelBar}>
         {levelOptions.map((o) => {
           const active = levelFilter === o.id;
           return (
             <TouchableOpacity
               key={o.id}
-              style={[styles.levelTab, active && { ...neuInset(theme, a.radius), margin: 3, backgroundColor: theme.selected }]}
+              style={[styles.levelTab, active && { backgroundColor: theme.selected }]}
               onPress={() => setLevelFilter(o.id)}
             >
               <Text style={[styles.levelTabText, { color: active ? theme.primaryText : theme.secondaryText }]}>{o.label}</Text>
@@ -589,20 +547,17 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.tiny ? 4 : 6, gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.tiny ? 10 : 14 },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
-    // Единый объёмный блок: три фильтр-бара (статус/книга/уровень) слиты в один raised-блок
+    // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
     filterBlock: { padding: a.tiny ? 8 : 12, borderRadius: a.radius, gap: a.tiny ? 8 : 12 },
-    sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 2, flexWrap: 'wrap' },
-    sortTab: { paddingVertical: a.tiny ? 3 : 5, paddingHorizontal: a.tiny ? 7 : 11, borderRadius: Math.max(4, a.radius - 4) },
+    sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3, flexWrap: 'wrap' },
+    sortTab: { paddingVertical: a.tiny ? 5 : 7, paddingHorizontal: a.tiny ? 9 : 13 },
     sortTabText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
-    levelBar: { flexDirection: 'row', borderRadius: a.radius, padding: 2 },
-    levelTab: { flex: 1, paddingVertical: a.tiny ? 3 : 5, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
+    levelBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3 },
+    levelTab: { flex: 1, paddingVertical: a.tiny ? 5 : 7, alignItems: 'center' },
     levelTabText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
     viewBar: { ...neuInset(theme, a.radius), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.gap },
     viewTab: { flex: 1, paddingVertical: a.tiny ? 6 : 8, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
     viewTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
-    bookBar: { flexDirection: 'row', gap: 6, marginBottom: a.tiny ? 4 : 6, flexWrap: 'wrap' },
-    bookChip: { ...neuInset(theme, a.radius), paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 9 : 12, borderRadius: a.radius, maxWidth: Math.min(200, a.width * 0.5) },
-    bookChipText: { fontSize: a.fs(12), fontFamily: FONTS.bold, flexShrink: 1 },
     fabGroup: { position: 'absolute', right: a.pad, bottom: a.pad + a.tabBarH, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
     fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center', ...neuRaised(theme, a.radius) },
     toolbar: { flexDirection: 'row', gap: 8, marginBottom: a.gap },
