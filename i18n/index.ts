@@ -6,9 +6,11 @@
 import { useCallback } from 'react';
 import { useSettingsStore } from '../store/settingsStore';
 import { ukDict } from './uk';
+import { deDict } from './de';
 
 const dicts: Record<string, Record<string, string>> = {
   uk: ukDict,
+  de: deDict,
 };
 
 // Разрешает appLang ('auto' | 'system' | ISO) в конкретный ISO-код для перевода UI.
