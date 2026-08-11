@@ -19,7 +19,7 @@ import { useLibraryStore } from '../store/libraryStore';
 import QuizCard, { QuizItem } from '../components/QuizCard';
 import Icon from '../components/Icon';
 import SupportButton from '../components/SupportButton';
-import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad } from '../theme/neu';
+import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad, screenBg } from '../theme/neu';
 
 const TARGET_STREAK = 5;
 
@@ -395,7 +395,7 @@ export default function TrainingScreen() {
   ));
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background, paddingHorizontal: a.pad, paddingTop: a.pad + backFabH + a.gap, paddingBottom: a.pad }]}>
+    <View style={[styles.container, { ...screenBg(theme), paddingHorizontal: a.pad, paddingTop: a.pad + backFabH + a.gap, paddingBottom: a.pad }]}>
       <BackFab onPress={() => navigation.goBack()} />
       <View style={styles.topRow}>
         <Text style={[styles.counter, { color: theme.secondaryText }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>

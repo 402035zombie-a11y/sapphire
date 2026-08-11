@@ -9,7 +9,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useLibraryStore } from '../store/libraryStore';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuRaised, neuShadowPad } from '../theme/neu';
+import { neuRaised, neuShadowPad, screenBg } from '../theme/neu';
 import { useT } from '../i18n';
 
 export default function SectionsScreen() {
@@ -47,7 +47,7 @@ export default function SectionsScreen() {
   })();
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={[styles.container, { ...screenBg(theme) }]}>
       <BackFab onPress={() => navigation.goBack()} />
       <Text style={[styles.title, { color: theme.primaryText }]}>{t('Table of Contents')}</Text>
       <FlatList

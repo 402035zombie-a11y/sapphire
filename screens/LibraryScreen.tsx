@@ -30,7 +30,7 @@ import { langName } from '../utils/languages';
 import { buildBookDictionary } from '../services/bookDictionaryService';
 import LanguagePicker from '../components/LanguagePicker';
 import ProgressBar from '../components/ProgressBar';
-import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad } from '../theme/neu';
+import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad, screenBg } from '../theme/neu';
 import OpenModeModal from '../components/OpenModeModal';
 import SpeedVariantModal from '../components/SpeedVariantModal';
 import AppSettingsModal from '../components/AppSettingsModal';
@@ -367,7 +367,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   }, [books, search, sortBy]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background, padding: a.pad }]}>
+    <View style={[styles.container, { ...screenBg(theme), padding: a.pad }]}>
       {/* Хедер библиотеки: объёмные кнопки поиска и настроек */}
       <View style={styles.libHead}>
         <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]} onPress={openSearch}>

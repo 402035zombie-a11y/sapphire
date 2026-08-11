@@ -25,7 +25,7 @@ import { useLibraryStore } from '../store/libraryStore';
 import { langName } from '../utils/languages';
 import { extractBookWords } from '../utils/bookWords';
 import Icon from '../components/Icon';
-import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad } from '../theme/neu';
+import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad, screenBg } from '../theme/neu';
 import SupportButton from '../components/SupportButton';
 import { useT } from '../i18n';
 
@@ -234,7 +234,7 @@ export default function DictionaryScreen() {
   }, [navigation, headerTitle, theme.primaryText, exportAll, setImportOpen, handleDeleteAll]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background, padding: a.pad }]}>
+    <View style={[styles.container, { ...screenBg(theme), padding: a.pad }]}>
       <View style={[styles.counterRow, neuInset(theme, a.radius)]}>
         <Text style={[styles.counterText, { color: theme.primaryText }]}>
           {t('Total words:')} <Text style={styles.counterNum}>{scopedEntries.length}</Text>
