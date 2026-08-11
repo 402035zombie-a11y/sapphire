@@ -43,7 +43,7 @@ export default function BookmarksScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: 'transparent' }]}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <BackFab onPress={() => navigation.goBack()} />
       <Text style={[styles.title, { color: theme.primaryText }]}>{t('Bookmarks')} · {book.title}</Text>
       <FlatList

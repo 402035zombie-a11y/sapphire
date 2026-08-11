@@ -12,6 +12,7 @@ import {
   Modal,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+const { BottomSheetModalProvider } = require('@gorhom/bottom-sheet');
 import Icon from '../components/Icon';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -367,7 +368,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   }, [books, search, sortBy]);
 
   return (
-    <View style={[styles.container, { backgroundColor: 'transparent', padding: a.pad }]}>
+    <BottomSheetModalProvider>
+    <View style={[styles.container, { backgroundColor: theme.background, padding: a.pad }]}>
       {/* Хедер библиотеки: объёмные кнопки поиска и настроек */}
       <View style={styles.libHead}>
         <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]} onPress={openSearch}>
@@ -564,6 +566,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       />
       <AppSettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </View>
+    </BottomSheetModalProvider>
   );
 }
 
@@ -588,7 +591,18 @@ function NativeAdBanner() {
 function makeStyles(a: ReturnType<typeof useAdaptive>) {
   const cover = { w: a.dim(0.065, 34, 54), h: a.dim(0.087, 46, 72) };
   return StyleSheet.create({
-    container: { flex: 1, paddingTop: a.pad, paddingBottom: 0, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
+    container: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100%',
+      maxWidth: a.contentMaxW,
+      alignSelf: 'center',
+      paddingTop: a.pad,
+      paddingBottom: 0,
+    },
     libHead: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginHorizontal: a.pad, marginBottom: a.gap },
     progressCard: { borderRadius: a.radius, padding: a.pad, marginHorizontal: a.pad, marginBottom: a.gap },
     progressText: { marginBottom: 8, fontSize: a.small_fs },

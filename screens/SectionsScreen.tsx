@@ -47,7 +47,7 @@ export default function SectionsScreen() {
   })();
 
   return (
-    <View style={[styles.container, { backgroundColor: 'transparent' }]}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <BackFab onPress={() => navigation.goBack()} />
       <Text style={[styles.title, { color: theme.primaryText }]}>{t('Table of Contents')}</Text>
       <FlatList

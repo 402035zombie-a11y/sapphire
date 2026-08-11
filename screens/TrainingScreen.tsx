@@ -390,7 +390,7 @@ export default function TrainingScreen() {
   ));
 
   return (
-    <View style={[styles.container, { backgroundColor: 'transparent', paddingHorizontal: a.pad, paddingTop: a.pad + backFabH + a.gap, paddingBottom: a.pad }]}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingHorizontal: a.pad, paddingTop: a.pad + backFabH + a.gap, paddingBottom: a.pad }]}>
       <BackFab onPress={() => navigation.goBack()} />
       <View style={styles.topRow}>
         <Text style={[styles.counter, { color: theme.secondaryText }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>

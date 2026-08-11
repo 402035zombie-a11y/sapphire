@@ -77,9 +77,9 @@ export default function AppNavigator() {
     dark: true,
     colors: {
       ...DefaultTheme.colors,
-      background: 'transparent',
-      card: 'transparent',
-      border: 'transparent',
+      background: theme.background,
+      card: theme.background,
+      border: theme.border,
       primary: theme.primary,
       text: theme.primaryText,
     },

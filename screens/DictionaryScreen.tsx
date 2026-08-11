@@ -234,7 +234,7 @@ export default function DictionaryScreen() {
   }, [navigation, headerTitle, theme.primaryText, exportAll, setImportOpen, handleDeleteAll]);
 
   return (
-    <View style={[styles.container, { backgroundColor: 'transparent', padding: a.pad }]}>
+    <View style={[styles.container, { backgroundColor: theme.background, padding: a.pad }]}>
       <View style={[styles.counterRow, neuInset(theme, a.radius)]}>
         <Text style={[styles.counterText, { color: theme.primaryText }]}>
           {t('Total words:')} <Text style={styles.counterNum}>{scopedEntries.length}</Text>
