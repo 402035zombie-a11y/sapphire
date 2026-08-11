@@ -209,11 +209,16 @@ export default function TrainingScreen() {
 
   const [opts, setOpts] = useState<string[]>([]);
   const current = queue[index];
+  // pool меняется при каждом ответе (progress), но перемешивать варианты
+  // повторно НЕЛЬЗЯ — иначе правильный ответ «прыгает» после клика.
+  // Читаем pool через ref, чтобы эффект не переподписывался на progress.
+  const poolRef = useRef(pool);
+  poolRef.current = pool;
   useEffect(() => {
     if (!current) { setOpts([]); return; }
-    const distractors = shuffle(pool.filter((e: DictionaryEntry) => e.translation !== current.translation)).slice(0, 3).map((e) => e.translation);
+    const distractors = shuffle(poolRef.current.filter((e: DictionaryEntry) => e.translation !== current.translation)).slice(0, 3).map((e) => e.translation);
     setOpts(shuffle([current.translation, ...distractors]));
-  }, [index, current?.word, current?.lang, pool]);
+  }, [index, current?.word]);
 
   const quiz: QuizItem | null = useMemo(() => {
     if (queue.length === 0 || index >= queue.length || opts.length === 0) return null;
