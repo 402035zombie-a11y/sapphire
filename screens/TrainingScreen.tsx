@@ -10,6 +10,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform, ScrollVi
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
 import Screen from '../components/Screen';
+import TextField from '../components/ui/TextField';
 import { useTheme } from '../theme/ThemeContext';
 import { useT } from '../i18n';
 import { useAdaptive } from '../theme/useAdaptive';
@@ -442,9 +443,10 @@ export default function TrainingScreen() {
             </Text>
           )}
           <Text style={[styles.typeHint, { color: theme.secondaryText }]}>{t("Enter the translation:")}</Text>
-          <TextInput
+          <TextField
             ref={typeInputRef}
-            style={[styles.typeInput, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText }]}
+            radius={10}
+            style={[styles.typeInput, { borderWidth: 0, color: theme.primaryText }]}
             value={typed}
             autoFocus
             editable={!typeChecked}

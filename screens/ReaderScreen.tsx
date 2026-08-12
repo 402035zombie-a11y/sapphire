@@ -6,6 +6,7 @@
 // - ▶ озвучка абзаца (Web Speech API на web)
 import ModalSheet from '../components/ModalSheet';
 import Screen from '../components/Screen';
+import TextField from '../components/ui/TextField';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
@@ -595,8 +596,9 @@ export default function ReaderScreen({ route }: { route: any }) {
     <ModalSheet visible={searchOpen} onClose={() => setSearchOpen(false)} panelStyle={{ backgroundColor: theme.readerBg }}>
       <View style={[styles.menuCard, { width: '100%', maxWidth: Math.min(a.width - 24, 520) }]}>
           <Text style={[styles.menuTitle, { color: theme.primaryText }]}>{t("Search in book")}</Text>
-          <TextInput
-            style={[styles.searchInput, metal(theme, 'inset', { radius: 10 })]}
+          <TextField
+            radius={10}
+            style={styles.searchInput}
             value={query}
             onChangeText={setQuery}
             placeholder={t("enter a word or phrase")}

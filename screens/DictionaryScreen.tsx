@@ -4,6 +4,7 @@
 // Общий счётчик = entries.length (дедуплицированы в store/createStore).
 import ModalSheet from '../components/ModalSheet';
 import Screen from '../components/Screen';
+import TextField from '../components/ui/TextField';
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
@@ -321,8 +322,9 @@ export default function DictionaryScreen() {
                     )}
                   </View>
                   {isEditing ? (
-                    <TextInput
-                      style={[styles.editInput, metal(theme, 'inset', { radius: 8 }), { borderWidth: 0, color: theme.primaryText }]}
+                    <TextField
+                      radius={8}
+                      style={[styles.editInput, { borderWidth: 0, color: theme.primaryText }]}
                       value={editing?.value}
                       autoFocus
                       onChangeText={(t) => setEditing({ id: item.id, value: t })}
@@ -410,8 +412,9 @@ export default function DictionaryScreen() {
 
       <ModalSheet visible={searchOpen} onClose={() => setSearchOpen(false)}>
         <View style={styles.searchPop}>
-            <TextInput
-              style={[styles.searchInline, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText }]}
+            <TextField
+              radius={10}
+              style={[styles.searchInline, { borderWidth: 0, color: theme.primaryText }]}
               placeholder={t('Search…')}
               placeholderTextColor={theme.secondaryText}
               value={query}
@@ -469,16 +472,18 @@ export default function DictionaryScreen() {
       <ModalSheet visible={addOpen} onClose={() => setAddOpen(false)}>
         <View style={styles.searchPop}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Add word')}</Text>
-            <TextInput
-              style={[styles.searchInline, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText, marginTop: 12 }]}
+            <TextField
+              radius={10}
+              style={[styles.searchInline, { borderWidth: 0, color: theme.primaryText, marginTop: 12 }]}
               placeholder={t('Word')}
               placeholderTextColor={theme.secondaryText}
               value={addWord}
               onChangeText={setAddWord}
               autoFocus
             />
-            <TextInput
-              style={[styles.searchInline, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText, marginTop: 10 }]}
+            <TextField
+              radius={10}
+              style={[styles.searchInline, { borderWidth: 0, color: theme.primaryText, marginTop: 10 }]}
               placeholder={t('Translation')}
               placeholderTextColor={theme.secondaryText}
               value={addTrans}

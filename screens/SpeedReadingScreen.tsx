@@ -6,6 +6,8 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Animated, Easing, 
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
 import Screen from '../components/Screen';
+import ModalSheet from '../components/ModalSheet';
+import TextField from '../components/ui/TextField';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { FONTS } from '../theme/constants';
@@ -244,8 +246,9 @@ export default function SpeedReadingScreen() {
       <TouchableOpacity style={[styles.speedBtn, metal(theme, 'circle', { size: a.fab() })]} onPress={() => setWpm((v) => clampWpm(v - 25))}>
         <Text style={[styles.speedBtnText, { color: theme.primaryText }]}>−</Text>
       </TouchableOpacity>
-      <TextInput
-        style={[styles.speedInput, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText }]}
+      <TextField
+        radius={10}
+        style={[styles.speedInput, { borderWidth: 0, color: theme.primaryText }]}
         value={String(wpm)}
         keyboardType="numeric"
         onChangeText={(t) => setWpm(clampWpm(Number(t.replace(/\D/g, ''))))}
@@ -443,8 +446,8 @@ export default function SpeedReadingScreen() {
       )}
 
       {resetPrompt && (
-        <View style={[StyleSheet.absoluteFill, styles.resetBackdrop]} pointerEvents="auto">
-          <View style={[styles.resetModal, metal(theme, 'raised', { radius: a.radius })]}>
+        <ModalSheet visible={resetPrompt} onClose={() => setResetPrompt(false)}>
+          <View style={[styles.resetModal]}>
             <Text style={[styles.resetTitle, { color: theme.primaryText }]}>{t('Start over?')}</Text>
             <View style={styles.resetRow}>
               <TouchableOpacity
@@ -461,7 +464,7 @@ export default function SpeedReadingScreen() {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </ModalSheet>
       )}
 
     </ScrollView>
