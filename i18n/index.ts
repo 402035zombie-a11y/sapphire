@@ -5,12 +5,93 @@
 // берёт локаль устройства (navigator.language), русский принудительно → английский.
 import { useCallback } from 'react';
 import { useSettingsStore } from '../store/settingsStore';
-import { ukDict } from './uk';
-import { deDict } from './de';
-
+import {afDict} from './af';
+import {arDict} from './ar';
+import {bgDict} from './bg';
+import {caDict} from './ca';
+import {csDict} from './cs';
+import {cyDict} from './cy';
+import {daDict} from './da';
+import {deDict} from './de';
+import {elDict} from './el';
+import {esDict} from './es';
+import {etDict} from './et';
+import {euDict} from './eu';
+import {faDict} from './fa';
+import {fiDict} from './fi';
+import {frDict} from './fr';
+import {glDict} from './gl';
+import {heDict} from './he';
+import {hiDict} from './hi';
+import {hrDict} from './hr';
+import {huDict} from './hu';
+import {idDict} from './id';
+import {isDict} from './is';
+import {itDict} from './it';
+import {jaDict} from './ja';
+import {koDict} from './ko';
+import {ltDict} from './lt';
+import {lvDict} from './lv';
+import {msDict} from './ms';
+import {nlDict} from './nl';
+import {noDict} from './no';
+import {plDict} from './pl';
+import {ptDict} from './pt';
+import {roDict} from './ro';
+import {skDict} from './sk';
+import {slDict} from './sl';
+import {srDict} from './sr';
+import {svDict} from './sv';
+import {swDict} from './sw';
+import {thDict} from './th';
+import {trDict} from './tr';
+import {ukDict} from './uk';
+import {viDict} from './vi';
+import {zhDict} from './zh';
 const dicts: Record<string, Record<string, string>> = {
-  uk: ukDict,
+  af: afDict,
+  ar: arDict,
+  bg: bgDict,
+  ca: caDict,
+  cs: csDict,
+  cy: cyDict,
+  da: daDict,
   de: deDict,
+  el: elDict,
+  es: esDict,
+  et: etDict,
+  eu: euDict,
+  fa: faDict,
+  fi: fiDict,
+  fr: frDict,
+  gl: glDict,
+  he: heDict,
+  hi: hiDict,
+  hr: hrDict,
+  hu: huDict,
+  id: idDict,
+  is: isDict,
+  it: itDict,
+  ja: jaDict,
+  ko: koDict,
+  lt: ltDict,
+  lv: lvDict,
+  ms: msDict,
+  nl: nlDict,
+  no: noDict,
+  pl: plDict,
+  pt: ptDict,
+  ro: roDict,
+  sk: skDict,
+  sl: slDict,
+  sr: srDict,
+  sv: svDict,
+  sw: swDict,
+  th: thDict,
+  tr: trDict,
+  uk: ukDict,
+  vi: viDict,
+  zh: zhDict,
 };
 
 // Разрешает appLang ('auto' | 'system' | ISO) в конкретный ISO-код для перевода UI.
