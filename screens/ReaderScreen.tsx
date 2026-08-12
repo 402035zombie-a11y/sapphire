@@ -640,7 +640,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   );
 
   return (
-    <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, padding: a.pad }}>
+    <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, padding: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>
       <BackFab onPress={() => navigation.goBack()} />
       {header}
       {content}

@@ -26,7 +26,7 @@ export default function Screen({
   const theme = useTheme();
   const a = useAdaptive();
   return (
-    <View style={{ flex: 1, position: 'relative' }}>
+    <View style={{ flex: 1 }}>
       {bg && <View style={[StyleSheet.absoluteFill, { ...screenBg(theme), backgroundColor: theme.background }, bgStyle]} pointerEvents="none" />}
       <View style={[styles.content, contentStyle]}>{children}</View>
     </View>

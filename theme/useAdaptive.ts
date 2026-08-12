@@ -42,6 +42,7 @@ export interface Adaptive {
   big: number;
   contentMaxW: number;
   readerMaxW: number;
+  gridMaxW: number;
   columns: number;
   modal: (opts?: { wide?: boolean }) => {
     backdropPad: number;
@@ -117,12 +118,16 @@ export function useAdaptive(): Adaptive {
     const icon = (base = 22) => Math.round(clamp(base * (0.88 + 0.16 * scale), base * 0.88, base * 1.12));
 
     // Ширина контента: на больших экранах центрируем колонку, чтобы строки не были бесконечными.
-    const contentMaxW = isDesktop ? 960 : bp === 'lg' ? 820 : width;
+    // Для сплошного текста (ридер/тренинг) ограничиваем жёстче (читабельность 60-75 зн/строка),
+    // для сеток (библиотека/словарь) — шире, чтобы карточки не скукоживались на оверсайзе.
+    const contentMaxW = isDesktop ? 1100 : bp === 'lg' ? 960 : width;
+    // Ширина сеток (библиотека/словарь): растёт под оверсайз, но не бесконечно.
+    const gridMaxW = isDesktop ? Math.min(width - pad * 2, 2200) : bp === 'lg' ? 1400 : width;
     // Колонка книжного текста уже общего контента: 60-75 знаков в строке читаются лучше всего.
     const readerMaxW = width >= 900 ? 760 : width >= 700 ? 640 : width;
 
     // Кол-во колонок для сеток (библиотека, словарь)
-    const columns = width >= 1400 ? 4 : width >= 1000 ? 3 : width >= 640 ? 2 : 1;
+    const columns = width >= 2200 ? 6 : width >= 1600 ? 5 : width >= 1400 ? 4 : width >= 1000 ? 3 : width >= 640 ? 2 : 1;
 
     const modal = (opts?: { wide?: boolean }) => {
       const backdropPad = Math.round(clamp(width * 0.05, tiny ? 8 : 12, 32));
@@ -155,7 +160,7 @@ export function useAdaptive(): Adaptive {
       hit: Math.round(clamp(44 * scale, 36, 48)),
       icon, dim, fs, fab,
       title: fs(20), h2: fs(17), body: fs(15), small_fs: fs(13), big: fs(44),
-      contentMaxW, readerMaxW, columns, modal, sheetW,
+      contentMaxW, readerMaxW, gridMaxW, columns, modal, sheetW,
     };
   }, [width, height, minSide, landscape]);
 }
