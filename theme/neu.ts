@@ -17,6 +17,16 @@ import { ThemePalette } from './themes';
 
 export type NeuStyle = any;
 
+// затемнить/осветлить hex-цвет на долю amt (-1..1)
+function shade(hex: string, amt: number): string {
+  const m = hex.replace('#', '');
+  const n = parseInt(m.length === 3 ? m.split('').map((c) => c + c).join('') : m, 16);
+  let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const f = (c: number) => Math.max(0, Math.min(255, Math.round(c + (amt < 0 ? c : 255 - c) * amt)));
+  r = f(r); g = f(g); b = f(b);
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
 // градиент «выточки»: сверху-слева светлее → внизу-справа темнее
 function extrude(t: ThemePalette): string {
   return `linear-gradient(145deg, ${t.neu.light} 0%, ${t.neu.base} 52%, ${t.neu.dark} 100%)`;
@@ -148,5 +158,280 @@ export function neuCircle(t: ThemePalette, size: number, filled = false): any {
       `inset ${-ix}px ${-iy}px ${iblur}px ${d}`,
     ].join(', '),
     elevation: Math.max(3, Math.round(off)),
+  };
+}
+
+// ====================== МЕТАЛЛ (liquid-metal / polished chrome) ======================
+// Элитный премиум: холодный полированный металл (хром/анодированный алюминий),
+// а НЕ брушеная сталь со щёточными линиями (выглядит старомодно, как скевоморфизм 2011).
+// По стандарту Argent liquid-metal (2026): металл = ТЕКУЩИЕ ОТРАЖАЮЩИЕ ПОЛОСЫ (reflection
+// banding) + SPECULAR SHEEN + EDGE RIM, без вертикальных линий щётки.
+//  - ДИАГОНАЛЬНЫЙ мягкий блик (linear-gradient 135deg со светлой полосой по краю) = отражение.
+//  - РАДИАЛЬНЫЙ specular в углу = как полированный шар (для круглых).
+//  - EDGE RIM (светлая кромка) — металл сосредоточен на краю, центр спокойный → читаемость.
+//  - Холодная хромовая палитра: base тёмно-стальной, light = холодный серебристый (не тёплый).
+// Гравированный текст на металле — через metalText(t).
+
+// холодное отражение (УГЛОВОЙ radial-specular, РЕЗКИЙ — без размытия «грязного» блика)
+// Позиция блика — в ПИКСЕЛЯХ (а не %), чтобы на больших элементах он оставался
+// у самого верхнего края, а не сползал вниз (иначе блик перекрывает заголовок).
+function sheen(): string {
+  return [
+    'radial-gradient(55% 70% at -10px -8px, rgba(232,242,255,0.24) 0%, rgba(232,242,255,0) 28%)',
+    'radial-gradient(115% 135% at calc(100% + 10px) calc(100% + 8px), rgba(0,0,0,0.30) 0%, rgba(0,0,0,0) 34%)',
+    'radial-gradient(125% 125% at -10px -8px, rgba(190,215,245,0.13) 0%, rgba(190,215,245,0) 32%)',
+  ].join(', ');
+}
+
+// направленный градиент металла (ХОЛОДНЫЙ СЕРЕБРИСТЫЙ ХРОМ — собственные оттенки,
+// светлее палитры приложения, чтобы металл читался как хром даже на тёмной теме,
+// а не сливался с тёмным фоном в «матовый пластик»)
+function metalExtrude(t: ThemePalette): string {
+  const CHROME_L = '#434B58'; // холодный серебристый (светлый)
+  const CHROME_M = '#2A2F38'; // средний стальной
+  const CHROME_D = '#15181D'; // тёмный (но не чёрный → не пластик)
+  return `linear-gradient(145deg, ${CHROME_L} 0%, ${CHROME_M} 46%, ${CHROME_M} 54%, ${CHROME_D} 100%)`;
+}
+
+function metalBg(t: ThemePalette): string {
+  // мягкий блик ПОВЕРХ направленного хромового градиента (без вертикальных линий)
+  return `${sheen()}, ${metalExtrude(t)}`;
+}
+
+const SPEC = 'rgba(255,255,255,0.44)'; // specular-блик (яркий, но не чистый белый)
+const SPEC_DARK = 'rgba(0,0,0,0.52)'; // тёмная грань (не чистый чёрный → не пластик)
+const RIM = 'rgba(205,220,245,0.34)'; // холодный светлый edge-rim (отражение кромки металла)
+
+export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): any {
+  const off = Math.max(4, Math.round((radius * 0.18 + 4) * strength));
+  const x = Math.round(off * 0.92);
+  const y = off;
+  const blur1 = Math.round(off * 2.0);
+  const blur2 = Math.round(off * 4.0);
+  const { soft: s, light: l } = t.neu;
+  // specular-блик у верхнего края: вертикальный сдвиг МАЛЫЙ И ФИКСИРОВАННЫЙ,
+  // чтобы на больших элементах блик НЕ сползал вниз под заголовок.
+  const ix = Math.max(2, Math.round(off * 0.35));
+  const iy = Math.max(1, Math.round(off * 0.12));
+  const iblur = Math.round(off * 1.4);
+  return {
+    backgroundColor: t.neu.base,
+    backgroundImage: metalBg(t),
+    backgroundClip: 'padding-box',
+    borderRadius: radius,
+    boxShadow: [
+      `${-x}px ${-y}px ${blur1}px ${s}`,
+      `${-x * 1.6}px ${-y * 1.6}px ${blur2}px ${l}`,
+      `inset 0 1.5px 0 0 ${RIM}`, // светлый верхний rim (кромка металла)
+      `inset 0 1px 3px 0 ${SPEC}`, // РЕЗКИЙ specular-блик у верхнего края (литой блеск)
+      `inset ${ix}px ${iy}px ${iblur}px ${SPEC}`, // объёмный specular сверху-слева
+      `inset ${-ix}px ${-iy}px ${iblur}px ${SPEC_DARK}`, // тёмная грань снизу-справа
+    ].join(', '),
+    ...(Platform.OS === 'web' ? {} : { shadowColor: SPEC_DARK, shadowOffset: { width: x, height: y }, shadowOpacity: 0.5, shadowRadius: blur1, elevation: Math.max(3, Math.round(off)) }),
+  };
+}
+
+export function neuMetalCircle(t: ThemePalette, size: number, filled = false): any {
+  const off = Math.max(4, Math.round(size * 0.14));
+  const blur1 = Math.round(off * 2.0);
+  const blur2 = Math.round(off * 4.0);
+  const { soft: s, light: l } = t.neu;
+  const ix = Math.max(2, Math.round(off * 0.5));
+  const iy = Math.max(2, Math.round(off * 0.5));
+  const iblur = Math.round(off * 1.4);
+  return {
+    width: size,
+    height: size,
+    borderRadius: size / 2,
+    backgroundColor: filled ? t.primary : t.neu.base,
+    backgroundImage: filled
+      ? `linear-gradient(180deg, ${shade(t.primary, 0.25)} 0%, ${t.primary} 55%, ${shade(t.primary, -0.28)} 100%)`
+      : metalBg(t),
+    backgroundClip: 'padding-box',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'box-shadow 160ms ease, transform 160ms ease',
+    boxShadow: filled
+      ? [
+          `${off * 1.4}px ${off * 1.6}px ${blur2}px rgba(0,0,0,0.55)`, // крупная внешняя тень (объём)
+          `${off}px ${off}px ${blur1}px rgba(0,0,0,0.45)`,
+          `inset 0 2px 3px rgba(255,255,255,0.45)`, // верхний specular-блик (выпуклость)
+          `inset 0 -3px 6px rgba(0,0,0,0.35)`, // нижняя внутренняя тень
+        ].join(', ')
+      : [
+          `${off}px ${off}px ${blur1}px ${SPEC_DARK}`,
+          `${off * 1.6}px ${off * 1.6}px ${blur2}px ${SPEC_DARK}`,
+          `${-off}px ${-off}px ${blur1}px ${s}`,
+          `${-off * 1.6}px ${-off * 1.6}px ${blur2}px ${l}`,
+          `inset 0 1px 0 0 ${RIM}`,
+          `inset 0 0 0 1px rgba(255,255,255,0.08)`,
+          `inset ${ix}px ${iy}px ${iblur}px ${SPEC}`,
+          `inset ${-ix}px ${-iy}px ${iblur}px ${SPEC_DARK}`,
+        ].join(', '),
+    elevation: filled ? Math.max(6, Math.round(off * 1.6)) : Math.max(3, Math.round(off)),
+  };
+}
+
+// гравированный текст на металле: тёмная тень сверху + светлая снизу (эффект чеканки)
+export function metalText(t: ThemePalette, color?: string): any {
+  return {
+    color: color ?? t.primaryText,
+    textShadowColor: 'rgba(0,0,0,0.55)',
+    textShadowOffset: { width: 0, height: -1 },
+    textShadowRadius: 0.5,
+    // светлая подсветка снизу через второй слой невозможна в RN Text (один textShadow),
+    // поэтому полагаемся на specular-фон элемента.
+  };
+}
+
+// ====================== ЕДИНЫЙ МЕТАЛЛ-СКИН ======================
+// Центральный диспетчер: один вызов стилизует любой элемент с ролью + модификаторами.
+// Роли: 'raised' | 'inset' | 'circle' | 'primary' | 'tab' | 'tabActive' | 'text'
+// Модификаторы: { size?, radius?, filled?, active?, pressed? }
+// Это даёт сплошную систему вместо разрозненных вызовов neuMetalRaised/neuMetalCircle/...
+type MetalRole = 'raised' | 'inset' | 'circle' | 'primary' | 'tab' | 'tabActive' | 'tabStamp' | 'tabStampActive' | 'stamp' | 'text';
+interface MetalOpts {
+  size?: number;
+  radius?: number;
+  filled?: boolean;
+  active?: boolean;
+  pressed?: boolean;
+  textColor?: string;
+}
+export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): any {
+  const radius = opts.radius ?? 14;
+  switch (role) {
+    case 'circle':
+      return neuMetalCircle(t, opts.size ?? 40, opts.filled ?? false);
+    case 'primary':
+      return neuMetalCircle(t, opts.size ?? 40, true);
+    case 'raised':
+      return neuMetalRaised(t, radius);
+    case 'inset':
+      return neuMetalInset(t, radius);
+    case 'tab':
+      return metalTab(t, radius, false);
+    case 'tabActive':
+      return metalTab(t, radius, true);
+    case 'tabStamp':
+      return metalTabStamp(t, radius, false);
+    case 'tabStampActive':
+      return metalTabStamp(t, radius, true);
+    case 'stamp':
+      return metalStamp(t, opts.size ?? 36);
+    case 'text':
+      return metalText(t, opts.textColor);
+    default:
+      return neuMetalRaised(t, radius);
+  }
+}
+
+// ШТАМПОВАННЫЙ МЕТАЛЛ: внешне ВДАВЛЕННАЯ «лунка» (inset well) + внутренне ВЫПУКЛЫЙ купол (convex dome).
+// Убирает «грязную» размытость: блик РЕЗКИЙ, форма машиностроительная (machined metal).
+// Применять к крестикам (✕), выбранным элементам и кнопкам-индикаторам.
+function metalStamp(t: ThemePalette, size: number): any {
+  const r = size / 2;
+  const o = Math.max(2, Math.round(size * 0.14)); // глубина лунки
+  return {
+    width: size,
+    height: size,
+    borderRadius: r,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // купол: радиальный блик сверху-слева → тёмный снизу-справа (выпуклость)
+    backgroundColor: t.neu.base,
+    backgroundImage: [
+      'radial-gradient(80% 80% at 32% 28%, rgba(235,243,255,0.45) 0%, rgba(235,243,255,0) 55%)',
+      `linear-gradient(150deg, ${'#4A5360'} 0%, ${t.neu.base} 50%, ${'#14171C'} 100%)`,
+    ].join(', '),
+    backgroundClip: 'padding-box',
+    transition: 'box-shadow 160ms ease, transform 160ms ease',
+    boxShadow: [
+      // ВНЕШНЯЯ лунка (вдавленная окантовка): тёмная сверху-слева, светлая снизу-справа
+      `inset ${o}px ${o}px ${o * 2}px ${SPEC_DARK}`,
+      `inset ${-o}px ${-o}px ${o * 2}px ${t.neu.soft}`,
+      // ВНУТРЕННИЙ купол (выпуклый): светлая верхняя грань + тёмная нижняя
+      `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px rgba(255,255,255,0.22)`,
+      `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px rgba(0,0,0,0.3)`,
+      // холодный edge-rim
+      `inset 0 0 0 1px ${RIM}`,
+    ].join(', '),
+    elevation: Math.max(3, Math.round(o)),
+  };
+}
+
+// таб в таб-баре: плоский (неактивный) или ВДАВЛЕННЫЙ металл (активный)
+function metalTab(t: ThemePalette, radius: number, active: boolean): any {
+  const off = Math.max(3, Math.round(radius * 0.35));
+  if (!active) {
+    return {
+      borderRadius: radius,
+      backgroundColor: 'transparent',
+      transition: 'box-shadow 160ms ease, background 160ms ease',
+    };
+  }
+  // активный: глубоко ВДАВЛЕННЫЙ металл (чёткий эффект нажатой кнопки)
+  const { soft: s } = t.neu;
+  const o = Math.max(5, Math.round(radius * 0.5)); // глубже, чем у неактивного
+  return {
+    borderRadius: radius,
+    backgroundColor: t.neu.base,
+    backgroundImage: metalBg(t),
+    backgroundClip: 'padding-box',
+    transition: 'box-shadow 160ms ease, background 160ms ease',
+    boxShadow: [
+      `inset ${o}px ${o}px ${o * 2.6}px ${SPEC_DARK}`, // глубокая тёмная грань (вдавленность)
+      `inset ${-o}px ${-o}px ${o * 2.2}px ${s}`, // светлая противоположная грань
+      `inset 0 1px 0 0 ${RIM}`,
+    ].join(', '),
+  };
+}
+
+// штампованный таб: ВНЕШНЕ вдавленная лунка + ВНУТРЕННЕ выпуклый купол (machined metal).
+function metalTabStamp(t: ThemePalette, radius: number, active: boolean): any {
+  const o = Math.max(4, Math.round(radius * 0.4));
+  const { soft: s, light: l } = t.neu;
+  const ix = Math.max(2, Math.round(o * 0.5));
+  const iy = Math.max(2, Math.round(o * 0.5));
+  const iblur = Math.round(o * 1.4);
+  return {
+    borderRadius: radius,
+    backgroundColor: t.neu.base,
+    backgroundImage: metalBg(t),
+    backgroundClip: 'padding-box',
+    transition: 'box-shadow 160ms ease, background 160ms ease',
+    boxShadow: [
+      // ВНЕШНЯЯ лунка (вдавленность): тёмная сверху-слева, светлая снизу-справа
+      `inset ${o}px ${o}px ${o * 2}px ${SPEC_DARK}`,
+      `inset ${-o}px ${-o}px ${o * 2}px ${s}`,
+      // ВНУТРЕННИЙ купол (выпуклость): светлая верхняя грань + тёмная нижняя
+      `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px rgba(255,255,255,0.22)`,
+      `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px rgba(0,0,0,0.3)`,
+      // холодный edge-rim
+      `inset 0 0 0 1px ${RIM}`,
+    ].join(', '),
+    elevation: Math.max(3, Math.round(o)),
+  };
+}
+
+// металлический inset (утопленный) — для полей ввода, контейнеров
+export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): any {
+  const off = Math.max(4, Math.round((radius * 0.42 + 5) * strength));
+  const x = Math.round(off * 0.9);
+  const y = off;
+  const blur1 = Math.round(off * 2.4);
+  const blur2 = Math.round(off * 4.5);
+  const { soft: s, light: l } = t.neu;
+  return {
+    backgroundColor: t.neu.base,
+    backgroundImage: metalBg(t),
+    backgroundClip: 'padding-box',
+    borderRadius: radius,
+    boxShadow: [
+      `inset ${-x}px ${-y}px ${blur1}px ${SPEC_DARK}`,
+      `inset ${x}px ${y}px ${blur1}px ${s}`,
+      `inset ${-x * 1.6}px ${-y * 1.6}px ${blur2}px ${SPEC_DARK}`,
+      `inset 0 -1px 0 0 ${RIM}`,
+    ].join(', '),
   };
 }

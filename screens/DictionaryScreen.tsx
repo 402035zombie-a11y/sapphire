@@ -2,17 +2,19 @@
 // Локальный словарь: список сохранённых слов, поиск, сортировка, удаление, экспорт.
 // На карточке каждого слова — бейдж прогресса (ур. + ✓/✗) из trainingStore.
 // Общий счётчик = entries.length (дедуплицированы в store/createStore).
+import ModalSheet from '../components/ModalSheet';
+import Screen from '../components/Screen';
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  FlatList,
+  ScrollView,
   TouchableOpacity,
   TextInput,
   Alert,
-  Modal,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
@@ -25,7 +27,7 @@ import { useLibraryStore } from '../store/libraryStore';
 import { langName } from '../utils/languages';
 import { extractBookWords } from '../utils/bookWords';
 import Icon from '../components/Icon';
-import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad, screenBg } from '../theme/neu';
+import { neuShadowPad, screenBg, metal } from '../theme/neu';
 import SupportButton from '../components/SupportButton';
 import { useT } from '../i18n';
 
@@ -44,6 +46,7 @@ export default function DictionaryScreen() {
   const theme = useTheme();
   const t = useT();
   const a = useAdaptive();
+  const { height: winH } = useWindowDimensions();
   const styles = useMemo(() => makeStyles(a, theme), [a, theme]);
   const entries = useDictionaryStore((s) => s.entries);
   const removeEntry = useDictionaryStore((s) => s.removeEntry);
@@ -94,6 +97,7 @@ export default function DictionaryScreen() {
   const [addTrans, setAddTrans] = useState('');
   const [sortBy, setSortBy] = useState<SortMode>('date');
   const [levelFilter, setLevelFilter] = useState<'all' | 'new' | 'learning' | 'learned'>('all');
+  const [levelPickerOpen, setLevelPickerOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -211,7 +215,7 @@ export default function DictionaryScreen() {
       headerRight: () => {
         // все иконки тулбара — выпуклые круги (raised снаружи + внутренняя окантовка внутри)
         const tbSize = a.dim(0.06, 30, 40);
-        const tb = neuCircle(theme, tbSize);
+        const tb = metal(theme, 'circle', { size: tbSize });
         const isz = a.dim(0.028, 16, 24);
         return (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginRight: 8 }}>
@@ -234,8 +238,8 @@ export default function DictionaryScreen() {
   }, [navigation, headerTitle, theme.primaryText, exportAll, setImportOpen, handleDeleteAll]);
 
   return (
-    <View style={[styles.container, { ...screenBg(theme), padding: a.pad }]}>
-      <View style={[styles.counterRow, neuInset(theme, a.radius)]}>
+    <Screen contentStyle={{ padding: a.pad }}>
+      <View style={[styles.counterRow, metal(theme, 'inset', { radius: a.radius })]}>
         <Text style={[styles.counterText, { color: theme.primaryText }]}>
           {t('Total words:')} <Text style={styles.counterNum}>{scopedEntries.length}</Text>
           {'  '}·{'  '}{t('Answers:')} <Text style={styles.counterNum}>{scopedEntries.reduce((sum, e) => {
@@ -243,7 +247,7 @@ export default function DictionaryScreen() {
             return sum + (tp?.correctCount ?? 0) + (tp?.wrongCount ?? 0);
           }, 0)}</Text>
         </Text>
-        <View style={[styles.filterBlock, neuRaised(theme, a.radius)]}>
+        <View style={[styles.filterBlock, metal(theme, 'raised', { radius: a.radius })]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 10 }}>
           <View style={styles.sortBar}>
             {sortOptions.map((o) => {
@@ -263,94 +267,88 @@ export default function DictionaryScreen() {
         </View>
       </View>
 
-      <View style={styles.levelBar}>
-        {levelOptions.map((o) => {
-          const active = levelFilter === o.id;
-          return (
-            <TouchableOpacity
-              key={o.id}
-              style={[styles.levelTab, active && { backgroundColor: theme.selected }]}
-              onPress={() => setLevelFilter(o.id)}
-            >
-              <Text style={[styles.levelTabText, { color: active ? theme.primaryText : theme.secondaryText }]}>{o.label}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+      <TouchableOpacity
+        style={[styles.levelTrigger, metal(theme, 'inset', { radius: a.radius })]}
+        onPress={() => setLevelPickerOpen(true)}
+      >
+        <Text style={[styles.levelTabText, { color: theme.primaryText }]}>
+          {t('Type')}: {levelOptions.find((o) => o.id === levelFilter)?.label ?? t('All')}
+        </Text>
+        <Icon name="chevron-down" size={a.fs(14)} color={theme.secondaryText} />
+      </TouchableOpacity>
       </View>
 
-      <FlatList
-        key={`dcols-${a.columns}`}
-        numColumns={a.columns}
-        columnWrapperStyle={a.columns > 1 ? { gap: a.gap } : undefined}
-        data={filtered}
-        keyExtractor={(e) => e.id}
-        contentContainerStyle={[styles.list, { padding: neuShadowPad() }]}
-        ListEmptyComponent={
-          <Text style={[styles.empty, { color: theme.secondaryText }]}>
-            {entries.length === 0
-              ? t('Dictionary is empty. Tap words while reading to save them.')
-              : t('Nothing found.')}
-          </Text>
-        }
-        renderItem={({ item }) => {
-          const isEditing = editing?.id === item.id;
-          const tp = progress[`${item.word}|${item.lang}`];
-          const box = tp?.box ?? 1;
-          const c = tp?.correctCount ?? 0;
-          const w = tp?.wrongCount ?? 0;
-          return (
-            <View style={[styles.row, neuRaised(theme, a.radius)]}>
-              <TouchableOpacity style={styles.speakInline} onPress={() => speakWord(item.word, item.lang)} hitSlop={6}>
-                <Text style={styles.speakInlineIcon}>▶</Text>
-              </TouchableOpacity>
-              <View style={{ flex: 1, marginLeft: a.gap }}>
-                <View style={styles.wordLine}>
-                  <Text style={[styles.word, { color: theme.primaryText }]}>
-                    {item.surfaceForm} <Text style={[styles.lang, { color: theme.secondaryText }]}>{langName(item.lang)}</Text>
-                  </Text>
-                  {(c > 0 || w > 0) && (
-                    <View style={[styles.badge, neuInset(theme, 8)]}>
-                      <Text style={[styles.badgeBox, { color: theme.primary }]}>{t('Lvl')} {box}</Text>
-                      <Text style={{ color: '#16A34A' }}>✓{c}</Text>
-                      <Text style={{ color: '#DC2626' }}>✗{w}</Text>
-                    </View>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={[styles.list, { padding: neuShadowPad() }, { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
+      >
+        {filtered.length === 0 ? (
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', padding: a.pad }}>
+            <Text style={[styles.empty, { color: theme.secondaryText }]}>
+              {entries.length === 0
+                ? t('Dictionary is empty. Tap words while reading to save them.')
+                : t('Nothing found.')}
+            </Text>
+          </View>
+        ) : (
+          filtered.map((item: any) => {
+            const isEditing = editing?.id === item.id;
+            const tp = progress[`${item.word}|${item.lang}`];
+            const box = tp?.box ?? 1;
+            const c = tp?.correctCount ?? 0;
+            const w = tp?.wrongCount ?? 0;
+            return (
+              <View key={item.id} style={[styles.row, metal(theme, 'raised', { radius: a.radius }), { width: `${(100 / Math.max(1, a.columns)) - 3}%` }]}>
+                <TouchableOpacity style={styles.speakInline} onPress={() => speakWord(item.word, item.lang)} hitSlop={6}>
+                  <Text style={styles.speakInlineIcon}>▶</Text>
+                </TouchableOpacity>
+                <View style={{ flex: 1, marginLeft: a.gap }}>
+                  <View style={styles.wordLine}>
+                    <Text style={[styles.word, { color: theme.primaryText }]}>
+                      {item.surfaceForm} <Text style={[styles.lang, { color: theme.secondaryText }]}>{langName(item.lang)}</Text>
+                    </Text>
+                    {(c > 0 || w > 0) && (
+                      <View style={[styles.badge, metal(theme, 'inset', { radius: 8 })]}>
+                        <Text style={[styles.badgeBox, { color: theme.primary }]}>{t('Lvl')} {box}</Text>
+                        <Text style={{ color: '#16A34A' }}>✓{c}</Text>
+                        <Text style={{ color: '#DC2626' }}>✗{w}</Text>
+                      </View>
+                    )}
+                    {item.frequency && item.frequency > 1 && (
+                      <View style={[styles.freqBadge, metal(theme, 'inset', { radius: 8 })]}>
+                        <Text style={[styles.freqText, { color: theme.secondaryText }]}>×{item.frequency}</Text>
+                      </View>
+                    )}
+                  </View>
+                  {isEditing ? (
+                    <TextInput
+                      style={[styles.editInput, metal(theme, 'inset', { radius: 8 }), { borderWidth: 0, color: theme.primaryText }]}
+                      value={editing?.value}
+                      autoFocus
+                      onChangeText={(t) => setEditing({ id: item.id, value: t })}
+                      onSubmitEditing={() => { updateEntry(item.id, { translation: editing!.value.trim() }); setEditing(null); }}
+                      onBlur={() => { updateEntry(item.id, { translation: editing!.value.trim() }); setEditing(null); }}
+                    />
+                  ) : (
+                    <TouchableOpacity onPress={() => setEditing({ id: item.id, value: item.translation })}>
+                      <Text style={[styles.translation, { color: theme.primary }]}>{item.translation}</Text>
+                    </TouchableOpacity>
                   )}
-                  {item.frequency && item.frequency > 1 && (
-                    <View style={[styles.freqBadge, neuInset(theme, 8)]}>
-                      <Text style={[styles.freqText, { color: theme.secondaryText }]}>×{item.frequency}</Text>
-                    </View>
-                  )}
+                  {item.context ? <Text style={[styles.context, { color: theme.secondaryText }]}>«{item.context}»</Text> : null}
                 </View>
-                {isEditing ? (
-                  <TextInput
-                    style={[styles.editInput, neuInset(theme, 8), { borderWidth: 0, color: theme.primaryText }]}
-                    value={editing?.value}
-                    autoFocus
-                    onChangeText={(t) => setEditing({ id: item.id, value: t })}
-                    onSubmitEditing={() => { updateEntry(item.id, { translation: editing!.value.trim() }); setEditing(null); }}
-                    onBlur={() => { updateEntry(item.id, { translation: editing!.value.trim() }); setEditing(null); }}
-                  />
-                ) : (
-                  <TouchableOpacity onPress={() => setEditing({ id: item.id, value: item.translation })}>
-                    <Text style={[styles.translation, { color: theme.primary }]}>{item.translation}</Text>
-                  </TouchableOpacity>
-                )}
-                {item.context ? <Text style={[styles.context, { color: theme.secondaryText }]}>«{item.context}»</Text> : null}
+                <TouchableOpacity style={styles.deleteBtn} onPress={() => removeEntry(item.id)} hitSlop={10}>
+                  <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity style={styles.deleteBtn} onPress={() => removeEntry(item.id)} hitSlop={10}>
-                <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
-              </TouchableOpacity>
-            </View>
-          );
-        }}
-      />
+            );
+          })
+        )}
+      </ScrollView>
 
       {/* Попап выбора источника при входе в Словарь */}
-      <Modal visible={source === null} transparent animationType="fade" onRequestClose={() => setSource({ type: 'general' })}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setSource({ type: 'general' })}>
-          <View style={[styles.pickCard, neuInset(theme, a.radius)]}>
-            <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Which dictionary to open?')}</Text>
+      <ModalSheet visible={source === null} onClose={() => setSource({ type: 'general' })}>
+        <View style={styles.pickCard}>
+        <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Which dictionary to open?')}</Text>
             <TouchableOpacity style={[styles.pickItem]} onPress={() => setSource({ type: 'general' })}>
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('General dictionary')}</Text>
             </TouchableOpacity>
@@ -367,14 +365,12 @@ export default function DictionaryScreen() {
             ) : (
               <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{t('No books with saved words.')}</Text>
             )}
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        </View>
+      </ModalSheet>
 
       {/* Попап выбора источника импорта */}
-      <Modal visible={importOpen} transparent animationType="fade" onRequestClose={() => setImportOpen(false)}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setImportOpen(false)}>
-          <View style={[styles.pickCard, neuInset(theme, a.radius)]}>
+      <ModalSheet visible={importOpen} onClose={() => setImportOpen(false)}>
+        <View style={styles.pickCard}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Import dictionary from…')}</Text>
             <TouchableOpacity
               style={[styles.pickItem]}
@@ -388,14 +384,12 @@ export default function DictionaryScreen() {
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From system file (JSON)')}</Text>
             </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        </View>
+      </ModalSheet>
 
       {/* Попап выбора книги для извлечения слов */}
-      <Modal visible={bookPickOpen} transparent animationType="fade" onRequestClose={() => setBookPickOpen(false)}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setBookPickOpen(false)}>
-          <View style={[styles.pickCard, neuInset(theme, a.radius)]}>
+      <ModalSheet visible={bookPickOpen} onClose={() => setBookPickOpen(false)}>
+        <View style={styles.pickCard}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Select a book')}</Text>
             {books.map((b) => (
               <TouchableOpacity
@@ -407,32 +401,28 @@ export default function DictionaryScreen() {
               </TouchableOpacity>
             ))}
             {books.length === 0 && <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{t('No books.')}</Text>}
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        </View>
+      </ModalSheet>
 
       {Platform.OS === 'web' ? (
         <input id="dict-import" type="file" accept="application/json,.json" style={{ display: 'none' }} onChange={onWebFile} />
       ) : null}
 
-      <Modal visible={searchOpen} transparent animationType="fade" onRequestClose={() => setSearchOpen(false)}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setSearchOpen(false)}>
-          <View style={[styles.searchPop, neuInset(theme, a.radius)]}>
+      <ModalSheet visible={searchOpen} onClose={() => setSearchOpen(false)}>
+        <View style={styles.searchPop}>
             <TextInput
-              style={[styles.searchInline, neuInset(theme, 10), { borderWidth: 0, color: theme.primaryText }]}
+              style={[styles.searchInline, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText }]}
               placeholder={t('Search…')}
               placeholderTextColor={theme.secondaryText}
               value={query}
               onChangeText={setQuery}
               autoFocus
             />
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        </View>
+      </ModalSheet>
 
-      <Modal visible={confirmDelete} transparent animationType="fade" onRequestClose={() => setConfirmDelete(false)}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setConfirmDelete(false)}>
-          <View style={[styles.searchPop, neuInset(theme, a.radius)]}>
+      <ModalSheet visible={confirmDelete} onClose={() => setConfirmDelete(false)}>
+        <View style={styles.searchPop}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Delete all words?')}</Text>
             <Text style={[styles.pickHint, { color: theme.secondaryText }]}>
               {source?.type === 'book'
@@ -440,16 +430,15 @@ export default function DictionaryScreen() {
                 : t('The entire dictionary ({n} words) will be deleted. This action is irreversible.').replace(/\{n\}/g, String(scopedEntries.length))}
             </Text>
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
-              <TouchableOpacity style={[styles.confirmBtn, neuInset(theme, a.radius)]} onPress={() => setConfirmDelete(false)}>
+              <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: theme.surface }]} onPress={() => setConfirmDelete(false)}>
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Cancel')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.confirmBtn, neuPrimary(theme, a.radius)]} onPress={confirmDeleteAction}>
+              <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: theme.primary }]} onPress={confirmDeleteAction}>
                 <Text style={[styles.sortTabText, { color: '#fff' }]}>{t('Delete')}</Text>
               </TouchableOpacity>
             </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        </View>
+      </ModalSheet>
 
       {/* FAB-группа: плюсик (добавить слово) + swap (сменить источник) */}
       <View style={[styles.fabGroup]}>
@@ -477,12 +466,11 @@ export default function DictionaryScreen() {
         </TouchableOpacity>
       </View>
 
-      <Modal visible={addOpen} transparent animationType="fade" onRequestClose={() => setAddOpen(false)}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setAddOpen(false)}>
-          <View style={[styles.searchPop, neuInset(theme, a.radius)]}>
+      <ModalSheet visible={addOpen} onClose={() => setAddOpen(false)}>
+        <View style={styles.searchPop}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Add word')}</Text>
             <TextInput
-              style={[styles.searchInline, neuInset(theme, 10), { borderWidth: 0, color: theme.primaryText, marginTop: 12 }]}
+              style={[styles.searchInline, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText, marginTop: 12 }]}
               placeholder={t('Word')}
               placeholderTextColor={theme.secondaryText}
               value={addWord}
@@ -490,18 +478,18 @@ export default function DictionaryScreen() {
               autoFocus
             />
             <TextInput
-              style={[styles.searchInline, neuInset(theme, 10), { borderWidth: 0, color: theme.primaryText, marginTop: 10 }]}
+              style={[styles.searchInline, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText, marginTop: 10 }]}
               placeholder={t('Translation')}
               placeholderTextColor={theme.secondaryText}
               value={addTrans}
               onChangeText={setAddTrans}
             />
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
-              <TouchableOpacity style={[styles.confirmBtn, neuInset(theme, a.radius)]} onPress={() => setAddOpen(false)}>
+              <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: theme.surface }]} onPress={() => setAddOpen(false)}>
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.confirmBtn, neuPrimary(theme, a.radius)]}
+                style={[styles.confirmBtn, { backgroundColor: theme.primary }]}
                 onPress={() => {
                   const w = addWord.trim();
                   if (!w) return;
@@ -519,10 +507,29 @@ export default function DictionaryScreen() {
                 <Text style={[styles.sortTabText, { color: '#fff' }]}>{t('Add')}</Text>
               </TouchableOpacity>
             </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    </View>
+        </View>
+      </ModalSheet>
+      <ModalSheet visible={levelPickerOpen} onClose={() => setLevelPickerOpen(false)}>
+        <View style={styles.pickCard}>
+          <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Word type')}</Text>
+          <ScrollView style={{ maxHeight: Math.round(winH * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
+          {levelOptions.map((o) => {
+            const active = levelFilter === o.id;
+            return (
+              <TouchableOpacity
+                key={o.id}
+                style={[styles.pickItem, active && { backgroundColor: theme.selected }]}
+                onPress={() => { setLevelFilter(o.id); setLevelPickerOpen(false); }}
+              >
+                <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
+                {active && <Text style={{ color: theme.primary }}>✓</Text>}
+              </TouchableOpacity>
+            );
+          })}
+          </ScrollView>
+        </View>
+      </ModalSheet>
+    </Screen>
   );
 }
 
@@ -530,64 +537,62 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
   const iconBtn = Math.round(Math.max(32, Math.min(44, 38 * a.scale)));
   const m = a.modal();
   return StyleSheet.create({
-    container: { flex: 1, padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
     screenTitle: { fontSize: a.title, fontFamily: FONTS.bold, marginBottom: a.gap },
     headerRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: a.gap, flexWrap: 'wrap' },
     headerActions: { flexDirection: 'row', gap: 8 },
-    confirmBtn: { flex: 1, paddingVertical: Math.max(10, Math.round(13 * a.scale)), paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
-    iconBtn: { ...neuCircle(theme, iconBtn), width: iconBtn, height: iconBtn, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
-    searchInline: { flex: 1, minWidth: 120, height: iconBtn, ...neuInset(theme, a.radius), paddingHorizontal: 10, fontSize: a.small_fs },
-    modalBackdrop: { flex: 1, backgroundColor: '#00000066', justifyContent: 'center', alignItems: 'center', padding: m.backdropPad },
+    confirmBtn: { flex: 1, paddingVertical: Math.max(10, Math.round(13 * a.scale)), paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'inset', { radius: a.radius }) },
+    iconBtn: { ...metal(theme, 'circle', { size: iconBtn }), width: iconBtn, height: iconBtn, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
+    searchInline: { flex: 1, minWidth: 120, height: iconBtn, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 10, fontSize: a.small_fs },
+    modalBackdrop: { flex: 1 },
     searchPop: { width: '100%', maxWidth: Math.min(a.width - 24, 520), borderRadius: a.radius, padding: 12 },
     pickCard: { width: '100%', maxWidth: m.maxWidth, maxHeight: m.maxHeight, borderRadius: a.radius, padding: m.padding },
     pickTitle: { fontSize: a.h2, fontFamily: FONTS.bold, color: theme.secondaryText, borderBottomWidth: 1, borderBottomColor: theme.border, paddingBottom: a.gap, marginBottom: a.gap },
-    pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, ...neuRaised(theme, a.radius), marginBottom: a.tiny ? 8 : 12 },
+    pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, ...metal(theme, 'raised', { radius: a.radius }), marginBottom: a.tiny ? 8 : 12 },
     pickText: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1 },
     pickHint: { fontSize: a.small_fs, marginTop: 8, fontStyle: 'italic' },
-    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.tiny ? 4 : 6, gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.tiny ? 10 : 14 },
+    counterRow: { position: 'absolute', top: a.pad, left: a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.tiny ? 10 : 14 },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
     filterBlock: { padding: a.tiny ? 8 : 12, borderRadius: a.radius, gap: a.tiny ? 8 : 12 },
     sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3, flexWrap: 'wrap' },
-    sortTab: { paddingVertical: a.tiny ? 5 : 7, paddingHorizontal: a.tiny ? 9 : 13 },
+    sortTab: { paddingVertical: a.tiny ? 5 : 7, paddingHorizontal: a.tiny ? 9 : 13, ...metal(theme, 'inset', { radius: a.radius }) },
     sortTabText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
     levelBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3 },
-    levelTab: { flex: 1, paddingVertical: a.tiny ? 5 : 7, alignItems: 'center' },
+    levelTrigger: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.pad, borderRadius: a.radius },
     levelTabText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
-    viewBar: { ...neuInset(theme, a.radius), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.gap },
+    viewBar: { ...metal(theme, 'inset', { radius: a.radius }), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.gap },
     viewTab: { flex: 1, paddingVertical: a.tiny ? 6 : 8, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
     viewTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     fabGroup: { position: 'absolute', right: a.pad, bottom: a.pad + a.tabBarH, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
-    fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center', ...neuRaised(theme, a.radius) },
+    fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'raised', { radius: a.radius }) },
     toolbar: { flexDirection: 'row', gap: 8, marginBottom: a.gap },
-    search: { flex: 1, ...neuInset(theme, a.radius), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },
+    search: { flex: 1, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },
     exportBtn: { borderRadius: a.radius, paddingHorizontal: a.pad, justifyContent: 'center' },
     exportText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.small_fs },
-    list: { paddingBottom: a.pad * 2, gap: a.columns > 1 ? a.gap : 0 },
-    empty: { textAlign: 'center', marginTop: 40, fontSize: a.body },
+    list: { paddingTop: a.pad * 2 + 110, paddingBottom: a.tabBarH + a.pad * 2 + a.gap, gap: a.gap, justifyContent: 'flex-start' },
+    empty: { textAlign: 'center', fontSize: a.body },
     row: {
-      ...neuRaised(theme, a.radius),
+      ...metal(theme, 'raised', { radius: a.radius }),
       flexDirection: 'row',
       alignItems: 'flex-start',
       borderRadius: a.radius,
       padding: a.pad,
-      marginBottom: a.columns > 1 ? 0 : a.gap,
-      flex: a.columns > 1 ? 1 : undefined,
+      marginBottom: a.gap,
       minWidth: 0,
     },
     wordLine: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 },
     word: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1, maxWidth: '70%', wordBreak: 'break-word', overflow: 'hidden' } as any,
-    speakInline: { ...neuInset(theme, a.dim(0.05, 28, 34)), alignItems: 'center', justifyContent: 'center' },
+    speakInline: { ...metal(theme, 'inset', { radius: a.dim(0.05, 28, 34) }), alignItems: 'center', justifyContent: 'center' },
     speakInlineIcon: { fontSize: a.fs(14), color: theme.primary },
     lang: { fontSize: a.fs(12), fontFamily: FONTS.regular },
-    badge: { ...neuInset(theme, 8), flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
+    badge: { ...metal(theme, 'inset', { radius: 8 }), flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     badgeBox: { fontSize: a.fs(12), fontFamily: FONTS.bold },
-    freqBadge: { ...neuInset(theme, 8), borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
+    freqBadge: { ...metal(theme, 'inset', { radius: 8 }), borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     freqText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
     translation: { fontSize: a.body, marginTop: 2 },
     context: { fontSize: a.small_fs, marginTop: 6, fontStyle: 'italic' },
-    editInput: { ...neuInset(theme, 8), borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8, fontSize: a.body, marginTop: 4 },
-    deleteBtn: { ...neuCircle(theme, a.dim(0.05, 28, 38)), alignItems: 'center', justifyContent: 'center' },
+    editInput: { ...metal(theme, 'inset', { radius: 8 }), borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8, fontSize: a.body, marginTop: 4 },
+    deleteBtn: { ...metal(theme, 'circle', { size: a.dim(0.05, 28, 38) }), alignItems: 'center', justifyContent: 'center' },
   });
 }

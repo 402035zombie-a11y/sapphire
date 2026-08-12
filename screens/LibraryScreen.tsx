@@ -9,10 +9,11 @@ import {
   Alert,
   Platform,
   TextInput,
-  Modal,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from '../components/Icon';
+import ModalSheet from '../components/ModalSheet';
+import Screen from '../components/Screen';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import { FONTS } from '../theme/constants';
@@ -30,9 +31,8 @@ import { langName } from '../utils/languages';
 import { buildBookDictionary } from '../services/bookDictionaryService';
 import LanguagePicker from '../components/LanguagePicker';
 import ProgressBar from '../components/ProgressBar';
-import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad, screenBg } from '../theme/neu';
+import { neuShadowPad, screenBg, metal } from '../theme/neu';
 import OpenModeModal from '../components/OpenModeModal';
-import SpeedVariantModal from '../components/SpeedVariantModal';
 import AppSettingsModal from '../components/AppSettingsModal';
 import SupportButton from '../components/SupportButton';
 
@@ -83,16 +83,17 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const [importProgress, setImportProgress] = useState(0);
   const [progress, setProgress] = useState(0);
   const styles = useMemo(() => makeStyles(a), [a]);
+  // FAB «+» крупнее стандартных круглых кнопок хедера, чтобы тапалось уверенно.
+  const fabSize = a.fab() + Math.round(10 * a.scale);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [targetPickerVisible, setTargetPickerVisible] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'title'>('recent');
   const [modeBookId, setModeBookId] = useState<string | null>(null);
-  const [speedVariantBookId, setSpeedVariantBookId] = useState<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const flatListRef = useRef<ScrollView>(null);
   const defaultTarget = useSettingsStore((s) => s.targetLang);
   const route = useRoute<any>();
   const openSearch = () => setSearchOpen(true);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [pressedId, setPressedId] = useState<string | null>(null);
 
   useLayoutEffect(() => {
@@ -327,26 +328,21 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       return;
     }
     // вместо прямого перехода — попап выбора режима
+    setDraft(null);
     setModeBookId(bookId);
   };
 
-  const handleModeSelect = (mode: 'read' | 'dual' | 'speed') => {
+  const handleModeSelect = (mode: 'read' | 'dual' | 'speed', variant?: 'rsvp' | 'ticker') => {
     const id = modeBookId;
     setModeBookId(null);
     if (!id) return;
     if (mode === 'speed') {
-      setSpeedVariantBookId(id); // второй попап выбора варианта
+      navigation.navigate('SpeedReading', { bookId: id, variant: variant ?? 'rsvp' });
       return;
     }
     navigation.navigate('Reader', { bookId: id, mode });
   };
 
-  const handleSpeedVariant = (variant: 'rsvp' | 'ticker') => {
-    const id = speedVariantBookId;
-    setSpeedVariantBookId(null);
-    if (!id) return;
-    navigation.navigate('SpeedReading', { bookId: id, variant });
-  };
 
   const coverColor = (s: string) => {
     let h = 0;
@@ -367,50 +363,47 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   }, [books, search, sortBy]);
 
   return (
-    <View style={[styles.container, { ...screenBg(theme), padding: a.pad }]}>
-      {/* Хедер библиотеки: объёмные кнопки поиска и настроек */}
+    <Screen contentStyle={{ padding: a.pad }}>
       <View style={styles.libHead}>
-        <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]} onPress={openSearch}>
+        <TouchableOpacity style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]} onPress={openSearch}>
           <Icon name="search" size={a.icon(20)} color={theme.primaryText} />
         </TouchableOpacity>
         {!onSelectBook && (
-          <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]} onPress={() => setSettingsOpen(true)}>
+          <TouchableOpacity style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]} onPress={() => setSettingsOpen(true)}>
             <Icon name="settings" size={a.icon(20)} color={theme.primaryText} />
           </TouchableOpacity>
         )}
-        <SupportButton size={a.icon(40)} iconSize={a.icon(20)} />
+        <SupportButton size={a.fab()} iconSize={Math.round(a.fab()*0.5)} />
       </View>
       {loading && (
-        <View style={[styles.progressCard, neuRaised(theme, a.radius)]}>
+        <View style={[styles.progressCard, metal(theme, 'raised', { radius: a.radius })]}>
           <Text style={[styles.progressText, { color: theme.secondaryText }]}>{t('Reading file…')} {Math.round(progress * 100)}%</Text>
           <ProgressBar progress={progress} />
         </View>
       )}
 
-      <Modal visible={!!draft} transparent animationType="fade" onRequestClose={() => setDraft(null)}>
+      <ModalSheet visible={!!draft} onClose={() => setDraft(null)} panelStyle={{ backgroundColor: theme.popupBg ?? theme.neu.base }}>
         {draft && (
-        <TouchableOpacity style={styles.draftBackdrop} activeOpacity={1} onPress={() => setDraft(null)}>
-          <View style={styles.draftCenter}>
-            <View style={[styles.draftCard, neuRaised(theme, a.radius)]}>
+          <View style={[styles.draftCard, { width: '100%', maxWidth: Math.min(520, a.contentMaxW - a.pad * 2) }]}>
               <Text style={[styles.draftTitle, { color: theme.primaryText }]}>{draft.title}</Text>
           <Text style={[styles.draftMeta, { color: theme.secondaryText }]}>
             {draft.format.toUpperCase()} · {draft.paragraphs.length} {t('sentences')}
           </Text>
 
           <Text style={[styles.label, { color: theme.secondaryText }]}>{t('Original language:')}</Text>
-          <TouchableOpacity style={[styles.langButton, neuInset(theme, a.radius), { borderWidth: 0 }]} onPress={() => setPickerVisible(true)}>
+          <TouchableOpacity style={[styles.langButton, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setPickerVisible(true)}>
             <Text style={[styles.langButtonText, { color: theme.primaryText }]}>{langName(draft.language)}</Text>
             <Text style={[styles.langArrow, { color: theme.secondaryText }]}>▾</Text>
           </TouchableOpacity>
 
           <Text style={[styles.label, { color: theme.secondaryText, marginTop: a.gap }]}>{t('Translation language:')}</Text>
-          <TouchableOpacity style={[styles.langButton, neuInset(theme, a.radius), { borderWidth: 0 }]} onPress={() => setTargetPickerVisible(true)}>
+          <TouchableOpacity style={[styles.langButton, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setTargetPickerVisible(true)}>
             <Text style={[styles.langButtonText, { color: theme.primaryText }]}>{langName(draft.targetLang)}</Text>
             <Text style={[styles.langArrow, { color: theme.secondaryText }]}>▾</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.importBtn, neuInset(theme, a.radius), { borderWidth: 0 }]}
+            style={[styles.importBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]}
             disabled={importing}
             onPress={importBookDict}
           >
@@ -425,18 +418,15 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           )}
 
           <View style={styles.draftActions}>
-            <TouchableOpacity style={styles.cancelBtn} onPress={() => setDraft(null)}>
-              <Text style={[styles.cancelText, { color: theme.secondaryText }]}>{t('Cancel')}</Text>
+            <TouchableOpacity style={[styles.actionBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setDraft(null)}>
+              <Text style={[styles.actionText, { color: theme.secondaryText }]}>{t('Cancel')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.saveBtn, neuPrimary(theme, a.radius)]} onPress={saveDraft}>
-              <Text style={styles.saveText}>{t('Save')}</Text>
+            <TouchableOpacity style={[styles.actionBtn, metal(theme, 'primary'), { borderWidth: 0 }]} onPress={saveDraft}>
+              <Text style={[styles.saveText]}>{t('Save')}</Text>
             </TouchableOpacity>
           </View>
-            </View>
           </View>
-        </TouchableOpacity>
         )}
-
         <LanguagePicker
           visible={pickerVisible}
           value={draft?.language ?? 'auto'}
@@ -444,7 +434,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           onSelect={(code) => draft && setDraft({ ...draft, language: code })}
           onClose={() => setPickerVisible(false)}
         />
-
         <LanguagePicker
           visible={targetPickerVisible}
           value={draft?.targetLang ?? defaultTarget}
@@ -452,12 +441,11 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           onSelect={(code) => draft && setDraft({ ...draft, targetLang: code })}
           onClose={() => setTargetPickerVisible(false)}
         />
-      </Modal>
+      </ModalSheet>
 
-      <Modal visible={searchOpen} transparent animationType="fade" onRequestClose={() => setSearchOpen(false)}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setSearchOpen(false)}>
-          <View style={[styles.searchPop, neuInset(theme, a.radius)]}>
-            <View style={[styles.searchBar, neuInset(theme, a.radius), { borderWidth: 0 }]}>
+      <ModalSheet visible={searchOpen} onClose={() => setSearchOpen(false)} panelStyle={{ backgroundColor: theme.popupBg ?? theme.neu.base }}>
+        <View style={[styles.searchPop, { width: '100%', maxWidth: Math.min(a.width - 24, 520) }]}>
+            <View style={[styles.searchBar, { backgroundColor: theme.surface, borderWidth: 0 }]}>
               <TextInput
                 style={[styles.searchInput, { color: theme.primaryText }]}
                 value={search}
@@ -471,15 +459,14 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
               </TouchableOpacity>
             </View>
           </View>
-        </TouchableOpacity>
-      </Modal>
+      </ModalSheet>
 
       <ScrollView
         ref={flatListRef as any}
         style={{ flex: 1 }}
         contentContainerStyle={[
           styles.list,
-          a.columns > 1 && { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+          a.columns > 1 && { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: a.gap },
         ]}
       >
         {visibleBooks.length === 0 ? (
@@ -493,10 +480,9 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
             key={item.id}
             style={[
               styles.bookRow,
-              neuRaised(theme, a.radius),
-              a.columns > 1 && { width: '48%' },
+              metal(theme, 'raised', { radius: a.radius }),
+              a.columns > 1 && { width: '47%' },
               { zIndex: isPressed ? 20 : 1 },
-              isPressed && { elevation: 12 },
             ]}
             onPressIn={() => setPressedId(item.id)}
             onPressOut={() => setPressedId(null)}
@@ -519,7 +505,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
                   removeBook(item.id);
                 }}
                 hitSlop={10}
-                style={[neuCircle(theme, a.dim(0.05, 28, 38)), { padding: 0 }]}
+                style={[metal(theme, 'circle', { size: a.dim(0.05, 28, 38) }), { padding: 0 }]}
               >
                 <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
               </TouchableOpacity>
@@ -534,11 +520,11 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
 
       {!onSelectBook && (
         <TouchableOpacity
-          style={[styles.fab, neuCircle(theme, a.dim(0.12, 32, 62), true)]}
+          style={[styles.fab, metal(theme, 'primary', { size: fabSize })]}
           onPress={onAddPress}
-          hitSlop={10}
+          hitSlop={12}
         >
-          <Icon name="plus" size={a.dim(0.045, 20, 32)} color="#fff" emboss />
+          <Icon name="plus" size={a.dim(0.06, 26, 40)} color="#fff" emboss />
         </TouchableOpacity>
       )}
       {Platform.OS === 'web' && (
@@ -556,14 +542,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         onSelect={handleModeSelect}
         onClose={() => setModeBookId(null)}
       />
-      <SpeedVariantModal
-        visible={speedVariantBookId !== null}
-        title={speedVariantBookId ? books.find((b) => b.id === speedVariantBookId)?.title ?? '' : ''}
-        onSelect={handleSpeedVariant}
-        onClose={() => setSpeedVariantBookId(null)}
-      />
       <AppSettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} />
-    </View>
+    </Screen>
   );
 }
 
@@ -589,7 +569,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
   const cover = { w: a.dim(0.065, 34, 54), h: a.dim(0.087, 46, 72) };
   return StyleSheet.create({
     container: { flex: 1, paddingTop: a.pad, paddingBottom: 0, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
-    libHead: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginHorizontal: a.pad, marginBottom: a.gap },
+    libHead: { position: 'absolute', top: a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10 },
     progressCard: { borderRadius: a.radius, padding: a.pad, marginHorizontal: a.pad, marginBottom: a.gap },
     progressText: { marginBottom: 8, fontSize: a.small_fs },
     draftCard: { width: '100%', maxWidth: 420, borderRadius: a.radius, padding: a.pad },
@@ -609,22 +589,20 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
     },
     langButtonText: { fontSize: a.body, flexShrink: 1 },
     langArrow: {},
-    draftActions: { flexDirection: 'row', marginTop: a.gap * 1.5, gap: 12, flexWrap: 'wrap' },
+    draftActions: { flexDirection: 'row', marginTop: a.gap * 1.5, gap: 12 },
     importBtn: { marginTop: a.gap, borderRadius: a.radius, paddingVertical: a.tiny ? 9 : 12, paddingHorizontal: 14, alignItems: 'center' },
     importText: { fontSize: a.small_fs, fontFamily: FONTS.bold, textAlign: 'center' },
-    cancelBtn: { flex: 1, paddingVertical: 10, paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
-    cancelText: { fontSize: a.body },
-    saveBtn: { flex: 1, paddingVertical: 10, paddingHorizontal: 20, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
+    actionBtn: { flex: 1, height: Math.round(Math.max(44, 48 * a.scale)), paddingVertical: 10, paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
+    actionText: { fontSize: a.body },
     saveText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.body },
-    list: { paddingHorizontal: neuShadowPad(), paddingTop: neuShadowPad(), paddingBottom: a.tabBarH + a.pad * 2 + 70 },
+    list: { paddingHorizontal: neuShadowPad(), paddingTop: a.fab() + a.pad * 2, paddingBottom: a.tabBarH + a.pad * 2 + 20 },
     empty: { textAlign: 'center', marginTop: 40, fontSize: a.body },
     bookRow: {
       flexDirection: 'row',
       alignItems: 'center',
       borderRadius: a.radius,
       padding: a.pad,
-      marginHorizontal: a.pad + 4,
-      marginBottom: a.columns > 1 ? 0 : a.gap,
+      marginBottom: a.gap,
       minWidth: 0,
     },
     cover: { width: cover.w, height: cover.h, borderRadius: 6, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
@@ -654,10 +632,13 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
     sortTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     fab: {
       position: 'absolute',
-      right: a.pad,
+      right: a.pad + 4,
       bottom: a.pad + a.tabBarH,
       alignItems: 'center',
       justifyContent: 'center',
+      // гарантируем, что кнопка не вылазит за правый край контента
+      // (container центрируется maxWidth:contentMaxW, поэтому right считается от него)
+      marginRight: 0,
     },
   });
 }

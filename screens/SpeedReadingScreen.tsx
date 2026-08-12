@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Animated, Easing, ScrollView, useWindowDimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
+import Screen from '../components/Screen';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { FONTS } from '../theme/constants';
@@ -12,8 +13,7 @@ import { useLibraryStore } from '../store/libraryStore';
 import { useSettingsStore } from '../store/settingsStore';
 import Icon from '../components/Icon';
 import SupportButton from '../components/SupportButton';
-import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad } from '../theme/neu';
-import LibraryScreen from './LibraryScreen';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import { useT } from '../i18n';
 
 export default function SpeedReadingScreen() {
@@ -26,6 +26,7 @@ export default function SpeedReadingScreen() {
   const [bookId, setBookId] = useState<string | undefined>(initialBookId);
   const theme = useTheme();
   const t = useT();
+  const navigation = useNavigation<any>();
   // адаптивные размеры: всё влезает в экран независимо от его высоты
   const isShort = height < 640;
   const styles = useMemo(() => makeStyles(a, theme), [a, theme]);
@@ -34,7 +35,6 @@ export default function SpeedReadingScreen() {
   const stagePad = a.landscape ? 18 : isShort ? 26 : Math.round(60 * a.scale);
   const ctrlSize = Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale)));
   const book = useLibraryStore((s) => s.books.find((b) => b.id === bookId));
-  const navigation = useNavigation<any>();
 
 
   // собираем все токены книги: слова/числа + прилегающие знаки (без пробела)
@@ -143,7 +143,16 @@ export default function SpeedReadingScreen() {
   }, [playing, wpm, words.length, words]);
 
   if (!bookId || !book) {
-    return <LibraryScreen onSelectBook={(id) => setBookId(id)} />;
+    return (
+      <Screen contentStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+        <TouchableOpacity
+          style={[metal(theme, 'primary', { radius: a.radius }), { paddingVertical: 12, paddingHorizontal: 24 }]}
+          onPress={() => navigation.navigate('Library' as never)}
+        >
+          <Text style={{ color: '#fff', fontFamily: FONTS.bold, fontSize: a.body }}>{t('Select a book')}</Text>
+        </TouchableOpacity>
+      </Screen>
+    );
   }
 
   if (words.length === 0) {
@@ -232,16 +241,16 @@ export default function SpeedReadingScreen() {
 
   const speedBox = (
     <View style={styles.speedBox}>
-      <TouchableOpacity style={[styles.speedBtn, neuCircle(theme, Math.round(Math.max(34, Math.min(48, 44 * a.scale))))]} onPress={() => setWpm((v) => clampWpm(v - 25))}>
+      <TouchableOpacity style={[styles.speedBtn, metal(theme, 'circle', { size: a.fab() })]} onPress={() => setWpm((v) => clampWpm(v - 25))}>
         <Text style={[styles.speedBtnText, { color: theme.primaryText }]}>−</Text>
       </TouchableOpacity>
       <TextInput
-        style={[styles.speedInput, neuInset(theme, 10), { borderWidth: 0, color: theme.primaryText }]}
+        style={[styles.speedInput, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText }]}
         value={String(wpm)}
         keyboardType="numeric"
         onChangeText={(t) => setWpm(clampWpm(Number(t.replace(/\D/g, ''))))}
       />
-      <TouchableOpacity style={[styles.speedBtn, neuCircle(theme, Math.round(Math.max(34, Math.min(48, 44 * a.scale))))]} onPress={() => setWpm((v) => clampWpm(v + 25))}>
+      <TouchableOpacity style={[styles.speedBtn, metal(theme, 'circle', { size: a.fab() })]} onPress={() => setWpm((v) => clampWpm(v + 25))}>
         <Text style={[styles.speedBtnText, { color: theme.primaryText }]}>+</Text>
       </TouchableOpacity>
       <Text style={[styles.speedLabel, { color: theme.secondaryText }]}>{t('words/min')}</Text>
@@ -302,7 +311,7 @@ export default function SpeedReadingScreen() {
   return (
     <ScrollView
       style={{ backgroundColor: 'transparent' }}
-      contentContainerStyle={[styles.container, { paddingBottom: a.pad * 2 + neuShadowPad() }]}
+      contentContainerStyle={[styles.container, { paddingBottom: a.tabBarH + a.pad * 2 + a.gap }]}
       showsVerticalScrollIndicator={false}
     >
       <BackFab onPress={() => navigation.goBack()} />
@@ -315,7 +324,7 @@ export default function SpeedReadingScreen() {
         <SupportButton />
       </View>
 
-      <View style={[styles.stage, neuRaised(theme, a.radius), { paddingVertical: stagePad }]}>
+      <View style={[styles.stage, metal(theme, 'raised', { radius: a.radius }), { paddingVertical: stagePad }]}>
         {variant === 'ticker' ? (
           <View
             style={styles.tickerWrap}
@@ -357,20 +366,20 @@ export default function SpeedReadingScreen() {
 
       <View style={[styles.playerRow, { marginTop: a.small ? 8 : 16 }]}>
         <View style={styles.controls}>
-          <TouchableOpacity style={[styles.ctrlBtn, neuCircle(theme, ctrlSize)]} onPress={() => setResetPrompt(true)}>
+          <TouchableOpacity style={[styles.ctrlBtn, metal(theme, 'circle', { size: ctrlSize })]} onPress={() => setResetPrompt(true)}>
             <Icon name="close" size={a.dim(0.032, 18, 26)} color={theme.primaryText} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.ctrlBtn, neuCircle(theme, ctrlSize)]} onPress={goPrevSentence}>
+          <TouchableOpacity style={[styles.ctrlBtn, metal(theme, 'circle', { size: ctrlSize })]} onPress={goPrevSentence}>
             <Icon name="chevron-back" size={a.dim(0.032, 18, 26)} color={theme.primaryText} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.playBtn, neuCircle(theme, ctrlSize + 12, true)]} onPress={() => {
+          <TouchableOpacity style={[styles.playBtn, metal(theme, 'primary', { size: ctrlSize + 12 })]} onPress={() => {
             // Если дошли до конца — при старте начинаем сначала.
             if (!playing && pos >= words.length - 1) setPos(0);
             setPlaying((p) => !p);
           }}>
             <Icon name={playing ? 'pause' : 'play'} size={a.dim(0.042, 22, 34)} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.ctrlBtn, neuCircle(theme, ctrlSize)]} onPress={goNextSentence}>
+          <TouchableOpacity style={[styles.ctrlBtn, metal(theme, 'circle', { size: ctrlSize })]} onPress={goNextSentence}>
             <Icon name="chevron-forward" size={a.dim(0.032, 18, 26)} color={theme.primaryText} />
           </TouchableOpacity>
         </View>
@@ -380,7 +389,7 @@ export default function SpeedReadingScreen() {
       {variant === 'rsvp' && (
         <View>
           <TouchableOpacity
-            style={[styles.microToggle, neuRaised(theme, a.radius), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
+            style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
             onPress={() => { const v = !microPauses; setMicroPauses(v); setReader({ microPauses: v }); }}
           >
             <View style={[styles.microDot, { backgroundColor: microPauses ? theme.primary : theme.border }]} />
@@ -388,7 +397,7 @@ export default function SpeedReadingScreen() {
           </TouchableOpacity>
           {microPauses && (
             <View>
-              <View style={[styles.pauseRow, neuInset(theme, a.radius)]}>
+              <View style={[styles.pauseRow, metal(theme, 'inset', { radius: a.radius })]}>
                 <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseCommaMs - 10); setPauseCommaMs(v); setReader({ pauseCommaMs: v }); }}>
                   <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
                 </TouchableOpacity>
@@ -398,7 +407,7 @@ export default function SpeedReadingScreen() {
                 </TouchableOpacity>
                 <Text style={[styles.pauseHint, { color: theme.secondaryText }]}>{t('comma , ; :')}</Text>
               </View>
-              <View style={[styles.pauseRow, neuInset(theme, a.radius)]}>
+              <View style={[styles.pauseRow, metal(theme, 'inset', { radius: a.radius })]}>
                 <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseSentMs - 10); setPauseSentMs(v); setReader({ pauseSentMs: v }); }}>
                   <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
                 </TouchableOpacity>
@@ -408,7 +417,7 @@ export default function SpeedReadingScreen() {
                 </TouchableOpacity>
                 <Text style={[styles.pauseHint, { color: theme.secondaryText }]}>{t('end . ! ?')}</Text>
               </View>
-              <View style={[styles.pauseRow, neuInset(theme, a.radius)]}>
+              <View style={[styles.pauseRow, metal(theme, 'inset', { radius: a.radius })]}>
                 <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseBracketMs - 10); setPauseBracketMs(v); setReader({ pauseBracketMs: v }); }}>
                   <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
                 </TouchableOpacity>
@@ -425,7 +434,7 @@ export default function SpeedReadingScreen() {
 
       {variant === 'ticker' && (
         <TouchableOpacity
-          style={[styles.microToggle, neuRaised(theme, a.radius), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
+          style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
           onPress={() => setTickerDir((d) => (d === 'rtl' ? 'ltr' : 'rtl'))}
         >
           <View style={[styles.microDot, { backgroundColor: tickerDir === 'rtl' ? theme.primary : theme.border }]} />
@@ -435,17 +444,17 @@ export default function SpeedReadingScreen() {
 
       {resetPrompt && (
         <View style={[StyleSheet.absoluteFill, styles.resetBackdrop]} pointerEvents="auto">
-          <View style={[styles.resetModal, neuRaised(theme, a.radius)]}>
+          <View style={[styles.resetModal, metal(theme, 'raised', { radius: a.radius })]}>
             <Text style={[styles.resetTitle, { color: theme.primaryText }]}>{t('Start over?')}</Text>
             <View style={styles.resetRow}>
               <TouchableOpacity
-                style={[styles.resetBtn, neuPrimary(theme, a.radius)]}
+                style={[styles.resetBtn, metal(theme, 'primary')]}
                 onPress={() => { setResetPrompt(false); stopAll(); }}
               >
                 <Text style={{ color: '#fff', fontFamily: FONTS.bold }}>{t('Yes')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.resetBtn, neuInset(theme, a.radius)]}
+                style={[styles.resetBtn, metal(theme, 'inset')]}
                 onPress={() => setResetPrompt(false)}
               >
                 <Text style={{ color: theme.primaryText, fontFamily: FONTS.bold }}>{t('No')}</Text>
@@ -460,13 +469,13 @@ export default function SpeedReadingScreen() {
 }
 
 function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof useTheme>) {
-  const wpmBtn = Math.round(Math.max(34, Math.min(48, 44 * a.scale)));
+  const wpmBtn = a.fab();
   const pauseSz = Math.round(Math.max(32, 40 * a.scale));
   return StyleSheet.create({
     container: {
       flexGrow: 1,
       padding: a.pad,
-      paddingTop: a.pad + Math.round(Math.max(34, 40 * a.scale)) + a.gap,
+      paddingTop: a.pad + Math.round(a.fab()) + a.gap,
       alignItems: 'center',
       width: '100%',
       maxWidth: a.contentMaxW,
@@ -484,6 +493,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       alignItems: 'center',
       justifyContent: 'center',
       marginTop: 8,
+      paddingHorizontal: a.pad,
       minHeight: a.landscape ? a.height * 0.28 : a.height * 0.2,
     },
     word: { fontFamily: FONTS.bold, textAlign: 'center' },
@@ -523,7 +533,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     },
     controls: { flexDirection: 'row', alignItems: 'center', gap: Math.round(Math.max(10, 24 * a.scale)), marginTop: a.small ? 8 : a.gap },
     playBtn: { alignItems: 'center', justifyContent: 'center' },
-    ctrlBtn: { ...neuCircle(theme, Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale)))), borderRadius: Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale))) / 2 },
+    ctrlBtn: { ...metal(theme, 'circle', { size: Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale))) }), borderRadius: Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale))) / 2 },
     progressTrack: { height: 6, width: '100%', borderRadius: 3, overflow: 'hidden' },
     progressFill: { height: 6 },
     microToggle: {
@@ -547,7 +557,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       borderRadius: a.radius,
       flexWrap: 'wrap',
     },
-    pauseBtn: { ...neuCircle(theme, pauseSz), borderRadius: pauseSz / 2 },
+    pauseBtn: { ...metal(theme, 'circle', { size: pauseSz }), borderRadius: pauseSz / 2 },
     pauseBtnText: { fontSize: a.fs(24), fontFamily: FONTS.bold },
     pauseValue: { fontSize: a.title, fontFamily: FONTS.bold, minWidth: 54, textAlign: 'center' },
     pauseHint: { fontSize: a.fs(12) },
@@ -555,6 +565,6 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     resetModal: { width: Math.min(320, a.contentMaxW - a.pad * 2), borderRadius: a.radius, padding: a.pad, alignItems: 'center' },
     resetTitle: { fontSize: a.h2, fontFamily: FONTS.bold, marginBottom: a.gap },
     resetRow: { flexDirection: 'row', gap: a.gap, width: '100%' },
-    resetBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: a.tiny ? 8 : 12, borderRadius: a.radius },
+    resetBtn: { flex: 1, height: Math.round(Math.max(44, 52 * a.scale)), alignItems: 'center', justifyContent: 'center', paddingVertical: a.tiny ? 8 : 12, borderRadius: a.radius },
   });
 }

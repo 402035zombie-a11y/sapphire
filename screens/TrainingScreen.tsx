@@ -9,6 +9,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform, ScrollView } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
+import Screen from '../components/Screen';
 import { useTheme } from '../theme/ThemeContext';
 import { useT } from '../i18n';
 import { useAdaptive } from '../theme/useAdaptive';
@@ -19,7 +20,7 @@ import { useLibraryStore } from '../store/libraryStore';
 import QuizCard, { QuizItem } from '../components/QuizCard';
 import Icon from '../components/Icon';
 import SupportButton from '../components/SupportButton';
-import { neuRaised, neuInset, neuPrimary, neuCircle, neuShadowPad, screenBg } from '../theme/neu';
+import { metal, neuShadowPad } from '../theme/neu';
 
 const TARGET_STREAK = 5;
 
@@ -76,20 +77,20 @@ export default function TrainingScreen() {
     startScroll: {
       flexGrow: 1,
       padding: a.pad,
-      paddingTop: a.pad + Math.round(Math.max(34, 40 * a.scale)) + a.gap,
+      paddingTop: a.pad + Math.round(a.fab()),
       gap: a.gap,
       width: '100%',
       maxWidth: a.isTablet ? 720 : 560,
       alignSelf: 'center',
     },
-    heroCard: { ...neuRaised(theme, a.radius + 4), padding: a.tiny ? 12 : a.isTablet ? 22 : 16, gap: a.tiny ? 8 : 12 },
+    heroCard: { ...metal(theme, 'raised', { radius: a.radius + 4 }), padding: a.tiny ? 12 : a.isTablet ? 22 : 16, gap: a.tiny ? 8 : 12 },
     heroTop: { flexDirection: 'row', alignItems: 'baseline', gap: 10 },
     heroFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' },
     heroFooterText: { fontSize: a.small_fs },
     heroFooterValue: { fontSize: a.small_fs, fontFamily: 'bold' },
     progressTrack: { height: a.tiny ? 6 : 8, borderRadius: 4, overflow: 'hidden' },
     progressFill: { height: '100%', borderRadius: 4 },
-    sourceCard: { ...neuRaised(theme, a.radius + 4), padding: a.tiny ? 10 : a.isTablet ? 18 : 14, gap: a.tiny ? 6 : 10 },
+    sourceCard: { ...metal(theme, 'raised', { radius: a.radius + 4 }), padding: a.tiny ? 10 : a.isTablet ? 18 : 14, gap: a.tiny ? 6 : 10 },
     // На планшете/десктопе две CTA в ряд — заполняют ширину, нет пустоты сбоку.
     actions: { gap: a.tiny ? 8 : 10, flexDirection: 'row' },
     btnSub: { fontSize: a.tiny ? a.fs(11) : a.fs(12), color: '#ffffffcc', marginTop: 2, textAlign: 'center' },
@@ -115,15 +116,15 @@ export default function TrainingScreen() {
     bigCount: { fontSize: a.fs(a.isTablet ? 60 : 44), fontFamily: 'bold', lineHeight: Math.round(a.fs(a.isTablet ? 60 : 44) * 1.05) },
     countLabel: { fontSize: a.small_fs, lineHeight: Math.round(a.small_fs * 1.25), flexShrink: 1 },
     result: { marginTop: 8, marginBottom: a.gap, fontSize: a.body },
-    finishBanner: { ...neuRaised(theme, a.radius + 4), alignItems: 'center', padding: a.pad, gap: 2, borderWidth: 0 },
+    finishBanner: { ...metal(theme, 'raised', { radius: a.radius + 4 }), alignItems: 'center', padding: a.pad, gap: 2, borderWidth: 0 },
     finishTitle: { fontSize: a.title, fontFamily: 'bold' },
     finishSub: { fontSize: a.body, marginTop: 4, marginBottom: 6 },
     btn: { flex: 1, borderRadius: a.radius + 2, paddingVertical: a.tiny ? 10 : 14, paddingHorizontal: a.tiny ? 10 : 16, alignItems: 'center' },
     btnText: { color: '#fff', fontFamily: 'bold', fontSize: a.body },
-    typeCard: { ...neuRaised(theme, a.radius), padding: a.pad, marginTop: 8 },
+    typeCard: { ...metal(theme, 'raised', { radius: a.radius }), padding: a.pad, marginTop: 8 },
     wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' },
     typeWord: { fontSize: a.fs(28), fontFamily: 'bold', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },
-    speakBtn: { ...neuCircle(theme, a.icon(34)), padding: 0 },
+    speakBtn: { ...metal(theme, 'circle', { size: a.icon(34) }), padding: 0 },
     speakIcon: { fontSize: a.fs(18), color: theme.primary },
     typeHint: { fontSize: a.fs(14), textAlign: 'center', marginTop: 12, marginBottom: 8 },
     typeInput: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: a.tiny ? 8 : 12, fontSize: a.body },
@@ -283,13 +284,13 @@ export default function TrainingScreen() {
     const pct = entries.length ? Math.round((learnedCount / entries.length) * 100) : 0;
     return (
       <ScrollView
-        style={{ backgroundColor: 'transparent' }}
-        contentContainerStyle={[styles.startScroll, { paddingHorizontal: neuShadowPad(a.radius + 4), paddingBottom: neuShadowPad(a.radius + 4) }]}
+        style={{ backgroundColor: theme.background }}
+        contentContainerStyle={[styles.startScroll, { paddingHorizontal: neuShadowPad(a.radius + 4), paddingBottom: a.tabBarH + a.pad }]}
         showsVerticalScrollIndicator={false}
       >
         <BackFab onPress={() => navigation.goBack()} />
         {finished && (
-          <View style={[styles.finishBanner, neuRaised(theme, a.radius + 4), { borderColor: theme.success }]}>
+          <View style={[styles.finishBanner, metal(theme, 'raised', { radius: a.radius + 4 }), { borderColor: theme.success }]}>
             <Text style={[styles.finishTitle, { color: theme.success }]}>{t("Keep it up! 🎉")}</Text>
             <Text style={[styles.finishSub, { color: theme.primaryText }]}>{t("All words from the book are learned!")}</Text>
             <Text style={[styles.finishStats, { color: theme.secondaryText }]}>
@@ -299,7 +300,7 @@ export default function TrainingScreen() {
         )}
 
         {/* Карточка прогресса: число, шкала и счётчик собраны в один блок */}
-        <View style={[styles.heroCard, neuRaised(theme, a.radius + 4)]}>
+        <View style={[styles.heroCard, metal(theme, 'raised', { radius: a.radius + 4 })]}>
           <View style={styles.heroTop}>
             <Text style={[styles.bigCount, { color: theme.primary }]}>{entries.length}</Text>
             <Text style={[styles.countLabel, { color: theme.secondaryText }]}>{t("words")}{'\n'}{t("in dictionary")}</Text>
@@ -317,12 +318,12 @@ export default function TrainingScreen() {
 
         {/* Действия прижаты к контенту, а не разбросаны по низу экрана */}
         <View style={styles.actions}>
-          <TouchableOpacity style={[styles.btn, neuPrimary(theme, a.radius + 2)]} onPress={() => start('quiz')}>
+          <TouchableOpacity style={[styles.btn, metal(theme, 'primary'), { borderWidth: 0 }]} onPress={() => start('quiz')}>
             <Text style={styles.btnText}>{finished ? t("Again: multiple choice") : t("Multiple choice")}</Text>
             <Text style={styles.btnSub}>{t("Find the translation among 4 cards")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.btn, neuInset(theme, a.radius + 2), { borderWidth: 0 }]}
+            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 }), { borderWidth: 0 }]}
             onPress={() => start('type')}
           >
             <Text style={[styles.btnText, { color: theme.primaryText }]}>
@@ -333,14 +334,14 @@ export default function TrainingScreen() {
         </View>
 
         {!routeBookId && (
-          <View style={[styles.sourceCard, neuRaised(theme, a.radius + 4)]}>
+          <View style={[styles.sourceCard, metal(theme, 'raised', { radius: a.radius + 4 })]}>
             <Text style={[styles.sourceLabel, { color: theme.secondaryText }]}>{t("Train")}</Text>
             <View style={styles.sourceTabs}>
               <TouchableOpacity
                 style={[
                   styles.sourceTab,
-                  neuRaised(theme, 999),
-                  source === 'all' && { backgroundColor: theme.primary, ...neuInset(theme, 999) },
+                  metal(theme, 'raised', { radius: 999 }),
+                  source === 'all' && { backgroundColor: theme.selected, ...metal(theme, 'inset', { radius: 999 }) },
                 ]}
                 onPress={() => setSource('all')}
               >
@@ -353,8 +354,8 @@ export default function TrainingScreen() {
                   key={b.id}
                   style={[
                     styles.sourceTab,
-                    neuRaised(theme, 999),
-                    source === b.id && { backgroundColor: theme.primary, ...neuInset(theme, 999) },
+                    metal(theme, 'raised', { radius: 999 }),
+                    source === b.id && { backgroundColor: theme.selected, ...metal(theme, 'inset', { radius: 999 }) },
                   ]}
                   onPress={() => setSource(b.id)}
                 >
@@ -374,7 +375,7 @@ export default function TrainingScreen() {
     );
   }
 
-  const backFabH = Math.round(Math.max(34, 40 * a.scale));
+  const backFabH = Math.round(a.fab());
 
   // стартовый / финишный экран: BackFab абсолютный, контент в ScrollView — отступ сверху
   // делаем через paddingStart ScrollView (см. startScroll). В активном режиме (ниже) контент
@@ -395,8 +396,8 @@ export default function TrainingScreen() {
   ));
 
   return (
-    <View style={[styles.container, { ...screenBg(theme), paddingHorizontal: a.pad, paddingTop: a.pad + backFabH + a.gap, paddingBottom: a.pad }]}>
-      <BackFab onPress={() => navigation.goBack()} />
+    <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.pad + backFabH, paddingBottom: a.pad }}>
+      <BackFab onPress={() => { setStarted(false); setFinished(false); setIndex(0); }} />
       <View style={styles.topRow}>
         <Text style={[styles.counter, { color: theme.secondaryText }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>
         <View style={styles.counterBadges}>
@@ -408,7 +409,7 @@ export default function TrainingScreen() {
           </View>
         </View>
         <TouchableOpacity
-          style={[styles.restartBtn, neuRaised(theme, 18)]}
+          style={[styles.restartBtn, metal(theme, 'raised', { radius: 18 })]}
           onPress={() => start(mode)}
           hitSlop={8}
         >
@@ -428,7 +429,7 @@ export default function TrainingScreen() {
       )}
 
       {mode === 'type' && current && (
-        <View style={[styles.typeCard, neuRaised(theme, a.radius)]}>
+        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius })]}>
           <View style={styles.wordRow}>
             <Text style={styles.typeWord}>{current.surfaceForm || current.word}</Text>
             <TouchableOpacity style={styles.speakBtn} onPress={() => { if (Platform.OS === 'web' && 'speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(current.word); u.lang = current.lang || 'en'; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); } }} hitSlop={6}>
@@ -443,7 +444,7 @@ export default function TrainingScreen() {
           <Text style={[styles.typeHint, { color: theme.secondaryText }]}>{t("Enter the translation:")}</Text>
           <TextInput
             ref={typeInputRef}
-            style={[styles.typeInput, neuInset(theme, 10), { borderWidth: 0, color: theme.primaryText }]}
+            style={[styles.typeInput, metal(theme, 'inset', { radius: 10 }), { borderWidth: 0, color: theme.primaryText }]}
             value={typed}
             autoFocus
             editable={!typeChecked}
@@ -460,7 +461,7 @@ export default function TrainingScreen() {
             }}
           />
           <TouchableOpacity
-            style={[styles.typeCheck, neuPrimary(theme, a.radius)]}
+            style={[styles.typeCheck, metal(theme, 'primary', { size: a.radius })]}
             onPress={() => {
               if (typeChecked) return;
               const ok = normalize(typed) === normalize(current.translation);
@@ -479,7 +480,7 @@ export default function TrainingScreen() {
           )}
         </View>
       )}
-    </View>
+    </Screen>
   );
 }
 

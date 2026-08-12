@@ -1,7 +1,7 @@
 // screens/SectionsScreen.tsx
 // Оглавление книги: список разделов, тап → переход к абзацу в ридере.
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
 import Icon from '../components/Icon';
@@ -9,8 +9,9 @@ import { useTheme } from '../theme/ThemeContext';
 import { useLibraryStore } from '../store/libraryStore';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuRaised, neuShadowPad, screenBg } from '../theme/neu';
+import { metal, neuShadowPad } from '../theme/neu';
 import { useT } from '../i18n';
+import Screen from '../components/Screen';
 
 export default function SectionsScreen() {
   const navigation = useNavigation<any>();
@@ -47,32 +48,34 @@ export default function SectionsScreen() {
   })();
 
   return (
-    <View style={[styles.container, { ...screenBg(theme) }]}>
+    <Screen contentStyle={{}}>
       <BackFab onPress={() => navigation.goBack()} />
       <Text style={[styles.title, { color: theme.primaryText }]}>{t('Table of Contents')}</Text>
-      <FlatList
-        data={sections}
-        keyExtractor={(_, i) => String(i)}
-        contentContainerStyle={{ paddingBottom: 24, padding: neuShadowPad() }}
-        ListEmptyComponent={<Text style={{ color: theme.secondaryText }}>{t('No sections.')}</Text>}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity style={[styles.row, neuRaised(theme, a.radius), { borderBottomWidth: 0, backgroundColor: index === currentSectionIdx ? theme.selected : theme.neu.base }]} onPress={() => go(item.paragraphIndex)}>
-            <Text style={[styles.index, { color: theme.secondaryText }]}>{index + 1}</Text>
-            <Text style={[styles.name, { color: theme.primaryText }]} numberOfLines={2}>
-              {item.title}
-            </Text>
-            <Icon name="chevron-forward" size={18} color={theme.secondaryText} />
-          </TouchableOpacity>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingHorizontal: neuShadowPad(), paddingBottom: a.tabBarH + a.pad * 2 + a.gap }}
+      >
+        {sections.length === 0 ? (
+          <Text style={{ color: theme.secondaryText }}>{t('No sections.')}</Text>
+        ) : (
+          sections.map((item, index) => (
+            <TouchableOpacity key={String(index)} style={[styles.row, metal(theme, 'raised', { radius: a.radius }), { borderBottomWidth: 0, backgroundColor: index === currentSectionIdx ? theme.selected : theme.neu.base }]} onPress={() => go(item.paragraphIndex)}>
+              <Text style={[styles.index, { color: theme.secondaryText }]}>{index + 1}</Text>
+              <Text style={[styles.name, { color: theme.primaryText }]} numberOfLines={2}>
+                {item.title}
+              </Text>
+              <Icon name="chevron-forward" size={18} color={theme.secondaryText} />
+            </TouchableOpacity>
+          ))
         )}
-      />
-    </View>
+      </ScrollView>
+    </Screen>
   );
 }
 
 function makeStyles(a: ReturnType<typeof useAdaptive>) {
   return StyleSheet.create({
-    container: { flex: 1, padding: a.pad, paddingTop: a.pad + Math.round(Math.max(34, 40 * a.scale)) + a.gap, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
-    title: { fontSize: a.title, fontFamily: FONTS.bold, marginBottom: 12, paddingLeft: a.icon(40) },
+    title: { fontSize: a.title, fontFamily: FONTS.bold, marginBottom: 12, paddingLeft: a.fab() },
     row: { flexDirection: 'row', alignItems: 'center', paddingVertical: a.tiny ? 10 : 14, borderBottomWidth: 0.5, gap: 12, minHeight: a.hit },
     index: { fontSize: a.fs(14), width: a.icon(24) },
     name: { flex: 1, fontSize: a.body },

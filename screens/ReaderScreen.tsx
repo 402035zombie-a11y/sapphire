@@ -4,6 +4,8 @@
 // - 2 колонки на широких экранах
 // - хедер: назад/языковой селектор/бургер-меню
 // - ▶ озвучка абзаца (Web Speech API на web)
+import ModalSheet from '../components/ModalSheet';
+import Screen from '../components/Screen';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
@@ -13,20 +15,18 @@ import {
   useWindowDimensions,
   ActivityIndicator,
   TouchableOpacity,
-  Modal,
   Platform,
   ScrollView,
   TextInput,
   Alert,
 } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 import Icon from '../components/Icon';
 import LanguageDropdown from '../components/LanguageDropdown';
-import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useT } from '../i18n';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuRaised, neuInset, neuPrimary, neuCircle } from '../theme/neu';
+import { metal } from '../theme/neu';
 import { SIZES, FONTS } from '../theme/constants';
 import { useLibraryStore } from '../store/libraryStore';
 import { useSettingsStore } from '../store/settingsStore';
@@ -41,6 +41,8 @@ import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
 import Marquee from '../components/Marquee';
 import BackFab from '../components/BackFab';
+import AppSettingsModal from '../components/AppSettingsModal';
+import FontSettingsSheet from '../components/FontSettingsSheet';
 
 interface RouteParams {
   bookId: string;
@@ -74,16 +76,18 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   const [loadingSet, setLoadingSet] = useState<Set<number>>(new Set());
   const [langOpen, setLangOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [fontOpen, setFontOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const scrollRef = useRef<any>(null);
   const setBookTargetLang = useLibraryStore((s) => s.setBookTargetLang);
-  const bottomSheetRef = useRef<any>(null);
   const [selected, setSelected] = useState<{ word: string; sentence: string } | null>(null);
   const [supportOpen, setSupportOpen] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [paused, setPaused] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const cancelledRef = useRef(false);
   const [action, setAction] = useState<{ word: string; sentence: string } | null>(null);
 
   const addToDictionary = useCallback(
@@ -104,9 +108,8 @@ export default function ReaderScreen({ route }: { route: any }) {
         return;
       }
       setSelected({ word, sentence });
-      if (!isWeb) bottomSheetRef.current?.present();
     },
-    [isWeb, mode],
+    [mode],
   );
 
   const speakFrom = useCallback(
@@ -116,6 +119,11 @@ export default function ReaderScreen({ route }: { route: any }) {
       let i = start;
       const lang = book.language === 'auto' ? 'en' : book.language;
       const step = () => {
+        if (cancelledRef.current) {
+          setIsSpeaking(false);
+          setPaused(true);
+          return;
+        }
         if (i >= paras.length) {
           setIsSpeaking(false);
           setPaused(false);
@@ -125,6 +133,11 @@ export default function ReaderScreen({ route }: { route: any }) {
         const u = new SpeechSynthesisUtterance(paras[i].original);
         u.lang = lang;
         u.onend = () => {
+          if (cancelledRef.current) {
+            setIsSpeaking(false);
+            setPaused(true);
+            return;
+          }
           i += 1;
           setCurrentIndex(i);
           step();
@@ -133,6 +146,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(u);
       };
+      cancelledRef.current = false;
       setIsSpeaking(true);
       setPaused(false);
       step();
@@ -152,6 +166,7 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   const pauseBook = useCallback(() => {
     if (!isWeb || !('speechSynthesis' in window)) return;
+    cancelledRef.current = true;
     window.speechSynthesis.cancel();
     setIsSpeaking(false);
     setPaused(true);
@@ -159,6 +174,7 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   const stopBook = useCallback(() => {
     if (!isWeb || !('speechSynthesis' in window)) return;
+    cancelledRef.current = true;
     window.speechSynthesis.cancel();
     setIsSpeaking(false);
     setPaused(false);
@@ -363,17 +379,6 @@ export default function ReaderScreen({ route }: { route: any }) {
   );
 
   const langForSheet = book?.language && book.language !== 'auto' ? book.language : 'en';
-  const selectedSentence = selected?.sentence ?? '';
-  const wordSheet = selected ? (
-    <WordBottomSheet
-      word={selected.word}
-      sentence={selectedSentence}
-      lang={langForSheet}
-      targetLang={book?.targetLang ?? settingsTarget}
-      bookId={book?.id ?? bookId}
-      onClose={() => (isWeb ? setSelected(null) : bottomSheetRef.current?.dismiss())}
-    />
-  ) : null;
 
   if (!book) {
     return (
@@ -532,7 +537,7 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   // Индикатор нумерации страниц (только в постраничном режиме)
   const pageIndicator = paginated && pages.length > 0 ? (
-    <View style={[styles.pageIndicator, neuRaised(theme, 12)]}>
+    <View style={[styles.pageIndicator, metal(theme, 'raised', { radius: 12 })]}>
       <Text style={[styles.pageIndicatorText, { color: theme.primaryText }]}>
         {t("Page {n} of {m}").replace(/\{n\}/g, String(Math.min(pageIndex + 1, pages.length))).replace(/\{m\}/g, String(pages.length))}
       </Text>
@@ -540,24 +545,24 @@ export default function ReaderScreen({ route }: { route: any }) {
   ) : null;
 
   const header = (
-    <View style={[styles.header, neuRaised(theme, a.radius)]}>
-      <View style={[styles.headerRow, { paddingLeft: a.pad + a.icon(40), paddingRight: a.pad, paddingTop: a.small ? 4 : 6, paddingBottom: a.small ? 4 : 6, maxHeight: a.small ? 56 : 68 }]}>
+    <View style={[styles.header, metal(theme, 'raised', { radius: a.radius })]}>
+      <View style={[styles.headerRow, { paddingLeft: a.pad + a.fab(), paddingRight: a.pad, paddingTop: a.small ? 4 : 6, paddingBottom: a.small ? 4 : 6, maxHeight: a.small ? 56 : 68 }]}>
         <View style={styles.titleGroup}>
           <Marquee text={book.title} textStyle={[styles.title, { color: theme.primaryText }]} />
         </View>
-        {(mode === 'read' || mode === 'dual') && (
+        {(mode === 'read') && (
           <View style={styles.centerPlay}>
             {isSpeaking ? (
               <React.Fragment>
-                <TouchableOpacity onPress={pauseBook} hitSlop={10} style={styles.playBtn}>
+                <TouchableOpacity onPress={pauseBook} hitSlop={10} style={[metal(theme, 'inset', { radius: a.fab()/2 }), { width: a.fab(), height: a.fab(), borderRadius: a.fab()/2, padding: 0 }]}>
                   <Icon name="pause" size={a.dim(0.034, 18, 28)} color={theme.primary} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={stopBook} hitSlop={10} style={styles.playBtn}>
+                <TouchableOpacity onPress={stopBook} hitSlop={10} style={[metal(theme, 'inset', { radius: a.fab()/2 }), { width: a.fab(), height: a.fab(), borderRadius: a.fab()/2, padding: 0 }]}>
                   <Icon name="close" size={a.dim(0.034, 18, 28)} color={theme.primary} />
                 </TouchableOpacity>
               </React.Fragment>
             ) : (
-              <TouchableOpacity onPress={playBook} hitSlop={10} style={styles.playBtn}>
+              <TouchableOpacity onPress={playBook} hitSlop={10} style={[metal(theme, 'inset', { radius: a.fab()/2 }), { width: a.fab(), height: a.fab(), borderRadius: a.fab()/2, padding: 0 }]}>
                 <Icon name="volume" size={a.dim(0.036, 20, 30)} color={theme.primary} />
               </TouchableOpacity>
             )}
@@ -565,21 +570,19 @@ export default function ReaderScreen({ route }: { route: any }) {
         )}
         <View style={[styles.headerRight, { position: 'relative' }]}>
           <TouchableOpacity
-            onPress={() => setLangOpen((v) => !v)}
+            onPress={() => setFontOpen(true)}
             hitSlop={8}
-            style={[neuCircle(theme, Math.round(Math.max(34, Math.min(48, 44 * a.scale)))), { padding: 0 }]}
+            style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}
           >
-            <Icon name="settings" size={a.dim(0.03, 16, 24)} color={theme.primaryText} />
+            <Icon name="options" size={a.dim(0.03, 16, 24)} color={theme.primaryText} />
           </TouchableOpacity>
-          {langOpen && (
-            <View style={styles.langDropdown}>
-              <LanguageDropdown
-                value={targetLang}
-                onSelect={(c) => { setBookTargetLang(book.id, c); setLangOpen(false); }}
-                onClose={() => setLangOpen(false)}
-              />
-            </View>
-          )}
+          <TouchableOpacity
+            onPress={() => setSupportOpen(true)}
+            hitSlop={8}
+            style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}
+          >
+            <Icon name="heart" size={a.dim(0.03, 16, 24)} color={theme.primaryText} />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -589,12 +592,11 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   // Модалка поиска по книге
   const searchModal = (
-    <Modal visible={searchOpen} transparent animationType="fade" onRequestClose={() => setSearchOpen(false)}>
-      <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setSearchOpen(false)}>
-        <View style={[styles.menuCard, neuInset(theme, a.radius + 4)]}>
+    <ModalSheet visible={searchOpen} onClose={() => setSearchOpen(false)} panelStyle={{ backgroundColor: theme.readerBg }}>
+      <View style={[styles.menuCard, { width: '100%', maxWidth: Math.min(a.width - 24, 520) }]}>
           <Text style={[styles.menuTitle, { color: theme.primaryText }]}>{t("Search in book")}</Text>
           <TextInput
-            style={[styles.searchInput, neuInset(theme, 10)]}
+            style={[styles.searchInput, metal(theme, 'inset', { radius: 10 })]}
             value={query}
             onChangeText={setQuery}
             placeholder={t("enter a word or phrase")}
@@ -602,7 +604,7 @@ export default function ReaderScreen({ route }: { route: any }) {
             autoFocus
           />
           <TouchableOpacity
-            style={[styles.searchClear, neuPrimary(theme, 10)]}
+            style={[styles.searchClear, metal(theme, 'primary', { size: 10 })]}
             onPress={() => {
               setQuery('');
               setSearchOpen(false);
@@ -611,122 +613,76 @@ export default function ReaderScreen({ route }: { route: any }) {
             <Text style={{ color: theme.primary }}>{t("Close")}</Text>
           </TouchableOpacity>
         </View>
-      </TouchableOpacity>
-    </Modal>
+      </ModalSheet>
   );
 
   // menuItems/menu (бургер) удалены — язык теперь в dropdown шестеренки.
-
-  // Web: Modal с бэкдропом (клик вне попапа = закрытие, скролл под попапом заблокирован).
-  if (isWeb) {
-    const wordSheetModal = selected ? (
-      <View style={styles.backdrop} onStartShouldSetResponder={() => true} onResponderRelease={() => setSelected(null)}>
-        <View style={styles.sheetWrap} onStartShouldSetResponder={() => true}>
-          <View style={styles.sheetCapture} onStartShouldSetResponder={() => true}>
-            {wordSheet}
-          </View>
-        </View>
-      </View>
-    ) : null;
-
-    const wordActionModal = action ? (
-      <WordActionSheet
-        visible={!!action}
-        word={action.word}
-        sentence={action.sentence}
-        onSpeakFromHere={(s) => speak(s)}
-        onAddToDictionary={(w, s) => addToDictionary(w, s)}
-        onClose={() => setAction(null)}
-      />
-    ) : null;
-
-    const content = isPdf ? (
-      <View style={{ flex: 1, backgroundColor: theme.readerBg }}>
-        {Platform.OS === 'web' ? (
-          <iframe
-            src={book.pdfUri}
-            style={{ width: '100%', height: '100%', borderWidth: 0 }}
-            title={book.title}
-          />
-        ) : (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-            <Text style={{ color: theme.readerText }}>
-              {t("PDF viewing is available only in the web version. On a device, open the file with an external app.")}
-            </Text>
-          </View>
-        )}
-      </View>
-    ) : (
-      list
-    );
-
-    return (
-      <View style={[styles.container, { backgroundColor: theme.readerBg }]}>
-        <BackFab onPress={() => navigation.goBack()} />
-        {header}
-        {content}
-        {pageIndicator}
-        {searchModal}
-        {wordSheetModal}
-        {wordActionModal}
-        <SupportAuthorModal
-          visible={supportOpen}
-          onSupport={onSupportConfirm}
-          onDonate={onDonate}
-          onDismiss={() => setSupportOpen(false)}
+  const content = isPdf ? (
+    <View style={{ flex: 1, backgroundColor: theme.readerBg }}>
+      {Platform.OS === 'web' ? (
+        <iframe
+          src={book.pdfUri}
+          style={{ width: '100%', height: '100%', borderWidth: 0 }}
+          title={book.title}
         />
-        <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
-          <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  const { BottomSheetModal } = require('@gorhom/bottom-sheet');
-  const { BottomSheetModalProvider } = require('@gorhom/bottom-sheet');
-  const { BottomSheetBackdrop } = require('@gorhom/bottom-sheet');
+      ) : (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <Text style={{ color: theme.readerText }}>
+            {t("PDF viewing is available only in the web version. On a device, open the file with an external app.")}
+          </Text>
+        </View>
+      )}
+    </View>
+  ) : (
+    list
+  );
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <View style={[styles.container, { backgroundColor: theme.readerBg }]}>
-          <BackFab onPress={() => navigation.goBack()} />
-          {header}
-          {isPdf ? <View style={{ flex: 1 }} /> : list}
-        </View>
-        <BottomSheetModal
-          ref={bottomSheetRef}
-          index={0}
-          snapPoints={['50%']}
-          backdropComponent={(props: any) => (
-            <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
-          )}
-          onDismiss={() => setSelected(null)}
-        >
-          {wordSheet}
-        </BottomSheetModal>
-        {searchModal}
-        <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
-          <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
-        </TouchableOpacity>
-        <SupportAuthorModal
-          visible={supportOpen}
-          onSupport={onSupportConfirm}
-          onDonate={onDonate}
-          onDismiss={() => setSupportOpen(false)}
+    <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, padding: a.pad }}>
+      <BackFab onPress={() => navigation.goBack()} />
+      {header}
+      {content}
+      {pageIndicator}
+      {searchModal}
+      {selected && (
+        <WordBottomSheet
+          word={selected.word}
+          sentence={selected.sentence}
+          lang={langForSheet}
+          targetLang={book?.targetLang ?? settingsTarget}
+          bookId={book?.id ?? bookId}
+          onClose={() => setSelected(null)}
         />
-        <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
-          <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
-        </TouchableOpacity>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+      )}
+      {action && (
+        <WordActionSheet
+          visible={!!action}
+          word={action.word}
+          sentence={action.sentence}
+          onSpeakFromHere={(s) => speak(s)}
+          onAddToDictionary={(w, s) => addToDictionary(w, s)}
+          onClose={() => setAction(null)}
+        />
+      )}
+      <AppSettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <FontSettingsSheet visible={fontOpen} mode={mode} onClose={() => setFontOpen(false)} />
+      <SupportAuthorModal
+        visible={supportOpen}
+        onSupport={onSupportConfirm}
+        onDonate={onDonate}
+        onDismiss={() => setSupportOpen(false)}
+      />
+      <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
+        <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
+      </TouchableOpacity>
+    </Screen>
   );
 }
 
 function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof useTheme>) {
-  const playSz = Math.round(Math.max(34, Math.min(48, 44 * a.scale)));
-  const neuBtn = neuCircle(theme, playSz);
-  const neuUp = neuCircle(theme, Math.round(Math.max(34, Math.min(48, 44 * a.scale))));
+  const playSz = a.fab();
+  const neuBtn = metal(theme, 'circle', { size: playSz });
+  const neuUp = metal(theme, 'circle', { size: a.fab() });
   return StyleSheet.create({
     container: { flex: 1, position: 'relative', userSelect: 'none' },
     header: {
@@ -738,7 +694,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       maxHeight: a.landscape ? 64 : 96,
       borderRadius: 0,
     },
-    headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 4 : 8 },
+    headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 4 : 8, position: 'relative', zIndex: 10 },
     // Название занимает всю свободную ширину: подпись экрана убрана, выравнивание по левому краю.
     titleGroup: {
       flex: 1,
@@ -754,7 +710,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     centerPlay: { flexShrink: 0, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: a.tiny ? 2 : 6 },
     playBtn: { ...neuBtn, borderRadius: playSz / 2 },
     title: { fontSize: a.h2, fontFamily: FONTS.bold },
-    langChip: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, ...neuInset(theme, 12) },
+    langChip: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, ...metal(theme, 'inset', { radius: 12 }) },
     langChipText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     // Колонка текста ограничена по ширине на больших мониторах — иначе строки нечитаемо длинные.
     list: { paddingVertical: 12, paddingBottom: 40, width: '100%', maxWidth: a.readerMaxW, alignSelf: 'center' },
@@ -782,7 +738,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       right: Math.max(12, a.pad),
       bottom: Math.max(12, a.pad),
       ...neuUp,
-      borderRadius: Math.round(Math.max(34, Math.min(48, 44 * a.scale))) / 2,
+      borderRadius: a.fab() / 2,
     },
     upFabText: { fontSize: a.fs(22), fontFamily: FONTS.bold, color: theme.primaryText },
     pageIndicator: {
@@ -795,14 +751,5 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       opacity: 0.9,
     },
     pageIndicatorText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
-    backdrop: {
-      position: 'absolute',
-      top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: '#00000066',
-      justifyContent: 'flex-start',
-      zIndex: 60,
-    },
-    sheetWrap: { width: '100%', maxWidth: a.isDesktop ? 640 : undefined, alignSelf: 'center' },
-    sheetCapture: { width: '100%' },
   });
 }

@@ -10,8 +10,9 @@ import { translateCached } from '../services/translationService';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
 import Icon from '../components/Icon';
-import { neuRaised, neuPrimary, neuCircle } from '../theme/neu';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import { useT } from '../i18n';
+import ModalSheet from './ModalSheet';
 
 interface Props {
   word: string | null;
@@ -118,36 +119,32 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
   if (!word) return null;
 
   return (
-    <View
-      style={[
-        neuRaised(theme, a.radius + 4),
-        {
-          backgroundColor: theme.popupBg,
-          padding: a.pad,
-          gap: Math.round(a.gap * 0.8),
-          width: '100%',
-          maxWidth: a.isDesktop ? 640 : undefined,
-          alignSelf: 'center',
-          maxHeight: a.height * (a.landscape ? 0.92 : 0.85),
-          borderTopLeftRadius: a.radius + 4,
-          borderTopRightRadius: a.radius + 4,
-        },
-      ]}
+    <ModalSheet
+      visible={true}
+      onClose={onClose}
+      variant="sheet"
+      panelStyle={{
+        backgroundColor: theme.popupBg ?? theme.neu.base,
+        padding: a.pad,
+        gap: Math.round(a.gap * 0.8),
+        maxWidth: a.isDesktop ? 640 : undefined,
+      }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
-          <Text style={{ fontSize: a.fs(26), fontFamily: 'bold', color: theme.primaryText }}>{word}</Text>
-          {phonetic ? <Text style={{ fontSize: a.body, color: theme.secondaryText }}>[{phonetic}]</Text> : null}
+      <View style={{ width: '100%' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
+            <Text style={{ fontSize: a.fs(26), fontFamily: 'bold', color: theme.primaryText }}>{word}</Text>
+            {phonetic ? <Text style={{ fontSize: a.body, color: theme.secondaryText }}> [{phonetic}]</Text> : null}
+          </View>
+          <TouchableOpacity style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]} onPress={onClose} hitSlop={12}>
+            <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]} onPress={onClose} hitSlop={12}>
-          <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
-        </TouchableOpacity>
-      </View>
 
-      {loading ? (
-        <ActivityIndicator color={theme.secondaryText} style={{ marginVertical: 12 }} />
-      ) : (
-        <ScrollView style={{ maxHeight: a.height * (a.landscape ? 0.5 : 0.48) }} showsVerticalScrollIndicator={false}>
+        {loading ? (
+          <ActivityIndicator color={theme.secondaryText} style={{ marginVertical: 12 }} />
+        ) : (
+          <ScrollView style={{ maxHeight: a.height * (a.landscape ? 0.5 : 0.48) }} showsVerticalScrollIndicator={false}>
           {meanings.map((m, i) => (
             <View key={i} style={{ marginBottom: 10 }}>
               <Text style={{ fontSize: a.body, fontFamily: 'bold', marginBottom: 4, color: theme.posColor }}>{m.partOfSpeech}</Text>
@@ -179,23 +176,23 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
       )}
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingVertical: a.tiny ? 4 : 8, gap: 8 }}>
-        <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]} onPress={onSave}>
+        <TouchableOpacity style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]} onPress={onSave}>
           <Icon name="star" size={a.icon(22)} color={theme.primaryText} />
         </TouchableOpacity>
-        <View style={[neuCircle(theme, a.icon(40)), { padding: 0 }]}>
+        <View style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
           <Icon name="language" size={a.icon(22)} color={theme.primaryText} />
         </View>
-        <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]}>
+        <TouchableOpacity style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
           <Icon name="volume" size={a.icon(22)} color={theme.primaryText} />
         </TouchableOpacity>
-        <TouchableOpacity style={[neuCircle(theme, a.icon(40)), { padding: 0 }]}>
+        <TouchableOpacity style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
           <Icon name="copy" size={a.icon(22)} color={theme.primaryText} />
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity
         style={[
-          saved || hasWord(normalizeWord(word)) ? neuRaised(theme, a.radius) : neuPrimary(theme, a.radius),
+          saved || hasWord(normalizeWord(word)) ? metal(theme, 'raised', { radius: a.radius }) : metal(theme, 'primary', { size: a.radius }),
           saved || hasWord(normalizeWord(word)) ? { backgroundColor: theme.success } : {},
           {
             paddingVertical: Math.max(10, Math.round(14 * a.scale)),
@@ -209,5 +206,6 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
         <Text style={{ color: '#fff', fontFamily: 'bold', fontSize: a.body }}>{saved ? t("In dictionary ✓") : t("Save to dictionary")}</Text>
       </TouchableOpacity>
     </View>
+    </ModalSheet>
   );
 }
