@@ -31,3 +31,11 @@ ios/
 # local artifacts
 expo_qr.png
 expo-go.apk
+node_modules/
+.expo/
+dist/
+web-build/
+test-results/
+*.tmp.js
+verify_*.js
+diag_*.js
