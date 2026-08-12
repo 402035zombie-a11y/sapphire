@@ -4,7 +4,7 @@
 // Поля ввода с +/− по бокам вместо ползунков (по требованию).
 import ModalSheet from '../components/ModalSheet';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch, Modal, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView } from 'react-native';
 import { useAdaptive, Adaptive } from '../theme/useAdaptive';
 import { useTheme } from '../theme/ThemeContext';
 import { useSettingsStore } from '../store/settingsStore';
@@ -87,16 +87,14 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
   if (!visible) return null;
 
   return (
-    <ModalSheet visible={visible} onClose={onClose}>
-      <View style={[styles.backdrop, a.landscape && { paddingRight: 0 }]}>
-        <View style={[styles.card]}>
-          <View style={styles.head}>
-            <Text style={[styles.title, { color: theme.primaryText }]}>{t("Reading view")}</Text>
-          </View>
+    <ModalSheet visible={visible} onClose={onClose} panelStyle={[styles.card, a.landscape && { paddingRight: 0 }]}>
+      <View style={{ width: '100%' }}>
+        <View style={styles.head}>
+          <Text style={[styles.title, { color: theme.primaryText }]}>{t("Reading view")}</Text>
           <TouchableOpacity
             onPress={onClose}
             hitSlop={10}
-            style={[metal(theme, 'circle', { size: a.fab() }), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
+            style={[metal(theme, 'stamp', { size: a.fab() }), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
           >
             <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
           </TouchableOpacity>

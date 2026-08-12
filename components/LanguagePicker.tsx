@@ -43,7 +43,7 @@ export default function LanguagePicker({ visible, value, onSelect, onClose, allo
       <View style={{ width: '100%', maxWidth: 360, alignSelf: 'center', maxHeight: Math.round(winH * 0.7) }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.gap }}>
           <Text style={{ fontSize: a.h2, fontFamily: 'System', fontWeight: '700', color: theme.primaryText }}>{t('Choose language')}</Text>
-          <TouchableOpacity onPress={onClose} hitSlop={12} style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}>
+          <TouchableOpacity onPress={onClose} hitSlop={12} style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
             <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
           </TouchableOpacity>
         </View>

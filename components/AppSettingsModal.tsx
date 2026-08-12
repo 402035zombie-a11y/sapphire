@@ -67,7 +67,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
           <TouchableOpacity
             onPress={onClose}
             hitSlop={10}
-            style={[metal(theme, 'circle', { size: a.fab() }), { position: 'absolute', top: m.padding, right: m.padding, zIndex: 20, padding: 0 }]}
+            style={[metal(theme, 'stamp', { size: a.fab() }), { position: 'absolute', top: m.padding, right: m.padding, zIndex: 20, padding: 0 }]}
           >
             <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
           </TouchableOpacity>
@@ -115,7 +115,10 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
             </TouchableOpacity>
 
             <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8 }}>{t('Data')}</Text>
-            <TouchableOpacity style={[metal(theme, 'primary', { size: a.radius }), { paddingVertical: a.tiny ? 10 : 14, alignItems: 'center' }]} onPress={exportData}>
+            <TouchableOpacity
+              style={[{ backgroundColor: theme.primary, borderRadius: a.radius, paddingVertical: a.tiny ? 10 : 14, alignItems: 'center', width: '100%' }]}
+              onPress={exportData}
+            >
               <Text style={{ color: '#fff', fontSize: a.body, fontFamily: FONTS.bold }}>{t('Export backup (JSON)')}</Text>
             </TouchableOpacity>
           </ScrollView>
