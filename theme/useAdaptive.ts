@@ -32,6 +32,7 @@ export interface Adaptive {
   showTabLabel: boolean;
   hit: number;
   icon: (base?: number) => number;
+  fab: () => number;
   dim: (basePct: number, min: number, max: number) => number;
   fs: (base: number) => number;
   title: number;
@@ -143,13 +144,16 @@ export function useAdaptive(): Adaptive {
     // Боковая шторка (FontSettingsSheet): на телефоне почти весь экран, на десктопе фикс.
     const sheetW: number | string = width < BP_SM ? '92%' : width < BP_LG ? '70%' : 420;
 
+    // Единый стандарт диаметра круглых кнопок (FAB/хедер/иконки): убирает дрифт 36/40/44px.
+    const fab = () => Math.round(clamp(40 * scale, 34, 44));
+
     return {
       width, height, minSide, scale, bp, landscape, small, tiny, isTablet, isDesktop,
       pad, gap, radius, headerH, tabBarH,
       tabFs: labelFs,
       showTabLabel,
       hit: Math.round(clamp(44 * scale, 36, 48)),
-      icon, dim, fs,
+      icon, dim, fs, fab,
       title: fs(20), h2: fs(17), body: fs(15), small_fs: fs(13), big: fs(44),
       contentMaxW, readerMaxW, columns, modal, sheetW,
     };

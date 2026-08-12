@@ -1,10 +1,11 @@
 // App.tsx — точка входа: провайдеры темы + навигатор
 import React from 'react';
 import { View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemeProvider } from './theme/ThemeContext';
+import { ThemeProvider, useTheme } from './theme/ThemeContext';
 import AppNavigator from './navigation/AppNavigator';
-import { COLORS } from './theme/constants';
+import { screenBg } from './theme/neu';
 import { initAds } from './services/monetization';
 
 // Инициализируем рекламный SDK при старте (натив только; на web — no-op).
@@ -34,16 +35,34 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { err
   }
 }
 
+// Корень внутри ThemeProvider: градиентный фон на ВЕСЬ viewport (включая поля
+// по бокам на широких экранах), чтобы screenBg не обрывался на коротком контенте.
+// Градиент ставим на document.body (он = 100% viewport), т.к. RN-root на web может
+// быть transparent и пропускать плоский фон body на oversize-экранах.
+function Root() {
+  const theme = useTheme();
+  React.useEffect(() => {
+    const g = `linear-gradient(160deg, ${theme.bgTop} 0%, ${theme.background} 45%, ${theme.bgBot} 100%)`;
+    document.body.style.backgroundImage = g;
+    document.body.style.backgroundColor = theme.bgBot;
+  }, [theme.bgTop, theme.background, theme.bgBot]);
+  return (
+    <View style={{ flex: 1, ...screenBg(theme) }}>
+      <AppNavigator />
+    </View>
+  );
+}
+
 export default function App() {
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.darkBackground }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
           <ErrorBoundary>
-            <AppNavigator />
+            <Root />
           </ErrorBoundary>
         </ThemeProvider>
       </SafeAreaProvider>
-    </View>
+    </GestureHandlerRootView>
   );
 }

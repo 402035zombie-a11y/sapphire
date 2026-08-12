@@ -4,7 +4,7 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuInset, neuRaised } from '../theme/neu';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 
 export default function Toggle({ value, onValueChange }: { value: boolean; onValueChange: (v: boolean) => void }) {
   const theme = useTheme();
@@ -19,7 +19,7 @@ export default function Toggle({ value, onValueChange }: { value: boolean; onVal
       onPress={() => onValueChange(!value)}
       hitSlop={8}
       style={[
-        neuInset(theme, h / 2),
+        metal(theme, 'inset', { radius: h / 2 }),
         {
           width: w,
           height: h,
@@ -30,7 +30,7 @@ export default function Toggle({ value, onValueChange }: { value: boolean; onVal
     >
       <View
         style={[
-          neuRaised(theme, thumb / 2),
+          metal(theme, 'raised', { radius: thumb / 2 }),
           {
             width: thumb,
             height: thumb,

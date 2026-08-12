@@ -2,6 +2,7 @@
 // Попап настроек шрифта ридера: размер, интерлиньяж, отступ от края, выравнивание.
 // Читает/пишет reader-секцию settingsStore.
 // Поля ввода с +/− по бокам вместо ползунков (по требованию).
+import ModalSheet from '../components/ModalSheet';
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch, Modal, ScrollView } from 'react-native';
 import { useAdaptive, Adaptive } from '../theme/useAdaptive';
@@ -10,9 +11,10 @@ import { useSettingsStore } from '../store/settingsStore';
 import { ThemeMode } from '../theme/themes';
 import Icon from '../components/Icon';
 import { FONTS } from '../theme/constants';
-import { neuInset, neuRaised, neuCircle } from '../theme/neu';
+import { neuInset, neuRaised, neuCircle , metal } from '../theme/neu';
 import { useT } from '../i18n';
-import { langName } from '../utils/languages';
+import { langName, translatableLangs } from '../utils/languages';
+import LanguagePicker from './LanguagePicker';
 
 interface Props {
   visible: boolean;
@@ -80,13 +82,13 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
   const setTheme = useSettingsStore((s) => s.setTheme);
   const targetLang = useSettingsStore((s) => s.targetLang);
   const setTargetLang = useSettingsStore((s) => s.setTargetLang);
+  const [langPicker, setLangPicker] = React.useState(false);
 
   if (!visible) return null;
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <ModalSheet visible={visible} onClose={onClose}>
       <View style={[styles.backdrop, a.landscape && { paddingRight: 0 }]}>
-        <TouchableOpacity style={styles.capture} activeOpacity={1} onPress={onClose} />
         <View style={[styles.card]}>
           <View style={styles.head}>
             <Text style={[styles.title, { color: theme.primaryText }]}>{t("Reading view")}</Text>
@@ -94,7 +96,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
           <TouchableOpacity
             onPress={onClose}
             hitSlop={10}
-            style={[neuCircle(theme, a.icon(36)), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
+            style={[metal(theme, 'circle', { size: a.fab() }), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
           >
             <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
           </TouchableOpacity>
@@ -122,7 +124,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={f.id}
-                    style={[styles.chip, active && { ...neuInset(theme, 8), backgroundColor: theme.primary }]}
+                    style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
                     onPress={() => setReader({ fontFamily: f.id })}
                   >
                     <Text style={[styles.chipText, { color: active ? '#fff' : theme.primaryText }]}>{t(f.label)}</Text>
@@ -149,7 +151,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={al.id}
-                    style={[styles.chip, active && { ...neuInset(theme, 8), backgroundColor: theme.primary }]}
+                    style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
                     onPress={() => setReader({ textAlign: al.id as any })}
                   >
                     <Text style={[styles.chipText, { color: active ? '#fff' : theme.primaryText }]}>{t(al.label)}</Text>
@@ -172,7 +174,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={p.id}
-                    style={[styles.chip, active && { ...neuInset(theme, 8), backgroundColor: theme.primary }]}
+                    style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
                     onPress={() => setReader({ pageFlip: p.id as any })}
                   >
                     <Text style={[styles.chipText, { color: active ? '#fff' : theme.primaryText }]}>{t(p.label)}</Text>
@@ -232,7 +234,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={th.id}
-                    style={[styles.chip, active && { ...neuInset(theme, 8), backgroundColor: theme.primary }]}
+                    style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
                     onPress={() => setTheme(th.id)}
                   >
                     <Text style={[styles.chipText, { color: active ? '#fff' : theme.primaryText }]}>{t(th.label)}</Text>
@@ -244,14 +246,30 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
 
           {mode === 'dual' && (
             <View style={styles.sectionLabelWrap}>
-              <Text style={[styles.sectionLabel, { color: theme.secondaryText }]}>{t('Translation')}</Text>
-              <Text style={[styles.sectionLabel, { color: theme.secondaryText, fontSize: a.small_fs }]}>{langName(targetLang)}</Text>
+              <Text style={[styles.sectionLabel, { color: theme.secondaryText }]}>{t('Translation language')}</Text>
+              <TouchableOpacity
+                style={[{ borderWidth: 1, borderColor: theme.border, backgroundColor: theme.surface, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: a.tiny ? 9 : 12, paddingHorizontal: 14, minHeight: a.hit, marginTop: 4, borderRadius: a.radius }]}
+                onPress={() => setLangPicker(true)}
+              >
+                <Text style={{ fontSize: a.body, color: theme.primaryText }}>
+                  {translatableLangs().find((l) => l.code === targetLang)?.name ?? langName(targetLang)}
+                </Text>
+                <Text style={{ color: theme.secondaryText }}>▾</Text>
+              </TouchableOpacity>
             </View>
           )}
+          <LanguagePicker
+            visible={langPicker}
+            value={targetLang}
+            allowAuto={false}
+            exclude={['ru']}
+            onSelect={(code) => setTargetLang(code)}
+            onClose={() => setLangPicker(false)}
+          />
           </ScrollView>
         </View>
       </View>
-    </Modal>
+    </ModalSheet>
   );
 }
 
@@ -267,7 +285,6 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
     },
     capture: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: '#00000066' },
     card: {
-      ...neuRaised(theme, a.width < 480 ? a.radius : 0),
       width: sheetWidth,
       maxWidth: Math.min(a.width - 16, 460),
       maxHeight: a.height * (a.landscape ? 0.94 : 0.88),
@@ -295,7 +312,7 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
       paddingHorizontal: 4,
       minHeight: a.tiny ? 34 : 40,
     },
-    stepBtn: { ...neuCircle(theme, a.tiny ? 30 : 36), paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 10 : 14 },
+    stepBtn: { ...metal(theme, 'circle', { size: a.tiny ? 30 : 36 }), paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 10 : 14 },
     stepSign: { fontSize: a.fs(20), fontFamily: FONTS.bold },
     stepperVal: { fontSize: a.body, fontFamily: FONTS.bold },
     toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 2, gap: 8 },
@@ -304,7 +321,7 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
     sectionLabel: { fontSize: a.fs(12), fontFamily: FONTS.bold },
     chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
     chip: {
-      ...neuRaised(theme, 8),
+      ...metal(theme, 'raised', { radius: 8 }),
       paddingVertical: a.tiny ? 5 : 7,
       paddingHorizontal: a.tiny ? 9 : 12,
       borderRadius: 8,

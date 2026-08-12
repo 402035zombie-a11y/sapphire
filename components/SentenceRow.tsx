@@ -9,7 +9,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuCircle } from '../theme/neu';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 
 interface Props {
   index: number;
@@ -120,13 +120,13 @@ export default function SentenceRow({
         <View style={styles.controls}>
           {/* ▶ озвучка */}
           {showSpeak && (
-            <TouchableOpacity style={[neuCircle(theme, a.icon(30)), { padding: 0 }]} onPress={() => onSpeak(original)} hitSlop={8}>
+            <TouchableOpacity style={[metal(theme, 'circle', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onSpeak(original)} hitSlop={8}>
               <Text style={[styles.playIcon, { color: theme.primary }]}>▶</Text>
             </TouchableOpacity>
           )}
           {/* Перевести — по нажатию переводим этот абзац сразу */}
           {onTranslate && !translation && showTranslate && (
-            <TouchableOpacity style={[neuCircle(theme, a.icon(30)), { padding: 0 }]} onPress={onTranslate} hitSlop={8}>
+            <TouchableOpacity style={[metal(theme, 'circle', { size: a.icon(30) }), { padding: 0 }]} onPress={onTranslate} hitSlop={8}>
               <Text style={[styles.translateIcon, { color: theme.primary }]}>⇄</Text>
             </TouchableOpacity>
           )}

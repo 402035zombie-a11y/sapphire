@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuInset, neuRaised, neuCircle } from '../theme/neu';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import { TrainingProgress } from '../store/trainingStore';
 import { useT } from '../i18n';
 
@@ -60,9 +60,9 @@ export default function QuizCard({ item, onAnswer, onNext, progress, resetKey }:
   const box = progress?.box ?? 1;
 
   return (
-    <View style={[styles.card, neuInset(theme, a.radius)]}>
+    <View style={[styles.card, metal(theme, 'inset', { radius: a.radius })]}>
       <View style={styles.wordRow}>
-        <View style={[styles.boxBadge, neuInset(theme, 8)]}>
+        <View style={[styles.boxBadge, metal(theme, 'inset', { radius: 8 })]}>
           <Text style={styles.boxText}>{t("lvl {n}").replace(/\{n\}/g, String(box))}</Text>
         </View>
         <Text style={styles.word}>{item.word}</Text>
@@ -85,9 +85,9 @@ export default function QuizCard({ item, onAnswer, onNext, progress, resetKey }:
               key={i}
               style={[
                 styles.option,
-                neuInset(theme, a.radius),
-                answered && isCorrect && { ...neuInset(theme, a.radius), backgroundColor: theme.success },
-                answered && isPicked && !isCorrect && { ...neuInset(theme, a.radius), backgroundColor: theme.danger },
+                metal(theme, 'inset', { radius: a.radius }),
+                answered && isCorrect && { ...metal(theme, 'inset', { radius: a.radius }), backgroundColor: theme.success },
+                answered && isPicked && !isCorrect && { ...metal(theme, 'inset', { radius: a.radius }), backgroundColor: theme.danger },
                 a.width >= 700 && { flexBasis: '48%', flexGrow: 1 },
               ]}
               onPress={() => choose(opt)}
@@ -116,9 +116,9 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     card: { padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
     wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' },
     word: { fontSize: a.fs(26), fontFamily: 'System', fontWeight: '700', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },
-    speakBtn: { ...neuCircle(theme, a.icon(34)), padding: 0 },
+    speakBtn: { ...metal(theme, 'circle', { size: a.icon(34) }), padding: 0 },
     speakIcon: { fontSize: a.fs(18), color: theme.primary },
-    speakSmall: { ...neuCircle(theme, a.icon(30)), padding: 0 },
+    speakSmall: { ...metal(theme, 'circle', { size: a.icon(30) }), padding: 0 },
     speakIconSmall: { fontSize: a.fs(14) },
     boxBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     boxText: { color: theme.primary, fontFamily: 'System', fontWeight: '700', fontSize: a.fs(12) },

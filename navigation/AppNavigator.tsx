@@ -70,16 +70,16 @@ export default function AppNavigator() {
   const theme = useTheme();
   const a = useAdaptive();
   // React Navigation по умолчанию ставит свой background на контейнеры (Tab/Stack),
-  // перекрывая наш глобальный фон. Делаем его прозрачным, чтобы меню было оверлеем
-  // поверх тёмного фона из App.tsx (виден фон под контентом — эффект глубины).
+  // перекрывая наш глобальный градиент (Rule 17b). Делаем ОБЁРТКИ прозрачными,
+  // чтобы градиент из App.tsx (document.body) был виден под контентом на весь экран.
   const navTheme = {
     ...DefaultTheme,
     dark: true,
     colors: {
       ...DefaultTheme.colors,
-      background: theme.background,
-      card: theme.background,
-      border: theme.border,
+      background: 'transparent',
+      card: 'transparent',
+      border: 'transparent',
       primary: theme.primary,
       text: theme.primaryText,
     },

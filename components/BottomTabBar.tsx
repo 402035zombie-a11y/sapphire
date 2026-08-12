@@ -7,7 +7,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from './Icon';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuInset, neuRaised } from '../theme/neu';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import { FONTS } from '../theme/constants';
 
 type RouteName = 'Library' | 'Dictionary' | 'Training';
@@ -34,12 +34,12 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
         alignSelf: 'center',
         maxWidth: 520,
         marginHorizontal: a.pad,
-        marginBottom: a.tiny ? 6 : 10,
+        marginBottom: a.tiny ? 2 : 4,
         marginTop: a.tiny ? 4 : 6,
         paddingVertical: a.tiny ? 6 : 8,
         paddingHorizontal: a.tiny ? 6 : 10,
         borderRadius: Math.round(a.radius * 1.6),
-        ...neuRaised(theme, Math.round(a.radius * 1.6)),
+        ...metal(theme, 'raised', { radius: Math.round(a.radius * 1.6) }),
       }}
     >
       {state.routes.map((route: any, index: number) => {
@@ -56,20 +56,22 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
             activeOpacity={0.85}
             onPress={() => navigation.navigate(route.name)}
             style={{
+              flex: 1,
               flexDirection: 'row',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: a.tiny ? 4 : 6,
               paddingVertical: a.tiny ? 6 : 9,
               paddingHorizontal: showLabel ? (a.tiny ? 10 : 14) : a.tiny ? 8 : 11,
               borderRadius: a.radius,
-              ...(focused ? neuInset(theme, a.radius) : {}),
-              backgroundColor: focused ? theme.primary : 'transparent',
+              ...(focused ? metal(theme, 'tabStampActive', { radius: a.radius }) : metal(theme, 'tabStamp', { radius: a.radius })),
+              backgroundColor: 'transparent',
             }}
           >
             <Icon
               name={iconName}
               size={a.icon(24)}
-              color={focused ? '#fff' : theme.secondaryText}
+              color={focused ? theme.primary : theme.secondaryText}
             />
             {showLabel && (
               <Text
@@ -77,7 +79,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={{
-                  color: focused ? '#fff' : theme.secondaryText,
+                  color: focused ? theme.primary : theme.secondaryText,
                   fontSize: a.tabFs,
                   fontFamily: FONTS.bold,
                   fontWeight: '700',

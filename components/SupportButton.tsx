@@ -7,7 +7,7 @@ import { TouchableOpacity, Platform } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import Icon from './Icon';
-import { neuCircle } from '../theme/neu';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import SupportAuthorModal from './SupportAuthorModal';
 import { useSupportStore } from '../store/supportStore';
 import { useT } from '../i18n';
@@ -16,14 +16,14 @@ export default function SupportButton({ size, iconSize }: { size?: number; iconS
   const theme = useTheme();
   const t = useT();
   const a = useAdaptive();
-  const btnSize = size ?? a.icon(36);
-  const icSize = iconSize ?? a.icon(18);
+  const btnSize = size ?? a.fab();
+  const icSize = iconSize ?? Math.round(a.fab() * 0.5);
   const [open, setOpen] = React.useState(false);
 
   return (
     <>
       <TouchableOpacity
-        style={[neuCircle(theme, btnSize), { padding: 0 }]}
+        style={[metal(theme, 'circle', { size: btnSize }), { padding: 0 }]}
         onPress={() => setOpen(true)}
         hitSlop={8}
         accessibilityLabel={t("Support the author")}

@@ -4,7 +4,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuInset } from '../theme/neu';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 
 export default function ProgressBar({ progress }: { progress: number }) {
   const p = Math.max(0, Math.min(1, progress));
@@ -14,7 +14,7 @@ export default function ProgressBar({ progress }: { progress: number }) {
   return (
     <View
       style={[
-        neuInset(theme, h / 2),
+        metal(theme, 'inset', { radius: h / 2 }),
         { height: h, overflow: 'hidden' },
       ]}
     >

@@ -6,7 +6,7 @@ import { TouchableOpacity, View, Platform } from 'react-native';
 import Icon from './Icon';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { neuCircle } from '../theme/neu';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 
 export default function BackFab({
   onPress,
@@ -21,7 +21,7 @@ export default function BackFab({
 }) {
   const theme = useTheme();
   const a = useAdaptive();
-  const s = size ?? Math.round(Math.max(34, 40 * a.scale));
+  const s = size ?? a.fab();
   const pad = Math.max(10, a.pad); // пропорциональный отступ от стен (не менее 10)
   const safeTop = Platform.OS === 'ios' ? 8 : 0;
   return (
@@ -29,7 +29,7 @@ export default function BackFab({
       onPress={onPress}
       hitSlop={10}
       style={[
-        neuCircle(theme, s),
+        metal(theme, 'circle', { size: s }),
         {
           position: 'absolute',
           top: (top ?? pad) + safeTop,

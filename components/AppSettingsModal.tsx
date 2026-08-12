@@ -1,6 +1,7 @@
 // components/AppSettingsModal.tsx
 // Модалка настроек ВСЕГО ПРИЛОЖЕНИЯ (не ридера): тема, язык перевода, бэкенд, ключ, бэкап.
 // Шрифты/отступы ридера живут внутри ридера (FontSettingsSheet) — здесь их нет.
+import ModalSheet from '../components/ModalSheet';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, Platform, Alert } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
@@ -12,7 +13,7 @@ import { useDictionaryStore } from '../store/dictionaryStore';
 import { useT } from '../i18n';
 import { THEME_ORDER, THEME_LABELS, ThemeMode } from '../theme/themes';
 import { LANGUAGES, translatableLangs } from '../utils/languages';
-import { neuInset, neuPrimary, neuCircle, neuShadowPad } from '../theme/neu';
+import { neuInset, neuPrimary, neuCircle, neuShadowPad , metal } from '../theme/neu';
 import Icon from './Icon';
 import LanguagePicker from './LanguagePicker';
 
@@ -58,26 +59,15 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <TouchableOpacity
-        style={{ flex: 1, backgroundColor: '#00000080', justifyContent: 'center', alignItems: 'center', padding: m.backdropPad }}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <View
-          onStartShouldSetResponder={() => true}
-          style={[
-            neuInset(theme, m.borderRadius),
-            { width: m.width, maxWidth: m.maxWidth, maxHeight: m.maxHeight, padding: m.padding, position: 'relative', overflow: 'visible' },
-          ]}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+    <ModalSheet visible={visible} onClose={onClose}>
+      <View style={{ width: '100%' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <Text style={{ flex: 1, fontSize: a.h2, fontFamily: FONTS.bold, color: theme.primaryText }}>{t('App settings')}</Text>
           </View>
           <TouchableOpacity
             onPress={onClose}
             hitSlop={10}
-            style={[neuCircle(theme, a.icon(36)), { position: 'absolute', top: m.padding, right: m.padding, zIndex: 20, padding: 0 }]}
+            style={[metal(theme, 'circle', { size: a.fab() }), { position: 'absolute', top: m.padding, right: m.padding, zIndex: 20, padding: 0 }]}
           >
             <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
           </TouchableOpacity>
@@ -125,12 +115,11 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
             </TouchableOpacity>
 
             <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8 }}>{t('Data')}</Text>
-            <TouchableOpacity style={[neuPrimary(theme, a.radius), { paddingVertical: a.tiny ? 10 : 14, alignItems: 'center' }]} onPress={exportData}>
+            <TouchableOpacity style={[metal(theme, 'primary', { size: a.radius }), { paddingVertical: a.tiny ? 10 : 14, alignItems: 'center' }]} onPress={exportData}>
               <Text style={{ color: '#fff', fontSize: a.body, fontFamily: FONTS.bold }}>{t('Export backup (JSON)')}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
-      </TouchableOpacity>
 
       <LanguagePicker
         visible={langPicker}
@@ -153,6 +142,6 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
         onSelect={(code) => setAppLang(code)}
         onClose={() => setAppLangPicker(false)}
       />
-    </Modal>
+    </ModalSheet>
   );
 }
