@@ -41,7 +41,7 @@ export default function ModalSheet({
   const theme = useTheme();
   const a = useAdaptive();
   if (!visible) return null;
-  const mw = maxWidth ?? Math.min(560, a.contentMaxW - a.pad * 2);
+  const mw = maxWidth ?? Math.min(480, a.contentMaxW - a.pad * 2);
   const mh = maxHeight ?? '88%';
   const isSheet = variant === 'sheet';
   return (
@@ -52,15 +52,19 @@ export default function ModalSheet({
           metal(theme, 'inset', { radius: a.radius }),
           {
             width: '100%',
-            maxWidth: mw,
             maxHeight: mh,
             padding: a.pad,
             backgroundColor: theme.surface ?? theme.neu.base,
-            overflow: 'visible',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
             alignSelf: isSheet ? (a.landscape ? 'flex-end' : 'center') : 'center',
             marginBottom: isSheet ? 0 : undefined,
           },
           panelStyle,
+          // жёсткий потолок ширины ВСЕГДА после panelStyle,
+          // чтобы дочерний panelStyle не мог растянуть панель на весь экран
+          { maxWidth: mw },
         ]}
         pointerEvents="auto"
       >

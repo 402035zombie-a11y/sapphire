@@ -40,7 +40,7 @@ export default function LanguagePicker({ visible, value, onSelect, onClose, allo
 
   return (
     <ModalSheet visible={visible} onClose={onClose}>
-      <View style={{ width: '100%', maxWidth: 360, alignSelf: 'center', maxHeight: Math.round(winH * 0.7) }}>
+      <View style={{ width: '100%', maxWidth: 360, alignSelf: 'center', maxHeight: Math.round(winH * 0.7), flex: 1, display: 'flex', flexDirection: 'column' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.gap }}>
           <Text style={{ fontSize: a.h2, fontFamily: 'System', fontWeight: '700', color: theme.primaryText }}>{t('Choose language')}</Text>
           <TouchableOpacity onPress={onClose} hitSlop={12} style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
@@ -65,7 +65,7 @@ export default function LanguagePicker({ visible, value, onSelect, onClose, allo
           autoFocus
         />
         <ScrollView
-          style={{ maxHeight: Math.round(winH * 0.5) }}
+          style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: a.gap }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator

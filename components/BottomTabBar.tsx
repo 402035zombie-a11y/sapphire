@@ -22,27 +22,40 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
   const theme = useTheme();
   const a = useAdaptive();
 
-  // Подписи справа показываем только если на один таб хватает ширины (иначе только значки).
-  const showLabel = a.width >= 640;
+  // Подписи справа показываем если на один таб хватает ширины (порог снижен:
+  // показываем почти всегда, кроме совсем узких телефонов в portrait).
+  const showLabel = a.width >= 420;
 
   return (
     <View
+      // ПЛАВАЮЩИЙ док: вне потока (absolute), чтобы контент экранов
+      // (список книг) тянулся на весь экран И ПОД таб-бар, а не упирался в него.
       style={{
+        position: 'absolute',
+        left: a.pad,
+        right: a.pad,
+        bottom: a.tiny ? 3 : 4,
+        zIndex: 200,
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        alignSelf: 'center',
-        maxWidth: a.isDesktop ? Math.min(a.width - a.pad * 2, 760) : a.bp === 'lg' ? 640 : 520,
-        marginHorizontal: a.pad,
-        marginBottom: a.tiny ? 3 : 4,
-        gap: 6,
-        marginTop: a.tiny ? 4 : 6,
-        paddingVertical: a.tiny ? 6 : 8,
-        paddingHorizontal: a.tiny ? 6 : 10,
-        borderRadius: Math.round(a.radius * 1.6),
-        ...metal(theme, 'raised', { radius: Math.round(a.radius * 1.6) }),
+        justifyContent: 'center',
+        pointerEvents: 'box-none',
       }}
     >
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          alignSelf: 'center',
+          width: '100%',
+          maxWidth: a.width - a.pad * 2,
+          gap: a.gap,
+          paddingVertical: a.tiny ? 6 : 8,
+          paddingHorizontal: a.tiny ? 6 : 10,
+          borderRadius: Math.round(a.radius * 1.6),
+          ...metal(theme, 'raised', { radius: Math.round(a.radius * 1.6) }),
+        }}
+      >
       {state.routes.map((route: any, index: number) => {
         const focused = state.index === index;
         const { options } = descriptors[route.key];
@@ -94,6 +107,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
           </TouchableOpacity>
         );
       })}
+      </View>
     </View>
   );
 }

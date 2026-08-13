@@ -84,7 +84,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const [progress, setProgress] = useState(0);
   const styles = useMemo(() => makeStyles(a), [a]);
   // FAB «+» крупнее стандартных круглых кнопок хедера, чтобы тапалось уверенно.
-  const fabSize = a.fab() + Math.round(10 * a.scale);
+  const fabSize = 50;
   const [pickerVisible, setPickerVisible] = useState(false);
   const [targetPickerVisible, setTargetPickerVisible] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'title'>('recent');
@@ -570,7 +570,7 @@ function NativeAdBanner() {
 function makeStyles(a: ReturnType<typeof useAdaptive>) {
   const cover = { w: a.dim(0.065, 34, 54), h: a.dim(0.087, 46, 72) };
   return StyleSheet.create({
-    container: { flex: 1, paddingTop: 0, paddingBottom: 0, width: '100%', maxWidth: a.gridMaxW, alignSelf: 'center', position: 'relative' },
+    container: { flex: 1, paddingTop: 0, paddingBottom: 0, width: '100%', maxWidth: a.gridMaxW, alignSelf: 'center' },
     libHead: { position: 'absolute', top: a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10 },
     progressCard: { borderRadius: a.radius, padding: a.pad, marginHorizontal: a.pad, marginBottom: a.gap },
     progressText: { marginBottom: 8, fontSize: a.small_fs },
@@ -597,7 +597,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
     actionBtn: { flex: 1, height: Math.round(Math.max(44, 48 * a.scale)), paddingVertical: 10, paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
     actionText: { fontSize: a.body },
     saveText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.body },
-    list: { paddingHorizontal: neuShadowPad(), paddingTop: a.pad + a.fab() + a.gap, paddingBottom: 0 },
+    list: { paddingHorizontal: neuShadowPad(), paddingTop: a.pad + a.fab() + a.gap, paddingBottom: a.tabBarH + a.pad },
     empty: { textAlign: 'center', marginTop: 40, fontSize: a.body },
     bookRow: {
       flexDirection: 'row',
@@ -634,8 +634,8 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
     sortTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     fab: {
       position: 'absolute',
-      right: a.isDesktop ? 57 : a.pad + 4,
-      bottom: a.pad + a.tabBarH,
+      right: 52,
+      bottom: 85,
       alignItems: 'center',
       justifyContent: 'center',
       // гарантируем, что кнопка не вылазит за правый край контента
