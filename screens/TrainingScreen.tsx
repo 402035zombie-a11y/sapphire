@@ -9,6 +9,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform, ScrollView } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
+import IconButton from '../components/ui/IconButton';
 import Screen from '../components/Screen';
 import TextField from '../components/ui/TextField';
 import { useTheme } from '../theme/ThemeContext';
@@ -399,9 +400,9 @@ export default function TrainingScreen() {
   ));
 
   return (
-    <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.pad + backFabH, paddingBottom: a.pad }}>
-      <BackFab onPress={() => { setStarted(false); setFinished(false); setIndex(0); }} />
+    <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.pad, paddingBottom: a.pad }}>
       <View style={styles.topRow}>
+        <IconButton icon="arrow-back" onPress={() => { setStarted(false); setFinished(false); setIndex(0); }} variant="circle" size={a.fab()} hitSlop={8} />
         <Text style={[styles.counter, { color: theme.secondaryText }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>
         <View style={styles.counterBadges}>
           <View style={[styles.counterBadge, { backgroundColor: '#16A34A' }]}>

@@ -4,6 +4,7 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
+import IconButton from '../components/ui/IconButton';
 import Icon from '../components/Icon';
 import { useTheme } from '../theme/ThemeContext';
 import { useLibraryStore } from '../store/libraryStore';
@@ -45,8 +46,10 @@ export default function BookmarksScreen() {
 
   return (
     <Screen contentStyle={{}}>
-      <BackFab onPress={() => navigation.goBack()} />
-      <Text style={[styles.title, { color: theme.primaryText }]}>{t('Bookmarks')} · {book.title}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 4 : 8, paddingHorizontal: a.pad, paddingTop: a.pad, paddingBottom: a.small ? 4 : 8 }}>
+        <IconButton icon="arrow-back" onPress={() => navigation.goBack()} variant="circle" size={a.fab()} hitSlop={8} />
+        <Text style={[styles.title, { color: theme.primaryText, flex: 1 }]}>{t('Bookmarks')} · {book.title}</Text>
+      </View>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{

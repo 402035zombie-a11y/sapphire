@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Animated, Easing, ScrollView, useWindowDimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
+import IconButton from '../components/ui/IconButton';
 import Screen from '../components/Screen';
 import ModalSheet from '../components/ModalSheet';
 import TextField from '../components/ui/TextField';
@@ -317,11 +318,12 @@ export default function SpeedReadingScreen() {
       contentContainerStyle={[styles.container, { paddingBottom: a.tabBarH + a.pad * 2 + a.gap }]}
       showsVerticalScrollIndicator={false}
     >
-      <BackFab onPress={() => navigation.goBack()} />
-
-      <View style={[styles.counterBar, { paddingVertical: a.small ? 4 : 8 }]}>
-        <Text style={[styles.bookTitle, { color: theme.primaryText }]} numberOfLines={1}>{book.title}</Text>
-        <Text style={[styles.counter, { color: theme.secondaryText }]}>{t('Word {n} of {m}').replace(/\{n\}/g, String(pos + 1)).replace(/\{m\}/g, String(words.length))}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 4 : 8, paddingHorizontal: a.pad }}>
+        <IconButton icon="arrow-back" onPress={() => navigation.goBack()} variant="circle" size={a.fab()} hitSlop={8} />
+        <View style={[styles.counterBar, { paddingVertical: a.small ? 4 : 8, flex: 1 }]}>
+          <Text style={[styles.bookTitle, { color: theme.primaryText }]} numberOfLines={1}>{book.title}</Text>
+          <Text style={[styles.counter, { color: theme.secondaryText }]}>{t('Word {n} of {m}').replace(/\{n\}/g, String(pos + 1)).replace(/\{m\}/g, String(words.length))}</Text>
+        </View>
       </View>
       <View style={{ width: '100%', alignItems: 'flex-end', marginTop: a.small ? 4 : 8 }}>
         <SupportButton />

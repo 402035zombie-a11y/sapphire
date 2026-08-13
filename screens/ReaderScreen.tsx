@@ -548,7 +548,8 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   const header = (
     <View style={[styles.header, metal(theme, 'raised', { radius: a.radius })]}>
-      <View style={[styles.headerRow, { paddingLeft: a.pad + a.fab(), paddingRight: a.pad, paddingTop: a.small ? 4 : 6, paddingBottom: a.small ? 4 : 6, maxHeight: a.small ? 56 : 68 }]}>
+      <View style={[styles.headerRow, { paddingLeft: a.pad, paddingRight: a.pad, paddingTop: a.small ? 4 : 6, paddingBottom: a.small ? 4 : 6, maxHeight: a.small ? 56 : 68 }]}>
+        <IconButton icon="arrow-back" onPress={() => navigation.goBack()} variant="circle" size={a.fab()} hitSlop={8} />
         <View style={styles.titleGroup}>
           <Marquee text={book.title} textStyle={[styles.title, { color: theme.primaryText }]} />
         </View>
@@ -624,7 +625,6 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   return (
     <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, padding: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>
-      <BackFab onPress={() => navigation.goBack()} top={24} left={25} />
       {header}
       {content}
       {pageIndicator}
@@ -690,7 +690,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       minWidth: 0,
       maxHeight: a.landscape ? 40 : 56,
     },
-    headerRight: { flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 12, flexShrink: 0 },
+    headerRight: { flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 12, flexShrink: 0, marginRight: a.pad, marginTop: a.tiny ? 2 : 4 },
     langDropdown: { position: 'absolute', top: '100%', right: 0, zIndex: 100 },
     centerPlay: { flex: 1, flexShrink: 0, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: a.tiny ? 2 : 6 },
     playBtn: { ...neuBtn, borderRadius: playSz / 2 },
