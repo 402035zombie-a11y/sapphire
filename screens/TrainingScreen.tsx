@@ -68,13 +68,6 @@ export default function TrainingScreen() {
     counterBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     counterBadgeText: { color: '#fff', fontFamily: 'bold', fontSize: a.small_fs },
     restart: { fontSize: a.small_fs, fontFamily: 'bold' },
-    restartBtn: {
-      width: Math.round(Math.max(30, 36 * a.scale)),
-      height: Math.round(Math.max(30, 36 * a.scale)),
-      borderRadius: 18,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     // Стартовый экран: контент сверху, без «провала» пустоты в центре.
     startScroll: {
       flexGrow: 1,
@@ -130,7 +123,8 @@ export default function TrainingScreen() {
     speakIcon: { fontSize: a.fs(18), color: theme.primary },
     typeHint: { fontSize: a.fs(14), textAlign: 'center', marginTop: 12, marginBottom: 8 },
     typeInput: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: a.tiny ? 8 : 12, fontSize: a.body },
-    typeCheck: { borderRadius: a.radius, paddingVertical: a.tiny ? 10 : 14, alignItems: 'center', marginTop: 12 },
+    typeCheck: { borderRadius: a.radius, paddingVertical: a.tiny ? 12 : 16, alignItems: 'center', flex: 1 },
+    skipBtn: { width: Math.round(Math.max(36, 44 * a.scale)), height: Math.round(Math.max(36, 44 * a.scale)), borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
     typeCorrect: { fontSize: a.small_fs, textAlign: 'center', marginTop: 10, fontStyle: 'italic' },
   }), [a, theme]);
 
@@ -437,13 +431,6 @@ export default function TrainingScreen() {
             <Text style={styles.counterBadgeText}>✗ {stats.wrong}</Text>
           </View>
         </View>
-        <TouchableOpacity
-          style={[styles.restartBtn, metal(theme, 'raised', { radius: 18 })]}
-          onPress={() => start(mode)}
-          hitSlop={8}
-        >
-          <Icon name="refresh" size={a.dim(0.028, 16, 24)} color={theme.primaryText} />
-        </TouchableOpacity>
         <SupportButton />
       </View>
 
@@ -465,6 +452,11 @@ export default function TrainingScreen() {
               <Text style={styles.speakIcon}>▶</Text>
             </TouchableOpacity>
           </View>
+          {typeChecked && (
+            <Text style={[styles.typeCorrect, { color: typeOk ? '#16A34A' : '#DC2626', fontSize: a.fs(15), marginTop: 6 }]}>
+              {typeOk ? t("Correct ✓") : `${t("Correct answer: ")}${current.translation}`}
+            </Text>
+          )}
           {currentProgress && (currentProgress.correctCount > 0 || currentProgress.wrongCount > 0) && (
             <Text style={[styles.typeHint, { color: theme.secondaryText }]}>
               ✓ {currentProgress.correctCount}  ✗ {currentProgress.wrongCount}  ·  {t("lvl")}{currentProgress.box}
@@ -487,27 +479,32 @@ export default function TrainingScreen() {
               setTypeOk(ok);
               setTypeChecked(true);
               onAnswer(ok);
-              setTimeout(() => onNext(), 500);
+              setTimeout(() => onNext(), 700);
             }}
           />
-          <TouchableOpacity
-            style={[styles.typeCheck, metal(theme, 'primary', { size: a.radius })]}
-            onPress={() => {
-              if (typeChecked) return;
-              const ok = normalize(typed) === normalize(current.translation);
-              setTypeOk(ok);
-              setTypeChecked(true);
-              onAnswer(ok);
-              setTimeout(() => onNext(), 500);
-            }}
-          >
-            <Text style={styles.btnText}>{typeChecked ? (typeOk ? t("Correct ✓") : t("Wrong ✗")) : t("Check")}</Text>
-          </TouchableOpacity>
-          {typeChecked && (
-            <Text style={[styles.typeCorrect, { color: typeOk ? '#16A34A' : '#DC2626' }]}>
-              {t("Correct answer: ")}{current.translation}
-            </Text>
-          )}
+          <View style={{ flexDirection: 'row', gap: a.gap, marginTop: 12, alignItems: 'center' }}>
+            <TouchableOpacity
+              style={[styles.typeCheck, metal(theme, 'primary'), !typed.trim() && { opacity: 0.45 }]}
+              disabled={!typed.trim() || typeChecked}
+              onPress={() => {
+                if (typeChecked || !typed.trim()) return;
+                const ok = normalize(typed) === normalize(current.translation);
+                setTypeOk(ok);
+                setTypeChecked(true);
+                onAnswer(ok);
+                setTimeout(() => onNext(), 700);
+              }}
+            >
+              <Text style={styles.btnText}>{typeChecked ? (typeOk ? t("Correct ✓") : t("Wrong ✗")) : t("Check")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.skipBtn, metal(theme, 'raised', { radius: 14 })]}
+              onPress={() => { if (!typeChecked) onNext(); }}
+              hitSlop={8}
+            >
+              <Icon name="refresh" size={a.dim(0.026, 16, 22)} color={theme.primaryText} />
+            </TouchableOpacity>
+          </View>
         </View>
       )}
       </ScrollView>

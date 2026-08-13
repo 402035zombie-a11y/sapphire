@@ -313,21 +313,12 @@ export default function SpeedReadingScreen() {
   }, [variant, playing, wpm, words.length, tickerWidth, tickerTextWidth]);
 
   return (
+    <View style={{ flex: 1 }}>
     <ScrollView
       style={{ backgroundColor: 'transparent' }}
-      contentContainerStyle={[styles.container, { paddingBottom: a.tabBarH + a.pad * 2 + a.gap }]}
+      contentContainerStyle={[styles.container, { paddingTop: a.tabBarH + a.fab() + a.gap, paddingBottom: a.tabBarH + a.pad * 2 + a.gap }]}
       showsVerticalScrollIndicator={false}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 4 : 8, paddingHorizontal: a.pad }}>
-        <IconButton icon="arrow-back" onPress={() => navigation.goBack()} variant="circle" size={a.fab()} hitSlop={8} />
-        <View style={[styles.counterBar, { paddingVertical: a.small ? 4 : 8, flex: 1 }]}>
-          <Text style={[styles.bookTitle, { color: theme.primaryText }]} numberOfLines={1}>{book.title}</Text>
-          <Text style={[styles.counter, { color: theme.secondaryText }]}>{t('Word {n} of {m}').replace(/\{n\}/g, String(pos + 1)).replace(/\{m\}/g, String(words.length))}</Text>
-        </View>
-      </View>
-      <View style={{ width: '100%', alignItems: 'flex-end', marginTop: a.small ? 4 : 8 }}>
-        <SupportButton />
-      </View>
 
       <View style={[styles.stage, metal(theme, 'raised', { radius: a.radius }), { paddingVertical: stagePad }]}>
         {variant === 'ticker' ? (
@@ -470,6 +461,15 @@ export default function SpeedReadingScreen() {
       )}
 
     </ScrollView>
+      <View style={[styles.topRow, { position: 'absolute', top: a.tabBarH + a.gap, left: a.pad, right: a.pad, zIndex: 100 }]}>
+        <IconButton icon="arrow-back" onPress={() => navigation.goBack()} variant="circle" size={a.fab()} hitSlop={8} />
+        <View style={[styles.counterBar, { paddingVertical: a.small ? 4 : 8, flex: 1, marginLeft: a.tiny ? 4 : 8 }]}>
+          <Text style={[styles.bookTitle, { color: theme.primaryText }]} numberOfLines={1}>{book.title}</Text>
+          <Text style={[styles.counter, { color: theme.secondaryText }]}>{t('Word {n} of {m}').replace(/\{n\}/g, String(pos + 1)).replace(/\{m\}/g, String(words.length))}</Text>
+        </View>
+        <SupportButton />
+      </View>
+    </View>
   );
 }
 
@@ -489,6 +489,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: a.pad },
     header: { width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: a.gap },
+    topRow: { flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 4 : 8 },
     bookTitle: { fontSize: a.h2, fontFamily: FONTS.bold, textAlign: 'left' },
     counterBar: { width: '100%', alignItems: 'center', paddingVertical: a.small ? 4 : 8 },
     counter: { fontSize: a.small_fs, marginTop: 4 },

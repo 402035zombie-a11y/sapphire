@@ -70,7 +70,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   const reader = useSettingsStore((s) => s.reader);
   const addEntry = useDictionaryStore((s) => s.addEntry);
   const hasWord = useDictionaryStore((s) => s.hasWord);
-  const targetLang = book?.targetLang ?? settingsTarget ?? 'en';
+  const [targetLang, setTargetLang] = useState(book?.targetLang ?? settingsTarget ?? 'en');
 
   const { width, height } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
@@ -313,7 +313,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       if (scrollTimer.current) clearTimeout(scrollTimer.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookId, mode]);
+  }, [bookId, mode, targetLang]);
 
   // прыжок к разделу/закладке из оглавления или списка закладок
   useEffect(() => {
@@ -419,7 +419,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   const header = (
     <View style={[styles.header, metal(theme, 'raised', { radius: a.radius })]}>
       <View style={[styles.headerRow, { paddingLeft: a.pad, paddingRight: a.pad, paddingTop: a.small ? 4 : 6, paddingBottom: a.small ? 4 : 6, maxHeight: a.small ? 56 : 68 }]}>
-        <IconButton icon="arrow-back" onPress={() => navigation.goBack()} variant="circle" size={a.fab()} hitSlop={8} />
+        <IconButton icon="arrow-back" onPress={() => navigation.goBack()} variant="circle" size={a.fab()} hitSlop={8} style={{ flexShrink: 0 }} />
         <View style={styles.titleGroup}>
           <Marquee text={book.title} textStyle={[styles.title, { color: theme.primaryText }]} />
         </View>
@@ -436,8 +436,25 @@ export default function ReaderScreen({ route }: { route: any }) {
           </View>
         )}
         <View style={[styles.headerRight, { position: 'relative' }]}>
+          <IconButton icon="language" onPress={() => setLangOpen((v) => !v)} variant="circle" size={a.fab()} hitSlop={8} />
           <IconButton icon="settings" onPress={() => setFontOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
           <IconButton icon="heart" onPress={() => setSupportOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
+          {langOpen && (
+            <LanguageDropdown
+              value={targetLang}
+              onSelect={(code) => {
+                setTargetLang(code);
+                // сбросить перевод, чтобы перегрузить на новый язык
+                if (book?.id) {
+                  updateParagraphsTranslations(
+                    book.id,
+                    (book.paragraphs || []).map((p) => ({ index: p.index, translation: '' })),
+                  );
+                }
+              }}
+              onClose={() => setLangOpen(false)}
+            />
+          )}
         </View>
       </View>
     </View>
@@ -559,9 +576,9 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       minWidth: 0,
       maxHeight: a.landscape ? 40 : 56,
     },
-    headerRight: { flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 12, flexShrink: 0, marginRight: a.pad, marginTop: a.tiny ? 2 : 4 },
+    headerRight: { flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 12, flexShrink: 0 },
     langDropdown: { position: 'absolute', top: '100%', right: 0, zIndex: 100 },
-    centerPlay: { flex: 1, flexShrink: 0, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: a.tiny ? 2 : 6 },
+    centerPlay: { flexShrink: 0, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: a.tiny ? 2 : 6 },
     playBtn: { ...neuBtn, borderRadius: playSz / 2 },
     title: { fontSize: a.h2, fontFamily: FONTS.bold },
     langChip: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, ...metal(theme, 'inset', { radius: 12 }) },
