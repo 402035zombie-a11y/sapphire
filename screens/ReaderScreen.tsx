@@ -555,15 +555,15 @@ export default function ReaderScreen({ route }: { route: any }) {
           <View style={styles.centerPlay}>
             {isSpeaking ? (
               <React.Fragment>
-                <TouchableOpacity onPress={pauseBook} hitSlop={10} style={[metal(theme, 'inset', { radius: a.fab()/2 }), { width: a.fab(), height: a.fab(), borderRadius: a.fab()/2, padding: 0 }]}>
+                <TouchableOpacity onPress={pauseBook} hitSlop={10} style={[metal(theme, 'circle', { size: a.fab() })]}>
                   <Icon name="pause" size={a.dim(0.034, 18, 28)} color={theme.primary} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={stopBook} hitSlop={10} style={[metal(theme, 'inset', { radius: a.fab()/2 }), { width: a.fab(), height: a.fab(), borderRadius: a.fab()/2, padding: 0 }]}>
+                <TouchableOpacity onPress={stopBook} hitSlop={10} style={[metal(theme, 'circle', { size: a.fab() })]}>
                   <Icon name="close" size={a.dim(0.034, 18, 28)} color={theme.primary} />
                 </TouchableOpacity>
               </React.Fragment>
             ) : (
-              <TouchableOpacity onPress={playBook} hitSlop={10} style={[metal(theme, 'inset', { radius: a.fab()/2 }), { width: a.fab(), height: a.fab(), borderRadius: a.fab()/2, padding: 0 }]}>
+              <TouchableOpacity onPress={playBook} hitSlop={10} style={[metal(theme, 'circle', { size: a.fab() })]}>
                 <Icon name="volume" size={a.dim(0.036, 20, 30)} color={theme.primary} />
               </TouchableOpacity>
             )}
@@ -641,7 +641,7 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   return (
     <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, padding: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>
-      <BackFab onPress={() => navigation.goBack()} />
+      <BackFab onPress={() => navigation.goBack()} top={24} left={25} />
       {header}
       {content}
       {pageIndicator}
@@ -709,7 +709,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     },
     headerRight: { flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 12, flexShrink: 0 },
     langDropdown: { position: 'absolute', top: '100%', right: 0, zIndex: 100 },
-    centerPlay: { flexShrink: 0, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: a.tiny ? 2 : 6 },
+    centerPlay: { flex: 1, flexShrink: 0, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: a.tiny ? 2 : 6 },
     playBtn: { ...neuBtn, borderRadius: playSz / 2 },
     title: { fontSize: a.h2, fontFamily: FONTS.bold },
     langChip: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, ...metal(theme, 'inset', { radius: 12 }) },
@@ -737,10 +737,12 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     progressFill: { height: 3 },
     upFab: {
       position: 'absolute',
-      right: Math.max(12, a.pad),
-      bottom: Math.max(12, a.pad),
+      right: 30,
+      bottom: 30,
       ...neuUp,
-      borderRadius: a.fab() / 2,
+      width: 45,
+      height: 45,
+      borderRadius: 45 / 2,
     },
     upFabText: { fontSize: a.fs(22), fontFamily: FONTS.bold, color: theme.primaryText },
     pageIndicator: {

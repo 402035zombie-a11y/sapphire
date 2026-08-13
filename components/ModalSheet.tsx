@@ -12,7 +12,7 @@
 //   panelStyle            — доп. стили панели (bg, radius)
 //   dismissable           — закрытие по тапу вне (дефолт true)
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { metal } from '../theme/neu';
@@ -28,6 +28,7 @@ export default function ModalSheet({
   maxHeight,
   panelStyle,
   dismissable = true,
+  blurBackdrop = true,
 }: {
   visible: boolean;
   onClose: () => void;
@@ -37,16 +38,24 @@ export default function ModalSheet({
   maxHeight?: number | string;
   panelStyle?: any;
   dismissable?: boolean;
+  // blur фона позади модалки (без затемнения). FontSettingsSheet отключает,
+  // чтобы пользователь видел изменения шрифта на заднем фоне в реальном времени.
+  blurBackdrop?: boolean;
 }) {
   const theme = useTheme();
   const a = useAdaptive();
   if (!visible) return null;
+  // Фон позади модалки: СИЛЬНЫЙ blur, НО БЕЗ затемнения (по требованию).
+  // FontSettingsSheet передаёт blurBackdrop={false} — фон остаётся чётким.
+  const blurStyle = blurBackdrop
+    ? { backgroundColor: 'rgba(0,0,0,0)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }
+    : { backgroundColor: 'transparent' };
   const mw = maxWidth ?? Math.min(480, a.contentMaxW - a.pad * 2);
   const mh = maxHeight ?? '88%';
   const isSheet = variant === 'sheet';
   return (
-    <View style={[StyleSheet.absoluteFill, styles.overlay, { paddingTop: a.pad, paddingHorizontal: a.pad }]}>
-      {dismissable && <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={onClose} />}
+    <View style={[{ position: 'fixed' as any, left: 0, right: 0, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }, blurStyle, { paddingTop: a.pad, paddingHorizontal: a.pad }] as any}>
+      {dismissable && <TouchableOpacity style={{ position: 'fixed' as any, left: 0, right: 0, top: 0, bottom: 0 }} activeOpacity={1} onPress={onClose} />}
       <View
         style={[
           metal(theme, 'inset', { radius: a.radius }),
@@ -74,16 +83,3 @@ export default function ModalSheet({
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1000,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.55)',
-  },
-});
