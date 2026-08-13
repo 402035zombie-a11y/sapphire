@@ -176,10 +176,12 @@ export function neuCircle(t: ThemePalette, size: number, filled = false): any {
 // Позиция блика — в ПИКСЕЛЯХ (а не %), чтобы на больших элементах он оставался
 // у самого верхнего края, а не сползал вниз (иначе блик перекрывает заголовок).
 function sheen(): string {
+  // Блик ВЫНЕСЕН НАРУЖУ за верхний левый край (не перекрывает заголовки/контент).
+  // Оттенок — светло-СЕРЫЙ (холодный), НЕ чистый белый (по правилу металла).
   return [
-    'radial-gradient(55% 70% at -10px -8px, rgba(232,242,255,0.24) 0%, rgba(232,242,255,0) 28%)',
+    'radial-gradient(55% 70% at -10px -8px, rgba(226,234,246,0.22) 0%, rgba(226,234,246,0) 28%)',
     'radial-gradient(115% 135% at calc(100% + 10px) calc(100% + 8px), rgba(0,0,0,0.30) 0%, rgba(0,0,0,0) 34%)',
-    'radial-gradient(125% 125% at -10px -8px, rgba(190,215,245,0.13) 0%, rgba(190,215,245,0) 32%)',
+    'radial-gradient(125% 125% at -10px -8px, rgba(186,206,232,0.11) 0%, rgba(186,206,232,0) 32%)',
   ].join(', ');
 }
 
@@ -198,7 +200,7 @@ function metalBg(t: ThemePalette): string {
   return `${sheen()}, ${metalExtrude(t)}`;
 }
 
-const SPEC = 'rgba(255,255,255,0.44)'; // specular-блик (яркий, но не чистый белый)
+const SPEC = 'rgba(220,228,242,0.34)'; // specular-блик (светло-СЕРЫЙ холодный, не чистый белый)
 const SPEC_DARK = 'rgba(0,0,0,0.52)'; // тёмная грань (не чистый чёрный → не пластик)
 const RIM = 'rgba(205,220,245,0.34)'; // холодный светлый edge-rim (отражение кромки металла)
 
@@ -222,9 +224,9 @@ export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): a
     boxShadow: [
       `${-x}px ${-y}px ${blur1}px ${s}`,
       `${-x * 1.6}px ${-y * 1.6}px ${blur2}px ${l}`,
-      `inset 0 1.5px 0 0 ${RIM}`, // светлый верхний rim (кромка металла)
-      `inset 0 1px 3px 0 ${SPEC}`, // РЕЗКИЙ specular-блик у верхнего края (литой блеск)
-      `inset ${ix}px ${iy}px ${iblur}px ${SPEC}`, // объёмный specular сверху-слева
+      `inset 0 1.5px 0 0 ${RIM}`, // светлый верхний rim (кромка металла, мягко)
+      `inset 0 1px 3px 0 ${SPEC}`, // РЕЗКИЙ specular-блик у верхнего края (литой блеск, светло-серый)
+      `inset ${ix}px ${iy}px ${iblur}px ${SPEC}`, // объёмный specular сверху-слева (мягко, не полоса)
       `inset ${-ix}px ${-iy}px ${iblur}px ${SPEC_DARK}`, // тёмная грань снизу-справа
     ].join(', '),
     ...(Platform.OS === 'web' ? {} : { shadowColor: SPEC_DARK, shadowOffset: { width: x, height: y }, shadowOpacity: 0.5, shadowRadius: blur1, elevation: Math.max(3, Math.round(off)) }),

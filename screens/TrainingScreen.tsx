@@ -186,6 +186,8 @@ export default function TrainingScreen() {
     pool.forEach((e) => {
       const k = `${e.word}|${e.lang}`;
       if (seen.has(k)) return;
+      // пропускаем слова без перевода — иначе correct="" и пустая кнопка засчитывается как верно
+      if (!e.translation || !e.translation.trim()) return;
       seen.add(k);
       unique.push(e);
     });
@@ -218,7 +220,7 @@ export default function TrainingScreen() {
   poolRef.current = pool;
   useEffect(() => {
     if (!current) { setOpts([]); return; }
-    const distractors = shuffle(poolRef.current.filter((e: DictionaryEntry) => e.translation !== current.translation)).slice(0, 3).map((e) => e.translation);
+    const distractors = shuffle(poolRef.current.filter((e: DictionaryEntry) => e.translation && e.translation.trim() && e.translation !== current.translation)).slice(0, 3).map((e) => e.translation);
     setOpts(shuffle([current.translation, ...distractors]));
   }, [index, current?.word]);
 

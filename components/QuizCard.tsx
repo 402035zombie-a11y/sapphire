@@ -48,6 +48,8 @@ export default function QuizCard({ item, onAnswer, onNext, progress, resetKey }:
 
   const choose = (opt: string) => {
     if (answered) return;
+    // защита: пустая кнопка (пустой перевод) не должна засчитываться как ответ
+    if (!opt || !opt.trim()) return;
     setPicked(opt);
     setAnswered(true);
     const correct = opt === item.correct;
