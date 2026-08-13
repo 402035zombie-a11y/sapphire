@@ -253,6 +253,7 @@ export default function DictionaryScreen() {
             <TouchableOpacity onPress={handleDeleteAll} hitSlop={6} style={tb}>
               <Icon name="close" size={isz} color="#DC2626" />
             </TouchableOpacity>
+            <SupportButton />
           </View>
         );
       },
@@ -285,7 +286,6 @@ export default function DictionaryScreen() {
               );
             })}
           </View>
-          <SupportButton />
         </View>
       </View>
 
@@ -302,7 +302,7 @@ export default function DictionaryScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={[styles.list, { padding: neuShadowPad() }, { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingBottom: Math.round(winH / 2) }]}
+        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: 120, paddingBottom: Math.round(winH / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
       >
         {filtered.length === 0 ? (
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', padding: a.pad }}>
@@ -596,7 +596,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     search: { flex: 1, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },
     exportBtn: { borderRadius: a.radius, paddingHorizontal: a.pad, justifyContent: 'center' },
     exportText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.small_fs },
-    list: { paddingTop: a.headerH + a.gap, gap: a.gap, justifyContent: 'flex-start' },
+    list: { paddingTop: a.headerH + a.gap, paddingBottom: a.tabBarH + a.pad + a.dim(0.06, 46, 56) + a.gap, gap: a.gap, justifyContent: 'flex-start' },
     empty: { textAlign: 'center', fontSize: a.body },
     row: {
       ...metal(theme, 'raised', { radius: a.radius }),
