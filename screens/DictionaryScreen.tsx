@@ -22,6 +22,7 @@ import { useAdaptive } from '../theme/useAdaptive';
 import { useNavigation } from '@react-navigation/native';
 import { FONTS } from '../theme/constants';
 import { useDictionaryStore } from '../store/dictionaryStore';
+import { translateCached } from '../services/translationService';
 import { DictionaryEntry } from '../store/dictionaryStore';
 import { useTrainingStore } from '../store/trainingStore';
 import { useLibraryStore } from '../store/libraryStore';
@@ -207,6 +208,26 @@ export default function DictionaryScreen() {
     else clearAll();
     setConfirmDelete(false);
   };
+
+  // TEMP-MAINT: дозагрузка translation для слов без перевода (чтобы тренировка их видела)
+  useEffect(() => {
+    const missing = entries.filter((e) => !e.translation || !e.translation.trim());
+    if (missing.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      for (const e of missing) {
+        if (cancelled) break;
+        try {
+          const from = e.lang || 'en';
+          const to = e.lang === 'en' ? 'ru' : 'en';
+          const r = await translateCached(e.word, from, to);
+          if (r?.text && !cancelled) updateEntry(e.id, { translation: r.text });
+        } catch {}
+        await new Promise((res) => setTimeout(res, 120));
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [entries]);
 
   // заголовок + иконки → в нативный хедер (убираем дублирующий кастомный headerRow)
   useEffect(() => {

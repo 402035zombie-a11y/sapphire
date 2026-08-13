@@ -27,7 +27,7 @@ export default function Screen({
   const a = useAdaptive();
   return (
     <View style={{ flex: 1 }}>
-      {bg && <View style={[StyleSheet.absoluteFill, { ...screenBg(theme), backgroundColor: theme.background }, bgStyle]} pointerEvents="none" />}
+      {bg && <View style={[StyleSheet.absoluteFill, { ...screenBg(theme), backgroundColor: theme.background }, bgStyle, { pointerEvents: "none" as any }]} />}
       <View style={[styles.content, contentStyle]}>{children}</View>
     </View>
   );

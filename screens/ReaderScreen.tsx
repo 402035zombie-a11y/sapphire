@@ -73,7 +73,6 @@ export default function ReaderScreen({ route }: { route: any }) {
   const targetLang = book?.targetLang ?? settingsTarget ?? 'en';
 
   const { width, height } = useWindowDimensions();
-  const flipKey = `${reader.pageFlip}`;
   const isWeb = Platform.OS === 'web';
 
   const [loadingSet, setLoadingSet] = useState<Set<number>>(new Set());
@@ -184,7 +183,6 @@ export default function ReaderScreen({ route }: { route: any }) {
   }, [isWeb]);
 
   const viewableRef = useRef<Set<number>>(new Set());
-  const translateTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
 
   const visibleRef = useRef<{ first: number; last: number }>({ first: 0, last: 20 });
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -233,17 +231,6 @@ export default function ReaderScreen({ route }: { route: any }) {
     [targetLang, updateParagraphsTranslations],
   );
 
-  const scheduleTranslate = useCallback(
-    (idx: number, delayMs: number) => {
-      if ((bookRef.current?.paragraphs[idx]?.translation)) return; // уже переведён
-      if (translateTimers.current[idx]) return; // уже запланирован
-      translateTimers.current[idx] = setTimeout(() => {
-        delete translateTimers.current[idx];
-        translateBatch(idx, idx);
-      }, delayMs);
-    },
-    [translateBatch],
-  );
 
   const onViewableItemsChanged = useCallback(
     ({ viewableItems, changed }: any) => {
@@ -253,20 +240,12 @@ export default function ReaderScreen({ route }: { route: any }) {
         if (typeof idx === 'number') set.add(idx);
       }
       viewableRef.current = set;
-      // абзац держится в окне >2с → переводим (если ещё нет перевода)
-      set.forEach((idx) => scheduleTranslate(idx, 2000));
-      // вышел из окна до 2с — отменяем отложенный перевод
-      if (Array.isArray(changed)) {
-        for (const c of changed) {
-          const idx = c?.index;
-          if (typeof idx === 'number' && !c?.isViewable && translateTimers.current[idx]) {
-            clearTimeout(translateTimers.current[idx]);
-            delete translateTimers.current[idx];
-          }
-        }
-      }
+      // абзац в окне → переводим СРАЗУ (без задержки), если ещё нет перевода
+      set.forEach((idx) => {
+        if (!bookRef.current?.paragraphs[idx]?.translation) translateBatch(idx, idx);
+      });
     },
-    [scheduleTranslate],
+    [],
   );
 
   const onScrollBeginDrag = useCallback(() => {
@@ -285,11 +264,6 @@ export default function ReaderScreen({ route }: { route: any }) {
       }
       for (const idx of range) {
         if (bookRef.current?.paragraphs[idx]?.translation) continue;
-        // снимаем отложенный 3с-таймер — переводим немедленно
-        if (translateTimers.current[idx]) {
-          clearTimeout(translateTimers.current[idx]);
-          delete translateTimers.current[idx];
-        }
         translateBatch(idx, idx);
       }
       const total = bookRef.current?.paragraphs.length ?? 1;
@@ -331,11 +305,12 @@ export default function ReaderScreen({ route }: { route: any }) {
     // В режиме 'read' перевод не грузим (пользователь хочет читать оригинал).
     if (mode === 'read') return;
     // Перевод срабатывает по скролл-стопу (onMomentumScrollEnd) и при удержании абзаца в окне >2с.
-    for (let i = 0; i <= BATCH; i++) scheduleTranslate(i, 2000);
+    const paras = bookRef.current?.paragraphs ?? [];
+    for (let i = 0; i <= BATCH && i < paras.length; i++) {
+      if (!bookRef.current?.paragraphs[i]?.translation) translateBatch(i, i);
+    }
     return () => {
       if (scrollTimer.current) clearTimeout(scrollTimer.current);
-      Object.values(translateTimers.current).forEach((t) => clearTimeout(t));
-      translateTimers.current = {};
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, mode]);
@@ -390,112 +365,16 @@ export default function ReaderScreen({ route }: { route: any }) {
     );
   }
 
-  // --- Пагинация для горизонтального режима (обычное чтение) ---
+
+
   const isPdf = book.format === 'pdf';
-  const paginated = reader.pageFlip === 'horizontal' && !isPdf;
-
-  const pages = React.useMemo(() => {
-    if (!paginated) return [] as number[][];
-    const margin = reader.pageMargins ? reader.margin : 0;
-    const availW = width - margin * 2;
-    const availH = height - 140; // хедер + футер с номером страницы
-    const lineH = reader.fontSize * reader.lineHeight;
-    const dualFactor = mode === 'dual' ? 0.5 : 1; // перевод занимает ~половину страницы
-    const charsPerLine = Math.max(10, Math.floor(availW / (reader.fontSize * 0.5)));
-    const linesPerPage = Math.max(3, Math.floor((availH / lineH) * dualFactor));
-    const charsPerPage = charsPerLine * linesPerPage;
-    const result: number[][] = [];
-    let cur: number[] = [];
-    let curLen = 0;
-    for (const p of book.paragraphs) {
-      const len = p.original.length;
-      if (curLen > 0 && curLen + len + 1 > charsPerPage) {
-        result.push(cur);
-        cur = [];
-        curLen = 0;
-      }
-      cur.push(p.index);
-      curLen += len + 1;
-    }
-    if (cur.length) result.push(cur);
-    return result;
-  }, [paginated, book.paragraphs, width, height, reader.fontSize, reader.lineHeight, reader.margin, reader.pageMargins]);
-
-  const [pageIndex, setPageIndex] = React.useState(0);
-  const pageScrollRef = React.useRef<any>(null);
-  const onPageScrollEnd = (e: any) => {
-    const x = e.nativeEvent?.contentOffset?.x ?? 0;
-    const idx = Math.round(x / width);
-    setPageIndex(idx);
-  };
-
-  const renderPageRow = (index: number) => {
-    const p = book.paragraphs.find((x) => x.index === index);
-    if (!p) return null;
-    return (
-      <SentenceRow
-        index={p.index}
-        original={p.original}
-        translation={p.translation}
-        loading={loadingSet.has(p.index)}
-        showTranslation={false}
-        fontSize={reader.fontSize}
-        lineHeight={reader.lineHeight}
-        justify={reader.justify}
-        fontFamily={reader.fontFamily}
-        fontWeight={reader.fontWeight}
-        textAlign={reader.textAlign}
-        pageMargins={reader.pageMargins}
-        bookmarked={book.bookmarks?.includes(p.index) ?? false}
-        onToggleBookmark={() => toggleBookmark(book.id, p.index)}
-        onCopy={() => copyParagraph(p.original, p.translation)}
-        onSpeak={speak}
-        onTranslate={() => translateBatch(p.index, p.index)}
-        showSpeak={reader.showSpeakButton ?? true}
-        showTranslate={reader.showTranslateButton ?? true}
-        onWordPress={onWordPress}
-        forceHideTranslation={mode === 'read'}
-        mode={mode}
-        query={query}
-      />
-    );
-  };
-
-  const list = paginated ? (
-    <FlatList
-      ref={pageScrollRef}
-      style={{ flex: 1 }}
-      data={pages}
-      keyExtractor={(_, i) => `pg-${i}`}
-      key={`paged-${reader.fontSize}-${reader.margin}-${reader.pageMargins}-${width}`}
-      horizontal
-      pagingEnabled
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ backgroundColor: theme.readerBg }}
-      snapToInterval={width}
-      decelerationRate="fast"
-      initialScrollIndex={Math.min(pageIndex, Math.max(0, pages.length - 1))}
-      getItemLayout={(_, index) => ({ length: width, offset: width * index, index })}
-      onMomentumScrollEnd={onPageScrollEnd}
-      renderItem={({ item }) => (
-        <View style={{ width, flex: 1, paddingTop: a.small ? 4 : 8, paddingBottom: a.small ? 20 : 40, paddingHorizontal: reader.pageMargins ? reader.margin : 0, backgroundColor: theme.readerBg }}>
-          {item.map((idx) => (
-            <View key={idx} style={{ marginBottom: a.gap }}>
-              {renderPageRow(idx)}
-            </View>
-          ))}
-        </View>
-      )}
-    />
-  ) : (
+  const list = (
     <FlatList
       ref={scrollRef}
       style={{ flex: 1 }}
       data={book.paragraphs}
       keyExtractor={(p) => String(p.index)}
       numColumns={1}
-      key={flipKey}
-      horizontal={reader.pageFlip === 'horizontal'}
       contentContainerStyle={[styles.list, { backgroundColor: theme.readerBg, paddingHorizontal: reader.pageMargins ? reader.margin : 0 }]}
       onScrollBeginDrag={onScrollBeginDrag}
       onMomentumScrollEnd={onMomentumScrollEnd}
@@ -513,7 +392,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           original={item.original}
           translation={item.translation}
           loading={loadingSet.has(item.index)}
-          showTranslation={false}
+          showTranslation={mode === 'dual'}
           fontSize={reader.fontSize}
           lineHeight={reader.lineHeight}
           justify={reader.justify}
@@ -537,15 +416,6 @@ export default function ReaderScreen({ route }: { route: any }) {
     />
   );
 
-  // Индикатор нумерации страниц (только в постраничном режиме)
-  const pageIndicator = paginated && pages.length > 0 ? (
-    <View style={[styles.pageIndicator, metal(theme, 'raised', { radius: 12 })]}>
-      <Text style={[styles.pageIndicatorText, { color: theme.primaryText }]}>
-        {t("Page {n} of {m}").replace(/\{n\}/g, String(Math.min(pageIndex + 1, pages.length))).replace(/\{m\}/g, String(pages.length))}
-      </Text>
-    </View>
-  ) : null;
-
   const header = (
     <View style={[styles.header, metal(theme, 'raised', { radius: a.radius })]}>
       <View style={[styles.headerRow, { paddingLeft: a.pad, paddingRight: a.pad, paddingTop: a.small ? 4 : 6, paddingBottom: a.small ? 4 : 6, maxHeight: a.small ? 56 : 68 }]}>
@@ -566,7 +436,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           </View>
         )}
         <View style={[styles.headerRight, { position: 'relative' }]}>
-          <IconButton icon="options" onPress={() => setFontOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
+          <IconButton icon="settings" onPress={() => setFontOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
           <IconButton icon="heart" onPress={() => setSupportOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
         </View>
       </View>
@@ -627,7 +497,6 @@ export default function ReaderScreen({ route }: { route: any }) {
     <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, padding: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>
       {header}
       {content}
-      {pageIndicator}
       {searchModal}
       {selected && (
         <WordBottomSheet
@@ -728,15 +597,5 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       borderRadius: 45 / 2,
     },
     upFabText: { fontSize: a.fs(22), fontFamily: FONTS.bold, color: theme.primaryText },
-    pageIndicator: {
-      position: 'absolute',
-      bottom: 8,
-      alignSelf: 'center',
-      paddingVertical: 4,
-      paddingHorizontal: 12,
-      borderRadius: 12,
-      opacity: 0.9,
-    },
-    pageIndicatorText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
   });
 }

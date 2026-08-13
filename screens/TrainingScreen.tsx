@@ -79,7 +79,7 @@ export default function TrainingScreen() {
     startScroll: {
       flexGrow: 1,
       padding: a.pad,
-      paddingTop: a.pad + Math.round(a.fab()),
+      paddingTop: a.tabBarH + 24 + Math.round(a.fab()) + a.gap,
       gap: a.gap,
       width: '100%',
       maxWidth: a.isTablet ? 720 : 560,
@@ -121,7 +121,7 @@ export default function TrainingScreen() {
     finishBanner: { ...metal(theme, 'raised', { radius: a.radius + 4 }), alignItems: 'center', padding: a.pad, gap: 2, borderWidth: 0 },
     finishTitle: { fontSize: a.title, fontFamily: 'bold' },
     finishSub: { fontSize: a.body, marginTop: 4, marginBottom: 6 },
-    btn: { flex: 1, borderRadius: a.radius + 2, paddingVertical: a.tiny ? 10 : 14, paddingHorizontal: a.tiny ? 10 : 16, alignItems: 'center' },
+    btn: { flex: 1, borderRadius: a.radius + 2, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.tiny ? 10 : 16, alignItems: 'center', minHeight: a.tiny ? 56 : 64 },
     btnText: { color: '#fff', fontFamily: 'bold', fontSize: a.body },
     typeCard: { ...metal(theme, 'raised', { radius: a.radius }), padding: a.pad, marginTop: 8 },
     wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' },
@@ -156,10 +156,12 @@ export default function TrainingScreen() {
     return entries.filter((e) => {
       if (source !== 'all' && e.bookId !== source) return false;
       const p = progress[`${e.word}|${e.lang}`];
-      if (p && p.box >= 4) return false; // выученные исключаем
+      // выученные (box>=4) НЕ исключаем полностью — иначе pool пустой и current=undefined (краш).
+      // реже показываем через weight в buildQueue.
       return true;
     });
   }, [entries, source, progress]);
+
 
   // перемешивание БЕЗ соседних повторов одного и того же слова
   function shuffleNoAdjacentDup(arr: DictionaryEntry[]): DictionaryEntry[] {
@@ -266,13 +268,21 @@ export default function TrainingScreen() {
   }, [index, mode]);
 
   const start = (m: 'quiz' | 'type') => {
+    const q = buildQueue();
+    if (q.length === 0) {
+      // нет слов для тренировки — не стартуем с пустой очередью (иначе current=undefined -> краш)
+      setQueue([]);
+      setStarted(true);
+      setFinished(false);
+      return;
+    }
     setMode(m);
     setIndex(0);
     setStats({ correct: 0, wrong: 0 });
     setStreak(0);
     setTyped('');
     setFinished(false);
-    setQueue(buildQueue());
+    setQueue(q);
     setStarted(true);
   };
 
@@ -385,6 +395,16 @@ export default function TrainingScreen() {
   // делаем через paddingStart ScrollView (см. startScroll). В активном режиме (ниже) контент
   // идёт сразу под абсолютный BackFab — поэтому container получает paddingTop с учётом его высоты.
 
+  if (!current) {
+    // очередь пуста (нет слов для тренировки) — показываем заглушку вместо краша
+    return (
+      <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.pad, paddingBottom: a.pad }}>
+        <View style={[styles.center, { backgroundColor: 'transparent' }]}>
+          <Text style={[styles.empty, { color: theme.secondaryText }]}>{t("No words to train. Save words while reading.")}</Text>
+        </View>
+      </Screen>
+    );
+  }
   const currentProgress = progress[`${current.word}|${current.lang}`] || null;
 
   // точки прогресса КОНКРЕТНОГО слова из trainingStore (correctStreak 0..5), а не сессионный счётчик
@@ -401,6 +421,11 @@ export default function TrainingScreen() {
 
   return (
     <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.pad, paddingBottom: a.pad }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: a.tabBarH + a.pad, gap: a.gap }}
+        showsVerticalScrollIndicator={false}
+      >
       <View style={styles.topRow}>
         <IconButton icon="arrow-back" onPress={() => { setStarted(false); setFinished(false); setIndex(0); }} variant="circle" size={a.fab()} hitSlop={8} />
         <Text style={[styles.counter, { color: theme.secondaryText }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>
@@ -485,6 +510,7 @@ export default function TrainingScreen() {
           )}
         </View>
       )}
+      </ScrollView>
     </Screen>
   );
 }

@@ -16,7 +16,6 @@ interface SettingsState {
     fontFamily: string; // гарнитура: 'default' | 'serif' | 'sans' | 'mono'
     fontWeight: number; // 300..800 — жирность
     textAlign: 'left' | 'justify' | 'hyphenation';
-    pageFlip: 'horizontal' | 'vertical';
     pageMargins: boolean; // вкл/выкл отступы по краям
     highlightWords: boolean;
     dictionaryOnDoubleTap: boolean;
@@ -48,7 +47,6 @@ export const useSettingsStore = persist<SettingsState>(
       fontFamily: 'default',
       fontWeight: 400,
       textAlign: 'justify',
-      pageFlip: 'vertical',
       pageMargins: true,
       highlightWords: true,
       dictionaryOnDoubleTap: true,

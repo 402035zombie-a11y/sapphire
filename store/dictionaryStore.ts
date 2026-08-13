@@ -3,6 +3,7 @@
 // Ключ уникальности — word|lang. Дубликаты при добавлении/импорте отсекаются.
 // Для счётчика в UI используйте entries (уже дедуплицированы в селекторах).
 import { persist } from './createStore';
+import { translateCached } from '../services/translationService';
 
 export interface DictionaryEntry {
   id: string;
@@ -51,12 +52,17 @@ export const useDictionaryStore = persist<DictionaryState>(
               ),
             };
           }
-          return {
-            entries: [
-              ...s.entries,
-              { ...entry, id: `${entry.word}-${Date.now()}`, createdAt: Date.now() },
-            ],
-          };
+          const id = `${entry.word}-${Date.now()}`;
+          const newEntry = { ...entry, id, createdAt: Date.now() };
+          // подгружаем translation, если пустой (fire-and-forget) — чтобы тренировка видела слово
+          if (!newEntry.translation || !newEntry.translation.trim()) {
+            const from = newEntry.lang || 'en';
+            const to = newEntry.lang === 'en' ? 'ru' : 'en';
+            translateCached(newEntry.word, from, to)
+              .then((r) => { if (r?.text) get().updateEntry(id, { translation: r.text }); })
+              .catch(() => {});
+          }
+          return { entries: [...s.entries, newEntry] };
         }),
       removeEntry: (id) => set((s) => ({ entries: s.entries.filter((e) => e.id !== id) })),
       updateEntry: (id, patch) =>

@@ -158,28 +158,6 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
           </View>
           )}
 
-          {/* Page flipping — направление */}
-          <View style={styles.sectionLabelWrap}>
-            <Text style={[styles.sectionLabel, { color: theme.secondaryText }]}>{t("Page flipping")}</Text>
-            <View style={styles.chipRow}>
-              {[
-                { id: 'vertical', label: "Vertical" },
-                { id: 'horizontal', label: "Horizontal" },
-              ].map((p) => {
-                const active = reader.pageFlip === p.id;
-                return (
-                  <TouchableOpacity
-                    key={p.id}
-                    style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
-                    onPress={() => setReader({ pageFlip: p.id as any })}
-                  >
-                    <Text style={[styles.chipText, { color: active ? '#fff' : theme.primaryText }]}>{t(p.label)}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
-
           <View style={styles.toggleRow}>
             <Text style={[styles.toggleLabel, { color: theme.primaryText }]}>{t("Page margins")}</Text>
             <Switch

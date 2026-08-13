@@ -73,9 +73,8 @@ export default function ModalSheet({
           panelStyle,
           // жёсткий потолок ширины ВСЕГДА после panelStyle,
           // чтобы дочерний panelStyle не мог растянуть панель на весь экран
-          { maxWidth: mw },
+          { maxWidth: mw, pointerEvents: 'auto' as any },
         ]}
-        pointerEvents="auto"
       >
         {children}
       </View>
