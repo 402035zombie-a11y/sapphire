@@ -42,6 +42,7 @@ import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
 import Marquee from '../components/Marquee';
 import BackFab from '../components/BackFab';
+import IconButton from '../components/ui/IconButton';
 import AppSettingsModal from '../components/AppSettingsModal';
 import FontSettingsSheet from '../components/FontSettingsSheet';
 
@@ -555,35 +556,17 @@ export default function ReaderScreen({ route }: { route: any }) {
           <View style={styles.centerPlay}>
             {isSpeaking ? (
               <React.Fragment>
-                <TouchableOpacity onPress={pauseBook} hitSlop={10} style={[metal(theme, 'circle', { size: a.fab() })]}>
-                  <Icon name="pause" size={a.dim(0.034, 18, 28)} color={theme.primary} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={stopBook} hitSlop={10} style={[metal(theme, 'circle', { size: a.fab() })]}>
-                  <Icon name="close" size={a.dim(0.034, 18, 28)} color={theme.primary} />
-                </TouchableOpacity>
+                <IconButton icon="pause" onPress={pauseBook} variant="circle" size={a.fab()} color={theme.primary} hitSlop={10} />
+                <IconButton icon="close" onPress={stopBook} variant="circle" size={a.fab()} color={theme.primary} hitSlop={10} />
               </React.Fragment>
             ) : (
-              <TouchableOpacity onPress={playBook} hitSlop={10} style={[metal(theme, 'circle', { size: a.fab() })]}>
-                <Icon name="volume" size={a.dim(0.036, 20, 30)} color={theme.primary} />
-              </TouchableOpacity>
+              <IconButton icon="volume" onPress={playBook} variant="circle" size={a.fab()} color={theme.primary} hitSlop={10} />
             )}
           </View>
         )}
         <View style={[styles.headerRight, { position: 'relative' }]}>
-          <TouchableOpacity
-            onPress={() => setFontOpen(true)}
-            hitSlop={8}
-            style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}
-          >
-            <Icon name="options" size={a.dim(0.03, 16, 24)} color={theme.primaryText} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setSupportOpen(true)}
-            hitSlop={8}
-            style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}
-          >
-            <Icon name="heart" size={a.dim(0.03, 16, 24)} color={theme.primaryText} />
-          </TouchableOpacity>
+          <IconButton icon="options" onPress={() => setFontOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
+          <IconButton icon="heart" onPress={() => setSupportOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
         </View>
       </View>
     </View>

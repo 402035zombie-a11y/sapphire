@@ -1,5 +1,5 @@
 // components/BottomTabBar.tsx
-// Неоморфный плавающий таб-бар (dock): выпуклый контейнер + активный таб вдавлен (inset) в акцент.
+// Неоморфный плавающий таб-бар (dock): выпуклый контейнер + активный таб ВЫПУКЛЫЙ (raised), неактивные ВДАВЛЕНЫ (inset).
 // Подпись — СПРАВА от значка (горизонтально), чтобы текст не обрезался.
 // Когда места не хватает (узкий экран) — только значки.
 import React from 'react';
@@ -78,8 +78,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
               paddingVertical: a.tiny ? 6 : 9,
               paddingHorizontal: showLabel ? (a.tiny ? 10 : 14) : a.tiny ? 8 : 11,
               borderRadius: a.radius,
-              ...(focused ? metal(theme, 'tabStampActive', { radius: a.radius }) : metal(theme, 'tabStamp', { radius: a.radius })),
-              backgroundColor: 'transparent',
+              ...(focused ? metal(theme, 'raised', { radius: a.radius }) : metal(theme, 'inset', { radius: a.radius })),
             }}
           >
             <Icon
