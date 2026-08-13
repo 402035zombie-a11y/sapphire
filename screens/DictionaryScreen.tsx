@@ -588,7 +588,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     },
     wordLine: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 },
     word: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1, maxWidth: '70%', wordBreak: 'break-word', overflow: 'hidden' } as any,
-    speakInline: { ...metal(theme, 'inset', { radius: a.dim(0.05, 28, 34) }), alignItems: 'center', justifyContent: 'center' },
+    speakInline: { ...metal(theme, 'circle', { size: a.dim(0.05, 28, 34) }), alignItems: 'center', justifyContent: 'center' },
     speakInlineIcon: { fontSize: a.fs(14), color: theme.primary },
     lang: { fontSize: a.fs(12), fontFamily: FONTS.regular },
     badge: { ...metal(theme, 'inset', { radius: 8 }), flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },

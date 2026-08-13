@@ -87,17 +87,15 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
   if (!visible) return null;
 
   return (
-    <ModalSheet visible={visible} onClose={onClose} panelStyle={[styles.card, a.landscape && { paddingRight: 0 }]}>
+    <ModalSheet visible={visible} onClose={onClose} blurBackdrop={false} panelStyle={[styles.card, a.landscape && { paddingRight: 0 }]}>
       <View style={{ width: '100%' }}>
-        <View style={styles.head}>
-          <Text style={[styles.title, { color: theme.primaryText }]}>{t("Reading view")}</Text>
-          <TouchableOpacity
-            onPress={onClose}
-            hitSlop={10}
-            style={[metal(theme, 'stamp', { size: a.fab() }), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
-          >
-            <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={onClose}
+          hitSlop={10}
+          style={[metal(theme, 'stamp', { size: a.fab() }), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
+        >
+          <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
+        </TouchableOpacity>
           <ScrollView
             style={{ maxHeight: Math.round(a.height * (a.landscape ? 0.72 : 0.78)) }}
             contentContainerStyle={styles.scrollContent}
@@ -265,7 +263,6 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
             onClose={() => setLangPicker(false)}
           />
           </ScrollView>
-        </View>
       </View>
     </ModalSheet>
   );
@@ -291,15 +288,6 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
       borderBottomLeftRadius: a.radius + 2,
     },
     scrollContent: { padding: a.pad, gap: Math.max(8, Math.round(a.gap * 0.8)), paddingBottom: a.pad },
-    head: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: a.pad,
-      paddingTop: Math.round(a.pad * 0.7),
-      paddingBottom: 6,
-    },
-    title: { fontSize: a.h2, fontFamily: FONTS.bold },
     stepperBlock: { gap: 4 },
     stepperLabel: { fontSize: a.fs(14) },
     stepperRow: {

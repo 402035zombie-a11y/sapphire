@@ -42,12 +42,14 @@ export default function SupportAuthorModal({
       onClose={onDismiss}
       panelStyle={{
         backgroundColor: theme.popupBg ?? theme.neu.base,
+        // maxHeight ограничивает панель, чтобы она НЕ растягивалась на весь экран
+        // (иначе ScrollView выпирает и панель "прилипает" к верху).
         maxHeight: m.maxHeight,
         padding: m.padding,
         alignItems: 'center',
       }}
     >
-      <ScrollView contentContainerStyle={{ alignItems: 'center', padding: neuShadowPad(12) }} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ maxHeight: m.maxHeight - m.padding * 2, width: '100%' }} contentContainerStyle={{ alignItems: 'center', padding: neuShadowPad(12) }} showsVerticalScrollIndicator={false}>
         {/* На очень низком landscape иконку прячем — экономим вертикаль */}
         {!(a.landscape && a.height < 420) && <Icon name="heart" size={a.fab()} color={theme.primary} />}
         <Text style={{ fontSize: a.h2, fontFamily: FONTS.bold, color: theme.primaryText, marginTop: 10, textAlign: 'center' }}>
