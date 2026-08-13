@@ -17,6 +17,12 @@ import { ThemePalette } from './themes';
 
 export type NeuStyle = any;
 
+// ГЛОБАЛЬНЫЙ КОЭФФИЦИЕНТ ВНЕШНЕЙ (падающей) ТЕНИ.
+// 1 = исходно (сильно размытая, большой разлёт). 0.55 = компактнее на пару px,
+// объём края (inset-тени) не трогаем → выпуклость читается, а не тонет в ореоле.
+// Меняется ОДНИМ числом для ВСЕХ элементов (все тени централизованы в metal()/neu*).
+const OUTER_SHADOW = 0.55;
+
 // затемнить/осветлить hex-цвет на долю amt (-1..1)
 function shade(hex: string, amt: number): string {
   const m = hex.replace('#', '');
@@ -43,20 +49,25 @@ export function neuRaised(t: ThemePalette, radius: number, strength = 1): any {
   const ix = Math.max(2, Math.round(off * 0.35));
   const iy = Math.max(2, Math.round(off * 0.4));
   const iblur = Math.round(off * 1.4);
+  // внешняя (падающая) тень — компактнее, чтобы объём читался, а не тонул в ореоле
+  const oX = Math.round(x * OUTER_SHADOW);
+  const oY = Math.round(y * OUTER_SHADOW);
+  const oB1 = Math.round(blur1 * OUTER_SHADOW);
+  const oB2 = Math.round(blur2 * OUTER_SHADOW);
   const style: any = {
     backgroundColor: t.neu.base,
     backgroundImage: extrude(t),
     backgroundClip: 'padding-box',
     borderRadius: radius,
     boxShadow: [
-      `${x}px ${y}px ${blur1}px ${d}`, // тёмная падающая (ближняя)
-      `${x * 1.6}px ${y * 1.6}px ${blur2}px ${d}`, // тёмная падающая (дальняя, глубина)
+      `${oX}px ${oY}px ${oB1}px ${d}`, // тёмная падающая (ближняя)
+      `${Math.round(oX * 1.6)}px ${Math.round(oY * 1.6)}px ${oB2}px ${d}`, // тёмная падающая (дальняя, глубина)
       `${-x}px ${-y}px ${blur1}px ${s}`, // цветной объём сверху-слева (видим на тёмном)
       `${-x * 1.6}px ${-y * 1.6}px ${blur2}px ${l}`, // светлый ореол (дальний)
       `inset ${ix}px ${iy}px ${iblur}px ${hi}`, // тонкий внутренний блик (объём края)
       `inset ${-ix}px ${-iy}px ${iblur}px ${d}`, // внутренняя тень снизу-справа
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : { shadowColor: d, shadowOffset: { width: x, height: y }, shadowOpacity: 0.5, shadowRadius: blur1, elevation: Math.max(3, Math.round(off)) }),
+    ...(Platform.OS === 'web' ? {} : { shadowColor: d, shadowOffset: { width: oX, height: oY }, shadowOpacity: 0.5, shadowRadius: oB1, elevation: Math.max(3, Math.round(off)) }),
   };
   return style;
 }
@@ -97,8 +108,8 @@ export function neuPrimary(t: ThemePalette, radius: number): any {
     backgroundImage: `linear-gradient(145deg, ${t.primary} 0%, ${t.primary} 60%, ${t.primary})`,
     borderRadius: radius,
     boxShadow: [
-      `${x}px ${off}px ${blur1}px rgba(0,0,0,0.45)`,
-      `${x * 1.6}px ${off * 1.6}px ${blur2}px rgba(0,0,0,0.35)`,
+      `${Math.round(x * OUTER_SHADOW)}px ${Math.round(off * OUTER_SHADOW)}px ${Math.round(blur1 * OUTER_SHADOW)}px rgba(0,0,0,0.45)`,
+      `${Math.round(x * 1.6 * OUTER_SHADOW)}px ${Math.round(off * 1.6 * OUTER_SHADOW)}px ${Math.round(blur2 * OUTER_SHADOW)}px rgba(0,0,0,0.35)`,
       `inset 0 1px 2px rgba(255,255,255,0.35)`, // верхний блик
       `inset 0 -2px 5px rgba(0,0,0,0.30)`, // нижняя внутренняя тень
     ].join(', '),
@@ -219,20 +230,25 @@ export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): a
   const ix = Math.max(2, Math.round(off * 0.35));
   const iy = Math.max(1, Math.round(off * 0.12));
   const iblur = Math.round(off * 1.4);
+  // внешняя падающая тень — компактнее (объём читается)
+  const oX = Math.round(x * OUTER_SHADOW);
+  const oY = Math.round(y * OUTER_SHADOW);
+  const oB1 = Math.round(blur1 * OUTER_SHADOW);
+  const oB2 = Math.round(blur2 * OUTER_SHADOW);
   return {
     backgroundColor: t.neu.base,
     backgroundImage: metalBg(t),
     backgroundClip: 'padding-box',
     borderRadius: radius,
     boxShadow: [
-      `${-x}px ${-y}px ${blur1}px ${s}`,
-      `${-x * 1.6}px ${-y * 1.6}px ${blur2}px ${l}`,
+      `${-oX}px ${-oY}px ${oB1}px ${s}`,
+      `${-Math.round(oX * 1.6)}px ${-Math.round(oY * 1.6)}px ${oB2}px ${l}`,
       `inset 0 1.5px 0 0 ${rim(t)}`, // светлый верхний rim (кромка металла, мягко)
       `inset 0 1px 3px 0 ${spec(t)}`, // РЕЗКИЙ specular-блик у верхнего края (литой блеск, светло-серый)
       `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`, // объёмный specular сверху-слева (мягко, не полоса)
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`, // тёмная грань снизу-справа
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : { shadowColor: specDark(t), shadowOffset: { width: x, height: y }, shadowOpacity: 0.5, shadowRadius: blur1, elevation: Math.max(3, Math.round(off)) }),
+    ...(Platform.OS === 'web' ? {} : { shadowColor: specDark(t), shadowOffset: { width: -oX, height: -oY }, shadowOpacity: 0.5, shadowRadius: oB1, elevation: Math.max(3, Math.round(off)) }),
   };
 }
 
@@ -258,8 +274,8 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
     transition: 'box-shadow 160ms ease, transform 160ms ease',
     boxShadow: filled
       ? [
-          `${off * 1.4}px ${off * 1.6}px ${blur2}px rgba(0,0,0,0.55)`, // крупная внешняя тень (объём)
-          `${off}px ${off}px ${blur1}px rgba(0,0,0,0.45)`,
+          `${Math.round(off * 1.4 * OUTER_SHADOW)}px ${Math.round(off * 1.6 * OUTER_SHADOW)}px ${Math.round(blur2 * OUTER_SHADOW)}px rgba(0,0,0,0.55)`, // крупная внешняя тень (объём)
+          `${Math.round(off * OUTER_SHADOW)}px ${Math.round(off * OUTER_SHADOW)}px ${Math.round(blur1 * OUTER_SHADOW)}px rgba(0,0,0,0.45)`,
           `inset 0 2px 3px rgba(255,255,255,0.45)`, // верхний specular-блик (выпуклость)
           `inset 0 -3px 6px rgba(0,0,0,0.35)`, // нижняя внутренняя тень
         ].join(', ')

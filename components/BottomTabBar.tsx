@@ -78,13 +78,15 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
               paddingVertical: a.tiny ? 6 : 9,
               paddingHorizontal: showLabel ? (a.tiny ? 10 : 14) : a.tiny ? 8 : 11,
               borderRadius: a.radius,
-              ...(focused ? metal(theme, 'raised', { radius: a.radius }) : metal(theme, 'inset', { radius: a.radius })),
+              ...(focused
+                ? { backgroundColor: theme.primary, alignItems: 'center', justifyContent: 'center' }
+                : metal(theme, 'inset', { radius: a.radius })),
             }}
           >
             <Icon
               name={iconName}
               size={a.icon(24)}
-              color={focused ? theme.primary : theme.secondaryText}
+              color={focused ? '#fff' : theme.secondaryText}
             />
             {showLabel && (
               <Text
@@ -92,7 +94,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={{
-                  color: focused ? theme.primary : theme.secondaryText,
+                  color: focused ? '#fff' : theme.secondaryText,
                   fontSize: a.tabFs,
                   fontFamily: FONTS.bold,
                   fontWeight: '700',

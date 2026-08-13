@@ -31,6 +31,7 @@ import { extractBookWords } from '../utils/bookWords';
 import Icon from '../components/Icon';
 import { neuShadowPad, screenBg, metal } from '../theme/neu';
 import SupportButton from '../components/SupportButton';
+import { useSettingsStore } from '../store/settingsStore';
 import { useT } from '../i18n';
 
 const speakWord = (text: string, lang: string) => {
@@ -41,6 +42,8 @@ const speakWord = (text: string, lang: string) => {
     window.speechSynthesis.speak(u);
   }
 };
+if (typeof window !== 'undefined') (window as any).__library = useLibraryStore;
+if (typeof window !== 'undefined') (window as any).__dictionary = useDictionaryStore;
 
 type SortMode = 'az' | 'date' | 'lang';
 
@@ -376,7 +379,8 @@ export default function DictionaryScreen() {
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('General dictionary')}</Text>
             </TouchableOpacity>
             {bookSources.length > 0 ? (
-              bookSources.map((b) => (
+              <ScrollView style={{ maxHeight: Math.round(winH * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
+              {bookSources.map((b) => (
                 <TouchableOpacity
                   key={b.id}
                   style={[styles.pickItem]}
@@ -384,7 +388,8 @@ export default function DictionaryScreen() {
                 >
                   <Text style={[styles.pickText, { color: theme.primaryText }]} numberOfLines={1}>{t('Dictionary for “{title}”').replace(/\{title\}/g, b.title)}</Text>
                 </TouchableOpacity>
-              ))
+              ))}
+              </ScrollView>
             ) : (
               <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{t('No books with saved words.')}</Text>
             )}
@@ -414,6 +419,7 @@ export default function DictionaryScreen() {
       <ModalSheet visible={bookPickOpen} onClose={() => setBookPickOpen(false)}>
         <View style={styles.pickCard}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Select a book')}</Text>
+            <ScrollView style={{ maxHeight: Math.round(winH * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
             {books.map((b) => (
               <TouchableOpacity
                 key={b.id}
@@ -423,6 +429,7 @@ export default function DictionaryScreen() {
                 <Text style={[styles.pickText, { color: theme.primaryText }]} numberOfLines={1}>{b.title}</Text>
               </TouchableOpacity>
             ))}
+            </ScrollView>
             {books.length === 0 && <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{t('No books.')}</Text>}
         </View>
       </ModalSheet>
