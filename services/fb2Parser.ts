@@ -57,9 +57,7 @@ export async function parseFb2(
   onProgress?: (p: number) => void,
 ): Promise<Fb2ParseResult> {
   onProgress?.(0.1);
-  const raw = await FileSystem.readAsStringAsync(uri, {
-    encoding: 'utf8',
-  });
+  const raw = await (await fetch(uri)).text();
   onProgress?.(0.4);
   const res = parseFb2Text(raw);
   onProgress?.(1);

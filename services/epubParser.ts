@@ -61,9 +61,8 @@ export async function parseEpub(
   let last = 0;
   const tick = (p: number) => { if (p - last >= 0.02 || p >= 1) { last = p; emit?.(p); } };
   tick(0.05);
-  const base64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: 'base64',
-  });
+  const buf = await (await fetch(uri)).arrayBuffer();
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
   tick(0.25);
   const zip = await JSZip.loadAsync(base64, { base64: true });
 
