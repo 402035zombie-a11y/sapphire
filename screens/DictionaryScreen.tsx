@@ -27,7 +27,7 @@ import { translateCached } from '../services/translationService';
 import { DictionaryEntry } from '../store/dictionaryStore';
 import { useTrainingStore } from '../store/trainingStore';
 import { useLibraryStore } from '../store/libraryStore';
-import Speech from 'expo-speech';
+import Tts from 'react-native-tts';
 import { langName } from '../utils/languages';
 import { extractBookWords } from '../utils/bookWords';
 import { effectiveLang } from '../utils/lang';
@@ -39,7 +39,13 @@ import { useT } from '../i18n';
 
 const speakWord = (text: string, lang: string) => {
   if (!text) return;
-  Speech.speak(text, { language: lang || 'en', rate: 0.95 });
+  try {
+    Tts.setDefaultLanguage(lang || 'en');
+    Tts.setDefaultRate(0.95);
+    Tts.speak(text);
+  } catch (e) {
+    console.warn('[speak] TTS failed:', e);
+  }
 };
 
 type SortMode = 'az' | 'date' | 'lang';
