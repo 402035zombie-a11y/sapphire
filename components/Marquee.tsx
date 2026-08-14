@@ -1,7 +1,7 @@
 // components/Marquee.tsx
 // Бегущая строка для длинных названий. На web — CSS-анимация (дубликат текста для зацикливания),
 // запускается ТОЛЬКО если текст шире контейнера. На native — обычная обрезка с троеточием.
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Platform, LayoutChangeEvent } from 'react-native';
 
 let injected = false;
@@ -31,7 +31,9 @@ export default function Marquee({
   const onContainer = (e: LayoutChangeEvent) => setContainerW(e.nativeEvent.layout.width);
   const onText = (e: LayoutChangeEvent) => setTextW(e.nativeEvent.layout.width);
 
-  ensureKeyframes();
+  // Инъекцию <style> с @keyframes выносим в useEffect: мутация document во время render
+  // — анти-паттерн (сайд-эффект в render, может двоиться при concurrent-рендере).
+  useEffect(() => { ensureKeyframes(); }, []);
 
   if (Platform.OS !== 'web') {
     return (

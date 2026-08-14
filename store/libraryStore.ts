@@ -120,5 +120,3 @@ export const useLibraryStore = persist<LibraryState>(
   },
 );
 
-// TEMP: expose store for e2e audit (remove after)
-if (typeof window !== 'undefined') (window as any).__library = useLibraryStore;

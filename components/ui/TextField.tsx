@@ -3,16 +3,19 @@
 import React, { forwardRef } from 'react';
 import { TextInput, TextInputProps } from 'react-native';
 import { useTheme } from '../../theme/ThemeContext';
-import { metal } from '../../theme/neu';
+import { metal, neuInset } from '../../theme/neu';
 
 const TextField = forwardRef<TextInput, { radius?: number } & TextInputProps>(
   ({ radius, style, ...rest }, ref) => {
     const theme = useTheme();
+    // neuInset даёт надёжную inset-тень, которая применяется к нативному <input> на web
+    // (metal('inset') иногда не пробрасывается RN TextInput -> input теряет объём).
+    const insetShadow = neuInset(theme, radius ?? 10);
     return (
       <TextInput
         ref={ref}
         style={[
-          metal(theme, 'inset', { radius: radius ?? 10 }),
+          insetShadow,
           { borderWidth: 0, color: theme.primaryText, paddingHorizontal: 12, paddingVertical: 10 },
           style,
         ]}

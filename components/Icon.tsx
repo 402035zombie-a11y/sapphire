@@ -1,6 +1,6 @@
 // components/Icon.tsx
 // Собственные SVG-иконки (без шрифтов) — рендерятся везде (web/native), без «неизвестных значков».
-import React from 'react';
+import React, { memo } from 'react';
 import Svg, { Path, Circle, Line, Rect, Polygon } from 'react-native-svg';
 import { TouchableOpacity } from 'react-native';
 
@@ -131,7 +131,7 @@ const PATHS_D: Partial<Record<IconName, string>> = {
   play: 'M7 5l12 7-12 7z',
 };
 
-export default function Icon({ name, size = 24, color = '#000', onPress, emboss }: { name: IconName; size?: number; color?: string; onPress?: () => void; emboss?: boolean }) {
+function Icon({ name, size = 24, color = '#000', onPress, emboss }: { name: IconName; size?: number; color?: string; onPress?: () => void; emboss?: boolean }) {
   const svg = (
     <Svg
       width={size}
@@ -163,3 +163,9 @@ export default function Icon({ name, size = 24, color = '#000', onPress, emboss 
   }
   return svg;
 }
+
+// Мемоизируем: Icon — листовой компонент, используется повсеместно (хедеры, попапы,
+// WordBottomSheet и т.д.). Без memo каждый ре-рендер родителя пересобирает все SVG-дерево
+// иконки. Пропсы примитивны (name/size/color/emboss) — shallow compare дешёв; onPress
+// (если передан инлайн) корректно форсирует ре-рендер.
+export default memo(Icon);

@@ -102,5 +102,3 @@ export const useDictionaryStore = persist<DictionaryState>(
   },
 );
 
-// TEMP: expose store for e2e audit (remove after)
-if (typeof window !== 'undefined') (window as any).__dictionary = useDictionaryStore;
