@@ -186,9 +186,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         parsed = await (async () => {
           const res = await fetch(asset.uri);
           const raw = await res.text();
-          const text = raw.replace(/
-\n/g, '\n').replace(/
-/g, '\n').trim();
+          const text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
           return { text, title: asset.name.replace(/\.txt$/i, '') };
         })();
       }
