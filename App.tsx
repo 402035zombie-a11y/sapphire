@@ -1,6 +1,6 @@
 // App.tsx — точка входа: провайдеры темы + навигатор
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from './theme/ThemeContext';
@@ -42,9 +42,13 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { err
 function Root() {
   const theme = useTheme();
   React.useEffect(() => {
-    const g = `linear-gradient(160deg, ${theme.bgTop} 0%, ${theme.background} 45%, ${theme.bgBot} 100%)`;
-    document.body.style.backgroundImage = g;
-    document.body.style.backgroundColor = theme.bgBot;
+    // Градиент фона ставим на document.body только для web-сборки.
+    // В нативном Android/iOS `document` не существует -> краш при старте.
+    if (Platform.OS === 'web') {
+      const g = `linear-gradient(160deg, ${theme.bgTop} 0%, ${theme.background} 45%, ${theme.bgBot} 100%)`;
+      document.body.style.backgroundImage = g;
+      document.body.style.backgroundColor = theme.bgBot;
+    }
   }, [theme.bgTop, theme.background, theme.bgBot]);
   return (
     <View style={{ flex: 1, ...screenBg(theme) }}>
