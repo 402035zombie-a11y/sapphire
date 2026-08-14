@@ -2,7 +2,7 @@
 // Хранилище загруженных книг. persist → AsyncStorage.
 import { persist } from './createStore';
 
-export type BookFormat = 'epub' | 'txt' | 'fb2' | 'pdf';
+export type BookFormat = 'epub' | 'txt' | 'fb2' | 'pdf' | 'docx' | 'odt' | 'rtf' | 'html';
 
 export interface BookParagraph {
   index: number;

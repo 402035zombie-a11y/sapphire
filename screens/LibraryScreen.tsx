@@ -25,6 +25,10 @@ import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { parseEpub } from '../services/epubParser';
 import { parseFb2, parseFb2Text } from '../services/fb2Parser';
+import { parseDocx } from '../services/docxParser';
+import { parseOdt } from '../services/odtParser';
+import { parseRtf } from '../services/rtfParser';
+import { parseHtml } from '../services/htmlParser';
 import { splitIntoSentences } from '../utils/sentenceSplitter';
 import { extractSections } from '../utils/sections';
 import { langName } from '../utils/languages';
@@ -41,7 +45,7 @@ import SupportButton from '../components/SupportButton';
 interface Draft {
   title: string;
   author?: string;
-  format: 'epub' | 'txt' | 'fb2' | 'pdf';
+  format: 'epub' | 'txt' | 'fb2' | 'pdf' | 'docx' | 'odt' | 'rtf' | 'html';
   uri: string;
   pdfUri?: string;
   language: string;
@@ -151,10 +155,18 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       if (res.canceled || !res.assets?.length) return;
       const asset = res.assets[0];
       const lower = asset.name.toLowerCase();
-      const format: 'epub' | 'txt' | 'fb2' | 'pdf' = lower.endsWith('.txt')
+      const format: 'epub' | 'txt' | 'fb2' | 'pdf' | 'docx' | 'odt' | 'rtf' | 'html' = lower.endsWith('.txt')
         ? 'txt'
         : lower.endsWith('.fb2')
         ? 'fb2'
+        : lower.endsWith('.docx')
+        ? 'docx'
+        : lower.endsWith('.odt')
+        ? 'odt'
+        : lower.endsWith('.rtf')
+        ? 'rtf'
+        : lower.endsWith('.html') || lower.endsWith('.htm')
+        ? 'html'
         : lower.endsWith('.pdf')
         ? 'pdf'
         : 'epub';
@@ -182,6 +194,14 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         parsed = await parseEpub(asset.uri, setProgress);
       } else if (format === 'fb2') {
         parsed = await parseFb2(asset.uri, setProgress);
+      } else if (format === 'docx') {
+        parsed = await parseDocx(asset.uri, setProgress);
+      } else if (format === 'odt') {
+        parsed = await parseOdt(asset.uri, setProgress);
+      } else if (format === 'rtf') {
+        parsed = await parseRtf(asset.uri, setProgress);
+      } else if (format === 'html') {
+        parsed = await parseHtml(asset.uri, setProgress);
       } else {
         parsed = await (async () => {
           const res = await fetch(asset.uri);

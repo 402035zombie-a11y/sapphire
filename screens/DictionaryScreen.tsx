@@ -215,14 +215,22 @@ export default function DictionaryScreen() {
     const lang = effectiveLang(book.language);
     // extractBookWords нормализует (только буквы) и считает частоту вхождений
     const freqs = extractBookWords(book.paragraphs);
-    let added = 0;
-    for (const { word, frequency } of freqs) {
-      addEntry({ word, surfaceForm: word, translation: '', context: '', lang, bookId, frequency });
-      added++;
-    }
+    // БАТЧ: один importEntries вместо 1000+ addEntry (каждый addEntry писал
+    // весь словарь в AsyncStorage → 5с freeze на 1000+ слов). importEntries
+    // делает один set + один persist.
+    const toAdd = freqs.map(({ word, frequency }) => ({
+      word,
+      surfaceForm: word,
+      translation: '',
+      context: '',
+      lang,
+      bookId,
+      frequency,
+    }));
+    importEntries(toAdd);
     // переключаемся на вид «по книге», чтобы пользователь сразу увидел добавленные слова
     setSource({ type: 'book', bookId });
-    Alert.alert(t('Import from book'), t('Unique words added: {n}').replace(/\{n\}/g, String(added)));
+    Alert.alert(t('Import from book'), t('Unique words added: {n}').replace(/\{n\}/g, String(toAdd.length)));
   };
 
   const handleDeleteAll = () => {
