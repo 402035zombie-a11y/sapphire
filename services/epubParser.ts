@@ -54,11 +54,17 @@ export async function parseEpub(
   uri: string,
   onProgress?: (p: number) => void,
 ): Promise<EpubParseResult> {
-  onProgress?.(0.05);
+  // Throttle progress-коллбек: parseEpub вызывает onProgress на каждом xhtml-файле,
+  // а UI re-render-ит модал прогресса → для книг с 50+ главами это setState-шторм
+  // и лишний React-рендер (A4: hot-path bloat). Дебаунсим до частоты экрана.
+  const emit = onProgress ? throttle(onProgress, 250) : undefined;
+  let last = 0;
+  const tick = (p: number) => { if (p - last >= 0.02 || p >= 1) { last = p; emit?.(p); } };
+  tick(0.05);
   const base64 = await FileSystem.readAsStringAsync(uri, {
     encoding: 'base64',
   });
-  onProgress?.(0.25);
+  tick(0.25);
   const zip = await JSZip.loadAsync(base64, { base64: true });
 
   const containerFile = zip.file('META-INF/container.xml');
@@ -104,12 +110,28 @@ export async function parseEpub(
     const text = stripHtml(raw);
     if (text) paragraphs.push(text);
     // прогресс от 0.3 до 0.9 по мере чтения spine
-    onProgress?.(0.3 + (0.6 * (i + 1)) / orderedHrefs.length);
+    tick(0.3 + (0.6 * (i + 1)) / orderedHrefs.length);
   }
+
+  // base64 + распакованный zip освобождаются после return (больше не referenced).
+  // Для эпюров 50+МБ: полное решение — Web Worker + чтение epub по-чанкам (BA-работа).
 
   const title = firstMatch(opfXml, /<dc:title[^>]*>([\s\S]*?)<\/dc:title>/i);
   const author = firstMatch(opfXml, /<dc:creator[^>]*>([\s\S]*?)<\/dc:creator>/i);
 
-  onProgress?.(1);
+  tick(1);
   return { text: paragraphs.join('\n\n'), title, author };
+}
+
+// Минимальный лимитер для progress-коллбеков. Один вызов за `minMs` — хватает на
+// UI-обновление прогресса без setState-шторма на каждый xhtml-файл большой книги.
+function throttle(fn: (p: number) => void, minMs: number): (p: number) => void {
+  let last = 0;
+  let pending = false;
+  return (p: number) => {
+    if (p >= 1) { fn(p); return; }
+    const now = Date.now();
+    if (now - last >= minMs) { last = now; fn(p); }
+    else if (!pending) { pending = true; setTimeout(() => { pending = false; fn(p); }, minMs); }
+  };
 }
