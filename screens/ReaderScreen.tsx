@@ -40,6 +40,7 @@ import WordBottomSheet from '../components/WordBottomSheet';
 import WordActionSheet from '../components/WordActionSheet';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
+import { effectiveLang } from '../utils/lang';
 import Marquee from '../components/Marquee';
 import IconButton from '../components/ui/IconButton';
 import AppSettingsModal from '../components/AppSettingsModal';
@@ -94,7 +95,7 @@ export default function ReaderScreen({ route }: { route: any }) {
     (word: string, sentence: string) => {
       if (!book) return;
       const norm = normalizeWord(word);
-      const lang = book.language === 'auto' ? 'en' : book.language;
+      const lang = effectiveLang(book.language);
       if (hasWord(norm)) return;
       addEntry({ word: norm, surfaceForm: word, translation: '', context: sentence, lang, bookId: book.id });
     },
@@ -117,7 +118,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       if (!book || !isWeb || !('speechSynthesis' in window)) return;
       const paras = book.paragraphs;
       let i = start;
-      const lang = book.language === 'auto' ? 'en' : book.language;
+      const lang = effectiveLang(book.language);
       const step = () => {
         if (cancelledRef.current) {
           setIsSpeaking(false);

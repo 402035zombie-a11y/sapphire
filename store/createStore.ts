@@ -82,14 +82,16 @@ export function persist<T extends object>(
         }
         useStore.setState(parsed);
       }
-    } catch {}
+    } catch (e) {
+      console.warn('[createStore] rehydrate failed for key=' + key, e);
+    }
   };
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
   useStore.subscribe((state: T) => {
     const toSave = options?.partialize ? options.partialize(state) : state;
     if (saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
-      AsyncStorage.setItem(key, JSON.stringify(toSave)).catch(() => {});
+      AsyncStorage.setItem(key, JSON.stringify(toSave)).catch((e) => console.warn('[createStore] persist save failed for key=' + key, e));
     }, 600);
   });
   load();

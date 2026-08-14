@@ -4,6 +4,7 @@
 import { translate } from './translationService';
 import type { DictionaryEntry } from '../store/dictionaryStore';
 import { extractBookWords } from '../utils/bookWords';
+import { effectiveLang } from '../utils/lang';
 
 const CHUNK = 20;
 const PAUSE_MS = 150;
@@ -28,7 +29,7 @@ export async function buildBookDictionary(
   targetLang: string,
   opts: { limit?: number; bookId?: string; onProgress?: (p: number) => void } = {},
 ): Promise<Omit<DictionaryEntry, 'id' | 'createdAt'>[]> {
-  const from = lang === 'auto' ? 'en' : lang;
+  const from = effectiveLang(lang);
   const words = extractBookWords(paragraphs);
   if (words.length === 0) return [];
 

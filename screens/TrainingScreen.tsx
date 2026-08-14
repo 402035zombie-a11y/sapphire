@@ -13,6 +13,7 @@ import IconButton from '../components/ui/IconButton';
 import Screen from '../components/Screen';
 import TextField from '../components/ui/TextField';
 import { useTheme } from '../theme/ThemeContext';
+import { effectiveLang } from '../utils/lang';
 import { useT } from '../i18n';
 import { useAdaptive } from '../theme/useAdaptive';
 import { useDictionaryStore } from '../store/dictionaryStore';
@@ -205,7 +206,7 @@ export default function TrainingScreen() {
     () => (source !== 'all' ? books.find((b) => b.id === source) : undefined),
     [source, books],
   );
-  const fromLang = sourceBook?.language === 'auto' ? 'en' : sourceBook?.language ?? 'en';
+  const fromLang = effectiveLang(sourceBook?.language);
   const toLang = sourceBook?.targetLang ?? 'en';
 
   const [opts, setOpts] = useState<string[]>([]);

@@ -9,6 +9,7 @@ import { useAdaptive } from '../theme/useAdaptive';
 import { translateCached } from '../services/translationService';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
+import { effectiveLang } from '../utils/lang';
 import Icon from '../components/Icon';
 import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import { useT } from '../i18n';
@@ -50,9 +51,9 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
     setTranslation('');
     setPhonetic('');
     setMeanings([]);
-    const from = lang === 'auto' ? 'en' : lang;
+    const from = effectiveLang(lang);
     // перевод слова целиком
-    translateCached(word, from, targetLang).then((r) => active && setTranslation(r.text)).catch(() => {});
+    translateCached(word, from, targetLang).then((r) => active && setTranslation(r.text)).catch((e) => console.warn('[WordBottomSheet] word translation failed', e));
     // словарная статья (en) — бесплатный Free Dictionary API
     if (from === 'en') {
       fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`)
@@ -87,7 +88,7 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
           setPhonetic(phonetic);
           setMeanings(translated);
         })
-        .catch(() => {})
+        .catch((e) => console.warn('[WordBottomSheet] dictionary article fetch failed', e))
         .finally(() => active && setLoading(false));
     } else {
       setLoading(false);
@@ -109,7 +110,7 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
       surfaceForm: word,
       translation,
       context: sentence,
-      lang: lang === 'auto' ? 'en' : lang,
+      lang: effectiveLang(lang),
       bookId,
       frequency: 1,
     });

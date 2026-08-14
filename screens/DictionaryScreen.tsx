@@ -28,6 +28,7 @@ import { useTrainingStore } from '../store/trainingStore';
 import { useLibraryStore } from '../store/libraryStore';
 import { langName } from '../utils/languages';
 import { extractBookWords } from '../utils/bookWords';
+import { effectiveLang } from '../utils/lang';
 import Icon from '../components/Icon';
 import { neuShadowPad, screenBg, metal } from '../theme/neu';
 import SupportButton from '../components/SupportButton';
@@ -200,7 +201,7 @@ export default function DictionaryScreen() {
   const importWordsFromBook = (bookId: string) => {
     const book = books.find((b) => b.id === bookId);
     if (!book) return;
-    const lang = book.language === 'auto' ? 'en' : book.language;
+    const lang = effectiveLang(book.language);
     // extractBookWords нормализует (только буквы) и считает частоту вхождений
     const freqs = extractBookWords(book.paragraphs);
     let added = 0;
@@ -238,7 +239,9 @@ export default function DictionaryScreen() {
           const to = e.lang === 'en' ? 'ru' : 'en';
           const r = await translateCached(e.word, from, to);
           if (r?.text && !cancelled) updateEntry(e.id, { translation: r.text });
-        } catch {}
+        } catch (err) {
+          console.warn('[DictionaryScreen] backfill translation failed for word=' + e.word, err);
+        }
         await new Promise((res) => setTimeout(res, 120));
       }
     })();
