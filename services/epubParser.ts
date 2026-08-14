@@ -2,7 +2,6 @@
 // EPUB = ZIP-архив. Читаем через jszip, находим OPF по container.xml,
 // берём spine в порядке чтения, извлекаем чистый текст из XHTML.
 import JSZip from 'jszip';
-import * as FileSystem from 'expo-file-system';
 import { tStatic } from '../i18n';
 
 export interface EpubParseResult {
@@ -61,8 +60,20 @@ export async function parseEpub(
   let last = 0;
   const tick = (p: number) => { if (p - last >= 0.02 || p >= 1) { last = p; emit?.(p); } };
   tick(0.05);
-  const buf = await (await fetch(uri)).arrayBuffer();
-  const base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+  // Локальні файли (content:// / file:// від document picker на нативі) НЕ читаються
+  // через fetch().arrayBuffer() (падає "error reading file"). Читаємо байти через
+  // expo-file-system (підтримує content:// на нативі) як base64 → JSZip.
+  // Для http(s) URL — fetch залишаємо.
+  // expo-file-system/legacy імпортуємо динамічно (його типи конфліктують з tsc node_modules).
+  // @ts-ignore
+  const FileSystem: any = require('expo-file-system/legacy');
+  let base64: string;
+  if (/^https?:\/\//i.test(uri)) {
+    const buf = await (await fetch(uri)).arrayBuffer();
+    base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+  } else {
+    base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' as any });
+  }
   tick(0.25);
   const zip = await JSZip.loadAsync(base64, { base64: true });
 
