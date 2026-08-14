@@ -118,6 +118,8 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
 
   if (!word) return null;
 
+  const isKnown = saved || hasWord(normalizeWord(word));
+
   return (
     <ModalSheet
       visible={true}
@@ -192,8 +194,8 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
 
       <TouchableOpacity
         style={[
-          saved || hasWord(normalizeWord(word)) ? metal(theme, 'raised', { radius: a.radius }) : metal(theme, 'primary', { size: a.radius }),
-          saved || hasWord(normalizeWord(word)) ? { backgroundColor: theme.success } : {},
+          isKnown ? metal(theme, 'raised', { radius: a.radius }) : metal(theme, 'primary', { size: a.radius }),
+          isKnown ? { backgroundColor: theme.success } : {},
           {
             paddingVertical: Math.max(10, Math.round(14 * a.scale)),
             alignItems: 'center',

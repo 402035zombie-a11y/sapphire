@@ -18,6 +18,13 @@ import SupportButton from '../components/SupportButton';
 import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import { useT } from '../i18n';
 
+// сокращения (т.к., т.е., т.д., др., пр., пн., ср. и т.п.) НЕ дают паузу
+// постобработка: пунктуация, отделённая пробелом (" казаться"), склеивается с соседним словом
+// Вынесены в module scope: RegExp-литералы иначе создаются при каждом render'е SpeedReadingScreen.
+const ABBREV = /^(т\.к|т\.е|т\.д|др|пр|им|т\.п|п\.п|с\.р|г\.г|в\.т|ч\.л|т\.н|п\.с|с\.ш|ю\.ш|з\.г|вв|н\.э|пр\.-т|ст)$/i;
+const OPEN_PUNCT = /^[("«"\[]/; // открывающая — липнет к СЛЕДУЮЩЕМУ слову
+const isPunctOnly = (s: string) => /^[^\p{L}\p{N}]+$/u.test(s);
+
 export default function SpeedReadingScreen() {
   const { height, width } = useWindowDimensions();
   const a = useAdaptive();
@@ -41,11 +48,6 @@ export default function SpeedReadingScreen() {
 
   // собираем все токены книги: слова/числа + прилегающие знаки (без пробела)
   // boundaryType: 'sent' = конец предложения (.!?…), 'comma' = , ; : —, null = без паузы
-  // сокращения (т.к., т.е., т.д., др., пр., пн., ср. и т.п.) НЕ дают паузу
-  // постобработка: пунктуация, отделённая пробелом (" казаться"), склеивается с соседним словом
-  const ABBREV = /^(т\.к|т\.е|т\.д|др|пр|им|т\.п|п\.п|с\.р|г\.г|в\.т|ч\.л|т\.н|п\.с|с\.ш|ю\.ш|з\.г|вв|н\.э|пр\.-т|ст)$/i;
-  const OPEN_PUNCT = /^[("«“\[]/;   // открывающая — липнет к СЛЕДУЮЩЕМУ слову
-  const isPunctOnly = (s: string) => /^[^\p{L}\p{N}]+$/u.test(s);
   const words = useMemo(() => {
     if (!book) return [];
     const raw: { text: string; para: number }[] = [];

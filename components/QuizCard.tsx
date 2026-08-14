@@ -1,6 +1,6 @@
 // components/QuizCard.tsx
 // Карточка тренировки: слово + 4 варианта перевода (викторина). Неоморфическая.
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
@@ -33,7 +33,7 @@ const speak = (text: string, lang: string) => {
   }
 };
 
-export default function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
+function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
   const theme = useTheme();
   const t = useT();
   const a = useAdaptive();
@@ -112,6 +112,8 @@ export default function QuizCard({ item, onAnswer, onNext, progress, resetKey }:
     </View>
   );
 }
+
+export default memo(QuizCard);
 
 function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof useTheme>) {
   return StyleSheet.create({

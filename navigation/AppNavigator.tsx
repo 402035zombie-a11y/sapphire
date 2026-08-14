@@ -72,7 +72,7 @@ export default function AppNavigator() {
   // React Navigation по умолчанию ставит свой background на контейнеры (Tab/Stack),
   // перекрывая наш глобальный градиент (Rule 17b). Делаем ОБЁРТКИ прозрачными,
   // чтобы градиент из App.tsx (document.body) был виден под контентом на весь экран.
-  const navTheme = {
+  const navTheme = React.useMemo(() => ({
     ...DefaultTheme,
     dark: true,
     colors: {
@@ -83,7 +83,7 @@ export default function AppNavigator() {
       primary: theme.primary,
       text: theme.primaryText,
     },
-  };
+  }), [theme.primary, theme.primaryText]);
   return (
     <NavigationContainer theme={navTheme}>
       <Stack.Navigator
