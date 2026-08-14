@@ -76,6 +76,11 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const removeBook = useLibraryStore((s) => s.removeBook);
   const importEntries = useDictionaryStore((s) => s.importEntries);
   const dictEntries = useDictionaryStore((s) => s.entries);
+  // O(1) lookup вместо O(books × dictEntries) filter на каждом рендере (поиск/pressedId).
+  const bookWordCount = useMemo(
+    () => dictEntries.reduce((m, e) => { if (e.bookId) m.set(e.bookId, (m.get(e.bookId) || 0) + 1); return m; }, new Map<string, number>()),
+    [dictEntries],
+  );
 
   const [draft, setDraft] = useState<Draft | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -472,7 +477,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           <Text style={[styles.empty, { color: theme.secondaryText }]}>{t('Library is empty. Upload your first book.')}</Text>
         ) : (
           visibleBooks.map((item) => {
-            const wordCount = dictEntries.filter((e) => e.bookId === item.id).length;
+            const wordCount = bookWordCount.get(item.id) || 0;
             const isPressed = pressedId === item.id;
             return (
           <TouchableOpacity
