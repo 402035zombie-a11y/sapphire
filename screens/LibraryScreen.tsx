@@ -498,7 +498,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
               <Text style={[styles.bookTitle, { color: theme.primaryText }]} numberOfLines={2}>{item.title}</Text>
               <Text style={[styles.bookMeta, { color: theme.secondaryText }]} numberOfLines={2}>
                 {item.author ? `${item.author} · ` : ''}
-                {item.language.toUpperCase()} → {item.targetLang.toUpperCase()} · {item.paragraphs.length} {t('par.')}{wordCount ? ` · ${wordCount} ${t('words')}` : ''}
+                {item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()} · {item.paragraphs.length} {t('par.')}{wordCount ? ` · ${wordCount} ${t('words')}` : ''}
               </Text>
             </View>
             <View style={styles.rowActions}>
