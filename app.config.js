@@ -70,25 +70,25 @@ module.exports = ({ config }) => ({
         // минимально нужные MIME для выбора книг
       },
     ],
-    [
-      'react-native-google-mobile-ads',
-      {
-        androidAppId: ADMOB_APP_ID,
-        iosAppId: ADMOB_APP_ID,
-        // Показывать реальную рекламу только в прод-профиле.
-        // В dev/preview (тестовые ID) это поле игнорируется самим SDK.
-        delayAppMeasurementInit: !IS_PRODUCTION,
-      },
-    ],
-    // Privacy policy ссылка прописывается в Play Console, не здесь.
+    // AdMob временно ВЫКЛЮЧЕН: react-native-google-mobile-ads@16 тянет play-services-ads 25.4.0
+    // (Kotlin 2.3.0), несовместимо с Expo SDK54 (Kotlin 2.1.0, нет KSP для 2.3.0).
+    // Раскомментировать после решения Kotlin-конфликта (см. plugins/withPlayServicesAds.js).
+    // [
+    //   'react-native-google-mobile-ads',
+    //   {
+    //     androidAppId: ADMOB_APP_ID,
+    //     iosAppId: ADMOB_APP_ID,
+    //     delayAppMeasurementInit: !IS_PRODUCTION,
+    //   },
+    // ],
   ],
   extra: {
-    // Прокидываем ID в рантайм (доступно через expo-constants / process.env в бандле).
-    admob: {
-      appId: ADMOB_APP_ID,
-      bannerId: ADMOB_BANNER_ID,
-      rewardedId: ADMOB_REWARDED_ID,
-    },
+    // admob временно выключен (см. выше).
+    // admob: {
+    //   appId: ADMOB_APP_ID,
+    //   bannerId: ADMOB_BANNER_ID,
+    //   rewardedId: ADMOB_REWARDED_ID,
+    // },
     eas: {
       projectId: process.env.EAS_PROJECT_ID || '59123992-8765-4762-87a4-9449c7384d79',
     },
