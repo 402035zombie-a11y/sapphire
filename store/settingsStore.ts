@@ -47,7 +47,7 @@ export const useSettingsStore = persist<SettingsState>(
       fontFamily: 'default',
       fontWeight: 400,
       textAlign: 'justify',
-      pageMargins: true,
+      pageMargins: false,
       highlightWords: true,
       dictionaryOnDoubleTap: true,
       showAllTranslations: false,
