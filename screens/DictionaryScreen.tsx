@@ -332,7 +332,7 @@ export default function DictionaryScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: a.headerH + a.insetTop + 10, paddingBottom: Math.round(a.height / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
+        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: a.headerH + a.insetTop + a.pad + 20, paddingBottom: Math.round(a.height / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
       >
         {filtered.length === 0 ? (
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', padding: a.pad }}>
@@ -604,7 +604,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, ...metal(theme, 'raised', { radius: a.radius }), marginBottom: a.tiny ? 8 : 12 },
     pickText: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1 },
     pickHint: { fontSize: a.small_fs, marginTop: 8, fontStyle: 'italic' },
-    counterRow: { position: 'absolute', top: a.pad, left: a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.tiny ? 10 : 14 },
+    counterRow: { position: 'absolute', top: a.insetTop + a.pad, left: a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.tiny ? 10 : 14 },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
@@ -624,7 +624,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     search: { flex: 1, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },
     exportBtn: { borderRadius: a.radius, paddingHorizontal: a.pad, justifyContent: 'center' },
     exportText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.small_fs },
-    list: { paddingTop: a.headerH + 10, paddingBottom: a.tabBarH + a.pad + a.dim(0.06, 46, 56) + a.gap, gap: a.gap, justifyContent: 'flex-start' },
+    list: { paddingTop: a.headerH + a.insetTop + a.pad + 20, paddingBottom: a.tabBarH + a.pad + a.dim(0.06, 46, 56) + a.gap, gap: a.gap, justifyContent: 'flex-start' },
     empty: { textAlign: 'center', fontSize: a.body },
     row: {
       ...metal(theme, 'raised', { radius: a.radius }),
