@@ -4,7 +4,7 @@
 // кликабельно -> словарь.
 // Кликабельность реализована через Text.onPress (валидно в RN/RN-web), а не TouchableOpacity
 // внутри текста, который ломает инлайн-вёрстку и часть слов перестаёт ловить тап.
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { FONTS } from '../theme/constants';
@@ -31,10 +31,11 @@ interface Props {
   onToggleBookmark?: () => void;
   onCopy?: () => void;
   onSpeak: (text: string) => void;
-  onTranslate?: () => void;
+  onTranslate?: (index: number) => void;
   showSpeak?: boolean;
   showTranslate?: boolean;
   onWordPress: (word: string, sentence: string) => void;
+  onRowLayout?: (index: number, height: number) => void;
 }
 
 // делим по пробелам, сохраняя сами пробелы как токены
@@ -47,7 +48,8 @@ function isWordToken(tok: string): boolean {
   return /\p{L}/u.test(tok);
 }
 
-export default function SentenceRow({
+function SentenceRow({
+  index,
   original,
   translation,
   showTranslation,
@@ -65,6 +67,7 @@ export default function SentenceRow({
   showSpeak,
   showTranslate,
   onWordPress,
+  onRowLayout,
 }: Props) {
   const theme = useTheme();
   const a = useAdaptive();
@@ -115,7 +118,7 @@ export default function SentenceRow({
   const isPlain = mode === 'read';
 
   return (
-    <View style={[styles.row, isPlain && styles.rowPlain, pageMargins ? { paddingHorizontal: Math.round(12 * a.scale) } : null, { borderBottomColor: theme.border }]}>
+    <View style={[styles.row, isPlain && styles.rowPlain, pageMargins ? { paddingHorizontal: Math.round(12 * a.scale) } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
       {!isPlain && (showSpeak || (onTranslate && !translation && showTranslate)) && (
         <View style={styles.controls}>
           {/* ▶ озвучка */}
@@ -126,7 +129,7 @@ export default function SentenceRow({
           )}
           {/* Перевести — по нажатию переводим этот абзац сразу */}
           {onTranslate && !translation && showTranslate && (
-            <TouchableOpacity style={[metal(theme, 'circle', { size: a.icon(30) }), { padding: 0 }]} onPress={onTranslate} hitSlop={8}>
+            <TouchableOpacity style={[metal(theme, 'circle', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onTranslate(index)} hitSlop={8}>
               <Text style={[styles.translateIcon, { color: theme.primary }]}>⇄</Text>
             </TouchableOpacity>
           )}
@@ -147,6 +150,8 @@ export default function SentenceRow({
     </View>
   );
 }
+
+export default memo(SentenceRow);
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 10, borderBottomWidth: 0.5, width: '100%', alignSelf: 'center' },

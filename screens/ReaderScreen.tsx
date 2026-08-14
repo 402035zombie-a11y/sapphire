@@ -186,6 +186,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   const visibleRef = useRef<{ first: number; last: number }>({ first: 0, last: 20 });
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bookRef = useRef(book);
+  const rowHeights = useRef<Map<number, number>>(new Map());
   bookRef.current = book;
 
   const translateBatch = useCallback(
@@ -229,6 +230,9 @@ export default function ReaderScreen({ route }: { route: any }) {
     },
     [targetLang, updateParagraphsTranslations],
   );
+  // Стабильный коллбек для SentenceRow.onTranslate(index) — иначе renderItem создаёт новую
+  // функцию на каждый рендер и ломает React.memo(SentenceRow), вызывая перерендер всех строк.
+  const translateCb = useCallback((index: number) => translateBatch(index, index), [translateBatch]);
 
 
   const onViewableItemsChanged = useCallback(
@@ -379,7 +383,15 @@ export default function ReaderScreen({ route }: { route: any }) {
       onMomentumScrollEnd={onMomentumScrollEnd}
       initialNumToRender={BATCH}
       initialScrollIndex={Math.min(book.lastPosition ?? 0, book.paragraphs.length - 1)}
-      getItemLayout={(_, index) => ({ length: 80, offset: 80 * index, index })}
+      getItemLayout={(_, index) => {
+        // Реальная высота измеряется на onLayout SentenceRow. Пока не измерена — 80px fallback.
+        // offset = сумма высот всех предыдущих строк (lazy cache; для 120 строк O(n) в getItemLayout
+        // всё равно быстрее, чем прыжки 80px при переменной высоте).
+        const getH = (i: number) => rowHeights.current.get(i) ?? 80;
+        let offset = 0;
+        for (let i = 0; i < index; i++) offset += getH(i);
+        return { length: getH(index), offset, index };
+      }}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{ itemVisiblePercentThreshold: 50, minimumViewTime: 50 }}
       ListFooterComponent={
@@ -400,13 +412,12 @@ export default function ReaderScreen({ route }: { route: any }) {
           textAlign={reader.textAlign}
           pageMargins={reader.pageMargins}
           bookmarked={book.bookmarks?.includes(item.index) ?? false}
-          onToggleBookmark={() => toggleBookmark(book.id, item.index)}
-          onCopy={() => copyParagraph(item.original, item.translation)}
           onSpeak={speak}
-          onTranslate={() => translateBatch(item.index, item.index)}
+          onTranslate={translateCb}
           showSpeak={reader.showSpeakButton ?? true}
           showTranslate={reader.showTranslateButton ?? true}
           onWordPress={onWordPress}
+          onRowLayout={(_, h) => { const prev = rowHeights.current.get(_); if (prev !== h) rowHeights.current.set(_, h); }}
           forceHideTranslation={mode === 'read'}
           mode={mode}
           query={query}
