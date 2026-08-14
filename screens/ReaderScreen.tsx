@@ -344,21 +344,6 @@ export default function ReaderScreen({ route }: { route: any }) {
     [isWeb, book],
   );
 
-  const copyParagraph = useCallback(
-    (text: string, translation?: string) => {
-      const payload = translation ? `${text}\n${translation}` : text;
-      if (isWeb && navigator.clipboard) {
-        navigator.clipboard.writeText(payload).then(
-          () => Alert.alert(t("Copied"), t("Paragraph (original + translation) copied to clipboard.")),
-          () => Alert.alert(t("Copy error"), t("Could not copy.")),
-        );
-      } else {
-        Alert.alert(t("Copied"), payload);
-      }
-    },
-    [isWeb],
-  );
-
   const langForSheet = book?.language && book.language !== 'auto' ? book.language : 'en';
 
   if (!book) {
@@ -618,8 +603,8 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     progressFill: { height: 3 },
     upFab: {
       position: 'absolute',
-      right: 30,
-      bottom: 30,
+      right: a.pad,
+      bottom: a.tabBarH + a.pad,
       ...neuUp,
       width: 45,
       height: 45,

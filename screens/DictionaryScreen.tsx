@@ -17,6 +17,7 @@ import {
   Alert,
   Platform,
 } from 'react-native';
+import * as Sharing from 'expo-sharing';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { useNavigation } from '@react-navigation/native';
@@ -181,7 +182,20 @@ export default function DictionaryScreen() {
       a.click();
       URL.revokeObjectURL(url);
     } else {
-      Alert.alert(t('Export'), t('On this platform export is available in the web version.'));
+      try {
+        // @ts-ignore — legacy API типи конфліктують з tsc node_modules
+        const FileSystem = require('expo-file-system/legacy');
+        const path = `${FileSystem.cacheDirectory}bookreader-dictionary.json`;
+        await FileSystem.writeAsStringAsync(path, json, { encoding: 'utf8' });
+        const can = await Sharing.isAvailableAsync();
+        if (can) {
+          await Sharing.shareAsync(path, { mimeType: 'application/json', dialogTitle: t('Export dictionary') });
+        } else {
+          Alert.alert(t('Export'), t('Sharing not available on this device.'));
+        }
+      } catch (err: any) {
+        Alert.alert(t('Export error'), err?.message ?? String(err));
+      }
     }
   };
 
@@ -226,7 +240,7 @@ export default function DictionaryScreen() {
     setConfirmDelete(false);
   };
 
-  // TEMP-MAINT: дозагрузка translation для слов без перевода (чтобы тренировка их видела)
+  // Авто-дозавантаження перекладу для слів без translation (щоб тренування їх бачило)
   useEffect(() => {
     const missing = entries.filter((e) => !e.translation || !e.translation.trim());
     if (missing.length === 0) return;
@@ -607,7 +621,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     viewBar: { ...metal(theme, 'inset', { radius: a.radius }), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.gap },
     viewTab: { flex: 1, paddingVertical: a.tiny ? 6 : 8, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
     viewTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
-    fabGroup: { position: 'absolute', right: a.pad, bottom: 100, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
+    fabGroup: { position: 'absolute', right: a.pad, bottom: a.tabBarH + a.pad, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
     fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'raised', { radius: a.radius }) },
     toolbar: { flexDirection: 'row', gap: 8, marginBottom: a.gap },
     search: { flex: 1, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },

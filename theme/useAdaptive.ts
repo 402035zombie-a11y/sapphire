@@ -76,7 +76,11 @@ export function useAdaptive(): Adaptive {
 
     // В landscape эталон считаем по высоте, иначе интерфейс раздувается на широком коротком экране.
     const ref = landscape ? Math.min(height * 1.35, minSide * 1.5) : minSide;
-    const scale = clamp(ref / 720, 0.62, 1.25);
+    // На оверсайз-моніторах (minSide >= 1100) дозволяємо scale рости до 1.8,
+    // щоб UI був пропорційним широкому дисплею (вимога користувача: 2560px+).
+    // На звичайних екранах залишаємо cap 1.25 (читабельність).
+    const scaleCap = minSide >= 1100 ? 1.8 : 1.25;
+    const scale = clamp(ref / 720, 0.62, scaleCap);
 
     const small = minSide < 640;
     const tiny = minSide < 380;
@@ -153,7 +157,7 @@ export function useAdaptive(): Adaptive {
     const sheetW: number | string = width < BP_SM ? '92%' : width < BP_LG ? '70%' : 420;
 
     // Единый стандарт диаметра круглых кнопок (FAB/хедер/иконки): убирает дрифт 36/40/44px.
-    const fab = () => Math.round(clamp(40 * scale, 34, 44));
+    const fab = () => Math.round(clamp(40 * scale, 34, 56));
 
     return {
       width, height, minSide, scale, bp, landscape, small, tiny, isTablet, isDesktop,
