@@ -13,6 +13,7 @@
 //   dismissable           — закрытие по тапу вне (дефолт true)
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { metal } from '../theme/neu';
@@ -49,16 +50,15 @@ export default function ModalSheet({
   const theme = useTheme();
   const a = useAdaptive();
   if (!visible) return null;
-  // Фон позади модалки: СИЛЬНЫЙ blur, НО БЕЗ затемнения (по требованию).
-  // FontSettingsSheet передаёт blurBackdrop={false} — фон остаётся чётким.
-  const blurStyle = blurBackdrop
-    ? { backgroundColor: 'rgba(0,0,0,0)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }
-    : { backgroundColor: 'transparent' };
   const mw = maxWidth ?? Math.min(480, a.contentMaxW - a.pad * 2);
   const mh = maxHeight ?? '88%';
   const isSheet = variant === 'sheet';
   return (
-    <View style={[{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }, blurStyle, { paddingVertical: a.pad, paddingHorizontal: a.pad }] as any}>
+    <View style={[{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }, { paddingVertical: a.pad, paddingHorizontal: a.pad }] as any}>
+      {blurBackdrop && (
+        <BlurView intensity={14} tint="light" style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} />
+      )}
+      {!blurBackdrop && <View style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'transparent' }} />}
       {dismissable && <TouchableOpacity style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} activeOpacity={1} onPress={onClose} />}
       <View
         style={[
