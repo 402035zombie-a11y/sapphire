@@ -64,7 +64,7 @@ export default function TrainingScreen() {
 
   const styles = useMemo(() => StyleSheet.create({
     container: { flex: 1, padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center', paddingTop: a.pad },
-    topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, flexWrap: 'wrap' },
+    topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, marginTop: 10, flexWrap: 'nowrap' },
     counterBadges: { flexDirection: 'row', gap: 6 },
     counter: { fontSize: a.small_fs },
     counterBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
@@ -436,6 +436,8 @@ export default function TrainingScreen() {
             <Text style={styles.counterBadgeText}>✗ {stats.wrong}</Text>
           </View>
         </View>
+      </View>
+      <View style={{ position: 'absolute', top: a.insetTop + a.pad + 10, right: a.pad, zIndex: 50 }}>
         <SupportButton />
       </View>
 
