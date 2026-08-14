@@ -37,7 +37,7 @@ export function splitIntoSentences(text: string): string[] {
     let j = i + 1;
     while (j < n && /\s/.test(text[j])) j++;
     const next = text[j] ?? '';
-    const nextIsBoundary = j >= n || /[A-ZА-ЯЁ«"'(«0-9]/.test(next);
+    const nextIsBoundary = j >= n || /[A-ZА-ЯЄЇІҐЁ«"'(«0-9]/.test(next);
     if (!nextIsBoundary) return false;
     // если текущий накопленный кусок содержит пункт списка (маркер в начале или сразу после переноса строки),
     // режем ТОЛЬКО если следующий тоже пункт списка
