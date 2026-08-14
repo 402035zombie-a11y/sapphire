@@ -4,7 +4,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Animated, Easing, ScrollView, useWindowDimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import BackFab from '../components/BackFab';
 import IconButton from '../components/ui/IconButton';
 import Screen from '../components/Screen';
 import ModalSheet from '../components/ModalSheet';

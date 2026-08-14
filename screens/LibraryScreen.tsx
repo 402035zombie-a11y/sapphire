@@ -31,10 +31,12 @@ import { langName } from '../utils/languages';
 import { buildBookDictionary } from '../services/bookDictionaryService';
 import LanguagePicker from '../components/LanguagePicker';
 import ProgressBar from '../components/ProgressBar';
+import IconButton from '../components/ui/IconButton';
 import { neuShadowPad, screenBg, metal } from '../theme/neu';
 import OpenModeModal from '../components/OpenModeModal';
 import AppSettingsModal from '../components/AppSettingsModal';
 import SupportButton from '../components/SupportButton';
+
 
 interface Draft {
   title: string;
@@ -84,7 +86,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const [progress, setProgress] = useState(0);
   const styles = useMemo(() => makeStyles(a), [a]);
   // FAB «+» крупнее стандартных круглых кнопок хедера, чтобы тапалось уверенно.
-  const fabSize = 50;
+  const fabSize = Math.round(a.fab() * 1.15);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [targetPickerVisible, setTargetPickerVisible] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'title'>('recent');
@@ -366,13 +368,9 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
     <Screen contentStyle={{ padding: 0 }}>
       <View style={styles.container}>
       <View style={styles.libHead}>
-        <TouchableOpacity style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]} onPress={openSearch}>
-          <Icon name="search" size={a.icon(20)} color={theme.primaryText} />
-        </TouchableOpacity>
+        <IconButton icon="search" onPress={openSearch} variant="circle" size={a.fab()} hitSlop={8} />
         {!onSelectBook && (
-          <TouchableOpacity style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]} onPress={() => setSettingsOpen(true)}>
-            <Icon name="settings" size={a.icon(20)} color={theme.primaryText} />
-          </TouchableOpacity>
+          <IconButton icon="settings" onPress={() => setSettingsOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
         )}
         <SupportButton size={a.fab()} iconSize={Math.round(a.fab()*0.5)} />
       </View>

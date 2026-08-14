@@ -3,7 +3,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import BackFab from '../components/BackFab';
 import IconButton from '../components/ui/IconButton';
 import Icon from '../components/Icon';
 import { useTheme } from '../theme/ThemeContext';

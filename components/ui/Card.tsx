@@ -14,7 +14,7 @@ export default function Card({
 }: {
   children: React.ReactNode;
   radius?: number;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
   onStartShouldSetResponder?: () => boolean;
 }) {
   const theme = useTheme();

@@ -7,7 +7,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from './Icon';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { metal, neuPrimary, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import { FONTS } from '../theme/constants';
 
 type RouteName = 'Library' | 'Dictionary' | 'Training';
@@ -79,7 +79,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
               paddingHorizontal: showLabel ? (a.tiny ? 10 : 14) : a.tiny ? 8 : 11,
               borderRadius: a.radius,
               ...(focused
-                ? { backgroundColor: theme.primary, alignItems: 'center', justifyContent: 'center' }
+                ? neuPrimary(theme, a.radius)
                 : metal(theme, 'inset', { radius: a.radius })),
             }}
           >

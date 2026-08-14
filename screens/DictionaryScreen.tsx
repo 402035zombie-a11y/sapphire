@@ -3,6 +3,7 @@
 // На карточке каждого слова — бейдж прогресса (ур. + ✓/✗) из trainingStore.
 // Общий счётчик = entries.length (дедуплицированы в store/createStore).
 import ModalSheet from '../components/ModalSheet';
+import Card from '../components/ui/Card';
 import Screen from '../components/Screen';
 import TextField from '../components/ui/TextField';
 import React, { useState, useMemo, useEffect } from 'react';
@@ -15,7 +16,6 @@ import {
   TextInput,
   Alert,
   Platform,
-  useWindowDimensions,
 } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
@@ -42,16 +42,29 @@ const speakWord = (text: string, lang: string) => {
     window.speechSynthesis.speak(u);
   }
 };
-if (typeof window !== 'undefined') (window as any).__library = useLibraryStore;
-if (typeof window !== 'undefined') (window as any).__dictionary = useDictionaryStore;
 
 type SortMode = 'az' | 'date' | 'lang';
+
+// Список выбора в попапе (дедуплицирует 3× ScrollView maxHeight:a.height*0.6 в DictionaryScreen)
+function PickerList({ items, emptyHint, styles }: { items: { key: string; label: string; onPress: () => void }[]; emptyHint?: string; styles: any }) {
+  const theme = useTheme();
+  const a = useAdaptive();
+  if (items.length === 0 && emptyHint) return <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{emptyHint}</Text>;
+  return (
+    <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
+      {items.map((it) => (
+        <TouchableOpacity key={it.key} style={[styles.pickItem]} onPress={it.onPress}>
+          <Text style={[styles.pickText, { color: theme.primaryText }]} numberOfLines={1}>{it.label}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+}
 
 export default function DictionaryScreen() {
   const theme = useTheme();
   const t = useT();
   const a = useAdaptive();
-  const { height: winH } = useWindowDimensions();
   const styles = useMemo(() => makeStyles(a, theme), [a, theme]);
   const entries = useDictionaryStore((s) => s.entries);
   const removeEntry = useDictionaryStore((s) => s.removeEntry);
@@ -273,7 +286,7 @@ export default function DictionaryScreen() {
             return sum + (tp?.correctCount ?? 0) + (tp?.wrongCount ?? 0);
           }, 0)}</Text>
         </Text>
-        <View style={[styles.filterBlock, metal(theme, 'raised', { radius: a.radius })]}>
+        <Card radius={a.radius} style={styles.filterBlock}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 10 }}>
           <View style={styles.sortBar}>
             {sortOptions.map((o) => {
@@ -290,7 +303,7 @@ export default function DictionaryScreen() {
             })}
           </View>
         </View>
-      </View>
+      </Card>
 
       <TouchableOpacity
         style={[styles.levelTrigger, metal(theme, 'inset', { radius: a.radius })]}
@@ -305,7 +318,7 @@ export default function DictionaryScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: 120, paddingBottom: Math.round(winH / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
+        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: a.headerH + a.gap, paddingBottom: Math.round(a.height / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
       >
         {filtered.length === 0 ? (
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', padding: a.pad }}>
@@ -323,7 +336,7 @@ export default function DictionaryScreen() {
             const c = tp?.correctCount ?? 0;
             const w = tp?.wrongCount ?? 0;
             return (
-              <View key={item.id} style={[styles.row, metal(theme, 'raised', { radius: a.radius }), { width: `${(100 / Math.max(1, a.columns)) - 3}%` }]}>
+              <Card radius={a.radius} style={[styles.row, { width: `${(100 / Math.max(1, a.columns)) - 3}%` }]}>
                 <TouchableOpacity style={styles.speakInline} onPress={() => speakWord(item.word, item.lang)} hitSlop={6}>
                   <Text style={styles.speakInlineIcon}>▶</Text>
                 </TouchableOpacity>
@@ -365,7 +378,7 @@ export default function DictionaryScreen() {
                 <TouchableOpacity style={styles.deleteBtn} onPress={() => removeEntry(item.id)} hitSlop={10}>
                   <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
                 </TouchableOpacity>
-              </View>
+              </Card>
             );
           })
         )}
@@ -379,17 +392,14 @@ export default function DictionaryScreen() {
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('General dictionary')}</Text>
             </TouchableOpacity>
             {bookSources.length > 0 ? (
-              <ScrollView style={{ maxHeight: Math.round(winH * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
-              {bookSources.map((b) => (
-                <TouchableOpacity
-                  key={b.id}
-                  style={[styles.pickItem]}
-                  onPress={() => setSource({ type: 'book', bookId: b.id })}
-                >
-                  <Text style={[styles.pickText, { color: theme.primaryText }]} numberOfLines={1}>{t('Dictionary for “{title}”').replace(/\{title\}/g, b.title)}</Text>
-                </TouchableOpacity>
-              ))}
-              </ScrollView>
+              <PickerList
+                items={bookSources.map((b) => ({
+                  key: b.id,
+                  label: t('Dictionary for “{title}”').replace(/\{title\}/g, b.title),
+                  onPress: () => setSource({ type: 'book', bookId: b.id }),
+                }))}
+                styles={styles}
+              />
             ) : (
               <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{t('No books with saved words.')}</Text>
             )}
@@ -419,18 +429,15 @@ export default function DictionaryScreen() {
       <ModalSheet visible={bookPickOpen} onClose={() => setBookPickOpen(false)}>
         <View style={styles.pickCard}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Select a book')}</Text>
-            <ScrollView style={{ maxHeight: Math.round(winH * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
-            {books.map((b) => (
-              <TouchableOpacity
-                key={b.id}
-                style={[styles.pickItem]}
-                onPress={() => { importWordsFromBook(b.id); setBookPickOpen(false); }}
-              >
-                <Text style={[styles.pickText, { color: theme.primaryText }]} numberOfLines={1}>{b.title}</Text>
-              </TouchableOpacity>
-            ))}
-            </ScrollView>
-            {books.length === 0 && <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{t('No books.')}</Text>}
+            <PickerList
+              items={books.map((b) => ({
+                key: b.id,
+                label: b.title,
+                onPress: () => { importWordsFromBook(b.id); setBookPickOpen(false); },
+              }))}
+              emptyHint={t('No books.')}
+              styles={styles}
+            />
         </View>
       </ModalSheet>
 
@@ -545,7 +552,7 @@ export default function DictionaryScreen() {
       <ModalSheet visible={levelPickerOpen} onClose={() => setLevelPickerOpen(false)}>
         <View style={styles.pickCard}>
           <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Word type')}</Text>
-          <ScrollView style={{ maxHeight: Math.round(winH * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
+          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
           {levelOptions.map((o) => {
             const active = levelFilter === o.id;
             return (
@@ -597,7 +604,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     viewBar: { ...metal(theme, 'inset', { radius: a.radius }), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.gap },
     viewTab: { flex: 1, paddingVertical: a.tiny ? 6 : 8, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
     viewTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
-    fabGroup: { position: 'absolute', right: a.pad, bottom: a.pad + a.tabBarH, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
+    fabGroup: { position: 'absolute', right: a.pad, bottom: 100, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
     fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'raised', { radius: a.radius }) },
     toolbar: { flexDirection: 'row', gap: 8, marginBottom: a.gap },
     search: { flex: 1, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },

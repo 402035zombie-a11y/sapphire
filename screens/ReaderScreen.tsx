@@ -41,7 +41,6 @@ import WordActionSheet from '../components/WordActionSheet';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
 import Marquee from '../components/Marquee';
-import BackFab from '../components/BackFab';
 import IconButton from '../components/ui/IconButton';
 import AppSettingsModal from '../components/AppSettingsModal';
 import FontSettingsSheet from '../components/FontSettingsSheet';
