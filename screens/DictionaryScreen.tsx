@@ -332,7 +332,7 @@ export default function DictionaryScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: a.headerH + a.insetTop + a.pad + 20, paddingBottom: Math.round(a.height / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
+        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: a.headerH + a.body + a.insetTop + a.pad + 10, paddingBottom: Math.round(a.height / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
       >
         {filtered.length === 0 ? (
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', padding: a.pad }}>
@@ -604,7 +604,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, ...metal(theme, 'raised', { radius: a.radius }), marginBottom: a.tiny ? 8 : 12 },
     pickText: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1 },
     pickHint: { fontSize: a.small_fs, marginTop: 8, fontStyle: 'italic' },
-    counterRow: { position: 'absolute', top: a.insetTop + a.pad, left: a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.tiny ? 10 : 14 },
+    counterRow: { position: 'absolute', top: a.insetTop + a.pad, left: a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 10 : 14 },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
