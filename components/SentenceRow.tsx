@@ -72,7 +72,7 @@ function SentenceRow({
   const theme = useTheme();
   const a = useAdaptive();
   const fs = fontSize ?? 18;
-  const lh = (lineHeight ?? 1.4) * fs;
+  const lh = Math.max(lineHeight ?? 1.4, 1.5) * fs;
   const open = !forceHideTranslation && (!!translation || showTranslation);
   const textAlignValue = textAlign === 'justify' ? 'justify' : textAlign === 'hyphenation' ? 'justify' : 'left';
   const hyphenation = textAlign === 'hyphenation';
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   body: { flex: 1, minWidth: 0 },
   paragraph: { flexShrink: 1 },
   justified: { textAlign: 'justify' },
-  word: { fontFamily: FONTS.regular },
-  tapWord: { fontFamily: FONTS.regular },
+  word: { fontFamily: FONTS.regular, paddingVertical: 2 },
+  tapWord: { fontFamily: FONTS.regular, paddingVertical: 2 },
   translation: { marginTop: 6, fontStyle: 'italic' },
 });

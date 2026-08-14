@@ -7,6 +7,7 @@
 // на каждом слове берётся из trainingStore (correctCount / wrongCount / box).
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform, ScrollView } from 'react-native';
+import Speech from 'expo-speech';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
 import IconButton from '../components/ui/IconButton';
@@ -62,7 +63,7 @@ export default function TrainingScreen() {
   const [source, setSource] = useState<'all' | string>(routeBookId ? routeBookId : 'all');
 
   const styles = useMemo(() => StyleSheet.create({
-    container: { flex: 1, padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center', paddingTop: a.insetTop + a.pad },
+    container: { flex: 1, padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center', paddingTop: a.pad },
     topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, flexWrap: 'wrap' },
     counterBadges: { flexDirection: 'row', gap: 6 },
     counter: { fontSize: a.small_fs },
@@ -124,7 +125,7 @@ export default function TrainingScreen() {
     speakIcon: { fontSize: a.fs(18), color: theme.primary },
     typeHint: { fontSize: a.fs(14), textAlign: 'center', marginTop: 12, marginBottom: 8 },
     typeInput: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: a.tiny ? 8 : 12, fontSize: a.body },
-    typeCheck: { borderRadius: a.radius, paddingVertical: a.tiny ? 12 : 16, alignItems: 'center', flex: 1 },
+    typeCheck: { borderRadius: a.radius, paddingVertical: a.tiny ? 17 : 21, alignItems: 'center', flex: 1 },
     skipBtn: { width: Math.round(Math.max(36, 44 * a.scale)), height: Math.round(Math.max(36, 44 * a.scale)), borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
     typeCorrect: { fontSize: a.small_fs, textAlign: 'center', marginTop: 10, fontStyle: 'italic' },
   }), [a, theme]);
@@ -396,7 +397,7 @@ export default function TrainingScreen() {
   if (!current) {
     // очередь пуста (нет слов для тренировки) — показываем заглушку вместо краша
     return (
-      <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.pad, paddingBottom: a.pad }}>
+      <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.insetTop, paddingBottom: a.pad }}>
         <View style={[styles.center, { backgroundColor: 'transparent' }]}>
           <Text style={[styles.empty, { color: theme.secondaryText }]}>{t("No words to train. Save words while reading.")}</Text>
         </View>
@@ -418,7 +419,7 @@ export default function TrainingScreen() {
   ));
 
   return (
-    <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.pad, paddingBottom: a.pad }}>
+    <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.insetTop, paddingBottom: a.pad }}>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: a.tabBarH + a.pad, gap: a.gap }}
@@ -452,7 +453,7 @@ export default function TrainingScreen() {
         <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius })]}>
           <View style={styles.wordRow}>
             <Text style={styles.typeWord}>{current.surfaceForm || current.word}</Text>
-            <TouchableOpacity style={styles.speakBtn} onPress={() => { if (Platform.OS === 'web' && 'speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(current.word); u.lang = current.lang || 'en'; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); } }} hitSlop={6}>
+            <TouchableOpacity style={styles.speakBtn} onPress={() => { if (current.word) Speech.speak(current.word, { language: current.lang || 'en', rate: 0.95 }); }} hitSlop={6}>
               <Text style={styles.speakIcon}>▶</Text>
             </TouchableOpacity>
           </View>

@@ -508,7 +508,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   );
 
   return (
-    <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, padding: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>
+    <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, paddingHorizontal: a.pad, paddingBottom: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>
       {header}
       {content}
       {searchModal}
@@ -556,7 +556,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     header: {
       flexDirection: 'column',
       paddingHorizontal: a.pad,
-      paddingTop: a.insetTop + (a.landscape ? 6 : 10),
+      paddingTop: a.landscape ? 6 : 10,
       paddingBottom: a.landscape ? 4 : 8,
       zIndex: 10,
       maxHeight: a.landscape ? 64 : 96,

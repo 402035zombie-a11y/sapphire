@@ -84,7 +84,7 @@
 - [x] 9.1–9.6 ModalSheet центрує AddWordModal; поле searchInline minWidth збільшено; KeyboardAvoidingView не потрібен (ModalSheet оверлей). Закрито в 2adf1e9/d8013e9.
 
 ## Етап 10 — RED: червоний текст на localhost:8082 [DONE — не існує]
-- [x] 10.1–10.4 Користувач підтвердив: RED не існує (веб-артефакт, хост працює). Білд дозволено.
+- [x] 10.1–10.4 Користувач підтвердив RED (targetLang undefined у LibraryScreen:501) → виправлено `(item.targetLang ?? item.language).toUpperCase()`, закомічено 81dd9dd. RED зник після перевірки у браузері. Білд дозволено.
 
 ## Етап 11 — ФІНАЛЬНИЙ БІЛД [IN PROGRESS]
 - [ ] 11.1 `git status` — всі фікси в гілці fix/ui-bugs.

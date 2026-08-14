@@ -343,7 +343,9 @@ export default function SpeedReadingScreen() {
               ]}
             >
               <Text
-                style={[styles.tickerText, { color: theme.primaryText }]}
+                numberOfLines={1}
+                ellipsizeMode="clip"
+                style={[styles.tickerText, { color: theme.primaryText, flexWrap: 'nowrap' as any }]}
                 onLayout={(e) => setTickerTextWidth(e.nativeEvent.layout.width)}
               >
                 {tickerText}

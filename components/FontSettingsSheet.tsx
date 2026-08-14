@@ -236,7 +236,7 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
       borderTopLeftRadius: a.radius + 2,
       borderBottomLeftRadius: a.radius + 2,
     },
-    scrollContent: { padding: a.pad, gap: Math.max(8, Math.round(a.gap * 0.8)), paddingBottom: a.pad },
+    scrollContent: { padding: a.pad, paddingTop: a.fab() + a.pad * 1.5, gap: Math.max(8, Math.round(a.gap * 0.8)), paddingBottom: a.pad },
     stepperBlock: { gap: 4 },
     stepperLabel: { fontSize: a.fs(14) },
     stepperRow: {

@@ -434,6 +434,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           visible={pickerVisible}
           value={draft?.language ?? 'auto'}
           allowAuto
+          embedded
           onSelect={(code) => draft && setDraft({ ...draft, language: code })}
           onClose={() => setPickerVisible(false)}
         />
@@ -441,6 +442,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           visible={targetPickerVisible}
           value={draft?.targetLang ?? defaultTarget}
           allowAuto={false}
+          embedded
           onSelect={(code) => draft && setDraft({ ...draft, targetLang: code })}
           onClose={() => setTargetPickerVisible(false)}
         />

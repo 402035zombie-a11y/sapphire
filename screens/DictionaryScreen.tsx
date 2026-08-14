@@ -27,6 +27,7 @@ import { translateCached } from '../services/translationService';
 import { DictionaryEntry } from '../store/dictionaryStore';
 import { useTrainingStore } from '../store/trainingStore';
 import { useLibraryStore } from '../store/libraryStore';
+import Speech from 'expo-speech';
 import { langName } from '../utils/languages';
 import { extractBookWords } from '../utils/bookWords';
 import { effectiveLang } from '../utils/lang';
@@ -37,12 +38,8 @@ import { useSettingsStore } from '../store/settingsStore';
 import { useT } from '../i18n';
 
 const speakWord = (text: string, lang: string) => {
-  if (Platform.OS === 'web' && 'speechSynthesis' in window) {
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang || 'en';
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-  }
+  if (!text) return;
+  Speech.speak(text, { language: lang || 'en', rate: 0.95 });
 };
 
 type SortMode = 'az' | 'date' | 'lang';
@@ -335,7 +332,7 @@ export default function DictionaryScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: a.headerH + 10, paddingBottom: Math.round(a.height / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
+        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: a.headerH + a.insetTop + 10, paddingBottom: Math.round(a.height / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
       >
         {filtered.length === 0 ? (
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', padding: a.pad }}>
@@ -599,7 +596,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     headerActions: { flexDirection: 'row', gap: 8 },
     confirmBtn: { flex: 1, paddingVertical: Math.max(10, Math.round(13 * a.scale)), paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'inset', { radius: a.radius }) },
     iconBtn: { ...metal(theme, 'circle', { size: iconBtn }), width: iconBtn, height: iconBtn, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
-    searchInline: { flex: 1, minWidth: 120, height: iconBtn, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 10, fontSize: a.small_fs },
+    searchInline: { width: '100%', minWidth: 200, height: iconBtn, ...metal(theme, 'inset', { radius: a.radius }), backgroundColor: theme.surface ?? theme.neu?.base ?? '#ffffff', paddingHorizontal: 12, fontSize: a.body, color: theme.primaryText },
     modalBackdrop: { flex: 1 },
     searchPop: { width: '100%', maxWidth: Math.min(a.width - 24, 520), borderRadius: a.radius, padding: 12 },
     pickCard: { width: '100%', maxWidth: m.maxWidth, maxHeight: m.maxHeight, borderRadius: a.radius, padding: m.padding },
@@ -621,7 +618,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     viewBar: { ...metal(theme, 'inset', { radius: a.radius }), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.gap },
     viewTab: { flex: 1, paddingVertical: a.tiny ? 6 : 8, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
     viewTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
-    fabGroup: { position: 'absolute', right: a.pad, bottom: a.tabBarH + a.pad, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
+    fabGroup: { position: 'absolute', right: a.pad, bottom: a.tabBarH + a.pad + 10, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
     fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'raised', { radius: a.radius }) },
     toolbar: { flexDirection: 'row', gap: 8, marginBottom: a.gap },
     search: { flex: 1, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },

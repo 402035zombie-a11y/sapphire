@@ -3,7 +3,7 @@
 // Открывает окно SupportAuthorModal с предложением посмотреть рекламу.
 // Премиума нет — приложение бесплатно навсегда, поддержка добровольная.
 import React from 'react';
-import { TouchableOpacity, Platform } from 'react-native';
+import { TouchableOpacity, Platform, Modal } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import Icon from './Icon';
@@ -30,20 +30,22 @@ export default function SupportButton({ size, iconSize }: { size?: number; iconS
       >
         <Icon name="heart" size={icSize} color={theme.primary} />
       </TouchableOpacity>
-      <SupportAuthorModal
-        visible={open}
-        onSupport={async () => {
-          setOpen(false);
-          const { showSupportAd } = await import('../services/monetization');
-          await showSupportAd();
-        }}
-        onDonate={() => {
-          setOpen(false);
-          useSupportStore.getState().setDontShowSupport(true);
-          if (Platform.OS === 'web') window.alert(t("Thanks for your support! (donation/subscription is a stub in the web version)"));
-        }}
-        onDismiss={() => setOpen(false)}
-      />
+      <Modal visible={open} transparent animationType="none" statusBarTranslucent>
+        <SupportAuthorModal
+          visible={open}
+          onSupport={async () => {
+            const { showSupportAd } = await import('../services/monetization');
+            await showSupportAd();
+            setOpen(false);
+          }}
+          onDonate={() => {
+            setOpen(false);
+            useSupportStore.getState().setDontShowSupport(true);
+            if (Platform.OS === 'web') window.alert(t("Thanks for your support! (donation/subscription is a stub in the web version)"));
+          }}
+          onDismiss={() => setOpen(false)}
+        />
+      </Modal>
     </>
   );
 }
