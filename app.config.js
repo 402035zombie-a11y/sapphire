@@ -90,7 +90,7 @@ module.exports = ({ config }) => ({
       rewardedId: ADMOB_REWARDED_ID,
     },
     eas: {
-      projectId: process.env.EAS_PROJECT_ID || '00000000-0000-0000-0000-000000000000',
+      projectId: process.env.EAS_PROJECT_ID || '59123992-8765-4762-87a4-9449c7384d79',
     },
   },
   // Экспо отдаёт ENV в клиент только через EXPO_PUBLIC_; оставляем для удобства.

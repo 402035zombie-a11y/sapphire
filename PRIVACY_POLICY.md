@@ -32,7 +32,7 @@ The App does not knowingly target or collect data from children under 13.
 We will update this policy if data practices change and revise the "Last updated" date.
 
 ## 6. Contact
-Questions: bookreader.app@example.com
+Questions: 402035zombie@gmail.com
 
 ---
 *This is a template. Replace the contact email and host it on a public URL
