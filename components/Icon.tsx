@@ -1,7 +1,7 @@
 // components/Icon.tsx
 // Собственные SVG-иконки (без шрифтов) — рендерятся везде (web/native), без «неизвестных значков».
 import React, { memo } from 'react';
-import Svg, { Path, Circle, Line, Rect, Polygon } from 'react-native-svg';
+import Svg, { Path, Circle, Line, Rect, Polygon, G } from 'react-native-svg';
 import { TouchableOpacity } from 'react-native';
 
 export type IconName =
@@ -144,11 +144,11 @@ function Icon({ name, size = 24, color = '#000', onPress, emboss }: { name: Icon
     >
       {emboss && PATHS_D[name] ? (
         // объёмный (выпуклый) знак: тень снизу-справа + блик сверху-слева → «выдавленный» значок
-        <g>
+        <G>
           <Path d={PATHS_D[name]} transform="translate(1,1)" stroke="rgba(0,0,0,0.28)" strokeWidth="2.5" fill="none" />
           <Path d={PATHS_D[name]} transform="translate(-1,-1)" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" fill="none" />
           <Path d={PATHS_D[name]} stroke={color} strokeWidth="2.5" fill="none" />
-        </g>
+        </G>
       ) : (
         PATHS[name]
       )}
