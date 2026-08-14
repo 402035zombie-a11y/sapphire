@@ -72,7 +72,7 @@ function SentenceRow({
   const theme = useTheme();
   const a = useAdaptive();
   const fs = fontSize ?? 18;
-  const lh = Math.max(lineHeight ?? 1.4, 1.7) * fs;
+  const lh = Math.max(lineHeight ?? 1.4, 1.8) * fs;
   const open = !forceHideTranslation && (!!translation || showTranslation);
   const textAlignValue = textAlign === 'justify' ? 'justify' : textAlign === 'hyphenation' ? 'justify' : 'left';
   const hyphenation = textAlign === 'hyphenation';
@@ -85,6 +85,7 @@ function SentenceRow({
     fontFamily: fontFamilyValue,
     fontWeight: fontWeight as any,
     textAlign: textAlignValue as any,
+    letterSpacing: 0.3,
     ...(hyphenation ? { hyphenationFactor: 1, wordBreak: 'break-word' } as any : null),
   };
   const q = (query ?? '').trim().toLowerCase();
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
   body: { flex: 1, minWidth: 0 },
   paragraph: { flexShrink: 1 },
   justified: { textAlign: 'justify' },
-  word: { fontFamily: FONTS.regular, paddingVertical: 2, marginRight: 3 },
-  tapWord: { fontFamily: FONTS.regular, paddingVertical: 2, marginRight: 3 },
+  word: { fontFamily: FONTS.regular, paddingVertical: 2, marginRight: 6 },
+  tapWord: { fontFamily: FONTS.regular, paddingVertical: 2, marginRight: 6 },
   translation: { marginTop: 6, fontStyle: 'italic' },
 });
