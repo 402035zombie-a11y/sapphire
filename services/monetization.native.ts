@@ -5,7 +5,7 @@ import { MobileAds, RewardedAd, RewardedAdEventType, TestIds, AdEventType } from
 
 const REWARDED_ID: string =
   (Constants.expoConfig?.extra?.admob?.rewardedId as string) ||
-  'ca-app-pub-5113967448800652/4712038644';
+  'ca-app-pub-5113967448800652/1663349260';
 
 let initialized = false;
 
