@@ -1,36 +1,50 @@
 # BookReader
 
-Мобильное приложение для чтения книг на иностранном языке с параллельным переводом и интерактивным словарём. Аналог 2books с открытой и удобной логикой.
+Мобільний додаток для читання книг іноземною мовою з паралельним перекладом, інтерактивним словником та тренуванням. Аналог 2books з відкритою та зручною логікою.
 
-## Возможности (план)
-1. Загрузка книг `.epub` и `.txt` с устройства.
-2. Парсинг и разбиение текста на предложения с параллельным переводом.
-3. Интерактивное чтение: клик по слову → всплывающее окно с переводом.
-4. Локальный словарь: сохранение слова с контекстом (предложением) на устройстве.
-5. Модуль тренировки: интервальное повторение (флеш-карточки / викторина 4 варианта).
+## Можливості
+1. Завантаження книг `.epub` та `.txt` з пристрою.
+2. Парсинг та розбиття тексту на речення з паралельним перекладом.
+3. Інтерактивне читання: тап по слову → випливаюче вікно з перекладом + додавання в словник.
+4. Локальний словник: збереження слів з контекстом (реченням) на пристрої.
+5. Модуль тренування: інтервальне повторення (флеш-картки / вікторина 4 варіанти).
+6. 4 режими читання: звичайний / з перекладом / швидкочитання / біжучий рядок (бігуча стрічка).
+7. Монетизація через AdMob (банер у бібліотеці + винагороджена реклама в "Підтримати автора").
 
-## Технологический стек
-- React Native (Expo SDK 51)
+## Технологічний стек
+- React Native (Expo SDK **54**)
 - TypeScript
 - React Navigation (Bottom Tabs + Native Stack)
 - Zustand + persist (AsyncStorage)
-- Базовый StyleSheet
-- Перевод: плагинный слой `translationService` (Google GTX без ключа / Google Paid / DeepL — подключается пользовательским ключом в Настройках)
+- React Native Reanimated / Worklets (анімації)
+- react-native-google-mobile-ads (AdMob)
+- Переклад: плагінний шар `translationService` (Google Translate без ключа / Google Paid / DeepL — підключається ключем у Налаштуваннях)
 
-## Статус разработки
-- [x] Шаг 1: Scaffold (App, навигация, theme, сторы, translationService)
-- [x] Шаг 2: Загрузка книг (epub/txt), парсеры, шкала загрузки, LanguagePicker
-- [x] Шаг 3: ReaderScreen (параллельный перевод, 2 колонки, ленивый перевод по scroll-stop), Settings
-- [ ] Шаг 4: BottomSheet перевода по клику на слово
-- [ ] Шаг 5: Экран словаря (просмотр/удаление/экспорт)
-- [ ] Шаг 6: Тренировка (интервальное повторение, викторина)
+## Статус розробки
+- [x] Scaffold (App, навігація, theme, стори, translationService)
+- [x] Завантаження книг (epub/txt), парсери, шкала завантаження, LanguagePicker
+- [x] ReaderScreen (паралельний переклад, 2 колонки, лінивий переклад по scroll-stop)
+- [x] BottomSheet перекладу по кліку на слово
+- [x] Екран словника (перегляд/видалення/експорт)
+- [x] Тренування (інтервальне повторення, вікторина)
+- [x] 4 режими читання (звичайний / переклад / швидкочитання / бігуча стрічка)
+- [x] AdMob (банер + винагороджена реклама)
+- [x] Адаптивний UI (масштабування під дисплей)
 
-## Запуск
+## Запуск (development)
 ```bash
 npm install
 npx expo start
 ```
-Отсканируй QR в приложении Expo Go (устройство в той же Wi-Fi сети, что и ПК).
+Для нативних модулів (AdMob) використовуй dev/preview білд, не Expo Go:
+```bash
+eas build --profile development --platform android
+# або
+eas build --profile preview --platform android
+```
+
+## Збірка та публікація
+Див. `PUBLISHING.md` та `RELEASE_TODO_USER.txt` — покрокові інструкції для Google Play та генерації APK/AAB.
 
 ## Структура
 ```
@@ -38,7 +52,7 @@ navigation/   — AppNavigator (Tabs + Stack)
 store/        — library / dictionary / training / settings (Zustand persist)
 services/     — translationService, epubParser, txtParser
 utils/        — sentenceSplitter, wordTokenizer, languages
-components/    — SentenceRow, LanguagePicker, ProgressBar, WordBottomSheet
-screens/      — Library, Reader, Dictionary, Training, Settings, WordSheet
-theme/        — constants (цвета, шрифты, размеры)
+components/    — SentenceRow, LanguagePicker, ProgressBar, WordBottomSheet, ui/*
+screens/      — Library, Reader, Dictionary, Training, Settings, WordSheet, SpeedReading, Marquee
+theme/        — constants (кольори, шрифти, розміри), neu (неоморфізм)
 ```
