@@ -7,7 +7,7 @@
 // на каждом слове берётся из trainingStore (correctCount / wrongCount / box).
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform, ScrollView } from 'react-native';
-import Tts from 'react-native-tts';
+import Speech from 'expo-speech';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
 import IconButton from '../components/ui/IconButton';
@@ -453,7 +453,7 @@ export default function TrainingScreen() {
         <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius })]}>
           <View style={styles.wordRow}>
             <Text style={styles.typeWord}>{current.surfaceForm || current.word}</Text>
-            <TouchableOpacity style={styles.speakBtn} onPress={() => { if (current.word) { try { Tts.setDefaultLanguage(current.lang || 'en'); Tts.setDefaultRate(0.95); Tts.speak(current.word); } catch (e) { console.warn('[speak] TTS failed:', e); } } }} hitSlop={6}>
+            <TouchableOpacity style={styles.speakBtn} onPress={() => { if (current.word) Speech.speak(current.word, { language: current.lang || 'en', rate: 0.95 }); }} hitSlop={6}>
               <Text style={styles.speakIcon}>▶</Text>
             </TouchableOpacity>
           </View>

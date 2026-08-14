@@ -432,7 +432,9 @@ export default function ReaderScreen({ route }: { route: any }) {
           </View>
         )}
         <View style={[styles.headerRight, { position: 'relative' }]}>
-          <IconButton icon="language" onPress={() => setLangOpen((v) => !v)} variant="circle" size={a.fab()} hitSlop={8} />
+          {mode === 'dual' && (
+            <IconButton icon="language" onPress={() => setLangOpen((v) => !v)} variant="circle" size={a.fab()} hitSlop={8} />
+          )}
           <IconButton icon="settings" onPress={() => setFontOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
           <IconButton icon="heart" onPress={() => setSupportOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
           {langOpen && (
