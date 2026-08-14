@@ -85,7 +85,6 @@ function SentenceRow({
     fontFamily: fontFamilyValue,
     fontWeight: fontWeight as any,
     textAlign: textAlignValue as any,
-    letterSpacing: 0.3,
     ...(hyphenation ? { hyphenationFactor: 1, wordBreak: 'break-word' } as any : null),
   };
   const q = (query ?? '').trim().toLowerCase();
