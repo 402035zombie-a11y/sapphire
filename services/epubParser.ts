@@ -72,7 +72,11 @@ export async function parseEpub(
     const buf = await (await fetch(uri)).arrayBuffer();
     base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
   } else {
-    base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' as any });
+    // content:// (від document picker на нативі) НЕ читається напряму readAsStringAsync.
+    // Обхід: копіюємо у cache dir як file://, потім читаємо base64.
+    const cacheUri = `${FileSystem.cacheDirectory}br_epub_${Date.now()}.epub`;
+    await FileSystem.copyAsync({ from: uri, to: cacheUri });
+    base64 = await FileSystem.readAsStringAsync(cacheUri, { encoding: 'base64' as any });
   }
   tick(0.25);
   const zip = await JSZip.loadAsync(base64, { base64: true });
