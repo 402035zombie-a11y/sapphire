@@ -1,6 +1,6 @@
 // App.tsx — точка входа: провайдеры темы + навигатор
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from './theme/ThemeContext';
@@ -26,9 +26,9 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { err
   render() {
     if (this.state.error) {
       return (
-        <pre style={{ padding: 20, color: 'red', fontSize: 14, whiteSpace: 'pre-wrap' }}>
-          {String(this.state.error && (this.state.error.stack || this.state.error.message))}
-        </pre>
+        <View style={{ padding: 20 }}>
+          <Text style={{ color: 'red', fontSize: 14 }}>{String(this.state.error && (this.state.error.stack || this.state.error.message))}</Text>
+        </View>
       );
     }
     return this.props.children as React.ReactElement;
