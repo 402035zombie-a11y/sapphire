@@ -571,7 +571,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     header: {
       flexDirection: 'column',
       paddingHorizontal: a.pad,
-      paddingTop: a.landscape ? 6 : 10,
+      paddingTop: a.insetTop + (a.landscape ? 6 : 10),
       paddingBottom: a.landscape ? 4 : 8,
       zIndex: 10,
       maxHeight: a.landscape ? 64 : 96,

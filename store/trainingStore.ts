@@ -72,3 +72,4 @@ export const useTrainingStore = persist<TrainingState>(
   }),
   { name: 'bookreader-training' },
 );
+

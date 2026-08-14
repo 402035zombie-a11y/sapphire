@@ -28,7 +28,7 @@ export default function Screen({
   return (
     <View style={{ flex: 1 }}>
       {bg && <View style={[StyleSheet.absoluteFill, { ...screenBg(theme), backgroundColor: theme.background }, bgStyle, { pointerEvents: "none" as any }]} />}
-      <View style={[styles.content, contentStyle]}>{children}</View>
+      <View style={[{ flex: 1, width: '100%', maxWidth: undefined, alignSelf: 'center', paddingTop: a.insetTop }, contentStyle]}>{children}</View>
     </View>
   );
 }

@@ -573,7 +573,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
   const cover = { w: a.dim(0.065, 34, 54), h: a.dim(0.087, 46, 72) };
   return StyleSheet.create({
     container: { flex: 1, paddingTop: 0, paddingBottom: 0, width: '100%', maxWidth: a.gridMaxW, alignSelf: 'center' },
-    libHead: { position: 'absolute', top: a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10 },
+    libHead: { position: 'absolute', top: a.insetTop + a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10 },
     progressCard: { borderRadius: a.radius, padding: a.pad, marginHorizontal: a.pad, marginBottom: a.gap },
     progressText: { marginBottom: 8, fontSize: a.small_fs },
     draftCard: { width: '100%', maxWidth: 420, borderRadius: a.radius, padding: a.pad },
@@ -599,7 +599,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
     actionBtn: { flex: 1, height: Math.round(Math.max(44, 48 * a.scale)), paddingVertical: 10, paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
     actionText: { fontSize: a.body },
     saveText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.body },
-    list: { paddingHorizontal: neuShadowPad(), paddingTop: a.pad + a.fab() + a.gap, paddingBottom: 85 + 50 + a.gap },
+    list: { paddingHorizontal: neuShadowPad(), paddingTop: a.insetTop + a.pad + a.fab() + a.gap, paddingBottom: 85 + 50 + a.gap },
     empty: { textAlign: 'center', marginTop: 40, fontSize: a.body },
     bookRow: {
       flexDirection: 'row',

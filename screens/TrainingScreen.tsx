@@ -62,7 +62,7 @@ export default function TrainingScreen() {
   const [source, setSource] = useState<'all' | string>(routeBookId ? routeBookId : 'all');
 
   const styles = useMemo(() => StyleSheet.create({
-    container: { flex: 1, padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
+    container: { flex: 1, padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center', paddingTop: a.insetTop + a.pad },
     topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, flexWrap: 'wrap' },
     counterBadges: { flexDirection: 'row', gap: 6 },
     counter: { fontSize: a.small_fs },
@@ -73,7 +73,7 @@ export default function TrainingScreen() {
     startScroll: {
       flexGrow: 1,
       padding: a.pad,
-      paddingTop: a.tabBarH + 24 + Math.round(a.fab()) + a.gap,
+      paddingTop: a.insetTop + a.tabBarH + 24 + Math.round(a.fab()) + a.gap,
       gap: a.gap,
       width: '100%',
       maxWidth: a.isTablet ? 720 : 560,
@@ -259,7 +259,10 @@ export default function TrainingScreen() {
   useEffect(() => {
     setTypeChecked(false);
     setTyped('');
-    if (mode === 'type') setTimeout(() => typeInputRef.current?.focus(), 50);
+    if (mode === 'type') {
+      const id = requestAnimationFrame(() => typeInputRef.current?.focus());
+      return () => cancelAnimationFrame(id);
+    }
   }, [index, mode]);
 
   const start = (m: 'quiz' | 'type') => {
@@ -471,6 +474,7 @@ export default function TrainingScreen() {
             value={typed}
             autoFocus
             editable={!typeChecked}
+            returnKeyType="done"
             onChangeText={setTyped}
             placeholder={t("your translation")}
             placeholderTextColor={theme.secondaryText}

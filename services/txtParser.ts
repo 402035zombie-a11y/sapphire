@@ -1,7 +1,7 @@
 // services/txtParser.ts
 // Простое чтение .txt с нормализацией переносов строк.
-import * as FileSystem from 'expo-file-system';
-
+// SDK54: readAsStringAsync deprecated+throws → используем fetch (expo fetch polyfill
+// поддерживает file:// на native). Запасной путь — expo-file-system/legacy при необходимости.
 export interface TxtParseResult {
   text: string;
   title?: string;
@@ -13,9 +13,8 @@ export async function parseTxt(
   onProgress?: (p: number) => void,
 ): Promise<TxtParseResult> {
   onProgress?.(0.3);
-  const raw = await FileSystem.readAsStringAsync(uri, {
-    encoding: 'utf8',
-  });
+  const res = await fetch(uri);
+  const raw = await res.text();
   onProgress?.(0.7);
   const text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
   const title =

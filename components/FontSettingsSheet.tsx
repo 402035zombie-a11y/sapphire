@@ -13,8 +13,6 @@ import Icon from '../components/Icon';
 import { FONTS } from '../theme/constants';
 import { neuInset, neuRaised, neuCircle , metal } from '../theme/neu';
 import { useT } from '../i18n';
-import { langName, translatableLangs } from '../utils/languages';
-import LanguagePicker from './LanguagePicker';
 
 interface Props {
   visible: boolean;
@@ -80,10 +78,6 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
   const setReader = useSettingsStore((s) => s.setReader);
   const appTheme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
-  const targetLang = useSettingsStore((s) => s.targetLang);
-  const setTargetLang = useSettingsStore((s) => s.setTargetLang);
-  const [langPicker, setLangPicker] = React.useState(false);
-
   if (!visible) return null;
 
   return (
@@ -217,29 +211,6 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
               })}
             </View>
           </View>
-
-          {mode === 'dual' && (
-            <View style={styles.sectionLabelWrap}>
-              <Text style={[styles.sectionLabel, { color: theme.secondaryText }]}>{t('Translation language')}</Text>
-              <TouchableOpacity
-                style={[{ borderWidth: 1, borderColor: theme.border, backgroundColor: theme.surface, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: a.tiny ? 9 : 12, paddingHorizontal: 14, minHeight: a.hit, marginTop: 4, borderRadius: a.radius }]}
-                onPress={() => setLangPicker(true)}
-              >
-                <Text style={{ fontSize: a.body, color: theme.primaryText }}>
-                  {translatableLangs().find((l) => l.code === targetLang)?.name ?? langName(targetLang)}
-                </Text>
-                <Text style={{ color: theme.secondaryText }}>▾</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          <LanguagePicker
-            visible={langPicker}
-            value={targetLang}
-            allowAuto={false}
-            exclude={['ru']}
-            onSelect={(code) => setTargetLang(code)}
-            onClose={() => setLangPicker(false)}
-          />
           </ScrollView>
       </View>
     </ModalSheet>

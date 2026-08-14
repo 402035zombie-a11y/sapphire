@@ -259,7 +259,7 @@ export default function DictionaryScreen() {
         const tb = metal(theme, 'circle', { size: tbSize });
         const isz = a.dim(0.028, 16, 24);
         return (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginRight: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginRight: 8, paddingTop: a.insetTop }}>
             <TouchableOpacity onPress={() => setSearchOpen(true)} hitSlop={6} style={tb}>
               <Icon name="search" size={isz} color={theme.primaryText} />
             </TouchableOpacity>

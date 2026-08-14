@@ -29,6 +29,7 @@ export default function ModalSheet({
   panelStyle,
   dismissable = true,
   blurBackdrop = true,
+  allowNested = false,
 }: {
   visible: boolean;
   onClose: () => void;
@@ -41,6 +42,9 @@ export default function ModalSheet({
   // blur фона позади модалки (без затемнения). FontSettingsSheet отключает,
   // чтобы пользователь видел изменения шрифта на заднем фоне в реальном времени.
   blurBackdrop?: boolean;
+  // Дозволяє вкладені ModalSheet (напр. LanguagePicker всередині Settings) не
+  // обрізатися батьківським overflow:hidden. Вимикає overflow:hidden на панелі.
+  allowNested?: boolean;
 }) {
   const theme = useTheme();
   const a = useAdaptive();
@@ -54,8 +58,8 @@ export default function ModalSheet({
   const mh = maxHeight ?? '88%';
   const isSheet = variant === 'sheet';
   return (
-    <View style={[{ position: 'fixed' as any, left: 0, right: 0, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }, blurStyle, { paddingTop: a.pad, paddingHorizontal: a.pad }] as any}>
-      {dismissable && <TouchableOpacity style={{ position: 'fixed' as any, left: 0, right: 0, top: 0, bottom: 0 }} activeOpacity={1} onPress={onClose} />}
+    <View style={[{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }, blurStyle, { paddingVertical: a.pad, paddingHorizontal: a.pad }] as any}>
+      {dismissable && <TouchableOpacity style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} activeOpacity={1} onPress={onClose} />}
       <View
         style={[
           metal(theme, 'inset', { radius: a.radius }),
@@ -64,7 +68,7 @@ export default function ModalSheet({
             maxHeight: mh,
             padding: a.pad,
             backgroundColor: theme.surface ?? theme.neu.base,
-            overflow: 'hidden',
+            overflow: allowNested ? 'visible' : 'hidden',
             display: 'flex',
             flexDirection: 'column',
             alignSelf: isSheet ? (a.landscape ? 'flex-end' : 'center') : 'center',

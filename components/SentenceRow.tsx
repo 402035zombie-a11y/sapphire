@@ -107,7 +107,7 @@ function SentenceRow({
     if (isWord) {
       return (
         <TouchableOpacity key={i} onPress={() => onWordPress(tok, original)} hitSlop={2}>
-          <Text style={[...base, styles.tapWord]}>{tok}</Text>
+          <Text style={[...base, styles.tapWord]}>{tok}{' '}</Text>
         </TouchableOpacity>
       );
     }
@@ -166,6 +166,6 @@ const styles = StyleSheet.create({
   paragraph: { flexShrink: 1 },
   justified: { textAlign: 'justify' },
   word: { fontFamily: FONTS.regular },
-  tapWord: { textDecorationLine: 'underline', textDecorationColor: '#00000022' },
+  tapWord: { fontFamily: FONTS.regular },
   translation: { marginTop: 6, fontStyle: 'italic' },
 });

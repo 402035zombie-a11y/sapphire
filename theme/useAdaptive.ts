@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SIZES } from './constants';
 
 // Единая система адаптивности приложения.
@@ -28,6 +29,7 @@ export interface Adaptive {
   radius: number;
   headerH: number;
   tabBarH: number;
+  insetTop: number;
   tabFs: number;
   showTabLabel: boolean;
   hit: number;
@@ -64,6 +66,7 @@ const BP_LG = 1024; // планшеты / ноутбуки
 
 export function useAdaptive(): Adaptive {
   const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const minSide = Math.min(width, height);
   const landscape = width > height;
 
@@ -154,7 +157,7 @@ export function useAdaptive(): Adaptive {
 
     return {
       width, height, minSide, scale, bp, landscape, small, tiny, isTablet, isDesktop,
-      pad, gap, radius, headerH, tabBarH,
+      pad, gap, radius, headerH, tabBarH, insetTop: insets.top,
       tabFs: labelFs,
       showTabLabel,
       hit: Math.round(clamp(44 * scale, 36, 48)),

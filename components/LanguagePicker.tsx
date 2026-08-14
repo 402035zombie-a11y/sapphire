@@ -21,9 +21,13 @@ interface Props {
   allowAuto?: boolean;
   exclude?: string[];
   options?: LangOption[];
+  // Якщо true — рендерити ТІЛЬКИ контент (без власного ModalSheet),
+  // бо батьківська модалка вже дає overlay+панель. Вкладений ModalSheet інакше
+  // обрізається батьківським overflow:hidden (T4/T5).
+  embedded?: boolean;
 }
 
-export default function LanguagePicker({ visible, value, onSelect, onClose, allowAuto = true, exclude, options }: Props) {
+export default function LanguagePicker({ visible, value, onSelect, onClose, allowAuto = true, exclude, options, embedded = false }: Props) {
   const [query, setQuery] = useState('');
   const theme = useTheme();
   const a = useAdaptive();
@@ -38,71 +42,76 @@ export default function LanguagePicker({ visible, value, onSelect, onClose, allo
     return base.filter((l) => l.name.toLowerCase().includes(q) || l.en.toLowerCase().includes(q) || l.code.includes(q));
   }, [query, allowAuto, exclude, options]);
 
+  const content = (
+    <View style={{ width: '100%', maxWidth: 360, alignSelf: 'center', maxHeight: Math.round(winH * 0.7), flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.gap }}>
+        <Text style={{ fontSize: a.h2, fontFamily: 'System', fontWeight: '700', color: theme.primaryText }}>{t('Choose language')}</Text>
+        <TouchableOpacity onPress={onClose} hitSlop={12} style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
+          <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
+        </TouchableOpacity>
+      </View>
+      <TextInput
+        style={[
+          metal(theme, 'inset', { radius: a.radius }),
+          {
+            paddingHorizontal: 12,
+            paddingVertical: a.tiny ? 7 : 10,
+            fontSize: a.body,
+            color: theme.primaryText,
+            marginBottom: a.gap,
+          },
+        ]}
+        placeholder={t('Search language…')}
+        placeholderTextColor={theme.secondaryText}
+        value={query}
+        onChangeText={setQuery}
+        autoFocus
+      />
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: a.gap }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator
+      >
+        {list.map((item) => (
+          <TouchableOpacity
+            key={item.code}
+            style={[
+              {
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: a.tiny ? 9 : 12,
+                paddingHorizontal: 8,
+                borderRadius: 8,
+                backgroundColor: item.code === value ? theme.selected : 'transparent',
+              },
+            ]}
+            onPress={() => {
+              onSelect(item.code);
+              onClose();
+            }}
+          >
+            <Text
+              style={{
+                color: item.code === value ? theme.primary : theme.primaryText,
+                fontFamily: item.code === value ? 'System' : undefined,
+                flex: 1,
+              } as any}
+            >
+              {item.name}
+            </Text>
+            {item.code === value && <Text style={{ color: theme.primary, fontSize: a.body }}>✓</Text>}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
+
+  if (embedded) return visible ? content : null;
   return (
     <ModalSheet visible={visible} onClose={onClose}>
-      <View style={{ width: '100%', maxWidth: 360, alignSelf: 'center', maxHeight: Math.round(winH * 0.7), flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.gap }}>
-          <Text style={{ fontSize: a.h2, fontFamily: 'System', fontWeight: '700', color: theme.primaryText }}>{t('Choose language')}</Text>
-          <TouchableOpacity onPress={onClose} hitSlop={12} style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
-            <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
-          </TouchableOpacity>
-        </View>
-        <TextInput
-          style={[
-            metal(theme, 'inset', { radius: a.radius }),
-            {
-              paddingHorizontal: 12,
-              paddingVertical: a.tiny ? 7 : 10,
-              fontSize: a.body,
-              color: theme.primaryText,
-              marginBottom: a.gap,
-            },
-          ]}
-          placeholder={t('Search language…')}
-          placeholderTextColor={theme.secondaryText}
-          value={query}
-          onChangeText={setQuery}
-          autoFocus
-        />
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ paddingBottom: a.gap }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator
-        >
-          {list.map((item) => (
-            <TouchableOpacity
-              key={item.code}
-              style={[
-                {
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  paddingVertical: a.tiny ? 9 : 12,
-                  paddingHorizontal: 8,
-                  borderRadius: 8,
-                  backgroundColor: item.code === value ? theme.selected : 'transparent',
-                },
-              ]}
-              onPress={() => {
-                onSelect(item.code);
-                onClose();
-              }}
-            >
-              <Text
-                style={{
-                  color: item.code === value ? theme.primary : theme.primaryText,
-                  fontFamily: item.code === value ? 'System' : undefined,
-                  flex: 1,
-                } as any}
-              >
-                {item.name}
-              </Text>
-              {item.code === value && <Text style={{ color: theme.primary, fontSize: a.body }}>✓</Text>}
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      {content}
     </ModalSheet>
   );
 }

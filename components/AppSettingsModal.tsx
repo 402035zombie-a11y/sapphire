@@ -58,7 +58,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
   };
 
   return (
-    <ModalSheet visible={visible} onClose={onClose}>
+    <ModalSheet visible={visible} onClose={onClose} allowNested>
       <View style={{ width: '100%' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <Text style={{ flex: 1, fontSize: a.h2, fontFamily: FONTS.bold, color: theme.primaryText }}>{t('App settings')}</Text>
@@ -116,6 +116,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
         visible={appLangPicker}
         value={appLang}
         allowAuto={false}
+        embedded
         options={[
           { code: 'auto', name: 'Auto', en: 'Auto' },
           { code: 'system', name: 'As in system', en: 'As in system' },
