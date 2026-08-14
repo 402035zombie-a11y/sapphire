@@ -93,24 +93,32 @@ export async function parseEpub(
   const opfXml = await opfFile.async('text');
   const opfDir = opfRelPath.includes('/') ? opfRelPath.slice(0, opfRelPath.lastIndexOf('/')) : '';
 
-  // манифест: id -> href
+  // манифест: id -> href (стійкий парсинг — атрибути в будь-якому порядку)
   const manifest: Record<string, string> = {};
-  const itemRe = /<item\b[^>]*\bid="([^"]+)"[^>]*\bhref="([^"]+)"[^>]*\bmedia-type="application\/xhtml\+xml"[^>]*\/?>/gi;
+  const itemRe = /<item\b[^>]*?>/gi;
   let im: RegExpExecArray | null;
-  while ((im = itemRe.exec(opfXml))) manifest[im[1]] = im[2];
+  while ((im = itemRe.exec(opfXml))) {
+    const tag = im[0];
+    const idM = tag.match(/\bid="([^"]+)"/i);
+    const hrefM = tag.match(/\bhref="([^"]+)"/i);
+    const mtM = tag.match(/\bmedia-type="([^"]+)"/i);
+    if (idM && hrefM && mtM && /xhtml|html|xml/i.test(mtM[1])) {
+      manifest[idM[1]] = hrefM[1];
+    }
+  }
 
   // spine: упорядоченный список idref
   const spineBlock = opfXml.match(/<spine\b[\s\S]*?<\/spine>/i);
   const orderedHrefs: string[] = [];
   if (spineBlock) {
-    const refRe = /<itemref\b[^>]*\bidref="([^"]+)"/gi;
+    const refRe = /<itemref\b[^>]*?\bidref="([^"]+)"/gi;
     let rm: RegExpExecArray | null;
     while ((rm = refRe.exec(spineBlock[0]))) {
       const href = manifest[rm[1]];
       if (href) orderedHrefs.push(resolvePath(opfDir, href));
     }
   }
-  // fallback: если spine пуст, берём все xhtml из манифеста
+  // fallback: якщо spine порожній — всі xhtml з маніфесту
   if (orderedHrefs.length === 0) {
     Object.values(manifest).forEach((h) => orderedHrefs.push(resolvePath(opfDir, h)));
   }
@@ -118,7 +126,19 @@ export async function parseEpub(
   const paragraphs: string[] = [];
   for (let i = 0; i < orderedHrefs.length; i++) {
     const href = orderedHrefs[i];
-    const file = zip.file(href);
+    // Кандидати шляхів: прямий, з opfDir, без дублюючого префікса, з OEBPS/
+    const candidates = [
+      href,
+      opfDir ? `${opfDir}/${href}` : href,
+      href.replace(/^OEBPS\//i, ''),
+      href.replace(/^OEBPS\//i, '').replace(/^\//, ''),
+      `OEBPS/${href.replace(/^OEBPS\//i, '')}`,
+    ];
+    let file: any = null;
+    for (const c of candidates) {
+      file = zip.file(c);
+      if (file) break;
+    }
     if (!file) continue;
     const raw = await file.async('text');
     const text = stripHtml(raw);
