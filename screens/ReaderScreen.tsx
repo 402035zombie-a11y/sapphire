@@ -330,6 +330,18 @@ export default function ReaderScreen({ route }: { route: any }) {
     return () => clearTimeout(t);
   }, [route.params]);
 
+  // старт з останньої позиції (book.lastPosition) — замість прибраного initialScrollIndex
+  useEffect(() => {
+    const b = bookRef.current;
+    const pos = b?.lastPosition ?? 0;
+    if (pos <= 0 || !scrollRef.current) return;
+    const t = setTimeout(() => {
+      scrollRef.current?.scrollToIndex({ index: Math.min(pos, (b?.paragraphs.length ?? 1) - 1), animated: false, viewPosition: 0 });
+    }, 400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookId]);
+
   const speak = useCallback(
     (text: string) => {
       if (isWeb && 'speechSynthesis' in window) {
@@ -368,16 +380,9 @@ export default function ReaderScreen({ route }: { route: any }) {
       onScrollBeginDrag={onScrollBeginDrag}
       onMomentumScrollEnd={onMomentumScrollEnd}
       initialNumToRender={BATCH}
-      initialScrollIndex={Math.min(book.lastPosition ?? 0, book.paragraphs.length - 1)}
-      getItemLayout={(_, index) => {
-        // Реальная высота измеряется на onLayout SentenceRow. Пока не измерена — 80px fallback.
-        // offset = сумма высот всех предыдущих строк (lazy cache; для 120 строк O(n) в getItemLayout
-        // всё равно быстрее, чем прыжки 80px при переменной высоте).
-        const getH = (i: number) => rowHeights.current.get(i) ?? 80;
-        let offset = 0;
-        for (let i = 0; i < index; i++) offset += getH(i);
-        return { length: getH(index), offset, index };
-      }}
+      windowSize={5}
+      maxToRenderPerBatch={12}
+      updateCellsBatchingPeriod={100}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{ itemVisiblePercentThreshold: 50, minimumViewTime: 50 }}
       ListFooterComponent={
