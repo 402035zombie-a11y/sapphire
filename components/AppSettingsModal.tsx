@@ -12,7 +12,7 @@ import { useLibraryStore } from '../store/libraryStore';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { useT } from '../i18n';
 import { THEME_ORDER, THEME_LABELS, ThemeMode } from '../theme/themes';
-import { LANGUAGES, translatableLangs } from '../utils/languages';
+import { LANGUAGES } from '../utils/languages';
 import { neuInset, neuPrimary, neuCircle, neuShadowPad , metal } from '../theme/neu';
 import Icon from './Icon';
 import LanguagePicker from './LanguagePicker';
@@ -27,11 +27,10 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
   const a = useAdaptive();
   const m = a.modal();
   const t = useT();
-  const { targetLang, setTargetLang, setTheme, appLang, setAppLang } = useSettingsStore();
+  const { setTheme, appLang, setAppLang } = useSettingsStore();
   const currentTheme = useSettingsStore((s) => s.theme);
   const books = useLibraryStore((s) => s.books);
   const dictionary = useDictionaryStore((s) => s.entries);
-  const [langPicker, setLangPicker] = useState(false);
   const [appLangPicker, setAppLangPicker] = useState(false);
 
   const exportData = () => {
@@ -92,24 +91,13 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
               })}
             </View>
 
-            <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8 }}>{t('App language')}</Text>
+            <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8, marginTop: 4 }}>{t('App language')}</Text>
             <TouchableOpacity
               style={[{ borderWidth: 1, borderColor: theme.border, backgroundColor: theme.surface, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: a.tiny ? 9 : 12, paddingHorizontal: 14, minHeight: a.hit, marginBottom: a.gap, borderRadius: a.radius }]}
               onPress={() => setAppLangPicker(true)}
             >
               <Text style={{ fontSize: a.body, color: theme.primaryText }}>
                 {LANGUAGES.find((l) => l.code === appLang)?.name ?? appLang}
-              </Text>
-              <Text style={{ color: theme.secondaryText }}>▾</Text>
-            </TouchableOpacity>
-
-            <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8 }}>{t('Translation language')}</Text>
-            <TouchableOpacity
-              style={[{ borderWidth: 1, borderColor: theme.border, backgroundColor: theme.surface, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: a.tiny ? 9 : 12, paddingHorizontal: 14, minHeight: a.hit, marginBottom: a.gap, borderRadius: a.radius }]}
-              onPress={() => setLangPicker(true)}
-            >
-              <Text style={{ fontSize: a.body, color: theme.primaryText }}>
-                {translatableLangs().find((l) => l.code === targetLang)?.name ?? targetLang}
               </Text>
               <Text style={{ color: theme.secondaryText }}>▾</Text>
             </TouchableOpacity>
@@ -123,15 +111,6 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
             </TouchableOpacity>
           </ScrollView>
         </View>
-
-      <LanguagePicker
-        visible={langPicker}
-        value={targetLang}
-        allowAuto={false}
-        exclude={['ru']}
-        onSelect={(code) => setTargetLang(code)}
-        onClose={() => setLangPicker(false)}
-      />
 
       <LanguagePicker
         visible={appLangPicker}

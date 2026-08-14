@@ -249,7 +249,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         if (!bookRef.current?.paragraphs[idx]?.translation) translateBatch(idx, idx);
       });
     },
-    [],
+    [translateBatch],
   );
 
   const onScrollBeginDrag = useCallback(() => {
@@ -455,6 +455,7 @@ export default function ReaderScreen({ route }: { route: any }) {
               value={targetLang}
               onSelect={(code) => {
                 setTargetLang(code);
+                if (book?.id) setBookTargetLang(book.id, code);
                 // сбросить перевод, чтобы перегрузить на новый язык
                 if (book?.id) {
                   updateParagraphsTranslations(
