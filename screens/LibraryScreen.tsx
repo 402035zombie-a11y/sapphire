@@ -135,8 +135,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       title: cleanTitle(name),
       format: 'txt',
       uri: name,
-      language: 'en',
-      targetLang: defaultTarget,
+      language: 'auto',
+      targetLang: 'uk',
       paragraphs,
       sections: extractSections(paragraphs),
     });
@@ -207,8 +207,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         author: parsed.author,
         format,
         uri: asset.uri,
-        language: 'en',
-        targetLang: defaultTarget,
+        language: 'auto',
+        targetLang: 'uk',
         paragraphs,
         sections,
       });
@@ -246,8 +246,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           author: parsed.author,
           format: 'fb2',
           uri: file.name,
-          language: 'en',
-          targetLang: defaultTarget,
+          language: 'auto',
+          targetLang: 'uk',
           paragraphs,
           sections,
         });

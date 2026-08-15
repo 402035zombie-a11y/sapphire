@@ -193,4 +193,13 @@ export const ukDict: Record<string, string> = {
   'Invalid EPUB: missing META-INF/container.xml': 'Некоректний EPUB: немає META-INF/container.xml',
   'OPF path not found in container.xml': 'Не знайдено шлях до OPF у container.xml',
   'OPF not found in archive: {path}': 'OPF не знайдено в архіві: {path}',
+  'Normal': 'Звичайне',
+  'With translation': 'З перекладом',
+  'Original text only': 'Тільки оригінальний текст',
+  'Original + translation under the line': 'Оригінал + переклад під рядком',
+  'Fast word-by-word reading (RSVP)': 'Швидке читання по словах (RSVP)',
+  'Classic speed reading': 'Класичне швидке читання',
+  'One word at a time in the center (RSVP)': 'Одне слово в центрі за раз (RSVP)',
+  'Ticker line': 'Біжучий рядок',
+  'Text scrolls along a line at the same speed': 'Текст прокручується по рядку з тією ж швидкістю',
 };

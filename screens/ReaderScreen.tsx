@@ -49,7 +49,8 @@ import FontSettingsSheet from '../components/FontSettingsSheet';
 import { getBookChapters } from '../services/bookImport';
 import { translateBatch as translateBatchV2 } from '../services/translationServiceV2';
 import { buildChunks, nextChunkIndices, ChunkOptions } from '../services/readerChunker';
-import Speech from 'expo-speech';
+import * as Speech from 'expo-speech';
+import { onTtsIndex, onTtsState, ttsPlay, ttsPause, ttsResume, ttsStop } from '../services/bookTts';
 
 interface RouteParams {
   bookId: string;
@@ -152,7 +153,6 @@ export default function ReaderScreen({ route }: { route: any }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [paused, setPaused] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const cancelledRef = useRef(false);
   const [action, setAction] = useState<{ word: string; sentence: string } | null>(null);
 
   const addToDictionary = useCallback(
@@ -177,115 +177,37 @@ export default function ReaderScreen({ route }: { route: any }) {
     [mode],
   );
 
-  const speakFrom = useCallback(
-    (start: number) => {
-      if (!book) return;
-      const paras = chapters;
-      let i = start;
-      const lang = effectiveLang(book.language);
-      if (isWeb && 'speechSynthesis' in window) {
-        const step = () => {
-          if (cancelledRef.current) {
-            setIsSpeaking(false);
-            setPaused(true);
-            return;
-          }
-          if (i >= paras.length) {
-            setIsSpeaking(false);
-            setPaused(false);
-            setCurrentIndex(0);
-            return;
-          }
-          const u = new SpeechSynthesisUtterance(paras[i].original);
-          u.lang = lang;
-          u.onend = () => {
-            if (cancelledRef.current) {
-              setIsSpeaking(false);
-              setPaused(true);
-              return;
-            }
-            i += 1;
-            setCurrentIndex(i);
-            step();
-          };
-          setCurrentIndex(i);
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.speak(u);
-        };
-        cancelledRef.current = false;
-        setIsSpeaking(true);
-        setPaused(false);
-        step();
-      } else {
-        // Нативне послідовне озвучування через expo-speech.
-        const stepNative = () => {
-          if (cancelledRef.current) {
-            setIsSpeaking(false);
-            setPaused(true);
-            return;
-          }
-          if (i >= paras.length) {
-            setIsSpeaking(false);
-            setPaused(false);
-            setCurrentIndex(0);
-            return;
-          }
-          setCurrentIndex(i);
-          Speech.speak(paras[i].original, {
-            language: lang,
-            rate: 0.95,
-            onDone: () => {
-              if (cancelledRef.current) {
-                setIsSpeaking(false);
-                setPaused(true);
-                return;
-              }
-              i += 1;
-              stepNative();
-            },
-          });
-        };
-        cancelledRef.current = false;
-        setIsSpeaking(true);
-        setPaused(false);
-        stepNative();
-      }
-    },
-    [book, isWeb],
-  );
-
   const playBook = useCallback(() => {
     if (!book) return;
-    if (isSpeaking) return;
+    const lang = effectiveLang(book.language);
+    const paras = chapters.map((p) => p.original).filter((t) => t && t.trim().length > 0);
+    if (paras.length === 0) return;
     if (paused) {
-      speakFrom(currentIndex);
+      ttsResume();
     } else {
-      speakFrom(0);
+      setCurrentIndex(0);
+      ttsPlay(paras, lang);
     }
-  }, [book, isSpeaking, paused, currentIndex, speakFrom]);
+  }, [book, paused, chapters]);
 
   const pauseBook = useCallback(() => {
-    cancelledRef.current = true;
-    if (isWeb && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    } else {
-      Speech.stop();
-    }
-    setIsSpeaking(false);
-    setPaused(true);
-  }, [isWeb]);
+    ttsPause();
+  }, []);
 
   const stopBook = useCallback(() => {
-    cancelledRef.current = true;
-    if (isWeb && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    } else {
-      Speech.stop();
-    }
-    setIsSpeaking(false);
-    setPaused(false);
+    ttsStop();
     setCurrentIndex(0);
-  }, [isWeb]);
+  }, []);
+
+  // Нативні TTS-події → React-стан
+  useEffect(() => {
+    onTtsIndex((i) => setCurrentIndex(i));
+    onTtsState((s) => {
+      if (s === 'playing') { setIsSpeaking(true); setPaused(false); }
+      else if (s === 'paused') { setIsSpeaking(false); setPaused(true); }
+      else if (s === 'stopped' || s === 'done') { setIsSpeaking(false); setPaused(false); }
+    });
+  }, []);
 
   const viewableRef = useRef<Set<number>>(new Set());
 

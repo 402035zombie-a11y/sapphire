@@ -28,7 +28,7 @@ import { translateCached } from '../services/translationService';
 import { DictionaryEntry } from '../store/dictionaryStore';
 import { useTrainingStore } from '../store/trainingStore';
 import { useLibraryStore } from '../store/libraryStore';
-import Speech from 'expo-speech';
+import * as Speech from 'expo-speech';
 import { langName } from '../utils/languages';
 import { extractBookWords } from '../utils/bookWords';
 import { effectiveLang } from '../utils/lang';
@@ -327,9 +327,13 @@ export default function DictionaryScreen() {
         if (cancelled) break;
         try {
           const from = e.lang || 'en';
-          const to = e.lang === 'en' ? 'ru' : 'en';
+          const book = e.bookId ? books.find((b) => b.id === e.bookId) : null;
+          const to = effectiveLang(book?.targetLang || useSettingsStore.getState().targetLang) || 'uk';
           const r = await translateCached(e.word, from, to);
-          if (r?.text && !cancelled) updateEntry(e.id, { translation: r.text });
+          // Гард: не зберігаємо переклад що збігається зі словом (house-house при невірній мові книги)
+          if (r?.text && !cancelled && r.text.trim().toLowerCase() !== e.word.trim().toLowerCase()) {
+            updateEntry(e.id, { translation: r.text });
+          }
         } catch (err) {
           console.warn('[DictionaryScreen] backfill translation failed for word=' + e.word, err);
         }
@@ -337,7 +341,7 @@ export default function DictionaryScreen() {
       }
     })();
     return () => { cancelled = true; };
-  }, [entries]);
+  }, [entries, books]);
 
   // заголовок + иконки → в нативный хедер (убираем дублирующий кастомный headerRow)
   useEffect(() => {

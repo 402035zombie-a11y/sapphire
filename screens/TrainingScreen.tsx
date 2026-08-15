@@ -7,7 +7,7 @@
 // на каждом слове берётся из trainingStore (correctCount / wrongCount / box).
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform, ScrollView } from 'react-native';
-import Speech from 'expo-speech';
+import * as Speech from 'expo-speech';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackFab from '../components/BackFab';
 import IconButton from '../components/ui/IconButton';
