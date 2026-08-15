@@ -1,0 +1,65 @@
+[
+  {
+    "id": "g1342",
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "lang": "en",
+    "epubUrl": "https://www.gutenberg.org/ebooks/1342.epub.noimages"
+  },
+  {
+    "id": "g11",
+    "title": "Alice’s Adventures in Wonderland",
+    "author": "Lewis Carroll",
+    "lang": "en",
+    "epubUrl": "https://www.gutenberg.org/ebooks/11.epub.noimages"
+  },
+  {
+    "id": "g2600",
+    "title": "War and Peace",
+    "author": "Leo Tolstoy",
+    "lang": "en",
+    "epubUrl": "https://www.gutenberg.org/ebooks/2600.epub.noimages"
+  },
+  {
+    "id": "g84",
+    "title": "Frankenstein",
+    "author": "Mary Shelley",
+    "lang": "en",
+    "epubUrl": "https://www.gutenberg.org/ebooks/84.epub.noimages"
+  },
+  {
+    "id": "g1661",
+    "title": "The Adventures of Sherlock Holmes",
+    "author": "Arthur Conan Doyle",
+    "lang": "en",
+    "epubUrl": "https://www.gutenberg.org/ebooks/1661.epub.noimages"
+  },
+  {
+    "id": "g2701",
+    "title": "Moby-Dick",
+    "author": "Herman Melville",
+    "lang": "en",
+    "epubUrl": "https://www.gutenberg.org/ebooks/2701.epub.noimages"
+  },
+  {
+    "id": "g98",
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "lang": "en",
+    "epubUrl": "https://www.gutenberg.org/ebooks/98.epub.noimages"
+  },
+  {
+    "id": "g1080",
+    "title": "A Christmas Carol",
+    "author": "Charles Dickens",
+    "lang": "en",
+    "epubUrl": "https://www.gutenberg.org/ebooks/1080.epub.noimages"
+  },
+  {
+    "id": "ua-taras",
+    "title": "Кобзар",
+    "author": "Тарас Шевченко",
+    "lang": "uk",
+    "epubUrl": ""
+  }
+]

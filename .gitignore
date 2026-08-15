@@ -39,3 +39,9 @@ test-results/
 *.tmp.js
 verify_*.js
 diag_*.js
+
+# Large data files (dictionaries, DB)
+data/
+*.db
+*.sqlite
+*.gz
