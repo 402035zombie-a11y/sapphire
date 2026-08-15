@@ -18,11 +18,13 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import { FONTS } from '../theme/constants';
 import { useLibraryStore, Book, BookParagraph, BookSection } from '../store/libraryStore';
+import { BookList } from '../components/BookList';
 import { useSettingsStore } from '../store/settingsStore';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { useT } from '../i18n';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
+import { importBook } from '../services/bookImport';
 import { parseEpub } from '../services/epubParser';
 import { parseFb2, parseFb2Text } from '../services/fb2Parser';
 import { parseDocx } from '../services/docxParser';
@@ -45,9 +47,8 @@ import SupportButton from '../components/SupportButton';
 interface Draft {
   title: string;
   author?: string;
-  format: 'epub' | 'txt' | 'fb2' | 'pdf' | 'docx' | 'odt' | 'rtf' | 'html';
+  format: 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html';
   uri: string;
-  pdfUri?: string;
   language: string;
   targetLang: string;
   paragraphs: BookParagraph[];
@@ -155,7 +156,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       if (res.canceled || !res.assets?.length) return;
       const asset = res.assets[0];
       const lower = asset.name.toLowerCase();
-      const format: 'epub' | 'txt' | 'fb2' | 'pdf' | 'docx' | 'odt' | 'rtf' | 'html' = lower.endsWith('.txt')
+      const format: 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html' = lower.endsWith('.txt')
         ? 'txt'
         : lower.endsWith('.fb2')
         ? 'fb2'
@@ -167,28 +168,11 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         ? 'rtf'
         : lower.endsWith('.html') || lower.endsWith('.htm')
         ? 'html'
-        : lower.endsWith('.pdf')
-        ? 'pdf'
         : 'epub';
 
       setLoading(true);
       setProgress(0.02);
 
-      // PDF: сохраняем как есть, без извлечения текста
-      if (format === 'pdf') {
-        setProgress(1);
-        setDraft({
-          title: cleanTitle(asset.name),
-          format: 'pdf',
-          uri: asset.uri,
-          pdfUri: asset.uri,
-          language: 'en',
-          targetLang: defaultTarget,
-          paragraphs: [],
-          sections: [],
-        });
-        return;
-      }
       let parsed: { text: string; title?: string; author?: string };
       if (format === 'epub') {
         parsed = await parseEpub(asset.uri, setProgress);
@@ -228,6 +212,10 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         paragraphs,
         sections,
       });
+      // E3: parse-once → books.db.chapters (для миттєвого повторного відкриття).
+      importBook(asset.uri, format).catch((e) => {
+        console.warn('[bookImport] failed (non-fatal):', e);
+      });
     } catch (e: any) {
       Alert.alert(t('Error reading file'), e?.message ?? String(e));
     } finally {
@@ -242,22 +230,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
     setProgress(0.1);
     try {
       const lower = file.name.toLowerCase();
-      // PDF в вебе: не парсим текст, сохраняем объект файла как blob-URL
-      if (lower.endsWith('.pdf')) {
-        const url = URL.createObjectURL(file);
-        setProgress(1);
-        setDraft({
-          title: cleanTitle(file.name),
-          format: 'pdf',
-          uri: url,
-          pdfUri: url,
-          language: 'en',
-          targetLang: defaultTarget,
-          paragraphs: [],
-          sections: [],
-        });
-        return;
-      }
       const text = await readFileAsText(file);
       setProgress(0.6);
       if (lower.endsWith('.fb2')) {
@@ -314,7 +286,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       author: draft.author,
       format: draft.format,
       uri: draft.uri,
-      pdfUri: draft.pdfUri,
       language: draft.language,
       targetLang: draft.targetLang,
       paragraphs: draft.paragraphs,
@@ -461,6 +432,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           visible={targetPickerVisible}
           value={draft?.targetLang ?? defaultTarget}
           allowAuto={false}
+          exclude={['ru']}
           onSelect={(code) => draft && setDraft({ ...draft, targetLang: code })}
           onClose={() => setTargetPickerVisible(false)}
         />
@@ -484,60 +456,12 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           </View>
       </ModalSheet>
 
-      <ScrollView
-        ref={flatListRef as any}
-        style={{ flex: 1 }}
-        contentContainerStyle={[
-          styles.list,
-          a.columns > 1 && { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: a.gap },
-        ]}
-      >
-        {visibleBooks.length === 0 ? (
-          <Text style={[styles.empty, { color: theme.secondaryText }]}>{t('Library is empty. Upload your first book.')}</Text>
-        ) : (
-          visibleBooks.map((item) => {
-            const wordCount = bookWordCount.get(item.id) || 0;
-            const isPressed = pressedId === item.id;
-            return (
-          <TouchableOpacity
-            key={item.id}
-            style={[
-              styles.bookRow,
-              metal(theme, 'raised', { radius: a.radius }),
-              a.columns > 1 && { width: `${100 / a.columns - 2}%` },
-              { zIndex: isPressed ? 20 : 1 },
-            ]}
-            onPressIn={() => setPressedId(item.id)}
-            onPressOut={() => setPressedId(null)}
-            onPress={() => openReader(item.id)}
-          >
-            <View style={[styles.cover, { backgroundColor: coverColor(item.title) }]}>
-              <Text style={styles.coverText}>{(item.title || '?').trim().charAt(0).toUpperCase()}</Text>
-            </View>
-            <View style={{ flex: 1, flexShrink: 1, marginLeft: Math.round(12 * a.scale), minWidth: 0 }}>
-              <Text style={[styles.bookTitle, { color: theme.primaryText }]} numberOfLines={2}>{item.title}</Text>
-              <Text style={[styles.bookMeta, { color: theme.secondaryText }]} numberOfLines={2}>
-                {item.author ? `${item.author} · ` : ''}
-                {item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()} · {item.paragraphs.length} {t('par.')}{wordCount ? ` · ${wordCount} ${t('words')}` : ''}
-              </Text>
-            </View>
-            <View style={styles.rowActions}>
-              <TouchableOpacity
-                onPress={(e: any) => {
-                  e?.stopPropagation?.();
-                  removeBook(item.id);
-                }}
-                hitSlop={10}
-                style={[metal(theme, 'circle', { size: a.dim(0.05, 28, 38) }), { padding: 0 }]}
-              >
-                <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-            );
-          })
-        )}
-      </ScrollView>
+      <BookList
+        books={visibleBooks}
+        bookWordCount={bookWordCount}
+        onOpen={openReader}
+        onRemove={removeBook}
+      />
 
       {!onSelectBook && Platform.OS !== 'web' && <NativeAdBanner />}
 
@@ -554,7 +478,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         <input
           ref={fileInputRef}
           type="file"
-          accept=".txt,.epub,.fb2,.pdf,text/plain,application/epub+zip,application/x-fictionbook,application/pdf"
+          accept=".txt,.epub,.fb2,text/plain,application/epub+zip,application/x-fictionbook"
           style={{ display: 'none' }}
           onChange={onWebFile}
         />
@@ -619,7 +543,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
     actionBtn: { flex: 1, height: Math.round(Math.max(44, 48 * a.scale)), paddingVertical: 10, paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
     actionText: { fontSize: a.body },
     saveText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.body },
-    list: { paddingHorizontal: neuShadowPad(), paddingTop: a.insetTop + a.pad + a.fab() + a.gap, paddingBottom: 85 + 50 + a.gap },
+    list: { paddingHorizontal: neuShadowPad(), paddingTop: a.insetTop + a.pad + a.fab() + a.gap + a.headerH + a.fab() * 1.5, paddingBottom: 85 + 50 + a.gap },
     empty: { textAlign: 'center', marginTop: 40, fontSize: a.body },
     bookRow: {
       flexDirection: 'row',

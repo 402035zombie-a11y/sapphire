@@ -4,9 +4,10 @@
 const PACKAGE = process.env.EXPO_PUBLIC_ANDROID_PACKAGE || 'com.bookreader.app';
 const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME || 'BookReader';
 
-const ADMOB_APP_ID = process.env.EXPO_PUBLIC_ADMOB_APP_ID || 'ca-app-pub-5113967448800652~8371247908';
-const ADMOB_BANNER_ID = process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || 'ca-app-pub-5113967448800652/4712038644';
-const ADMOB_REWARDED_ID = process.env.EXPO_PUBLIC_ADMOB_REWARDED_ID || 'ca-app-pub-5113967448800652/1663349260';
+// AdMob IDs — ТІЛЬКИ з ENV (EAS production env). Не хардкодимо в git (security).
+const ADMOB_APP_ID = process.env.EXPO_PUBLIC_ADMOB_APP_ID || '';
+const ADMOB_BANNER_ID = process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || '';
+const ADMOB_REWARDED_ID = process.env.EXPO_PUBLIC_ADMOB_REWARDED_ID || '';
 
 const IS_PRODUCTION = process.env.EAS_BUILD_PROFILE === 'production';
 
@@ -14,11 +15,12 @@ module.exports = ({ config }) => ({
   ...config,
   name: APP_NAME,
   slug: 'bookreader',
-  version: '0.1.0',
+  version: '1.0.0',
   orientation: 'portrait',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
   scheme: 'bookreader',
+  privacyPolicyUrl: 'https://raw.githubusercontent.com/402035zombie-a11y/bookreader/fix/ui-bugs/docs/privacy-policy.html',
   icon: './assets/icon.png',
   splash: {
     image: './assets/splash.png',

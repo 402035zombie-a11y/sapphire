@@ -4,6 +4,7 @@
 // Для счётчика в UI используйте entries (уже дедуплицированы в селекторах).
 import { persist } from './createStore';
 import { translateCached } from '../services/translationService';
+import { useSettingsStore } from './settingsStore';
 
 export interface DictionaryEntry {
   id: string;
@@ -54,10 +55,15 @@ export const useDictionaryStore = persist<DictionaryState>(
           }
           const id = `${entry.word}-${Date.now()}`;
           const newEntry = { ...entry, id, createdAt: Date.now() };
-          // подгружаем translation, если пустой (fire-and-forget) — чтобы тренировка видела слово
+          // C9: не додаємо слово якщо мова оригіналу == мова перекладу (дубль-переклад на ту ж мову).
+          const targetLang = useSettingsStore.getState().targetLang;
+          if (newEntry.lang === targetLang) {
+            return {}; // ігноруємо (не додаємо в словник)
+          }
+          // підгружаємо translation, якщо пусте (fire-and-forget) — щоб тренування бачило слово
           if (!newEntry.translation || !newEntry.translation.trim()) {
             const from = newEntry.lang || 'en';
-            const to = newEntry.lang === 'en' ? 'ru' : 'en';
+            const to = targetLang || 'uk';
             translateCached(newEntry.word, from, to)
               .then((r) => { if (r?.text) get().updateEntry(id, { translation: r.text }); })
               .catch(() => {});

@@ -6,12 +6,13 @@ import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads'
 import Constants from 'expo-constants';
 
 const BANNER_ID: string =
-  (Constants.expoConfig?.extra?.admob?.bannerId as string) ||
-  'ca-app-pub-5113967448800652/4712038644';
+  (Constants.expoConfig?.extra?.admob?.bannerId as string) || '';
 
 export default function AdBanner() {
   // На вебі пакет недоступний — повертаємо порожній View.
   if (Platform.OS === 'web') return <View />;
+  // Без валідного ad-unit ID — не рендеримо банер (інакше BannerAd падає з Render Error).
+  if (!BANNER_ID) return <View />;
   const [error, setError] = useState(false);
   useEffect(() => {
     // AdMob ініціалізується в App.tsx initAds(); тут лише рендер банера.

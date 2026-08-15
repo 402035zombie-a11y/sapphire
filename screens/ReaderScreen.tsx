@@ -30,6 +30,7 @@ import { useAdaptive } from '../theme/useAdaptive';
 import { metal } from '../theme/neu';
 import { SIZES, FONTS } from '../theme/constants';
 import { useLibraryStore } from '../store/libraryStore';
+import { BookParagraph } from '../store/libraryStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useSupportStore } from '../store/supportStore';
 import { translateCached } from '../services/translationService';
@@ -45,6 +46,10 @@ import Marquee from '../components/Marquee';
 import IconButton from '../components/ui/IconButton';
 import AppSettingsModal from '../components/AppSettingsModal';
 import FontSettingsSheet from '../components/FontSettingsSheet';
+import { getBookChapters } from '../services/bookImport';
+import { translateBatch as translateBatchV2 } from '../services/translationServiceV2';
+import { buildChunks, nextChunkIndices, ChunkOptions } from '../services/readerChunker';
+import Speech from 'expo-speech';
 
 interface RouteParams {
   bookId: string;
@@ -72,8 +77,67 @@ export default function ReaderScreen({ route }: { route: any }) {
   const hasWord = useDictionaryStore((s) => s.hasWord);
   const [targetLang, setTargetLang] = useState(book?.targetLang ?? settingsTarget ?? 'en');
 
+  /**
+   * E4: parse-once — читає глави з books.db (getBookChapters) замість libraryStore.paragraphs.
+   * Конвертує contentHtml глави → BookParagraph[] (strip tags + split). Fallback на chapters якщо БД порожня.
+   * Працює і веб, і моб (expo-sqlite універсальний).
+   */
+  const chapters = React.useMemo<BookParagraph[]>(() => {
+    if (!book) return [];
+    const dbChapters = getBookChapters(book.id);
+    if (dbChapters.length === 0) return book.paragraphs;
+    const out: BookParagraph[] = [];
+    let idx = 0;
+    for (const ch of dbChapters) {
+      const plain = ch.contentHtml
+        .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+        .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+        .replace(/<(p|div|br|h[1-6]|li|\/p|\/div|\/h[1-6]|\/li)\b[^>]*\/?>/gi, '\n')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&nbsp;/g, ' ')
+        .replace(/[ \t]+/g, ' ')
+        .replace(/\n{2,}/g, '\n')
+        .trim()
+        .split('\n')
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+      for (const sentence of plain) {
+        out.push({ index: idx++, original: sentence, translation: '' });
+      }
+    }
+    return out;
+  }, [book]);
+
   const { width, height } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
+
+  // ---- R3: вертикальне чанкування + префетч перекладу ----
+  // Оцінка символів/рядок залежить від ширини контенту та шрифту.
+  const fs0 = reader.fontSize ?? 18;
+  const contentWidth = Math.max(120, Math.min(width, a.readerMaxW ?? width) - 24);
+  const charsPerLine = Math.max(10, Math.floor(contentWidth / Math.max(6, fs0 * 0.55)));
+  // Опції чанкера стабільні доки не зміниться шрифт/в'юпорт/режим.
+  const chunkerOpts: ChunkOptions = React.useMemo(
+    () => ({
+      viewportHeight: Math.max(120, height - 140),
+      fontSize: fs0,
+      lineHeight: reader.lineHeight ?? 1.5,
+      charsPerLine,
+      showTranslation: mode === 'dual',
+      translateExpansion: 1.3,
+      maxChunkLines: 80,
+    }),
+    [height, width, a.readerMaxW, reader.lineHeight, fs0, mode],
+  );
+  // Чанки = одиниці планування префетчу перекладу. Перебудовуємось тільки при зміні
+  // структури книги (bookId/довжина) або опцій — НЕ на кожен переклад (оригінали
+  // не змінюються, тому межі чанків стабільні → уникаємо повторної арифметики).
+  const chunks = React.useMemo(
+    () => buildChunks(chapters, chunkerOpts),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bookId, chapters.length, chunkerOpts],
+  );
 
   const [loadingSet, setLoadingSet] = useState<Set<number>>(new Set());
   const [langOpen, setLangOpen] = useState(false);
@@ -115,42 +179,77 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   const speakFrom = useCallback(
     (start: number) => {
-      if (!book || !isWeb || !('speechSynthesis' in window)) return;
-      const paras = book.paragraphs;
+      if (!book) return;
+      const paras = chapters;
       let i = start;
       const lang = effectiveLang(book.language);
-      const step = () => {
-        if (cancelledRef.current) {
-          setIsSpeaking(false);
-          setPaused(true);
-          return;
-        }
-        if (i >= paras.length) {
-          setIsSpeaking(false);
-          setPaused(false);
-          setCurrentIndex(0);
-          return;
-        }
-        const u = new SpeechSynthesisUtterance(paras[i].original);
-        u.lang = lang;
-        u.onend = () => {
+      if (isWeb && 'speechSynthesis' in window) {
+        const step = () => {
           if (cancelledRef.current) {
             setIsSpeaking(false);
             setPaused(true);
             return;
           }
-          i += 1;
+          if (i >= paras.length) {
+            setIsSpeaking(false);
+            setPaused(false);
+            setCurrentIndex(0);
+            return;
+          }
+          const u = new SpeechSynthesisUtterance(paras[i].original);
+          u.lang = lang;
+          u.onend = () => {
+            if (cancelledRef.current) {
+              setIsSpeaking(false);
+              setPaused(true);
+              return;
+            }
+            i += 1;
+            setCurrentIndex(i);
+            step();
+          };
           setCurrentIndex(i);
-          step();
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.speak(u);
         };
-        setCurrentIndex(i);
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(u);
-      };
-      cancelledRef.current = false;
-      setIsSpeaking(true);
-      setPaused(false);
-      step();
+        cancelledRef.current = false;
+        setIsSpeaking(true);
+        setPaused(false);
+        step();
+      } else {
+        // Нативне послідовне озвучування через expo-speech.
+        const stepNative = () => {
+          if (cancelledRef.current) {
+            setIsSpeaking(false);
+            setPaused(true);
+            return;
+          }
+          if (i >= paras.length) {
+            setIsSpeaking(false);
+            setPaused(false);
+            setCurrentIndex(0);
+            return;
+          }
+          setCurrentIndex(i);
+          Speech.speak(paras[i].original, {
+            language: lang,
+            rate: 0.95,
+            onDone: () => {
+              if (cancelledRef.current) {
+                setIsSpeaking(false);
+                setPaused(true);
+                return;
+              }
+              i += 1;
+              stepNative();
+            },
+          });
+        };
+        cancelledRef.current = false;
+        setIsSpeaking(true);
+        setPaused(false);
+        stepNative();
+      }
     },
     [book, isWeb],
   );
@@ -166,17 +265,23 @@ export default function ReaderScreen({ route }: { route: any }) {
   }, [book, isSpeaking, paused, currentIndex, speakFrom]);
 
   const pauseBook = useCallback(() => {
-    if (!isWeb || !('speechSynthesis' in window)) return;
     cancelledRef.current = true;
-    window.speechSynthesis.cancel();
+    if (isWeb && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    } else {
+      Speech.stop();
+    }
     setIsSpeaking(false);
     setPaused(true);
   }, [isWeb]);
 
   const stopBook = useCallback(() => {
-    if (!isWeb || !('speechSynthesis' in window)) return;
     cancelledRef.current = true;
-    window.speechSynthesis.cancel();
+    if (isWeb && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    } else {
+      Speech.stop();
+    }
     setIsSpeaking(false);
     setPaused(false);
     setCurrentIndex(0);
@@ -189,6 +294,10 @@ export default function ReaderScreen({ route }: { route: any }) {
   const bookRef = useRef(book);
   const rowHeights = useRef<Map<number, number>>(new Map());
   bookRef.current = book;
+
+  // R3: відстеження префетчу перекладу по чанках (щоб не перекладати двічі).
+  const prefetchedChunks = useRef<Set<number>>(new Set());
+  const prefetchInFlight = useRef<Set<number>>(new Set());
 
   const translateBatch = useCallback(
     async (first: number, last: number) => {
@@ -235,21 +344,78 @@ export default function ReaderScreen({ route }: { route: any }) {
   // функцию на каждый рендер и ломает React.memo(SentenceRow), вызывая перерендер всех строк.
   const translateCb = useCallback((index: number) => translateBatch(index, index), [translateBatch]);
 
+  /**
+   * R3: префетч перекладу для наступних 5 чанків уперед відносно поточного абзацу.
+   * - чанки беруться з `chunks` (розраховані під в'юпорт);
+   * - переклад через translationServiceV2.translateBatch (пакетно, паралельно);
+   * - вже перекладені абзаци (book.paragraphs[i].translation) пропускаємо;
+   * - кожен чанк запускається в префетч максимум один раз (prefetchedChunks),
+   *   а паралельні запуски одного чанка блокуються prefetchInFlight.
+   * Результати зберігаємо через updateParagraphsTranslations (той самий шлях, що й E4).
+   */
+  const prefetchAhead = useCallback(
+    (currentParagraphIndex: number) => {
+      const b = bookRef.current;
+      if (!b || mode === 'read') return;
+      if (chunks.length === 0) return;
+      const from = b.language === 'auto' ? 'auto' : b.language;
+      const nextIdx = nextChunkIndices(chunks, currentParagraphIndex, 5);
+      for (const ci of nextIdx) {
+        if (prefetchedChunks.current.has(ci) || prefetchInFlight.current.has(ci)) continue;
+        const chunk = chunks[ci];
+        if (!chunk) continue;
+        // зібрати абзаци чанка без перекладу
+        const items: { id: number; text: string }[] = [];
+        for (const pIdx of chunk.paragraphIndices) {
+          const p = b.paragraphs[pIdx];
+          if (p && !p.translation) items.push({ id: pIdx, text: p.original });
+        }
+        if (items.length === 0) {
+          prefetchedChunks.current.add(ci);
+          continue;
+        }
+        prefetchInFlight.current.add(ci);
+        translateBatchV2(items, from, targetLang)
+          .then((map) => {
+            const entries: { index: number; translation: string }[] = [];
+            map.forEach((res, id) => {
+              if (res && res.text) entries.push({ index: id as number, translation: res.text });
+            });
+            if (entries.length) updateParagraphsTranslations(b.id, entries);
+          })
+          .catch(() => {
+            /* ігноруємо — переклад відновиться при наступному показі/скролі */
+          })
+          .finally(() => {
+            prefetchedChunks.current.add(ci);
+            prefetchInFlight.current.delete(ci);
+          });
+      }
+    },
+    [chunks, mode, targetLang, updateParagraphsTranslations],
+  );
+
 
   const onViewableItemsChanged = useCallback(
     ({ viewableItems, changed }: any) => {
       const set = new Set<number>();
+      let minIdx = Infinity;
       for (const vi of viewableItems) {
         const idx = vi.index;
-        if (typeof idx === 'number') set.add(idx);
+        if (typeof idx === 'number') {
+          set.add(idx);
+          if (idx < minIdx) minIdx = idx;
+        }
       }
       viewableRef.current = set;
       // абзац в окне → переводим СРАЗУ (без задержки), если ещё нет перевода
       set.forEach((idx) => {
         if (!bookRef.current?.paragraphs[idx]?.translation) translateBatch(idx, idx);
       });
+      // R3: префетч перекладу для наступних 5 чанків уперед
+      if (minIdx !== Infinity) prefetchAhead(minIdx);
     },
-    [translateBatch],
+    [translateBatch, prefetchAhead],
   );
 
   const onScrollBeginDrag = useCallback(() => {
@@ -275,8 +441,10 @@ export default function ReaderScreen({ route }: { route: any }) {
       const atEnd = first >= total - 2;
       const pct = atEnd ? 1 : Math.min(1, Math.max(0, first / total));
       setProgress(bookId, pct, Math.max(0, first));
+      // R3: префетч перекладу для наступних 5 чанків уперед
+      prefetchAhead(first);
     },
-    [translateBatch, bookId, setProgress],
+    [translateBatch, bookId, setProgress, prefetchAhead],
   );
 
   // Окно «Поддержать автора» — плата за бесплатное приложение.
@@ -313,11 +481,20 @@ export default function ReaderScreen({ route }: { route: any }) {
     for (let i = 0; i <= BATCH && i < paras.length; i++) {
       if (!bookRef.current?.paragraphs[i]?.translation) translateBatch(i, i);
     }
+    // R3: префетч перекладу для наступних 5 чанків уперед від стартової позиції
+    const start = bookRef.current?.lastPosition ?? 0;
+    prefetchAhead(start);
     return () => {
       if (scrollTimer.current) clearTimeout(scrollTimer.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookId, mode, targetLang]);
+  }, [bookId, mode, targetLang, prefetchAhead]);
+
+  // R3: при зміні книги скидаємо відстеження префетчу (старі індекси чанків невалідні).
+  useEffect(() => {
+    prefetchedChunks.current = new Set();
+    prefetchInFlight.current = new Set();
+  }, [bookId]);
 
   // прыжок к разделу/закладке из оглавления или списка закладок
   useEffect(() => {
@@ -351,6 +528,15 @@ export default function ReaderScreen({ route }: { route: any }) {
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(u);
         setIsSpeaking(true);
+      } else {
+        // Нативне озвучування (Android/iOS) через expo-speech.
+        Speech.stop();
+        Speech.speak(text, {
+          language: book?.language && book.language !== 'auto' ? book.language : 'en',
+          rate: 0.95,
+          onDone: () => setIsSpeaking(false),
+        });
+        setIsSpeaking(true);
       }
     },
     [isWeb, book],
@@ -368,12 +554,11 @@ export default function ReaderScreen({ route }: { route: any }) {
 
 
 
-  const isPdf = book.format === 'pdf';
   const list = (
     <FlatList
       ref={scrollRef}
       style={{ flex: 1 }}
-      data={book.paragraphs}
+      data={chapters}
       keyExtractor={(p) => String(p.index)}
       numColumns={1}
       contentContainerStyle={[styles.list, { backgroundColor: theme.readerBg, paddingHorizontal: reader.pageMargins ? reader.margin : 0 }]}
@@ -445,6 +630,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           {langOpen && (
             <LanguageDropdown
               value={targetLang}
+              excludeRu
               onSelect={(code) => {
                 setTargetLang(code);
                 if (book?.id) setBookTargetLang(book.id, code);
@@ -452,7 +638,7 @@ export default function ReaderScreen({ route }: { route: any }) {
                 if (book?.id) {
                   updateParagraphsTranslations(
                     book.id,
-                    (book.paragraphs || []).map((p) => ({ index: p.index, translation: '' })),
+                    (chapters || []).map((p) => ({ index: p.index, translation: '' })),
                   );
                 }
               }}
@@ -494,25 +680,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   );
 
   // menuItems/menu (бургер) удалены — язык теперь в dropdown шестеренки.
-  const content = isPdf ? (
-    <View style={{ flex: 1, backgroundColor: theme.readerBg }}>
-      {Platform.OS === 'web' ? (
-        <iframe
-          src={book.pdfUri}
-          style={{ width: '100%', height: '100%', borderWidth: 0 }}
-          title={book.title}
-        />
-      ) : (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <Text style={{ color: theme.readerText }}>
-            {t("PDF viewing is available only in the web version. On a device, open the file with an external app.")}
-          </Text>
-        </View>
-      )}
-    </View>
-  ) : (
-    list
-  );
+  const content = list;
 
   return (
     <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, paddingHorizontal: a.pad, paddingBottom: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>

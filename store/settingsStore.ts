@@ -36,7 +36,7 @@ interface SettingsState {
 export const useSettingsStore = persist<SettingsState>(
   (set) => ({
     appLang: 'auto', // дефолт интерфейса — авто (по системе; ru→en), можно сменить в настройках
-    targetLang: 'en', // дефолт перевода — английский (русский удалён)
+    targetLang: 'uk', // дефолт перевода — украинский (по требованию юзера)
     // По умолчанию — тёмная тема (Ночь), как просил пользователь.
     theme: 'night',
     reader: {

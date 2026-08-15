@@ -4,12 +4,12 @@ import Constants from 'expo-constants';
 import { MobileAds, RewardedAd, RewardedAdEventType, TestIds, AdEventType } from 'react-native-google-mobile-ads';
 
 const REWARDED_ID: string =
-  (Constants.expoConfig?.extra?.admob?.rewardedId as string) ||
-  'ca-app-pub-5113967448800652/1663349260';
+  (Constants.expoConfig?.extra?.admob?.rewardedId as string) || '';
 
 let initialized = false;
 
-export const isRealAdUnit = !REWARDED_ID.startsWith('ca-app-pub-3940256099942544');
+// isRealAdUnit: true якщо ID не порожній і не Google test-ID.
+export const isRealAdUnit = REWARDED_ID.length > 0 && !REWARDED_ID.startsWith('ca-app-pub-3940256099942544');
 
 export async function initAds(): Promise<void> {
   if (initialized) return;
@@ -23,8 +23,9 @@ export async function initAds(): Promise<void> {
 }
 
 export async function showSupportAd(): Promise<boolean> {
+  // Без валідного rewarded-ID — не показуємо (вважаємо підтримку отриманою, щоб не блокувати UX).
+  if (!isRealAdUnit) return true;
   // Показуємо rewarded-рекламу за підтримку автора.
-  // Якщо реальний unit недоступний (dev), повертаємо true (вважаємо підтримку отриманою).
   try {
     const rewarded = RewardedAd.createForAdRequest(REWARDED_ID, {
       requestNonPersonalizedAdsOnly: true,

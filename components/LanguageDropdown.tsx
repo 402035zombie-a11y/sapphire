@@ -14,9 +14,11 @@ interface Props {
   value: string;
   onSelect: (code: string) => void;
   onClose: () => void;
+  /** true для выбора языка ПЕРЕВОДА — исключает 'ru' (русский только для чтения). */
+  excludeRu?: boolean;
 }
 
-export default function LanguageDropdown({ value, onSelect, onClose }: Props) {
+export default function LanguageDropdown({ value, onSelect, onClose, excludeRu }: Props) {
   const [query, setQuery] = useState('');
   const theme = useTheme();
   const a = useAdaptive();
@@ -24,8 +26,10 @@ export default function LanguageDropdown({ value, onSelect, onClose }: Props) {
 
   const list: LangOption[] = (() => {
     const q = query.trim().toLowerCase();
-    if (!q) return LANGUAGES;
-    return LANGUAGES.filter(
+    let src = LANGUAGES;
+    if (excludeRu) src = src.filter((l) => l.code !== 'ru');
+    if (!q) return src;
+    return src.filter(
       (l) => l.name.toLowerCase().includes(q) || l.en.toLowerCase().includes(q) || l.code.includes(q),
     );
   })();

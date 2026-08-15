@@ -60,7 +60,7 @@ export function langName(code: string): string {
   return LANGUAGES.find((l) => l.code === code)?.name ?? code;
 }
 
-// Для списка языков перевода (без 'auto', без 'ru').
+// Для списка языков перевода (без 'auto', без 'ru' — русский только для чтения, не для перевода).
 export function translatableLangs(): LangOption[] {
-  return LANGUAGES.filter((l) => l.code !== 'auto');
+  return LANGUAGES.filter((l) => l.code !== 'auto' && l.code !== 'ru');
 }

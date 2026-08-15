@@ -12,6 +12,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  FlatList,
   TouchableOpacity,
   TextInput,
   Alert,
@@ -57,6 +58,77 @@ function PickerList({ items, emptyHint, styles }: { items: { key: string; label:
         </TouchableOpacity>
       ))}
     </ScrollView>
+  );
+}
+
+// B9: віртуалізована картка слова (renderItem для FlashList).
+// Контекст-речення НЕ рендериться (вага при 1000+ слів). SurfaceForm+переклад+бейджі.
+type WordCardProps = {
+  item: DictionaryEntry;
+  theme: any;
+  a: any;
+  styles: any;
+  progress: Record<string, any>;
+  editing: { id: string; value: string } | null;
+  setEditing: (v: { id: string; value: string } | null) => void;
+  updateEntry: (id: string, patch: any) => void;
+  removeEntry: (id: string) => void;
+  speakWord: (text: string, lang: string) => void;
+  t: (key: string) => string;
+};
+
+function WordCard({ item, theme, a, styles, progress, editing, setEditing, updateEntry, removeEntry, speakWord, t }: WordCardProps) {
+  const isEditing = editing?.id === item.id;
+  const tp = progress[`${item.word}|${item.lang}`];
+  const box = tp?.box ?? 1;
+  const c = tp?.correctCount ?? 0;
+  const w = tp?.wrongCount ?? 0;
+  // B9/HWUI: memoize metal()-стилі бейджів — НЕ перераховувати тіні при скролі FlatList.
+  const badgeStyle = React.useMemo(() => metal(theme, 'inset', { radius: 8 }), [theme]);
+  const freqBadgeStyle = React.useMemo(() => metal(theme, 'inset', { radius: 8 }), [theme]);
+  return (
+    <Card radius={a.radius} style={styles.row}>
+      <TouchableOpacity style={styles.speakInline} onPress={() => speakWord(item.word, item.lang)} hitSlop={6}>
+        <Text style={styles.speakInlineIcon}>▶</Text>
+      </TouchableOpacity>
+      <View style={{ flex: 1, marginLeft: a.gap }}>
+        <View style={styles.wordLine}>
+          <Text style={[styles.word, { color: theme.primaryText }]}>
+            {item.surfaceForm} <Text style={[styles.lang, { color: theme.secondaryText }]}>{langName(item.lang)}</Text>
+          </Text>
+          {(c > 0 || w > 0) && (
+            <View style={[styles.badge, badgeStyle]}>
+              <Text style={[styles.badgeBox, { color: theme.primary }]}>{t('Lvl')} {box}</Text>
+              <Text style={{ color: '#16A34A' }}>✓{c}</Text>
+              <Text style={{ color: '#DC2626' }}>✗{w}</Text>
+            </View>
+          )}
+          {item.frequency && item.frequency > 1 && (
+            <View style={[styles.freqBadge, freqBadgeStyle]}>
+              <Text style={[styles.freqText, { color: theme.secondaryText }]}>×{item.frequency}</Text>
+            </View>
+          )}
+        </View>
+        {isEditing ? (
+          <TextField
+            radius={8}
+            style={[styles.editInput, { borderWidth: 0, color: theme.primaryText }]}
+            value={editing?.value}
+            autoFocus
+            onChangeText={(t2) => setEditing({ id: item.id, value: t2 })}
+            onSubmitEditing={() => { updateEntry(item.id, { translation: editing!.value.trim() }); setEditing(null); }}
+            onBlur={() => { updateEntry(item.id, { translation: editing!.value.trim() }); setEditing(null); }}
+          />
+        ) : (
+          <TouchableOpacity onPress={() => setEditing({ id: item.id, value: item.translation })}>
+            <Text style={[styles.translation, { color: theme.primary }]}>{item.translation}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      <TouchableOpacity style={styles.deleteBtn} onPress={() => removeEntry(item.id)} hitSlop={10}>
+        <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
+      </TouchableOpacity>
+    </Card>
   );
 }
 
@@ -309,7 +381,7 @@ export default function DictionaryScreen() {
           }, 0)}</Text>
         </Text>
         <Card radius={a.radius} style={styles.filterBlock}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 10, flexWrap: 'wrap' }}>
           <View style={styles.sortBar}>
             {sortOptions.map((o) => {
               const active = sortBy === o.id;
@@ -324,87 +396,58 @@ export default function DictionaryScreen() {
               );
             })}
           </View>
+          <TouchableOpacity
+            style={[styles.sortTab, levelFilter !== 'all' && { backgroundColor: theme.selected }]}
+            onPress={() => setLevelPickerOpen(true)}
+          >
+            <Text style={[styles.sortTabText, { color: levelFilter !== 'all' ? theme.primaryText : theme.secondaryText }]}>
+              {t('Type')}: {levelOptions.find((o) => o.id === levelFilter)?.label ?? t('All')}
+            </Text>
+            <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
+          </TouchableOpacity>
         </View>
       </Card>
-
-      <TouchableOpacity
-        style={[styles.levelTrigger, metal(theme, 'inset', { radius: a.radius })]}
-        onPress={() => setLevelPickerOpen(true)}
-      >
-        <Text style={[styles.levelTabText, { color: theme.primaryText }]}>
-          {t('Type')}: {levelOptions.find((o) => o.id === levelFilter)?.label ?? t('All')}
-        </Text>
-        <Icon name="chevron-down" size={a.fs(14)} color={theme.secondaryText} />
-      </TouchableOpacity>
       </View>
 
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={[styles.list, { paddingHorizontal: neuShadowPad(), paddingTop: a.headerH + a.body + a.insetTop + a.pad + 10, paddingBottom: Math.round(a.height / 2), flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}
-      >
-        {filtered.length === 0 ? (
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', padding: a.pad }}>
+      {/* B9: FlatList замість ScrollView — віртуалізація (не рендерить 1000+ карток одразу).
+          numColumns={a.columns} — адаптивна сітка (1-6 колонок). Context прибрано зі списку. */}
+      <FlatList
+        data={filtered}
+        keyExtractor={(item) => item.id}
+        numColumns={a.columns}
+        initialNumToRender={20}
+        maxToRenderPerBatch={30}
+        windowSize={10}
+        contentContainerStyle={{
+          paddingHorizontal: neuShadowPad(),
+          paddingTop: a.insetTop + a.pad,
+          paddingBottom: Math.round(a.height / 2),
+        }}
+        ListEmptyComponent={() => (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: a.pad, marginTop: a.height * 0.2 }}>
             <Text style={[styles.empty, { color: theme.secondaryText }]}>
               {entries.length === 0
                 ? t('Dictionary is empty. Tap words while reading to save them.')
                 : t('Nothing found.')}
             </Text>
           </View>
-        ) : (
-          filtered.map((item: any) => {
-            const isEditing = editing?.id === item.id;
-            const tp = progress[`${item.word}|${item.lang}`];
-            const box = tp?.box ?? 1;
-            const c = tp?.correctCount ?? 0;
-            const w = tp?.wrongCount ?? 0;
-            return (
-              <Card radius={a.radius} style={[styles.row, { width: `${(100 / Math.max(1, a.columns)) - 3}%` }]}>
-                <TouchableOpacity style={styles.speakInline} onPress={() => speakWord(item.word, item.lang)} hitSlop={6}>
-                  <Text style={styles.speakInlineIcon}>▶</Text>
-                </TouchableOpacity>
-                <View style={{ flex: 1, marginLeft: a.gap }}>
-                  <View style={styles.wordLine}>
-                    <Text style={[styles.word, { color: theme.primaryText }]}>
-                      {item.surfaceForm} <Text style={[styles.lang, { color: theme.secondaryText }]}>{langName(item.lang)}</Text>
-                    </Text>
-                    {(c > 0 || w > 0) && (
-                      <View style={[styles.badge, metal(theme, 'inset', { radius: 8 })]}>
-                        <Text style={[styles.badgeBox, { color: theme.primary }]}>{t('Lvl')} {box}</Text>
-                        <Text style={{ color: '#16A34A' }}>✓{c}</Text>
-                        <Text style={{ color: '#DC2626' }}>✗{w}</Text>
-                      </View>
-                    )}
-                    {item.frequency && item.frequency > 1 && (
-                      <View style={[styles.freqBadge, metal(theme, 'inset', { radius: 8 })]}>
-                        <Text style={[styles.freqText, { color: theme.secondaryText }]}>×{item.frequency}</Text>
-                      </View>
-                    )}
-                  </View>
-                  {isEditing ? (
-                    <TextField
-                      radius={8}
-                      style={[styles.editInput, { borderWidth: 0, color: theme.primaryText }]}
-                      value={editing?.value}
-                      autoFocus
-                      onChangeText={(t) => setEditing({ id: item.id, value: t })}
-                      onSubmitEditing={() => { updateEntry(item.id, { translation: editing!.value.trim() }); setEditing(null); }}
-                      onBlur={() => { updateEntry(item.id, { translation: editing!.value.trim() }); setEditing(null); }}
-                    />
-                  ) : (
-                    <TouchableOpacity onPress={() => setEditing({ id: item.id, value: item.translation })}>
-                      <Text style={[styles.translation, { color: theme.primary }]}>{item.translation}</Text>
-                    </TouchableOpacity>
-                  )}
-                  {item.context ? <Text style={[styles.context, { color: theme.secondaryText }]}>«{item.context}»</Text> : null}
-                </View>
-                <TouchableOpacity style={styles.deleteBtn} onPress={() => removeEntry(item.id)} hitSlop={10}>
-                  <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
-                </TouchableOpacity>
-              </Card>
-            );
-          })
         )}
-      </ScrollView>
+        renderItem={({ item }) => (
+          <WordCard
+            item={item}
+            theme={theme}
+            a={a}
+            styles={styles}
+            progress={progress}
+            editing={editing}
+            setEditing={setEditing}
+            updateEntry={updateEntry}
+            removeEntry={removeEntry}
+            speakWord={speakWord}
+            t={t}
+          />
+        )}
+      />
 
       {/* Попап выбора источника при входе в Словарь */}
       <ModalSheet visible={source === null} onClose={() => setSource({ type: 'general' })}>
@@ -612,7 +655,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, ...metal(theme, 'raised', { radius: a.radius }), marginBottom: a.tiny ? 8 : 12 },
     pickText: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1 },
     pickHint: { fontSize: a.small_fs, marginTop: 8, fontStyle: 'italic' },
-    counterRow: { position: 'absolute', top: a.insetTop + a.pad, left: a.pad, right: a.pad, zIndex: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 10 : 14 },
+    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 10 : 14, marginBottom: a.gap },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
@@ -641,6 +684,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       borderRadius: a.radius,
       padding: a.pad,
       marginBottom: a.gap,
+      width: a.columns > 1 ? '48%' : undefined,
       minWidth: 0,
     },
     wordLine: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 },

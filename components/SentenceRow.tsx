@@ -40,12 +40,39 @@ interface Props {
 
 // делим по пробелам, сохраняя сами пробелы как токены
 function tokenize(text: string): string[] {
-  return text.split(/(\s+)/).filter((t) => t.length > 0);
+  // split без capturing group — пробіли видаляються, проміжки додаються у renderToken через {' '}
+  return text.split(/\s+/).filter((t) => t.length > 0);
 }
 
 // слово = токен, содержащий хотя бы одну букву (любого алфавита)
 function isWordToken(tok: string): boolean {
   return /\p{L}/u.test(tok);
+}
+
+// Підсвітка збігів пошуку ОДНИМ Text (без токенізації → пробіли зберігаються).
+// Повертає масив React-елементів: звичайний текст + <Text> з highlight для збігів.
+function highlightMatches(text: string, query: string, theme: any): React.ReactNode[] {
+  if (!query) return [text];
+  const lower = text.toLowerCase();
+  const q = query.toLowerCase();
+  const parts: React.ReactNode[] = [];
+  let i = 0;
+  let key = 0;
+  while (i < text.length) {
+    const idx = lower.indexOf(q, i);
+    if (idx === -1) {
+      parts.push(text.slice(i));
+      break;
+    }
+    if (idx > i) parts.push(text.slice(i, idx));
+    parts.push(
+      <Text key={key++} style={{ backgroundColor: theme.highlight, color: theme.readerText }}>
+        {text.slice(idx, idx + q.length)}
+      </Text>,
+    );
+    i = idx + q.length;
+  }
+  return parts;
 }
 
 function SentenceRow({
@@ -95,24 +122,24 @@ function SentenceRow({
     const isWord = isWordToken(tok);
     const lower = tok.toLowerCase();
     const hit = q.length > 0 && lower.includes(q);
-    const base = [styles.word, baseText, { color: theme.readerText, fontSize: fs, lineHeight: lh }];
+    const base = [baseText, { color: theme.readerText }];
 
     if (hit) {
       return (
-        <Text key={i} style={[styles.word, baseText, { backgroundColor: theme.highlight, color: theme.readerText, fontSize: fs, lineHeight: lh }]}>
-          {tok}
+        <Text key={i} style={[styles.word, { backgroundColor: theme.highlight, color: theme.readerText }]}>
+          {tok}{'\u00A0'}
         </Text>
       );
     }
     if (isWord) {
       return (
         <TouchableOpacity key={i} onPress={() => onWordPress(tok, original)} hitSlop={2}>
-          <Text style={[...base, styles.tapWord]}>{tok}{' '}</Text>
+          <Text style={[...base, styles.tapWord]}>{tok}{'\u00A0'}</Text>
         </TouchableOpacity>
       );
     }
     // пунктуация / пробелы — обычный текст, не кликабельны
-    return <Text key={i} style={base}>{tok}</Text>;
+    return <Text key={i} style={base}>{tok}{'\u00A0'}</Text>;
   };
 
   const isPlain = mode === 'read';
@@ -137,9 +164,22 @@ function SentenceRow({
       )}
 
       <View style={styles.body}>
-        <Text style={[styles.paragraph, baseText]}>
-          {tokens.map((tok, i) => renderToken(tok, i))}
-        </Text>
+        {isPlain ? (
+          // Звичайний режим читання: рендеримо оригінал ОДНИМ Text (без токенізації → пробіли коректні)
+          <Text style={[styles.paragraph, baseText, { fontSize: fs, lineHeight: lh }]}>
+            {original}
+          </Text>
+        ) : q.length > 0 ? (
+          // Режим з перекладом + активний пошук: підсвічуємо збіги, але рендеримо ОДНИМ Text (без токенізації)
+          <Text style={[styles.paragraph, baseText, { fontSize: fs, lineHeight: lh }]}>
+            {highlightMatches(original, q, theme)}
+          </Text>
+        ) : (
+          // Режим з перекладом (без пошуку): оригінал ОДНИМ Text (пробіли коректні, клікабельність слів вимкнена)
+          <Text style={[styles.paragraph, baseText, { fontSize: fs, lineHeight: lh }]}>
+            {original}
+          </Text>
+        )}
 
         {open ? (
           <Text style={[styles.translation, { color: theme.secondaryText, fontSize: fs - 2, lineHeight: lh - 2 }]}>
@@ -165,7 +205,7 @@ const styles = StyleSheet.create({
   body: { flex: 1, minWidth: 0 },
   paragraph: { flexShrink: 1 },
   justified: { textAlign: 'justify' },
-  word: { fontFamily: FONTS.regular, paddingVertical: 2, marginRight: 6 },
-  tapWord: { fontFamily: FONTS.regular, paddingVertical: 2, marginRight: 6 },
+  word: { fontFamily: FONTS.regular },
+  tapWord: { fontFamily: FONTS.regular },
   translation: { marginTop: 6, fontStyle: 'italic' },
 });
