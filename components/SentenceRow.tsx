@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   translateIcon: { fontSize: 16 },
   bmBtn: { paddingTop: 2, paddingRight: 6, width: 22 },
   body: { flex: 1, minWidth: 0 },
-  paragraph: { flexShrink: 1 },
+  paragraph: { flexShrink: 1, color: theme.primaryText },
   justified: { textAlign: 'justify' },
   word: { fontFamily: FONTS.regular },
   tapWord: { fontFamily: FONTS.regular },
