@@ -522,8 +522,8 @@ export default function ReaderScreen({ route }: { route: any }) {
       onScrollBeginDrag={onScrollBeginDrag}
       onMomentumScrollEnd={onMomentumScrollEnd}
       initialNumToRender={BATCH}
-      windowSize={5}
-      maxToRenderPerBatch={12}
+      windowSize={3}
+      maxToRenderPerBatch={8}
       updateCellsBatchingPeriod={100}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{ itemVisiblePercentThreshold: 50, minimumViewTime: 50 }}
