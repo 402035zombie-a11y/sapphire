@@ -23,6 +23,7 @@ interface Props {
 const THEMES: { id: ThemeMode; label: string }[] = [
   { id: 'day', label: "Day" },
   { id: 'night', label: "Night" },
+  { id: 'blackout', label: "Blackout" },
 ];
 
 function NumberStepper({

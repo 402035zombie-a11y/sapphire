@@ -304,7 +304,7 @@ export function neuMetalCircleInset(t: ThemePalette, size: number): any {
     width: size,
     height: size,
     borderRadius: size / 2,
-    backgroundColor: t.neu.base,
+    backgroundColor: t.neu.dark,
     backgroundImage: metalBg(t),
     backgroundClip: 'padding-box',
     alignItems: 'center',
