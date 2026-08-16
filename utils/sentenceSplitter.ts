@@ -43,6 +43,12 @@ export function splitIntoSentences(text: string): string[] {
     // режем ТОЛЬКО если следующий тоже пункт списка
     const curSeg = text.slice(start, i + 1).trim();
     if (hasListMarker(curSeg)) {
+      // curSeg ЦЕ ЛИШЕ маркер (напр. "001." без тексту) → не boundary, накопичуємо далі
+      if (curSeg.replace(/[\s.)\]]*$/, '') === curSeg.match(/^\s*(?:\d+|[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)/)?.[0]?.trim()) return false;
+      // Якщо після крапки йде ВЕЛИКА літера — це початок нового речення (напр. "001. The board... 002. The startup"),
+      // а не маркер списку. Ріжемо як речення, інакше нумеровані речення склеюються в один блок.
+      const nextIsSentenceStart = /[A-ZА-ЯЄЇІҐЁ«"'(«]/.test(next);
+      if (nextIsSentenceStart) return true;
       const rest = text.slice(j).trimStart();
       return isListItem(rest) || !rest; // конец списка или конец текста
     }
@@ -72,11 +78,13 @@ function mergeListItems(sentences: string[]): string[] {
   const result: string[] = [];
   let i = 0;
   while (i < sentences.length) {
-    if (isListItem(sentences[i])) {
+    // склеюємо тільки КОРОТКІ елементи списку (<80 сим) — реальні списки.
+    // Довгі "елементи" (нумеровані речення "001. The board...") НЕ склеюємо → лишаються окремими реченнями.
+    if (isListItem(sentences[i]) && sentences[i].length < 80) {
       // собираем цепочку пунктов списка подряд
       let chain = sentences[i];
       let k = i + 1;
-      while (k < sentences.length && isListItem(sentences[k])) {
+      while (k < sentences.length && isListItem(sentences[k]) && sentences[k].length < 80) {
         chain += ' ' + sentences[k];
         k++;
       }
