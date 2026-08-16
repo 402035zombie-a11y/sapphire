@@ -10,7 +10,7 @@
  *    <BookList books={visibleBooks} bookWordCount={...} onOpen={openReader} onRemove={removeBook} />
  */
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Book } from '../store/libraryStore';
 import { useTheme } from '../theme/ThemeContext';
@@ -51,8 +51,12 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
       style={[styles.bookRow, raisedStyle]}
       onPress={() => onOpen(item.id)}
     >
-      <View style={[styles.cover, { backgroundColor: coverColor(item.title) }]}>
-        <Text style={styles.coverText}>{(item.title || '?').trim().charAt(0).toUpperCase()}</Text>
+      <View style={[styles.cover, item.coverImage ? {} : { backgroundColor: coverColor(item.title) }]}>
+        {item.coverImage ? (
+          <Image source={{ uri: item.coverImage }} style={styles.coverImg} resizeMode="cover" />
+        ) : (
+          <Text style={styles.coverText}>{(item.title || '?').trim().charAt(0).toUpperCase()}</Text>
+        )}
       </View>
       <View style={{ flex: 1, flexShrink: 1, marginLeft: Math.round(12 * a.scale), minWidth: 0 }}>
         <Text style={[styles.bookTitle, { color: theme.primaryText }]} numberOfLines={2}>{item.title}</Text>
@@ -100,7 +104,8 @@ export function BookList({ books, bookWordCount, onOpen, onRemove }: Props) {
 
 const styles = StyleSheet.create({
   bookRow: { flexDirection: 'row', alignItems: 'center', padding: 12, marginBottom: 8, borderRadius: 12 },
-  cover: { width: 40, height: 56, borderRadius: 6, alignItems: 'center', justifyContent: 'center' },
+  cover: { width: 40, height: 56, borderRadius: 6, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  coverImg: { width: 40, height: 56, borderRadius: 6 },
   coverText: { color: '#fff', fontSize: 22, fontWeight: '700' },
   bookTitle: { fontSize: 16, fontWeight: '600' },
   bookMeta: { fontSize: 13, marginTop: 2 },

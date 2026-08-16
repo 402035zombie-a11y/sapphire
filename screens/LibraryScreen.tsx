@@ -53,6 +53,7 @@ interface Draft {
   targetLang: string;
   paragraphs: BookParagraph[];
   sections: BookSection[];
+  cover?: string;
 }
 
 function buildParagraphs(text: string): BookParagraph[] {
@@ -165,7 +166,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       setLoading(true);
       setProgress(0.02);
 
-      let parsed: { text: string; title?: string; author?: string };
+      let parsed: { text: string; title?: string; author?: string; cover?: string };
       if (format === 'epub') {
         parsed = await parseEpub(asset.uri, setProgress);
       } else if (format === 'fb2') {
@@ -203,6 +204,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         targetLang: 'uk',
         paragraphs,
         sections,
+        cover: parsed.cover,
       });
       // E3: parse-once → books.db.chapters (для миттєвого повторного відкриття).
       importBook(asset.uri, format).catch((e) => {
@@ -282,6 +284,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       targetLang: draft.targetLang,
       paragraphs: draft.paragraphs,
       sections: draft.sections,
+      coverImage: draft.cover,
       createdAt: Date.now(),
       progress: 0,
       lastPosition: 0,

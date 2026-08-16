@@ -29,6 +29,7 @@ export interface Book {
   targetLang: string;
   paragraphs: BookParagraph[];
   sections: BookSection[];
+  coverImage?: string; // base64 data URI або file:// шлях до обкладинки
   createdAt: number;
   progress: number; // 0..1
   lastPosition: number; // индекс последнего прочитанного абзаца

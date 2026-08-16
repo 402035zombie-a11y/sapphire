@@ -8,6 +8,7 @@ export interface EpubParseResult {
   text: string;
   title?: string;
   author?: string;
+  cover?: string;
 }
 
 function decodeEntities(s: string): string {
@@ -93,8 +94,8 @@ export async function parseEpub(
   const opfXml = await opfFile.async('text');
   const opfDir = opfRelPath.includes('/') ? opfRelPath.slice(0, opfRelPath.lastIndexOf('/')) : '';
 
-  // манифест: id -> href (стійкий парсинг — атрибути в будь-якому порядку)
-  const manifest: Record<string, string> = {};
+  // манифест: id -> { href, mediaType } (стійкий парсинг — атрибути в будь-якому порядку)
+  const manifest: Record<string, { href: string; mediaType: string }> = {};
   const itemRe = /<item\b[^>]*?>/gi;
   let im: RegExpExecArray | null;
   while ((im = itemRe.exec(opfXml))) {
@@ -102,8 +103,35 @@ export async function parseEpub(
     const idM = tag.match(/\bid="([^"]+)"/i);
     const hrefM = tag.match(/\bhref="([^"]+)"/i);
     const mtM = tag.match(/\bmedia-type="([^"]+)"/i);
-    if (idM && hrefM && mtM && /xhtml|html|xml/i.test(mtM[1])) {
-      manifest[idM[1]] = hrefM[1];
+    if (idM && hrefM && mtM) {
+      manifest[idM[1]] = { href: hrefM[1], mediaType: mtM[1] };
+    }
+  }
+
+  // обкладинка: item з Properties="cover-image" або id/назва містить "cover" і media-type image/*
+  let coverHref: string | null = null;
+  let coverType = 'image/jpeg';
+  for (const [id, m] of Object.entries(manifest)) {
+    if (!/image\//i.test(m.mediaType)) continue;
+    coverType = m.mediaType;
+    const props = opfXml.match(new RegExp(`<item\\b[^>]*\\bid="${id}"[^>]*\\bproperties="([^"]*)"`, 'i'));
+    if (props && /cover-image/i.test(props[1])) { coverHref = m.href; break; }
+    if (/cover/i.test(id)) { coverHref = m.href; break; }
+  }
+  let cover: string | undefined;
+  if (coverHref) {
+    const cands = [
+      resolvePath(opfDir, coverHref),
+      coverHref.replace(/^OEBPS\//i, ''),
+      `OEBPS/${coverHref.replace(/^OEBPS\//i, '')}`,
+    ];
+    for (const c of cands) {
+      const f = zip.file(c);
+      if (f) {
+        const b64 = await f.async('base64');
+        cover = `data:${coverType};base64,${b64}`;
+        break;
+      }
     }
   }
 
@@ -114,13 +142,13 @@ export async function parseEpub(
     const refRe = /<itemref\b[^>]*?\bidref="([^"]+)"/gi;
     let rm: RegExpExecArray | null;
     while ((rm = refRe.exec(spineBlock[0]))) {
-      const href = manifest[rm[1]];
+      const href = manifest[rm[1]]?.href;
       if (href) orderedHrefs.push(resolvePath(opfDir, href));
     }
   }
   // fallback: якщо spine порожній — всі xhtml з маніфесту
   if (orderedHrefs.length === 0) {
-    Object.values(manifest).forEach((h) => orderedHrefs.push(resolvePath(opfDir, h)));
+    Object.values(manifest).forEach((m) => orderedHrefs.push(resolvePath(opfDir, m.href)));
   }
 
   const paragraphs: string[] = [];
@@ -154,7 +182,7 @@ export async function parseEpub(
   const author = firstMatch(opfXml, /<dc:creator[^>]*>([\s\S]*?)<\/dc:creator>/i);
 
   tick(1);
-  return { text: paragraphs.join('\n\n'), title, author };
+  return { text: paragraphs.join('\n\n'), title, author, cover };
 }
 
 // Минимальный лимитер для progress-коллбеков. Один вызов за `minMs` — хватает на
