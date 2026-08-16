@@ -71,7 +71,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
           hitSlop={10}
           style={[circleStyle, { padding: 0 }]}
         >
-          <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.primaryText} />
+          <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

@@ -123,15 +123,10 @@ const PATHS: Record<IconName, React.ReactNode> = {
   ),
 };
 
-// Контуры (stroke) для гравировки (engrave): тёмная/светлая обводка с offset-ом
-const PATHS_D: Partial<Record<IconName, string>> = {
-  plus: 'M12 5v14M5 12h14',
-  close: 'M6 6l12 12M18 6L6 18',
-  check: 'M5 12l5 5 9-11',
-  play: 'M7 5l12 7-12 7z',
-};
+// Контуры (stroke) для гравировки (engrave) — ВИДАЛЕНО (користувач: контрастна обводка неприємна)
+const PATHS_D: Partial<Record<IconName, string>> = {};
 
-function Icon({ name, size = 24, color = '#000', onPress, emboss }: { name: IconName; size?: number; color?: string; onPress?: () => void; emboss?: boolean }) {
+function Icon({ name, size = 24, color = '#000', onPress }: { name: IconName; size?: number; color?: string; onPress?: () => void }) {
   const svg = (
     <Svg
       width={size}
@@ -143,16 +138,7 @@ function Icon({ name, size = 24, color = '#000', onPress, emboss }: { name: Icon
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      {emboss && PATHS_D[name] ? (
-        // объёмный (выпуклый) знак: тень снизу-справа + блик сверху-слева → «выдавленный» значок
-        <G>
-          <Path d={PATHS_D[name]} transform="translate(1,1)" stroke="rgba(0,0,0,0.28)" strokeWidth="2.5" fill="none" />
-          <Path d={PATHS_D[name]} transform="translate(-1,-1)" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" fill="none" />
-          <Path d={PATHS_D[name]} stroke={color} strokeWidth="2.5" fill="none" />
-        </G>
-      ) : (
-        PATHS[name]
-      )}
+      {PATHS[name]}
     </Svg>
   );
   if (onPress) {
