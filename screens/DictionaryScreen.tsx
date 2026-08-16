@@ -700,7 +700,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     list: { paddingTop: a.headerH + a.insetTop + a.pad + 20, paddingBottom: a.tabBarH + a.pad + a.dim(0.06, 46, 56) + a.gap, gap: a.gap, justifyContent: 'flex-start' },
     empty: { textAlign: 'center', fontSize: a.body },
     row: {
-      ...metal(theme, 'raised', { radius: a.radius }),
+      backgroundColor: theme.surface,
       flexDirection: 'row',
       alignItems: 'flex-start',
       borderRadius: a.radius,
