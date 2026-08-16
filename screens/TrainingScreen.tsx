@@ -24,6 +24,10 @@ import { useLibraryStore } from '../store/libraryStore';
 import QuizCard, { QuizItem } from '../components/QuizCard';
 import Icon from '../components/Icon';
 import SupportButton from '../components/SupportButton';
+import SupportAuthorModal from '../components/SupportAuthorModal';
+import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
+import { useSupportStore } from '../store/supportStore';
+import { showSupportAd } from '../services/monetization';
 import { metal, neuShadowPad } from '../theme/neu';
 
 const TARGET_STREAK = 5;
@@ -140,6 +144,18 @@ export default function TrainingScreen() {
   const [typeOk, setTypeOk] = useState(false); // верно/неверно для подсветки
   const [, setStreak] = useState(0); // верные подряд по текущему слову
   const [queue, setQueue] = useState<DictionaryEntry[]>([]); // фиксированная очередь на сессию
+  const [supportOpen, setSupportOpen] = useState(false);
+  useSupportAutoOpen(() => setSupportOpen(true));
+
+  const onSupportConfirm = async () => {
+    setSupportOpen(false);
+    const ok = await showSupportAd();
+    if (ok) useSupportStore.getState().markAdWatched();
+  };
+  const onDonate = () => {
+    setSupportOpen(false);
+    useSupportStore.getState().setDontShowSupport(true);
+  };
   const typeInputRef = useRef<any>(null);
 
   const learnedCount = useMemo(
@@ -516,6 +532,12 @@ export default function TrainingScreen() {
         </View>
       )}
       </ScrollView>
+      <SupportAuthorModal
+        visible={supportOpen}
+        onSupport={onSupportConfirm}
+        onDonate={onDonate}
+        onDismiss={() => setSupportOpen(false)}
+      />
     </Screen>
   );
 }

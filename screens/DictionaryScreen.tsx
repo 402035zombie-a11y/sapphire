@@ -35,6 +35,10 @@ import { effectiveLang } from '../utils/lang';
 import Icon from '../components/Icon';
 import { neuShadowPad, screenBg, metal } from '../theme/neu';
 import SupportButton from '../components/SupportButton';
+import SupportAuthorModal from '../components/SupportAuthorModal';
+import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
+import { useSupportStore } from '../store/supportStore';
+import { showSupportAd } from '../services/monetization';
 import { useSettingsStore } from '../store/settingsStore';
 import { useT } from '../i18n';
 
@@ -209,6 +213,19 @@ export default function DictionaryScreen() {
     });
     return list;
   }, [scopedEntries, query, sortBy, levelFilter, levelOf]);
+
+  const [supportOpen, setSupportOpen] = useState(false);
+  useSupportAutoOpen(() => setSupportOpen(true));
+
+  const onSupportConfirm = async () => {
+    setSupportOpen(false);
+    const ok = await showSupportAd();
+    if (ok) useSupportStore.getState().markAdWatched();
+  };
+  const onDonate = () => {
+    setSupportOpen(false);
+    useSupportStore.getState().setDontShowSupport(true);
+  };
 
   const importFromFile = (text: string) => {
     try {
@@ -633,6 +650,12 @@ export default function DictionaryScreen() {
           </ScrollView>
         </View>
       </ModalSheet>
+      <SupportAuthorModal
+        visible={supportOpen}
+        onSupport={onSupportConfirm}
+        onDonate={onDonate}
+        onDismiss={() => setSupportOpen(false)}
+      />
     </Screen>
   );
 }

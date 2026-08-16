@@ -37,6 +37,7 @@ import { splitIntoSegments } from '../utils/sentenceSplitter';
 import { translateCached } from '../services/translationService';
 import { showSupportAd } from '../services/monetization';
 import SupportAuthorModal from '../components/SupportAuthorModal';
+import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import SentenceRow from '../components/SentenceRow';
 import WordBottomSheet from '../components/WordBottomSheet';
 import WordActionSheet from '../components/WordActionSheet';
@@ -363,19 +364,14 @@ export default function ReaderScreen({ route }: { route: any }) {
   );
 
   // Окно «Поддержать автора» — плата за бесплатное приложение.
-  // Показываем при открытии книги с задержкой 20с, если пользователь ещё не задонатил
-  // (флаг dontShowSupport в supportStore). Чтение не блокируется.
+  // Тайминг через useSupportAutoOpen: первый раз 30с, потом каждые 5 мин (если не смотрел рекламу).
   const dontShowSupport = useSupportStore((s) => s.dontShowSupport);
-  useEffect(() => {
-    setSupportOpen(false);
-    if (dontShowSupport) return;
-    const t = setTimeout(() => setSupportOpen(true), 20000);
-    return () => clearTimeout(t);
-  }, [bookId, dontShowSupport]);
+  useSupportAutoOpen(() => setSupportOpen(true));
 
   const onSupportConfirm = async () => {
     setSupportOpen(false);
-    await showSupportAd();
+    const ok = await showSupportAd();
+    if (ok) useSupportStore.getState().markAdWatched();
   };
 
   // Донат/подписка: ставим флаг «больше не показывать» и запускаем платёж (mock в вебе).
