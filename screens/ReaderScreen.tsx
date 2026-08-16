@@ -90,7 +90,6 @@ export default function ReaderScreen({ route }: { route: any }) {
     const dbChapters = getBookChapters(book.id);
     if (dbChapters.length === 0) return book.paragraphs;
     const out: BookParagraph[] = [];
-    let idx = 0;
     for (const ch of dbChapters) {
       // ВЕСЬ текст глави → чистий → splitIntoSegments (ріже на речення, не на <p>).
       // Було: різка по <p> → кожен <p> окремим original, потім hope що sentences-memo доріже.
@@ -105,8 +104,10 @@ export default function ReaderScreen({ route }: { route: any }) {
         .replace(/\n{2,}/g, '\n')
         .trim();
       const segs = splitIntoSegments(plain);
+      let si = 0;
       for (const s of segs) {
-        if (s) out.push({ index: idx++, original: s, translation: '' });
+        if (s) out.push({ index: ch.idx * 1000 + si, original: s, translation: '' });
+        si++;
       }
     }
     return out;
