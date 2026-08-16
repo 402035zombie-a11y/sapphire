@@ -153,7 +153,7 @@ export default function SpeedReadingScreen() {
           style={[metal(theme, 'primary', { radius: a.radius }), { paddingVertical: 12, paddingHorizontal: 24 }]}
           onPress={() => navigation.navigate('Library' as never)}
         >
-          <Text style={{ color: '#fff', fontFamily: FONTS.bold, fontSize: a.body }}>{t('Select a book')}</Text>
+          <Text style={{ color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.body }}>{t('Select a book')}</Text>
         </TouchableOpacity>
       </Screen>
     );
@@ -450,7 +450,7 @@ export default function SpeedReadingScreen() {
                 style={[styles.resetBtn, metal(theme, 'primary')]}
                 onPress={() => { setResetPrompt(false); stopAll(); }}
               >
-                <Text style={{ color: '#fff', fontFamily: FONTS.bold }}>{t('Yes')}</Text>
+                <Text style={{ color: theme.primaryText, fontFamily: FONTS.bold }}>{t('Yes')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.resetBtn, metal(theme, 'inset')]}

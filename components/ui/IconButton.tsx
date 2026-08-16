@@ -31,7 +31,7 @@ export default function IconButton({
   const s = size ?? a.fab();
   const role = variant === 'primary' ? 'primary' : variant === 'inset' ? 'inset' : 'circle';
   const iconColor =
-    color ?? (variant === 'primary' ? '#fff' : theme.primaryText);
+    color ?? (variant === 'primary' ? theme.primaryText : theme.primaryText);
   return (
     <TouchableOpacity
       onPress={onPress}

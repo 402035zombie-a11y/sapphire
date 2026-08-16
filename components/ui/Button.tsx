@@ -37,7 +37,7 @@ export default function Button({
         style,
       ]}
     >
-      <Text style={[{ color: variant === 'primary' ? '#fff' : theme.primaryText, fontFamily: 'System', fontWeight: '700' }, textStyle]}>
+      <Text style={[{ color: variant === 'primary' ? theme.primaryText : theme.primaryText, fontFamily: 'System', fontWeight: '700' }, textStyle]}>
         {label}
       </Text>
     </TouchableOpacity>

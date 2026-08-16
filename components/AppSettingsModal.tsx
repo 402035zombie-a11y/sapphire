@@ -107,7 +107,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
               style={[{ backgroundColor: theme.primary, borderRadius: a.radius, paddingVertical: a.tiny ? 10 : 14, alignItems: 'center', width: '100%' }]}
               onPress={exportData}
             >
-              <Text style={{ color: '#fff', fontSize: a.body, fontFamily: FONTS.bold }}>{t('Export backup (JSON)')}</Text>
+              <Text style={{ color: theme.primaryText, fontSize: a.body, fontFamily: FONTS.bold }}>{t('Export backup (JSON)')}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>

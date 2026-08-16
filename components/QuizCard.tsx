@@ -97,7 +97,7 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
               <Text
                 style={[
                   styles.optionText,
-                  (answered && (isCorrect || (isPicked && !isCorrect))) && { color: '#fff' },
+                  (answered && (isCorrect || (isPicked && !isCorrect))) && { color: theme.primaryText },
                 ]}
               >
                 {opt}

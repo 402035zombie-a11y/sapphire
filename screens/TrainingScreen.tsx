@@ -374,7 +374,7 @@ export default function TrainingScreen() {
                 ]}
                 onPress={() => setSource('all')}
               >
-                <Text style={[styles.sourceTabText, { color: source === 'all' ? '#fff' : theme.primaryText }]}>
+                <Text style={[styles.sourceTabText, { color: source === 'all' ? theme.primaryText : theme.primaryText }]}>
                   {t("Whole dictionary")}
                 </Text>
               </TouchableOpacity>
@@ -389,8 +389,8 @@ export default function TrainingScreen() {
                   onPress={() => setSource(b.id)}
                 >
                   <Text
-                    style={[styles.sourceTabText, { color: source === b.id ? '#fff' : theme.primaryText }]}
-                    numberOfLines={1}
+                   style={[styles.sourceTabText, { color: source === b.id ? theme.primaryText : theme.primaryText }]}
+                   numberOfLines={1}
                     ellipsizeMode="middle"
                   >
                     {b.title}

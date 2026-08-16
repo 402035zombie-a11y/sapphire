@@ -126,7 +126,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                     style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
                     onPress={() => setReader({ fontFamily: f.id })}
                   >
-                    <Text style={[styles.chipText, { color: active ? '#fff' : theme.primaryText }]}>{t(f.label)}</Text>
+                    <Text style={[styles.chipText, { color: active ? theme.primaryText : theme.primaryText }]}>{t(f.label)}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -153,7 +153,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                     style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
                     onPress={() => setReader({ textAlign: al.id as any })}
                   >
-                    <Text style={[styles.chipText, { color: active ? '#fff' : theme.primaryText }]}>{t(al.label)}</Text>
+                    <Text style={[styles.chipText, { color: active ? theme.primaryText : theme.primaryText }]}>{t(al.label)}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -218,7 +218,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                     style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
                     onPress={() => setTheme(th.id)}
                   >
-                    <Text style={[styles.chipText, { color: active ? '#fff' : theme.primaryText }]}>{t(th.label)}</Text>
+                    <Text style={[styles.chipText, { color: active ? theme.primaryText : theme.primaryText }]}>{t(th.label)}</Text>
                   </TouchableOpacity>
                 );
               })}

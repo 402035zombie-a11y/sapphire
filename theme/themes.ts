@@ -97,23 +97,23 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
   blackout: {
     background: '#000000',
     surface: '#050505',
-    primary: '#2A2C30',
-    primaryText: '#B8B4AC', // светло-серый (НЕ белый)
-    secondaryText: '#6A6660',
-    border: '#1A1A1A',
-    selected: '#121212',
-    success: '#5E8C6A',
-    danger: '#B04646',
+    primary: '#232427',
+    primaryText: '#787468', // тьмяний сірий (НЕ світло-сірий, НЕ білий)
+    secondaryText: '#56524C',
+    border: '#161616',
+    selected: '#0E0E0E',
+    success: '#4E6B54', // тьмяно-зелений
+    danger: '#8A3A3A', // тьмяно-червоний
     readerBg: '#000000',
-    readerText: '#A8A4A0', // светло-серый (НЕ белый)
-    readerDim: '#4A4A50',
-    highlight: '#B8B4AC', // светло-серый (НЕ белый)
+    readerText: '#726E64', // тьмяний сірий (НЕ білий)
+    readerDim: '#3C3C40',
+    highlight: '#787468', // тьмяний сірий
     popupBg: '#0A0A0A',
-    popupBorder: '#1E1E1E',
-    posColor: '#B8B4AC', // светло-серый (НЕ белый)
+    popupBorder: '#161616',
+    posColor: '#787468', // тьмяний сірий
     bgTop: '#050505',
     bgBot: '#000000',
-    neu: { base: '#1C1C1E', light: '#2E2E30', dark: '#000000', shadowDark: 'rgba(0,0,0,0.9)', shadowLight: 'rgba(255,255,255,0.05)', soft: 'rgba(80,78,72,0.5)', hi: 'rgba(255,245,220,0.05)', glow: 'rgba(120,110,80,0.3)' },
+    neu: { base: '#1A1A1C', light: '#242427', dark: '#000000', shadowDark: 'rgba(0,0,0,0.9)', shadowLight: 'rgba(255,255,255,0.04)', soft: 'rgba(60,58,54,0.5)', hi: 'rgba(255,245,220,0.04)', glow: 'rgba(100,92,68,0.25)' },
   },
 };
 
