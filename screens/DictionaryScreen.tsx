@@ -188,20 +188,17 @@ export default function DictionaryScreen() {
   const [sortBy, setSortBy] = useState<SortMode>('date');
   const [levelFilter, setLevelFilter] = useState<'all' | 'new' | 'learning' | 'learned'>('all');
   const [levelPickerOpen, setLevelPickerOpen] = useState(false);
-  const [minFreq, setMinFreq] = useState<number>(0); // D5: фільтр за мінімальною частотою вживання
 
   const filtered = useMemo(() => {
+    const src = scopedEntries ?? [];
     const q = query.trim().toLowerCase();
     let list = q
-      ? scopedEntries.filter(
-          (e: DictionaryEntry) => e.word.toLowerCase().includes(q) || e.translation.toLowerCase().includes(q),
+      ? src.filter(
+          (e: DictionaryEntry) => (e.word || '').toLowerCase().includes(q) || (e.translation || '').toLowerCase().includes(q),
         )
-      : [...scopedEntries];
+      : [...src];
     if (levelFilter !== 'all') {
-      list = list.filter((e: DictionaryEntry) => levelOf(e.word, e.lang) === levelFilter);
-    }
-    if (minFreq > 0) {
-      list = list.filter((e: DictionaryEntry) => (e.frequency ?? 1) >= minFreq);
+      list = list.filter((e: DictionaryEntry) => levelOf(e.word || '', e.lang || '') === levelFilter);
     }
     list.sort((a, b) => {
       if (sortBy === 'az') return a.word.localeCompare(b.word);
@@ -211,7 +208,7 @@ export default function DictionaryScreen() {
       return (b.createdAt || 0) - (a.createdAt || 0);
     });
     return list;
-  }, [scopedEntries, query, sortBy, levelFilter, levelOf, minFreq]);
+  }, [scopedEntries, query, sortBy, levelFilter, levelOf]);
 
   const importFromFile = (text: string) => {
     try {
@@ -329,7 +326,7 @@ export default function DictionaryScreen() {
   const ensureTranslation = useCallback((e: DictionaryEntry) => {
     if (e.translation && e.translation.trim()) return;
     const from = e.lang || 'en';
-    const book = e.bookId ? books.find((b) => b.id === e.bookId) : null;
+    const book = e.bookId ? (books || []).find((b) => b.id === e.bookId) : null;
     const to = effectiveLang(book?.targetLang || useSettingsStore.getState().targetLang) || 'uk';
     translateCached(e.word, from, to)
       .then((r) => {
@@ -406,22 +403,6 @@ export default function DictionaryScreen() {
             </Text>
             <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
           </TouchableOpacity>
-          {/* D5: фільтр за мінімальною частотою вживання (топ повторюваних слів) */}
-          <View style={styles.freqFilterBar}>
-            {[0, 2, 10, 50, 100].map((f) => {
-              const active = minFreq === f;
-              const label = f === 0 ? t('All') : `≥${f}`;
-              return (
-                <TouchableOpacity
-                  key={f}
-                  style={[styles.sortTab, active && { backgroundColor: theme.selected }]}
-                  onPress={() => setMinFreq(f)}
-                >
-                  <Text style={[styles.sortTabText, { color: active ? theme.primaryText : theme.secondaryText }]}>{label}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
         </View>
       </Card>
       </View>
@@ -679,7 +660,6 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
     filterBlock: { padding: a.tiny ? 8 : 12, borderRadius: a.radius, gap: a.tiny ? 8 : 12 },
     sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3, flexWrap: 'wrap' },
-    freqFilterBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3, flexWrap: 'wrap', marginTop: 6 },
     sortTab: { paddingVertical: a.tiny ? 5 : 7, paddingHorizontal: a.tiny ? 9 : 13, ...metal(theme, 'inset', { radius: a.radius }) },
     sortTabText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
     levelBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3 },

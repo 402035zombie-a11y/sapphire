@@ -54,6 +54,9 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
           paddingHorizontal: a.tiny ? 6 : 10,
           borderRadius: Math.round(a.radius * 1.6),
           ...metal(theme, 'raised', { radius: Math.round(a.radius * 1.6) }),
+          // Світіння з правого верхнього кута (єдине зовнішнє світло в додатку)
+          boxShadow: '8px -8px 24px rgba(0,0,0,0.45)',
+          elevation: 8,
         }}
       >
       {state.routes.map((route: any, index: number) => {

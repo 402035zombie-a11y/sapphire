@@ -104,9 +104,9 @@ function SentenceRow({
   const textAlignValue = textAlign === 'justify' ? 'justify' : textAlign === 'hyphenation' ? 'justify' : 'left';
   const hyphenation = textAlign === 'hyphenation';
   const fontFamilyValue =
-    fontFamily === 'serif' ? 'Georgia, "Times New Roman", serif'
-    : fontFamily === 'sans' ? 'Arial, Helvetica, sans-serif'
-    : fontFamily === 'mono' ? '"Courier New", monospace'
+    fontFamily === 'serif' ? 'serif'
+    : fontFamily === 'sans' ? 'sans-serif'
+    : fontFamily === 'mono' ? 'monospace'
     : undefined;
   const baseText = {
     fontFamily: fontFamilyValue,
@@ -122,7 +122,7 @@ function SentenceRow({
     const isWord = isWordToken(tok);
     const lower = tok.toLowerCase();
     const hit = q.length > 0 && lower.includes(q);
-    const base = [baseText, { color: theme.readerText }];
+    const base = [baseText, { color: theme.primaryText }];
 
     if (hit) {
       return (
