@@ -45,10 +45,10 @@ export default function WordActionSheet({ visible, word, sentence, onSpeakFromHe
             {word}
           </Text>
           <TouchableOpacity onPress={() => { onSpeakFromHere(sentence); }} hitSlop={10} style={[metal(theme, 'inset', { radius: 10 }), { width: a.icon(34), height: a.icon(34), borderRadius: a.radius, alignItems: 'center', justifyContent: 'center', padding: 0 }]}>
-            <Icon name="play" size={a.icon(18)} color={theme.primary} />
-          </TouchableOpacity>
+            <Icon name="play" size={a.icon(18)} color={theme.primaryText} />
+            </TouchableOpacity>
           <TouchableOpacity onPress={onClose} hitSlop={10} style={[metal(theme, 'stamp', { size: a.icon(34) }), { padding: 0 }]}>
-            <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
+            <Icon name="close" size={a.icon(20)} color={theme.primaryText} />
           </TouchableOpacity>
         </View>
 

@@ -51,7 +51,7 @@ export default function SupportAuthorModal({
     >
       <ScrollView style={{ maxHeight: m.maxHeight - m.padding * 2, width: '100%' }} contentContainerStyle={{ alignItems: 'center', padding: neuShadowPad(12) }} showsVerticalScrollIndicator={false}>
         {/* На очень низком landscape иконку прячем — экономим вертикаль */}
-        {!(a.landscape && a.height < 420) && <Icon name="heart" size={a.fab()} color={theme.primary} />}
+        {!(a.landscape && a.height < 420) && <Icon name="heart" size={a.fab()} color={theme.primaryText} />}
         <Text style={{ fontSize: a.h2, fontFamily: FONTS.bold, color: theme.primaryText, marginTop: 10, textAlign: 'center' }}>
           {t("Support the author")}
         </Text>

@@ -28,7 +28,7 @@ export default function SupportButton({ size, iconSize }: { size?: number; iconS
         hitSlop={8}
         accessibilityLabel={t("Support the author")}
       >
-        <Icon name="heart" size={icSize} color={theme.primary} />
+        <Icon name="heart" size={icSize} color={theme.primaryText} />
       </TouchableOpacity>
       <Modal visible={open} transparent animationType="none" statusBarTranslucent>
         <SupportAuthorModal

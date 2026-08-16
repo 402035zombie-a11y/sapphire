@@ -535,11 +535,11 @@ export default function ReaderScreen({ route }: { route: any }) {
           <View style={styles.centerPlay}>
             {isSpeaking ? (
               <React.Fragment>
-                <IconButton icon="pause" onPress={pauseBook} variant="circle" size={a.fab()} color={theme.primary} hitSlop={10} />
-                <IconButton icon="close" onPress={stopBook} variant="circle" size={a.fab()} color={theme.primary} hitSlop={10} />
+                <IconButton icon="pause" onPress={pauseBook} variant="circle" size={a.fab()} color={theme.primaryText} hitSlop={10} />
+                <IconButton icon="close" onPress={stopBook} variant="circle" size={a.fab()} color={theme.primaryText} hitSlop={10} />
               </React.Fragment>
             ) : (
-              <IconButton icon="volume" onPress={playBook} variant="circle" size={a.fab()} color={theme.primary} hitSlop={10} />
+              <IconButton icon="volume" onPress={playBook} variant="circle" size={a.fab()} color={theme.primaryText} hitSlop={10} />
             )}
           </View>
         )}

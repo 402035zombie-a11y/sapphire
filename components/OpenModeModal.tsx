@@ -100,7 +100,7 @@ export default function OpenModeModal({ visible, title, onSelect, onClose }: Pro
                   justifyContent: 'center',
                 }}
               >
-                <Icon name={o.icon} size={a.icon(22)} color={theme.primary} />
+                <Icon name={o.icon} size={a.icon(22)} color={theme.primaryText} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: a.body, fontFamily: FONTS.bold, color: theme.primaryText }}>{t(o.label)}</Text>

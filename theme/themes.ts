@@ -73,7 +73,7 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
   night: {
     background: '#16171A',
     surface: '#1C1D21',
-    primary: '#F2EEE6',
+    primary: '#34363C',
     primaryText: '#ECE7DB',
     secondaryText: '#9A958A',
     border: '#2A2B30',
