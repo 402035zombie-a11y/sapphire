@@ -10,7 +10,7 @@ import {
   Platform,
   TextInput,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Icon from '../components/Icon';
 import ModalSheet from '../components/ModalSheet';
 import Screen from '../components/Screen';
@@ -88,8 +88,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   );
 
   const [draft, setDraft] = useState<Draft | null>(null);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
@@ -104,8 +102,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const [settingsOpen, setSettingsOpen] = useState(false);
   const flatListRef = useRef<ScrollView>(null);
   const defaultTarget = useSettingsStore((s) => s.targetLang);
-  const route = useRoute<any>();
-  const openSearch = () => setSearchOpen(true);
   const [pressedId, setPressedId] = useState<string | null>(null);
 
   useLayoutEffect(() => {
@@ -117,11 +113,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       title: onSelectBook ? t('Select book') : '',
       headerRight: undefined,
     });
-  }, [navigation, searchOpen, theme.primaryText, onSelectBook]);
-
-  useLayoutEffect(() => {
-    if (route.params?.search) setSearchOpen(true);
-  }, [route.params]);
+  }, [navigation, theme.primaryText, onSelectBook]);
 
   const processTxtText = (text: string, name: string) => {
     setProgress(0.95);
@@ -348,22 +340,18 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   };
 
   const visibleBooks = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    let list = books.filter((b) =>
-      q ? (b.title + ' ' + (b.author ?? '')).toLowerCase().includes(q) : true,
-    );
+    let list = books;
     list = [...list].sort((a, b) => {
       if (sortBy === 'title') return a.title.localeCompare(b.title);
       return (b.createdAt || 0) - (a.createdAt || 0);
     });
     return list;
-  }, [books, search, sortBy]);
+  }, [books, sortBy]);
 
   return (
     <Screen contentStyle={{ padding: 0 }}>
       <View style={styles.container}>
       <View style={styles.libHead}>
-        <IconButton icon="search" onPress={openSearch} variant="circle" size={a.fab()} hitSlop={8} />
         {!onSelectBook && (
           <IconButton icon="settings" onPress={() => setSettingsOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
         )}
@@ -436,24 +424,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           onSelect={(code) => draft && setDraft({ ...draft, targetLang: code })}
           onClose={() => setTargetPickerVisible(false)}
         />
-      </ModalSheet>
-
-      <ModalSheet visible={searchOpen} onClose={() => setSearchOpen(false)} panelStyle={{ backgroundColor: theme.popupBg ?? theme.neu.base }}>
-        <View style={[styles.searchPop, { width: '100%', maxWidth: Math.min(a.width - 24, 520) }]}>
-            <View style={[styles.searchBar, { backgroundColor: theme.surface, borderWidth: 0 }]}>
-              <TextInput
-                style={[styles.searchInput, { color: theme.primaryText }]}
-                value={search}
-                onChangeText={setSearch}
-                placeholder={t('Search library')}
-                placeholderTextColor={theme.secondaryText}
-                autoFocus
-              />
-              <TouchableOpacity onPress={() => { setSearch(''); setSearchOpen(false); }}>
-                <Text style={[styles.searchClose, { color: theme.secondaryText }]}>✕</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
       </ModalSheet>
 
       <BookList
@@ -571,9 +541,6 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
       alignItems: 'center',
       padding: a.modal().backdropPad,
     },
-    searchPop: { width: '100%', maxWidth: Math.min(a.width - 24, 520), borderRadius: a.radius, padding: 12 },
-    searchInput: { flex: 1, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body, minWidth: 0 },
-    searchClose: { fontSize: a.h2, paddingLeft: 8 },
     sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3, marginBottom: a.gap },
     sortTab: { flex: 1, paddingVertical: a.tiny ? 6 : 8, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
     sortTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
