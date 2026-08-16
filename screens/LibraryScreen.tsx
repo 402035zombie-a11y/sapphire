@@ -471,7 +471,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           onPress={onAddPress}
           hitSlop={12}
         >
-          <Icon name="plus" size={a.dim(0.06, 26, 40)} color="#fff" emboss />
+          <Icon name="plus" size={a.dim(0.06, 26, 40)} color={theme.primaryText} emboss />
         </TouchableOpacity>
       )}
       {Platform.OS === 'web' && (

@@ -89,7 +89,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
             <Icon
               name={iconName}
               size={a.icon(24)}
-              color={focused ? '#fff' : theme.secondaryText}
+              color={focused ? theme.primaryText : theme.secondaryText}
             />
             {showLabel && (
               <Text
@@ -97,7 +97,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={{
-                  color: focused ? '#fff' : theme.secondaryText,
+                  color: focused ? theme.primaryText : theme.secondaryText,
                   fontSize: a.tabFs,
                   fontFamily: FONTS.bold,
                   fontWeight: '700',
