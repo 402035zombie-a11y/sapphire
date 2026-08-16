@@ -113,7 +113,20 @@ class BookTTSModule(reactContext: ReactApplicationContext) :
     val t = ensureTts()
     try {
       val loc = Locale.forLanguageTag(lang.replace('_', '-'))
-      t.language = loc
+      // Спочатку пробуємо знайти voice з точним локалем (щоб уникнути акценту дефолтного голосу)
+      val target = loc.toString() // напр. "en_US" або "uk_UA"
+      val voice = t.voices?.firstOrNull { v ->
+        !v.isNetworkConnectionRequired && (v.locale.toString() == target || v.locale.language == loc.language)
+      }
+      if (voice != null) {
+        t.voice = voice
+      } else {
+        // Немає локального voice → хоча б сетимо мову (Android підхопить доступний)
+        val res = t.setLanguage(loc)
+        if (res == TextToSpeech.LANG_MISSING_DATA || res == TextToSpeech.LANG_NOT_SUPPORTED) {
+          android.util.Log.w("BookTTS", "TTS lang missing data for $target, using default")
+        }
+      }
     } catch (e: Throwable) {
       t.language = Locale.ENGLISH
     }

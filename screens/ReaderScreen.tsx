@@ -61,7 +61,7 @@ const BATCH = 8;
 
 export default function ReaderScreen({ route }: { route: any }) {
   const { bookId } = route.params as RouteParams;
-  const mode: 'read' | 'dual' = (route.params as RouteParams)?.mode === 'read' ? 'read' : 'dual';
+  const mode: 'read' | 'dual' | 'speed' = ((route.params as RouteParams)?.mode as any) ?? 'read';
   const theme = useTheme();
   const t = useT();
   const navigation = useNavigation<any>();
@@ -531,7 +531,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         <View style={styles.titleGroup}>
           <Marquee text={book.title} textStyle={[styles.title, { color: theme.primaryText }]} />
         </View>
-        {(mode === 'read') && (
+        {(mode === 'dual' || mode === 'speed') && (
           <View style={styles.centerPlay}>
             {isSpeaking ? (
               <React.Fragment>

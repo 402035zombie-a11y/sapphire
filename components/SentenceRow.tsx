@@ -23,7 +23,7 @@ interface Props {
   query?: string;
   bookmarked?: boolean;
   forceHideTranslation?: boolean;
-  mode?: 'read' | 'dual';
+  mode?: 'read' | 'dual' | 'speed';
   fontFamily?: string;
   fontWeight?: number;
   textAlign?: 'left' | 'justify' | 'hyphenation';

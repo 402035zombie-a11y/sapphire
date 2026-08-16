@@ -16,7 +16,7 @@ import { useT } from '../i18n';
 
 interface Props {
   visible: boolean;
-  mode?: 'read' | 'dual';
+  mode?: 'read' | 'dual' | 'speed';
   onClose: () => void;
 }
 
@@ -76,6 +76,13 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
   const styles = React.useMemo(() => makeStyles(a, theme), [a, theme]);
   const reader = useSettingsStore((s) => s.reader);
   const setReader = useSettingsStore((s) => s.setReader);
+  // Debounce оновлення reader: швидкі тапи +/- не спричиняють десятки re-render ReaderScreen
+  // (lineHeight/margin тригерять re-layout всього ScrollView → лаг 5-10с на великих книгах).
+  const debounceRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const setReaderDebounced = React.useCallback((patch: any) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setReader(patch), 200);
+  }, [setReader]);
   const appTheme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
   if (!visible) return null;
@@ -97,8 +104,8 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
           >
 
           <NumberStepper label={t("Font size")} value={reader.fontSize} min={12} max={32} step={1} suffix=" px" onChange={(v) => setReader({ fontSize: v })} st={styles} a={a} />
-          <NumberStepper label={t("Line height")} value={reader.lineHeight} min={1} max={2.2} step={0.1} onChange={(v) => setReader({ lineHeight: v })} st={styles} a={a} />
-          <NumberStepper label={t("Window edge padding")} value={reader.margin} min={0} max={64} step={2} suffix=" px" onChange={(v) => setReader({ margin: v })} st={styles} a={a} />
+          <NumberStepper label={t("Line height")} value={reader.lineHeight} min={1} max={2.2} step={0.1} onChange={(v) => setReaderDebounced({ lineHeight: v })} st={styles} a={a} />
+          <NumberStepper label={t("Window edge padding")} value={reader.margin} min={0} max={64} step={2} suffix=" px" onChange={(v) => setReaderDebounced({ margin: v })} st={styles} a={a} />
 
           {/* Font face — гарнитура */}
           <View style={styles.sectionLabelWrap}>

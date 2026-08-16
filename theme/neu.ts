@@ -21,7 +21,7 @@ export type NeuStyle = any;
 // 1 = исходно (сильно размытая, большой разлёт). 0.55 = компактнее на пару px,
 // объём края (inset-тени) не трогаем → выпуклость читается, а не тонет в ореоле.
 // Меняется ОДНИМ числом для ВСЕХ элементов (все тени централизованы в metal()/neu*).
-const OUTER_SHADOW = 0.55;
+const OUTER_SHADOW = 0.35;
 
 // затемнить/осветлить hex-цвет на долю amt (-1..1)
 function shade(hex: string, amt: number): string {
@@ -41,10 +41,10 @@ function extrude(t: ThemePalette): string {
 // выпуклый (raised): мягкий многослойный объём
 export function neuRaised(t: ThemePalette, radius: number, strength = 1): any {
   const off = Math.max(4, Math.round((radius * 0.18 + 4) * strength)); // базовый сдвиг
-  const x = Math.round(off * 0.92);
-  const y = off;
-  const blur1 = Math.round(off * 2.0); // ближний мягкий слой
-  const blur2 = Math.round(off * 4.0); // дальний очень мягкий слой (глубина)
+  const x = off * 0.5;
+  const y = off * 0.5;
+  const blur1 = Math.round(off * 1.0); // ближний мягкий слой (зменшено)
+  const blur2 = Math.round(off * 2.0); // дальний очень мягкий слой (зменшено в 2x)
   const { shadowDark: d, soft: s, hi, light: l } = t.neu;
   const ix = Math.max(2, Math.round(off * 0.35));
   const iy = Math.max(2, Math.round(off * 0.4));
@@ -75,10 +75,10 @@ export function neuRaised(t: ThemePalette, radius: number, strength = 1): any {
 // утопленный (inset): мягкое углубление с читаемым бортиком
 export function neuInset(t: ThemePalette, radius: number, strength = 1): any {
   const off = Math.max(4, Math.round((radius * 0.42 + 5) * strength));
-  const x = Math.round(off * 0.9);
-  const y = off;
-  const blur1 = Math.round(off * 2.4);
-  const blur2 = Math.round(off * 4.5);
+  const x = off * 0.5;
+  const y = off * 0.5;
+  const blur1 = Math.round(off * 1.2); // зменшено
+  const blur2 = Math.round(off * 2.2); // зменшено в 2x
   const { shadowDark: d, soft: s, hi, light: l } = t.neu;
   const rx = Math.max(1, Math.round(off * 0.3));
   const ry = Math.max(1, Math.round(off * 0.34));
@@ -124,9 +124,9 @@ export function neuCard(t: ThemePalette, radius: number): any {
 // Запас под тень: ScrollView/FlatList клиппит overflow по своему bounding box,
 // поэтому box-shadow последних neu-карточек режется краем скролла.
 export function neuShadowPad(radius = 12): number {
-  const off = Math.max(4, Math.round(radius * 0.18 + 4));
-  const blur = Math.round(off * 4.0);
-  return Math.max(18, off + blur);
+  const off = Math.max(2, Math.round(radius * 0.12 + 2));
+  const blur = Math.round(off * 2.0);
+  return Math.max(6, off + blur);
 }
 export function neuInsetCard(t: ThemePalette, radius: number): any {
   return neuInset(t, radius);

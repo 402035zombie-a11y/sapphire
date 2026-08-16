@@ -6,7 +6,7 @@ import ModalSheet from '../components/ModalSheet';
 import Card from '../components/ui/Card';
 import Screen from '../components/Screen';
 import TextField from '../components/ui/TextField';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -43,7 +43,7 @@ const speakWord = (text: string, lang: string) => {
   Speech.speak(text, { language: lang || 'en', rate: 0.95 });
 };
 
-type SortMode = 'az' | 'date' | 'lang';
+type SortMode = 'az' | 'date' | 'lang' | 'freq';
 
 // Список выбора в попапе (дедуплицирует 3× ScrollView maxHeight:a.height*0.6 в DictionaryScreen)
 function PickerList({ items, emptyHint, styles }: { items: { key: string; label: string; onPress: () => void }[]; emptyHint?: string; styles: any }) {
@@ -74,10 +74,11 @@ type WordCardProps = {
   updateEntry: (id: string, patch: any) => void;
   removeEntry: (id: string) => void;
   speakWord: (text: string, lang: string) => void;
+  ensureTranslation: (e: DictionaryEntry) => void;
   t: (key: string) => string;
 };
 
-function WordCard({ item, theme, a, styles, progress, editing, setEditing, updateEntry, removeEntry, speakWord, t }: WordCardProps) {
+function WordCard({ item, theme, a, styles, progress, editing, setEditing, updateEntry, removeEntry, speakWord, ensureTranslation, t }: WordCardProps) {
   const isEditing = editing?.id === item.id;
   const tp = progress[`${item.word}|${item.lang}`];
   const box = tp?.box ?? 1;
@@ -120,7 +121,7 @@ function WordCard({ item, theme, a, styles, progress, editing, setEditing, updat
             onBlur={() => { updateEntry(item.id, { translation: editing!.value.trim() }); setEditing(null); }}
           />
         ) : (
-          <TouchableOpacity onPress={() => setEditing({ id: item.id, value: item.translation })}>
+          <TouchableOpacity onPress={() => { ensureTranslation(item); setEditing({ id: item.id, value: item.translation }); }}>
             <Text style={[styles.translation, { color: theme.primary }]}>{item.translation}</Text>
           </TouchableOpacity>
         )}
@@ -187,6 +188,7 @@ export default function DictionaryScreen() {
   const [sortBy, setSortBy] = useState<SortMode>('date');
   const [levelFilter, setLevelFilter] = useState<'all' | 'new' | 'learning' | 'learned'>('all');
   const [levelPickerOpen, setLevelPickerOpen] = useState(false);
+  const [minFreq, setMinFreq] = useState<number>(0); // D5: фільтр за мінімальною частотою вживання
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -198,14 +200,18 @@ export default function DictionaryScreen() {
     if (levelFilter !== 'all') {
       list = list.filter((e: DictionaryEntry) => levelOf(e.word, e.lang) === levelFilter);
     }
+    if (minFreq > 0) {
+      list = list.filter((e: DictionaryEntry) => (e.frequency ?? 1) >= minFreq);
+    }
     list.sort((a, b) => {
       if (sortBy === 'az') return a.word.localeCompare(b.word);
       if (sortBy === 'lang') return a.lang.localeCompare(b.lang) || a.word.localeCompare(b.word);
+      if (sortBy === 'freq') return (b.frequency ?? 1) - (a.frequency ?? 1); // D5: за частотою (топ повторюваних)
       // date — новые сверху
       return (b.createdAt || 0) - (a.createdAt || 0);
     });
     return list;
-  }, [scopedEntries, query, sortBy, levelFilter, levelOf]);
+  }, [scopedEntries, query, sortBy, levelFilter, levelOf, minFreq]);
 
   const importFromFile = (text: string) => {
     try {
@@ -272,6 +278,7 @@ export default function DictionaryScreen() {
     { id: 'az', label: t('A–Z') },
     { id: 'date', label: t('Date') },
     { id: 'lang', label: t('Language') },
+    { id: 'freq', label: t('Frequency') },
   ];
 
   const levelOptions: { id: 'all' | 'new' | 'learning' | 'learned'; label: string }[] = [
@@ -317,31 +324,21 @@ export default function DictionaryScreen() {
     setConfirmDelete(false);
   };
 
-  // Авто-дозавантаження перекладу для слів без translation (щоб тренування їх бачило)
-  useEffect(() => {
-    const missing = entries.filter((e) => !e.translation || !e.translation.trim());
-    if (missing.length === 0) return;
-    let cancelled = false;
-    (async () => {
-      for (const e of missing) {
-        if (cancelled) break;
-        try {
-          const from = e.lang || 'en';
-          const book = e.bookId ? books.find((b) => b.id === e.bookId) : null;
-          const to = effectiveLang(book?.targetLang || useSettingsStore.getState().targetLang) || 'uk';
-          const r = await translateCached(e.word, from, to);
-          // Гард: не зберігаємо переклад що збігається зі словом (house-house при невірній мові книги)
-          if (r?.text && !cancelled && r.text.trim().toLowerCase() !== e.word.trim().toLowerCase()) {
-            updateEntry(e.id, { translation: r.text });
-          }
-        } catch (err) {
-          console.warn('[DictionaryScreen] backfill translation failed for word=' + e.word, err);
+  // Lazy-переклад: запитуємо переклад ТІЛЬКИ коли юзер тапнув слово (не при імпорті).
+  // Це усуває лаг при імпорті великої книги (раніше backfill гнав 1000+ мережевих запитів).
+  const ensureTranslation = useCallback((e: DictionaryEntry) => {
+    if (e.translation && e.translation.trim()) return;
+    const from = e.lang || 'en';
+    const book = e.bookId ? books.find((b) => b.id === e.bookId) : null;
+    const to = effectiveLang(book?.targetLang || useSettingsStore.getState().targetLang) || 'uk';
+    translateCached(e.word, from, to)
+      .then((r) => {
+        if (r?.text && r.text.trim().toLowerCase() !== e.word.trim().toLowerCase()) {
+          updateEntry(e.id, { translation: r.text });
         }
-        await new Promise((res) => setTimeout(res, 120));
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [entries, books]);
+      })
+      .catch(() => {});
+  }, [books, updateEntry]);
 
   // заголовок + иконки → в нативный хедер (убираем дублирующий кастомный headerRow)
   useEffect(() => {
@@ -409,6 +406,22 @@ export default function DictionaryScreen() {
             </Text>
             <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
           </TouchableOpacity>
+          {/* D5: фільтр за мінімальною частотою вживання (топ повторюваних слів) */}
+          <View style={styles.freqFilterBar}>
+            {[0, 2, 10, 50, 100].map((f) => {
+              const active = minFreq === f;
+              const label = f === 0 ? t('All') : `≥${f}`;
+              return (
+                <TouchableOpacity
+                  key={f}
+                  style={[styles.sortTab, active && { backgroundColor: theme.selected }]}
+                  onPress={() => setMinFreq(f)}
+                >
+                  <Text style={[styles.sortTabText, { color: active ? theme.primaryText : theme.secondaryText }]}>{label}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
       </Card>
       </View>
@@ -448,6 +461,7 @@ export default function DictionaryScreen() {
             updateEntry={updateEntry}
             removeEntry={removeEntry}
             speakWord={speakWord}
+            ensureTranslation={ensureTranslation}
             t={t}
           />
         )}
@@ -665,6 +679,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
     filterBlock: { padding: a.tiny ? 8 : 12, borderRadius: a.radius, gap: a.tiny ? 8 : 12 },
     sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3, flexWrap: 'wrap' },
+    freqFilterBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3, flexWrap: 'wrap', marginTop: 6 },
     sortTab: { paddingVertical: a.tiny ? 5 : 7, paddingHorizontal: a.tiny ? 9 : 13, ...metal(theme, 'inset', { radius: a.radius }) },
     sortTabText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
     levelBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3 },
