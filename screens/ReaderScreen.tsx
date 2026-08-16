@@ -112,23 +112,19 @@ export default function ReaderScreen({ route }: { route: any }) {
     return out;
   }, [book]);
 
-  // Розбиваємо кожен параграф на речення (враховуючи переноси рядків — Gutenberg-формат).
-  // Кожен блок FlatList = одне речення (для коректного TTS/перекладу/закладок по параграфу).
-  // Переклад беремо ЗА реченням (sentenceTranslations[key]), а не за абзацом (убирає нашарування).
-  // index = унікальний id речення (paragraphIndex*1000 + sentenceIndex), paragraphIndex = для закладок.
+  // Структура речень (БЕЗ перекладу). Переклад дістаємо в renderItem з book.sentenceTranslations
+  // за ключем item.index. НЕ залежимо від sentenceTranslations → не перераховуємо весь масив
+  // на кожен переклад (PERF-5) і не ламаємо memo-рядки.
   const sentences = React.useMemo(() => {
-    const st = book?.sentenceTranslations;
-    const out: { original: string; translation?: string; paragraphIndex: number; sentenceIndex: number; index: number }[] = [];
+    const out: { original: string; paragraphIndex: number; sentenceIndex: number; index: number }[] = [];
     for (const p of chapters) {
       const segs = splitIntoSegments(p.original);
       segs.forEach((s, si) => {
-        const key = `${p.index * 1000 + si}`;
-        const translation = st?.[key] ?? (si === segs.length - 1 ? p.translation : '');
-        out.push({ original: s, translation, paragraphIndex: p.index, sentenceIndex: si, index: p.index * 1000 + si });
+        out.push({ original: s, paragraphIndex: p.index, sentenceIndex: si, index: p.index * 1000 + si });
       });
     }
     return out;
-  }, [chapters, book?.sentenceTranslations]);
+  }, [chapters]);
 
   // paragraphIndex -> sentence index (для scrollToIndex після переходу на речення)
   const paraToFirstSentence = React.useMemo(() => {
@@ -226,6 +222,14 @@ export default function ReaderScreen({ route }: { route: any }) {
   const rowHeights = useRef<Map<number, number>>(new Map());
   bookRef.current = book;
 
+  // Refs на актуальні масиви, щоб translateBatch/prefetchAhead не перестворювались
+  // і не мали stale-даних (Fix: після 89df93b chapters/sentences — sentence-level з глоб. індексом,
+  // а механізм перекладу раніше брав b.paragraphs → ключі не збігалися → переклад не показувався).
+  const sentencesRef = useRef(sentences);
+  sentencesRef.current = sentences;
+  const chaptersRef = useRef(chapters);
+  chaptersRef.current = chapters;
+
   // R3: відстеження префетчу перекладу по чанках (щоб не перекладати двічі).
   const prefetchedChunks = useRef<Set<number>>(new Set());
   const prefetchInFlight = useRef<Set<number>>(new Set());
@@ -236,15 +240,13 @@ export default function ReaderScreen({ route }: { route: any }) {
       if (!b) return;
       const from = b.language === 'auto' ? 'auto' : b.language;
       const st = b.sentenceTranslations ?? {};
+      const sents = sentencesRef.current;
       const indices: { key: string; idx: number; text: string }[] = [];
-      for (let i = first; i <= last && i < b.paragraphs.length; i++) {
-        const p = b.paragraphs[i];
-        if (!p) continue;
-        const segs = splitIntoSegments(p.original);
-        segs.forEach((s, si) => {
-          const key = `${p.index * 1000 + si}`;
-          if (!st[key]) indices.push({ key, idx: p.index * 1000 + si, text: s });
-        });
+      for (let i = first; i <= last && i < sents.length; i++) {
+        const s = sents[i];
+        if (!s) continue;
+        const key = String(s.index);
+        if (!st[key]) indices.push({ key, idx: s.index, text: s.original });
       }
       if (indices.length === 0) return;
 
@@ -274,12 +276,12 @@ export default function ReaderScreen({ route }: { route: any }) {
     },
     [targetLang, updateSentenceTranslations],
   );
-  // Стабильный коллбек для SentenceRow.onTranslate(index) — иначе renderItem создаёт новую
-  // функцию на каждый рендер и ломает React.memo(SentenceRow), вызывая перерендер всех строк.
+  // Стабильный коллбек для SentenceRow.onTranslate(index) — інакше renderItem створює нову
+  // функцію на кожен рендер і ламає React.memo(SentenceRow), викликаючи перерендер всіх рядків.
+  // index = item.index (унікальний id речення). Знаходимо його позицію у sentences і перекладаємо лише його.
   const translateCb = useCallback((index: number) => {
-    // index = sentence id (paragraphIndex*1000 + sentenceIndex); translateBatch сам розбиває абзац на речення
-    const paragraphIndex = Math.floor(index / 1000);
-    translateBatch(paragraphIndex, paragraphIndex);
+    const pos = sentencesRef.current.findIndex((s) => s.index === index);
+    if (pos >= 0) translateBatch(pos, pos);
   }, [translateBatch]);
 
   /**
@@ -533,7 +535,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           index={item.index}
           paragraphIndex={item.paragraphIndex}
           original={item.original}
-          translation={item.translation}
+          translation={book.sentenceTranslations?.[item.index] ?? ''}
           loading={loadingSet.has(item.index)}
           showTranslation={mode === 'dual'}
           fontSize={reader.fontSize}
