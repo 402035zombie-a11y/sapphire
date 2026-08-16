@@ -139,6 +139,7 @@ function Icon({ name, size = 24, color = '#000', onPress, emboss }: { name: Icon
       viewBox="0 0 24 24"
       fill={color}
       stroke="none"
+      color={color}
       strokeLinecap="round"
       strokeLinejoin="round"
     >

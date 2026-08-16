@@ -92,27 +92,28 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     neu: { base: '#1A1B1F', light: '#34353B', dark: '#0B0C0E', shadowDark: 'rgba(0,0,0,0.55)', shadowLight: 'rgba(255,240,200,0.06)', soft: 'rgba(90,88,80,0.5)', hi: 'rgba(255,245,220,0.06)', glow: 'rgba(150,140,100,0.35)' },
   },
   // ---- BLACKOUT: максимально чёрный фон для OLED (пиксели полностью выключаются) ----
-  // Неоморфизм на чистом чёрном не виден, поэтому base чуть светлее (#0A0A0A) для читаемости кнопок.
+  // Никакого белого: текст и кнопки — светло-серые. Неоморфизм на чёрном не виден,
+  // поэтому base делаем светло-серым (#1C1C1E) для видимости кнопок (хрестик удаления и т.п.).
   blackout: {
     background: '#000000',
     surface: '#050505',
     primary: '#2A2C30',
-    primaryText: '#ECE7DB',
-    secondaryText: '#8A857A',
-    border: '#161616',
-    selected: '#101010',
+    primaryText: '#B8B4AC', // светло-серый (НЕ белый)
+    secondaryText: '#6A6660',
+    border: '#1A1A1A',
+    selected: '#121212',
     success: '#5E8C6A',
     danger: '#B04646',
     readerBg: '#000000',
-    readerText: '#D8D3C7',
-    readerDim: '#5A5A60',
-    highlight: '#E8E2D6',
+    readerText: '#A8A4A0', // светло-серый (НЕ белый)
+    readerDim: '#4A4A50',
+    highlight: '#B8B4AC', // светло-серый (НЕ белый)
     popupBg: '#0A0A0A',
-    popupBorder: '#1A1A1A',
-    posColor: '#E8E2D6',
+    popupBorder: '#1E1E1E',
+    posColor: '#B8B4AC', // светло-серый (НЕ белый)
     bgTop: '#050505',
     bgBot: '#000000',
-    neu: { base: '#0A0A0A', light: '#1A1A1A', dark: '#000000', shadowDark: 'rgba(0,0,0,0.9)', shadowLight: 'rgba(255,255,255,0.04)', soft: 'rgba(60,58,52,0.4)', hi: 'rgba(255,245,220,0.04)', glow: 'rgba(120,110,80,0.25)' },
+    neu: { base: '#1C1C1E', light: '#2E2E30', dark: '#000000', shadowDark: 'rgba(0,0,0,0.9)', shadowLight: 'rgba(255,255,255,0.05)', soft: 'rgba(80,78,72,0.5)', hi: 'rgba(255,245,220,0.05)', glow: 'rgba(120,110,80,0.3)' },
   },
 };
 

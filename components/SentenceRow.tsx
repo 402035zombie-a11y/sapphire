@@ -157,13 +157,13 @@ function SentenceRow({
           {/* ▶ озвучка */}
           {showSpeak && (
             <TouchableOpacity style={[metal(theme, 'circleInset', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onSpeak(original)} hitSlop={8}>
-              <Text style={[styles.playIcon, { color: theme.primary }]}>▶</Text>
+              <Text style={[styles.playIcon, { color: theme.primaryText }]}>▶</Text>
             </TouchableOpacity>
           )}
           {/* Перевести — по нажатию переводим этот абзац сразу */}
           {onTranslate && !translation && showTranslate && (
             <TouchableOpacity style={[metal(theme, 'circleInset', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onTranslate(index)} hitSlop={8}>
-              <Text style={[styles.translateIcon, { color: theme.primary }]}>⇄</Text>
+              <Text style={[styles.translateIcon, { color: theme.primaryText }]}>⇄</Text>
             </TouchableOpacity>
           )}
         </View>

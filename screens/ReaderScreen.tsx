@@ -242,8 +242,8 @@ export default function ReaderScreen({ route }: { route: any }) {
         if (!p) continue;
         const segs = splitIntoSegments(p.original);
         segs.forEach((s, si) => {
-          const key = `${i * 1000 + si}`;
-          if (!st[key]) indices.push({ key, idx: i * 1000 + si, text: s });
+          const key = `${p.index * 1000 + si}`;
+          if (!st[key]) indices.push({ key, idx: p.index * 1000 + si, text: s });
         });
       }
       if (indices.length === 0) return;
@@ -310,7 +310,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           if (!p) continue;
           const segs = splitIntoSegments(p.original);
           segs.forEach((s, si) => {
-            const key = `${pIdx * 1000 + si}`;
+            const key = `${p.index * 1000 + si}`;
             if (!st[key]) items.push({ id: key, text: s });
           });
         }
@@ -358,7 +358,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         if (!p) return;
         const segs = splitIntoSegments(p.original);
         const st = bookRef.current?.sentenceTranslations ?? {};
-        const needTranslate = segs.some((_s, si) => !st[`${idx * 1000 + si}`]);
+        const needTranslate = segs.some((_s, si) => !st[`${p.index * 1000 + si}`]);
         if (needTranslate) translateBatch(idx, idx);
       });
       // R3: префетч перекладу для наступних 5 чанків уперед
@@ -386,7 +386,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         if (!p) continue;
         const segs = splitIntoSegments(p.original);
         const st = bookRef.current?.sentenceTranslations ?? {};
-        const needTranslate = segs.some((_s, si) => !st[`${idx * 1000 + si}`]);
+        const needTranslate = segs.some((_s, si) => !st[`${p.index * 1000 + si}`]);
         if (needTranslate) translateBatch(idx, idx);
       }
       const total = bookRef.current?.paragraphs.length ?? 1;
@@ -431,7 +431,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       if (!p) continue;
       const segs = splitIntoSegments(p.original);
       const st = bookRef.current?.sentenceTranslations ?? {};
-      const needTranslate = segs.some((_s, si) => !st[`${i * 1000 + si}`]);
+      const needTranslate = segs.some((_s, si) => !st[`${p.index * 1000 + si}`]);
       if (needTranslate) translateBatch(i, i);
     }
     // R3: префетч перекладу для наступних 5 чанків уперед від стартової позиції
