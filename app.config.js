@@ -1,7 +1,7 @@
 // app.config.js — единая точка правды конфигурации сборки.
 // Все секреты/ключи берутся из ENV, НЕ хардкодятся в репо.
 
-const PACKAGE = process.env.EXPO_PUBLIC_ANDROID_PACKAGE || 'com.bookreader.app';
+const PACKAGE = process.env.EXPO_PUBLIC_ANDROID_PACKAGE || 'com.mike.wolfskin';
 const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME || 'BookReader';
 
 // AdMob IDs — ТІЛЬКИ з ENV (EAS production env). Не хардкодимо в git (security).
@@ -30,7 +30,7 @@ module.exports = ({ config }) => ({
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'com.bookreader.app',
+    bundleIdentifier: 'com.mike.wolfskin',
     // Для AdMob на iOS нужен Info.plist ключ (требование App Tracking Transparency).
     // Здесь только базовый каркас; iOS-публикация — отдельная задача.
     infoPlist: {
