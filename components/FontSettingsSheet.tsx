@@ -169,6 +169,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
             />
           </View>
 
+          {mode !== 'read' && (
           <View style={styles.toggleRow}>
             <Text style={[styles.toggleLabel, { color: theme.primaryText }]}>{t("Speak button (▶) next to paragraph")}</Text>
             <Switch
@@ -178,6 +179,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
               thumbColor="#fff"
             />
           </View>
+          )}
 
           {mode === 'read' && (
             <View style={styles.toggleRow}>
@@ -191,6 +193,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
             </View>
           )}
 
+          {mode !== 'read' && (
           <View style={styles.toggleRow}>
             <Text style={[styles.toggleLabel, { color: theme.primaryText }]}>{t("“Translate” button (⇄) next to paragraph")}</Text>
             <Switch
@@ -200,6 +203,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
               thumbColor="#fff"
             />
           </View>
+          )}
 
           <View style={styles.sectionLabelWrap}>
             <Text style={[styles.sectionLabel, { color: theme.secondaryText }]}>{t("Color theme")}</Text>
