@@ -274,22 +274,19 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
     transition: 'box-shadow 160ms ease, transform 160ms ease',
     boxShadow: filled
       ? [
-          `${Math.round(off * 1.4 * OUTER_SHADOW)}px ${Math.round(off * 1.6 * OUTER_SHADOW)}px ${Math.round(blur2 * OUTER_SHADOW)}px rgba(0,0,0,0.55)`, // крупная внешняя тень (объём)
+          `${Math.round(off * 1.4 * OUTER_SHADOW)}px ${Math.round(off * 1.6 * OUTER_SHADOW)}px ${Math.round(blur2 * OUTER_SHADOW)}px rgba(0,0,0,0.55)`,
           `${Math.round(off * OUTER_SHADOW)}px ${Math.round(off * OUTER_SHADOW)}px ${Math.round(blur1 * OUTER_SHADOW)}px rgba(0,0,0,0.45)`,
-          `inset 0 2px 3px rgba(255,255,255,0.45)`, // верхний specular-блик (выпуклость)
-          `inset 0 -3px 6px rgba(0,0,0,0.35)`, // нижняя внутренняя тень
+          `inset 0 2px 3px rgba(255,255,255,0.45)`,
+          `inset 0 -3px 6px rgba(0,0,0,0.35)`,
         ].join(', ')
       : [
-          `${off}px ${off}px ${blur1}px ${specDark(t)}`,
-          `${off * 1.6}px ${off * 1.6}px ${blur2}px ${specDark(t)}`,
-          `${-off}px ${-off}px ${blur1}px ${s}`,
-          `${-off * 1.6}px ${-off * 1.6}px ${blur2}px ${l}`,
+          // ВДАВЛЕНИЙ стиль (inset) — без зовнішніх тіней
+          `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
+          `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
           `inset 0 1px 0 0 ${rim(t)}`,
-          `inset 0 0 0 1px rgba(255,255,255,0.08)`,
-          `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
-          `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
+          `inset 0 0 0 1px rgba(0,0,0,0.12)`,
         ].join(', '),
-    elevation: filled ? Math.max(6, Math.round(off * 1.6)) : Math.max(3, Math.round(off)),
+    elevation: filled ? Math.max(6, Math.round(off * 1.6)) : 0,
   };
 }
 

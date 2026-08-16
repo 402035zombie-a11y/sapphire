@@ -80,7 +80,7 @@ export function BookList({ books, bookWordCount, onOpen, onRemove }: Props) {
     <FlashList
       data={books}
       keyExtractor={(b) => b.id}
-      contentContainerStyle={{ paddingHorizontal: a.pad, paddingTop: a.insetTop + a.pad + a.fab() + a.gap, paddingBottom: a.pad }}
+      contentContainerStyle={{ paddingHorizontal: a.pad, paddingTop: a.insetTop + a.pad + a.fab() + a.gap, paddingBottom: a.tabBarH + a.fab() * 2 + a.gap * 2 }}
       renderItem={({ item }) => (
         <View style={a.columns > 1 ? { width: `${100 / a.columns - 2}%` } : undefined}>
           <BookCard

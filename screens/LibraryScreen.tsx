@@ -543,7 +543,6 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
     actionBtn: { flex: 1, height: Math.round(Math.max(44, 48 * a.scale)), paddingVertical: 10, paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
     actionText: { fontSize: a.body },
     saveText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.body },
-    list: { paddingHorizontal: neuShadowPad(), paddingTop: a.insetTop + a.pad + a.fab() + a.gap + a.headerH + a.fab() * 1.5, paddingBottom: a.tabBarH + a.fab() * 2 + a.gap * 2 },
     empty: { textAlign: 'center', marginTop: 40, fontSize: a.body },
     bookRow: {
       flexDirection: 'row',
