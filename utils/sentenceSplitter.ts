@@ -103,19 +103,18 @@ function mergeAbbrevFragments(sentences: string[]): string[] {
   return merged;
 }
 
-// Разбиение текста на сегменты (предложения) с учетом переносов строк.
-// Каждый реальный \n считается границей сегмента (Gutenberg-формат: предложения
-// часто разбиты переносом строки, а не точкой). Внутри строки режем по терминальной
-// пунктуации через splitIntoSentences.
+// Разбиение текста на сегменты (предложения).
+// ВАЖЛИВО: одинарные переносы строк (\n) внутри абзаца — это Gutenberg-wrap,
+// НЕ граница предложения. Склеиваем их в пробел, иначе предложение
+// режется посередине (каждый wrapped-рядок становится отдельным блоком).
+// Граница предложения — только терминальная пунктуация (.!?…) + заглавная/цифра.
 export function splitIntoSegments(text: string): string[] {
   if (!text || !text.trim()) return [];
-  const lines = text.split('\n');
-  const out: string[] = [];
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-    const parts = splitIntoSentences(trimmed);
-    for (const p of parts) if (p.trim()) out.push(p.trim());
-  }
-  return out;
+  const normalized = text
+    .replace(/\r\n/g, '\n')
+    .replace(/[ \t]*\n[ \t]*/g, ' ') // одинарный \n (wrap) -> пробел
+    .replace(/ {2,}/g, ' ')
+    .trim();
+  const parts = splitIntoSentences(normalized);
+  return parts.map((p) => p.trim()).filter(Boolean);
 }

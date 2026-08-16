@@ -16,6 +16,7 @@ interface SettingsState {
     fontFamily: string; // гарнитура: 'default' | 'serif' | 'sans' | 'mono'
     fontWeight: number; // 300..800 — жирность
     textAlign: 'left' | 'justify' | 'hyphenation';
+    letterSpacing: number; // відступ між літерами (px), 0 = за замовчуванням
     pageMargins: boolean; // вкл/выкл отступы по краям
     highlightWords: boolean;
     dictionaryOnDoubleTap: boolean;
@@ -47,6 +48,7 @@ export const useSettingsStore = persist<SettingsState>(
       fontFamily: 'default',
       fontWeight: 400,
       textAlign: 'justify',
+      letterSpacing: 0,
       pageMargins: false,
       highlightWords: true,
       dictionaryOnDoubleTap: true,

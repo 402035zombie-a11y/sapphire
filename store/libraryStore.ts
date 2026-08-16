@@ -30,6 +30,7 @@ export interface Book {
   paragraphs: BookParagraph[];
   sections: BookSection[];
   coverImage?: string; // base64 data URI або file:// шлях до обкладинки
+  sentenceTranslations?: Record<string, string>; // key: paragraphIndex*1000+sentenceIndex -> переклад речення
   createdAt: number;
   progress: number; // 0..1
   lastPosition: number; // индекс последнего прочитанного абзаца
@@ -41,11 +42,11 @@ interface LibraryState {
   addBook: (book: Book) => void;
   removeBook: (id: string) => void;
   updateParagraphTranslation: (bookId: string, paragraphIndex: number, translation: string) => void;
-  updateParagraphsTranslations: (bookId: string, entries: { index: number; translation: string }[]) => void;
   setBookTargetLang: (bookId: string, targetLang: string) => void;
   setProgress: (bookId: string, progress: number, lastPosition: number) => void;
   toggleBookmark: (bookId: string, paragraphIndex: number) => void;
   getBook: (id: string) => Book | undefined;
+  updateSentenceTranslations: (bookId: string, entries: { key: string; translation: string }[]) => void;
 }
 
 export const useLibraryStore = persist<LibraryState>(
@@ -69,14 +70,13 @@ export const useLibraryStore = persist<LibraryState>(
         }
         return {};
       }),
-    updateParagraphsTranslations: (bookId, entries: { index: number; translation: string }[]) =>
+    updateSentenceTranslations: (bookId, entries: { key: string; translation: string }[]) =>
       set((s) => {
         const book = s.books.find((b) => b.id === bookId);
         if (book) {
-          for (const e of entries) {
-            const p = book.paragraphs[e.index];
-            if (p) p.translation = e.translation;
-          }
+          const st = { ...(book.sentenceTranslations ?? {}) };
+          for (const e of entries) st[e.key] = e.translation;
+          book.sentenceTranslations = st;
         }
         return {};
       }),

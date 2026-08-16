@@ -28,6 +28,7 @@ interface Props {
   fontFamily?: string;
   fontWeight?: number;
   textAlign?: 'left' | 'justify' | 'hyphenation';
+  letterSpacing?: number;
   pageMargins?: boolean;
   onToggleBookmark?: () => void;
   onCopy?: () => void;
@@ -90,6 +91,7 @@ function SentenceRow({
   fontFamily = 'default',
   fontWeight = 400,
   textAlign = 'justify',
+  letterSpacing = 0,
   pageMargins = true,
   onSpeak,
   onTranslate,
@@ -114,6 +116,7 @@ function SentenceRow({
     fontFamily: fontFamilyValue,
     fontWeight: fontWeight as any,
     textAlign: textAlignValue as any,
+    letterSpacing: letterSpacing || undefined,
     ...(hyphenation ? { hyphenationFactor: 1, wordBreak: 'break-word' } as any : null),
   };
   const base = [baseText, { color: theme.primaryText }];
@@ -184,7 +187,7 @@ function SentenceRow({
           </Text>
         )}
 
-        {open ? (
+        {(!isPlain && translation) || open ? (
           <Text style={[styles.translation, { color: theme.secondaryText, fontSize: fs - 2, lineHeight: lh - 2 }]}>
             {translation}
           </Text>

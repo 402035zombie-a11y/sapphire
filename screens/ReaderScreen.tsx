@@ -71,7 +71,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   const styles = React.useMemo(() => makeStyles(a, theme), [a, theme]);
 
   const book = useLibraryStore((s) => s.books.find((b) => b.id === bookId));
-  const updateParagraphsTranslations = useLibraryStore((s) => s.updateParagraphsTranslations);
+  const updateSentenceTranslations = useLibraryStore((s) => s.updateSentenceTranslations);
   const setProgress = useLibraryStore((s) => s.setProgress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
   const settingsTarget = useSettingsStore((s) => s.targetLang);
@@ -114,16 +114,31 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   // Розбиваємо кожен параграф на речення (враховуючи переноси рядків — Gutenberg-формат).
   // Кожен блок FlatList = одне речення (для коректного TTS/перекладу/закладок по параграфу).
+  // Переклад беремо ЗА реченням (sentenceTranslations[key]), а не за абзацом (убирає нашарування).
   // index = унікальний id речення (paragraphIndex*1000 + sentenceIndex), paragraphIndex = для закладок.
   const sentences = React.useMemo(() => {
+    const st = book?.sentenceTranslations;
     const out: { original: string; translation?: string; paragraphIndex: number; sentenceIndex: number; index: number }[] = [];
     for (const p of chapters) {
       const segs = splitIntoSegments(p.original);
       segs.forEach((s, si) => {
-        out.push({ original: s, translation: p.translation, paragraphIndex: p.index, sentenceIndex: si, index: p.index * 1000 + si });
+        const key = `${p.index * 1000 + si}`;
+        const translation = st?.[key] ?? (si === segs.length - 1 ? p.translation : '');
+        out.push({ original: s, translation, paragraphIndex: p.index, sentenceIndex: si, index: p.index * 1000 + si });
       });
     }
     return out;
+  }, [chapters, book?.sentenceTranslations]);
+
+  // paragraphIndex -> sentence index (для scrollToIndex після переходу на речення)
+  const paraToFirstSentence = React.useMemo(() => {
+    const map: Record<number, number> = {};
+    let sentenceIdx = 0;
+    for (const p of chapters) {
+      map[p.index] = sentenceIdx;
+      sentenceIdx += splitIntoSegments(p.original).length;
+    }
+    return map;
   }, [chapters]);
 
   const { width, height } = useWindowDimensions();
@@ -220,45 +235,52 @@ export default function ReaderScreen({ route }: { route: any }) {
       const b = bookRef.current;
       if (!b) return;
       const from = b.language === 'auto' ? 'auto' : b.language;
-      const indices: number[] = [];
+      const st = b.sentenceTranslations ?? {};
+      const indices: { key: string; idx: number; text: string }[] = [];
       for (let i = first; i <= last && i < b.paragraphs.length; i++) {
         const p = b.paragraphs[i];
-        if (p && !p.translation) indices.push(i);
+        if (!p) continue;
+        const segs = splitIntoSegments(p.original);
+        segs.forEach((s, si) => {
+          const key = `${i * 1000 + si}`;
+          if (!st[key]) indices.push({ key, idx: i * 1000 + si, text: s });
+        });
       }
       if (indices.length === 0) return;
 
-      setLoadingSet((prev) => new Set([...prev, ...indices]));
+      setLoadingSet((prev) => new Set([...prev, ...indices.map((x) => x.idx)]));
       try {
-        // переводим чанком параллельно (до 8 за раз), без последовательного await на каждый
         const results = await Promise.all(
-          indices.map(async (idx) => {
-            const p = bookRef.current?.paragraphs[idx];
-            if (!p) return null;
+          indices.map(async (it) => {
             try {
-              const res = await translateCached(p.original, from, targetLang);
-              return { index: idx, translation: res.text } as { index: number; translation: string };
+              const res = await translateCached(it.text, from, targetLang);
+              return { key: it.key, translation: res.text } as { key: string; translation: string };
             } catch {
               return null;
             }
           }),
         );
-        const ok = results.filter((r): r is { index: number; translation: string } => r !== null);
-        if (ok.length) updateParagraphsTranslations(b.id, ok);
+        const ok = results.filter((r): r is { key: string; translation: string } => r !== null);
+        if (ok.length) updateSentenceTranslations(b.id, ok);
       } catch {
-        // игнорируем — перевод восстановится при следующем показе
+        // ігноруємо — переклад відновиться при наступному показі
       } finally {
         setLoadingSet((prev) => {
           const next = new Set(prev);
-          indices.forEach((i) => next.delete(i));
+          indices.forEach((x) => next.delete(x.idx));
           return next;
         });
       }
     },
-    [targetLang, updateParagraphsTranslations],
+    [targetLang, updateSentenceTranslations],
   );
   // Стабильный коллбек для SentenceRow.onTranslate(index) — иначе renderItem создаёт новую
   // функцию на каждый рендер и ломает React.memo(SentenceRow), вызывая перерендер всех строк.
-  const translateCb = useCallback((index: number) => translateBatch(index, index), [translateBatch]);
+  const translateCb = useCallback((index: number) => {
+    // index = sentence id (paragraphIndex*1000 + sentenceIndex); translateBatch сам розбиває абзац на речення
+    const paragraphIndex = Math.floor(index / 1000);
+    translateBatch(paragraphIndex, paragraphIndex);
+  }, [translateBatch]);
 
   /**
    * R3: префетч перекладу для наступних 5 чанків уперед відносно поточного абзацу.
@@ -280,11 +302,17 @@ export default function ReaderScreen({ route }: { route: any }) {
         if (prefetchedChunks.current.has(ci) || prefetchInFlight.current.has(ci)) continue;
         const chunk = chunks[ci];
         if (!chunk) continue;
-        // зібрати абзаци чанка без перекладу
-        const items: { id: number; text: string }[] = [];
+        // зібрати речення чанка без перекладу
+        const st = b.sentenceTranslations ?? {};
+        const items: { id: string; text: string }[] = [];
         for (const pIdx of chunk.paragraphIndices) {
           const p = b.paragraphs[pIdx];
-          if (p && !p.translation) items.push({ id: pIdx, text: p.original });
+          if (!p) continue;
+          const segs = splitIntoSegments(p.original);
+          segs.forEach((s, si) => {
+            const key = `${pIdx * 1000 + si}`;
+            if (!st[key]) items.push({ id: key, text: s });
+          });
         }
         if (items.length === 0) {
           prefetchedChunks.current.add(ci);
@@ -293,11 +321,11 @@ export default function ReaderScreen({ route }: { route: any }) {
         prefetchInFlight.current.add(ci);
         translateBatchV2(items, from, targetLang)
           .then((map) => {
-            const entries: { index: number; translation: string }[] = [];
+            const entries: { key: string; translation: string }[] = [];
             map.forEach((res, id) => {
-              if (res && res.text) entries.push({ index: id as number, translation: res.text });
+              if (res && res.text) entries.push({ key: id as string, translation: res.text });
             });
-            if (entries.length) updateParagraphsTranslations(b.id, entries);
+            if (entries.length) updateSentenceTranslations(b.id, entries);
           })
           .catch(() => {
             /* ігноруємо — переклад відновиться при наступному показі/скролі */
@@ -308,7 +336,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           });
       }
     },
-    [chunks, mode, targetLang, updateParagraphsTranslations],
+    [chunks, mode, targetLang, updateSentenceTranslations],
   );
 
 
@@ -324,9 +352,14 @@ export default function ReaderScreen({ route }: { route: any }) {
         }
       }
       viewableRef.current = set;
-      // абзац в окне → переводим СРАЗУ (без задержки), если ещё нет перевода
+      // абзац в окне → переводим СРАЗУ (без задержки), якщо ще не всі речення перекладені
       set.forEach((idx) => {
-        if (!bookRef.current?.paragraphs[idx]?.translation) translateBatch(idx, idx);
+        const p = bookRef.current?.paragraphs[idx];
+        if (!p) return;
+        const segs = splitIntoSegments(p.original);
+        const st = bookRef.current?.sentenceTranslations ?? {};
+        const needTranslate = segs.some((_s, si) => !st[`${idx * 1000 + si}`]);
+        if (needTranslate) translateBatch(idx, idx);
       });
       // R3: префетч перекладу для наступних 5 чанків уперед
       if (minIdx !== Infinity) prefetchAhead(minIdx);
@@ -349,8 +382,12 @@ export default function ReaderScreen({ route }: { route: any }) {
         visible.forEach((idx) => range.push(idx));
       }
       for (const idx of range) {
-        if (bookRef.current?.paragraphs[idx]?.translation) continue;
-        translateBatch(idx, idx);
+        const p = bookRef.current?.paragraphs[idx];
+        if (!p) continue;
+        const segs = splitIntoSegments(p.original);
+        const st = bookRef.current?.sentenceTranslations ?? {};
+        const needTranslate = segs.some((_s, si) => !st[`${idx * 1000 + si}`]);
+        if (needTranslate) translateBatch(idx, idx);
       }
       const total = bookRef.current?.paragraphs.length ?? 1;
       const first = visible.size ? Math.min(...visible) : visibleRef.current.first;
@@ -390,7 +427,12 @@ export default function ReaderScreen({ route }: { route: any }) {
     // Перевод срабатывает по скролл-стопу (onMomentumScrollEnd) и при удержании абзаца в окне >2с.
     const paras = bookRef.current?.paragraphs ?? [];
     for (let i = 0; i <= BATCH && i < paras.length; i++) {
-      if (!bookRef.current?.paragraphs[i]?.translation) translateBatch(i, i);
+      const p = paras[i];
+      if (!p) continue;
+      const segs = splitIntoSegments(p.original);
+      const st = bookRef.current?.sentenceTranslations ?? {};
+      const needTranslate = segs.some((_s, si) => !st[`${i * 1000 + si}`]);
+      if (needTranslate) translateBatch(i, i);
     }
     // R3: префетч перекладу для наступних 5 чанків уперед від стартової позиції
     const start = bookRef.current?.lastPosition ?? 0;
@@ -412,8 +454,9 @@ export default function ReaderScreen({ route }: { route: any }) {
     const jumpTo = (route.params as any)?.jumpTo;
     if (jumpTo == null || !scrollRef.current) return;
     const idx = Math.max(0, Math.min(jumpTo, bookRef.current?.paragraphs.length ?? 1));
+    const sentenceIdx = paraToFirstSentence[idx] ?? 0;
     const t = setTimeout(() => {
-      scrollRef.current?.scrollToIndex({ index: idx, animated: true, viewPosition: 0.2 });
+      scrollRef.current?.scrollToOffset({ offset: sentenceIdx * 120, animated: true });
     }, 300);
     return () => clearTimeout(t);
   }, [route.params]);
@@ -423,8 +466,9 @@ export default function ReaderScreen({ route }: { route: any }) {
     const b = bookRef.current;
     const pos = b?.lastPosition ?? 0;
     if (pos <= 0 || !scrollRef.current) return;
+    const sentenceIdx = paraToFirstSentence[pos] ?? 0;
     const t = setTimeout(() => {
-      scrollRef.current?.scrollToIndex({ index: Math.min(pos, (b?.paragraphs.length ?? 1) - 1), animated: false, viewPosition: 0 });
+      scrollRef.current?.scrollToOffset({ offset: sentenceIdx * 120, animated: false });
     }, 400);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -498,6 +542,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           fontFamily={reader.fontFamily}
           fontWeight={reader.fontWeight}
           textAlign={reader.textAlign}
+          letterSpacing={reader.letterSpacing}
           pageMargins={reader.pageMargins}
           bookmarked={book.bookmarks?.includes(item.paragraphIndex) ?? false}
           onSpeak={speak}
@@ -536,10 +581,8 @@ export default function ReaderScreen({ route }: { route: any }) {
                 if (book?.id) setBookTargetLang(book.id, code);
                 // сбросить перевод, чтобы перегрузить на новый язык
                 if (book?.id) {
-                  updateParagraphsTranslations(
-                    book.id,
-                    (chapters || []).map((p) => ({ index: p.index, translation: '' })),
-                  );
+                  const entries = Object.keys(book.sentenceTranslations ?? {}).map((key) => ({ key, translation: '' }));
+                  updateSentenceTranslations(book.id, entries);
                 }
               }}
               onClose={() => setLangOpen(false)}
@@ -615,7 +658,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         onDonate={onDonate}
         onDismiss={() => setSupportOpen(false)}
       />
-      <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToIndex({ index: 0, animated: true })} hitSlop={8}>
+      <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToOffset({ offset: 0, animated: true })} hitSlop={8}>
         <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
       </TouchableOpacity>
     </Screen>
