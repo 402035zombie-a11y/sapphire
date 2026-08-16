@@ -92,21 +92,21 @@ export default function ReaderScreen({ route }: { route: any }) {
     const out: BookParagraph[] = [];
     let idx = 0;
     for (const ch of dbChapters) {
+      // ВЕСЬ текст глави → чистий → splitIntoSegments (ріже на речення, не на <p>).
+      // Було: різка по <p> → кожен <p> окремим original, потім hope що sentences-memo доріже.
+      // Alice (довгі <p> з кількома реченнями) лишалась цілою. Фікс: ріжемо тут одразу.
       const plain = ch.contentHtml
         .replace(/<script[\s\S]*?<\/script>/gi, ' ')
         .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-        .replace(/<(p|div|br|h[1-6]|li|\/p|\/div|\/h[1-6]|\/li)\b[^>]*\/?>/gi, '\n')
-        .replace(/<[^>]+>/g, ' ')
+        .replace(/<[^>]+>/g, ' ')            // ВСІ теги (вкл. <p>) → пробіл, не \n
         .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&nbsp;/g, ' ')
         .replace(/[ \t]+/g, ' ')
         .replace(/\n{2,}/g, '\n')
-        .trim()
-        .split('\n')
-        .map((s: string) => s.trim())
-        .filter(Boolean);
-      for (const sentence of plain) {
-        out.push({ index: idx++, original: sentence, translation: '' });
+        .trim();
+      const segs = splitIntoSegments(plain);
+      for (const s of segs) {
+        if (s) out.push({ index: idx++, original: s, translation: '' });
       }
     }
     return out;
