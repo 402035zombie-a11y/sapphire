@@ -43,7 +43,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
   // Залежність від [theme, a.radius, a.scale] — перерахунок тільки при зміні теми/розміру.
   const raisedStyle = React.useMemo(() => metal(theme, 'raised', { radius: a.radius }), [theme, a.radius, a.scale]);
   const circleStyle = React.useMemo(
-    () => metal(theme, 'circle', { size: a.dim(0.05, 28, 38) }),
+    () => metal(theme, 'circleInset', { size: a.dim(0.05, 28, 38) }),
     [theme, a.radius, a.scale],
   );
   return (

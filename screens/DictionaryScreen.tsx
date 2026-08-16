@@ -698,6 +698,6 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     translation: { fontSize: a.body, marginTop: 2 },
     context: { fontSize: a.small_fs, marginTop: 6, fontStyle: 'italic' },
     editInput: { ...metal(theme, 'inset', { radius: 8 }), borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8, fontSize: a.body, marginTop: 4 },
-    deleteBtn: { ...metal(theme, 'circle', { size: a.dim(0.05, 28, 38) }), alignItems: 'center', justifyContent: 'center' },
+    deleteBtn: { ...metal(theme, 'circleInset', { size: a.dim(0.05, 28, 38) }), alignItems: 'center', justifyContent: 'center' },
   });
 }

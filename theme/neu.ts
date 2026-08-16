@@ -280,13 +280,42 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
           `inset 0 -3px 6px rgba(0,0,0,0.35)`,
         ].join(', ')
       : [
-          // ВДАВЛЕНИЙ стиль (inset) — без зовнішніх тіней
-          `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
-          `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
+          // ВИПУКЛИЙ (raised) — зовнішня тінь через OUTER_SHADOW
+          `${off}px ${off}px ${blur1}px ${specDark(t)}`,
+          `${off * 1.6}px ${off * 1.6}px ${blur2}px ${specDark(t)}`,
+          `${-off}px ${-off}px ${blur1}px ${s}`,
+          `${-off * 1.6}px ${-off * 1.6}px ${blur2}px ${l}`,
           `inset 0 1px 0 0 ${rim(t)}`,
-          `inset 0 0 0 1px rgba(0,0,0,0.12)`,
+          `inset 0 0 0 1px rgba(255,255,255,0.08)`,
+          `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
+          `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
         ].join(', '),
-    elevation: filled ? Math.max(6, Math.round(off * 1.6)) : 0,
+    elevation: filled ? Math.max(6, Math.round(off * 1.6)) : Math.max(3, Math.round(off)),
+  };
+}
+
+// ВДАВЛЕНИЙ circle (для кнопок видалення) — без зовнішніх тіней, тільки inset
+export function neuMetalCircleInset(t: ThemePalette, size: number): any {
+  const off = Math.max(4, Math.round(size * 0.14));
+  const ix = Math.max(2, Math.round(off * 0.5));
+  const iy = Math.max(2, Math.round(off * 0.5));
+  const iblur = Math.round(off * 1.4);
+  return {
+    width: size,
+    height: size,
+    borderRadius: size / 2,
+    backgroundColor: t.neu.base,
+    backgroundImage: metalBg(t),
+    backgroundClip: 'padding-box',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: [
+      `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
+      `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
+      `inset 0 1px 0 0 ${rim(t)}`,
+      `inset 0 0 0 1px rgba(0,0,0,0.12)`,
+    ].join(', '),
+    elevation: 0,
   };
 }
 
@@ -307,7 +336,7 @@ export function metalText(t: ThemePalette, color?: string): any {
 // Роли: 'raised' | 'inset' | 'circle' | 'primary' | 'tab' | 'tabActive' | 'text'
 // Модификаторы: { size?, radius?, filled?, active?, pressed? }
 // Это даёт сплошную систему вместо разрозненных вызовов neuMetalRaised/neuMetalCircle/...
-type MetalRole = 'raised' | 'inset' | 'circle' | 'primary' | 'tab' | 'tabActive' | 'tabStamp' | 'tabStampActive' | 'stamp' | 'text';
+type MetalRole = 'raised' | 'inset' | 'circle' | 'circleInset' | 'primary' | 'tab' | 'tabActive' | 'tabStamp' | 'tabStampActive' | 'stamp' | 'text';
 interface MetalOpts {
   size?: number;
   radius?: number;
@@ -321,6 +350,8 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
   switch (role) {
     case 'circle':
       return neuMetalCircle(t, opts.size ?? 40, opts.filled ?? false);
+    case 'circleInset':
+      return neuMetalCircleInset(t, opts.size ?? 40);
     case 'primary':
       return neuMetalCircle(t, opts.size ?? 40, true);
     case 'raised':
