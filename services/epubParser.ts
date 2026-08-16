@@ -111,13 +111,19 @@ export async function parseEpub(
   // обкладинка: item з Properties="cover-image" або id/назва містить "cover" і media-type image/*
   let coverHref: string | null = null;
   let coverType = 'image/jpeg';
+  // K3: fallback — перша картинка маніфесту (Gutenberg-епаби часто без cover-image,
+  // але мають ілюстрації; показуємо першу як обкладинку замість пустого слота).
+  let firstImageHref: string | null = null;
+  let firstImageType = 'image/jpeg';
   for (const [id, m] of Object.entries(manifest)) {
     if (!/image\//i.test(m.mediaType)) continue;
+    if (!firstImageHref) { firstImageHref = m.href; firstImageType = m.mediaType; }
     coverType = m.mediaType;
     const props = opfXml.match(new RegExp(`<item\\b[^>]*\\bid="${id}"[^>]*\\bproperties="([^"]*)"`, 'i'));
     if (props && /cover-image/i.test(props[1])) { coverHref = m.href; break; }
     if (/cover/i.test(id)) { coverHref = m.href; break; }
   }
+  if (!coverHref) { coverHref = firstImageHref; coverType = firstImageType; }
   let cover: string | undefined;
   if (coverHref) {
     const cands = [
