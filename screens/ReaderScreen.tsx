@@ -356,12 +356,10 @@ export default function ReaderScreen({ route }: { route: any }) {
       viewableRef.current = set;
       // абзац в окне → переводим СРАЗУ (без задержки), якщо ще не всі речення перекладені
       set.forEach((idx) => {
-        const p = bookRef.current?.paragraphs[idx];
-        if (!p) return;
-        const segs = splitIntoSegments(p.original);
+        const s = sentencesRef.current[idx];
+        if (!s) return;
         const st = bookRef.current?.sentenceTranslations ?? {};
-        const needTranslate = segs.some((_s, si) => !st[`${p.index * 1000 + si}`]);
-        if (needTranslate) translateBatch(idx, idx);
+        if (!st[String(s.index)]) translateBatch(idx, idx);
       });
       // R3: префетч перекладу для наступних 5 чанків уперед
       if (minIdx !== Infinity) prefetchAhead(minIdx);
@@ -384,12 +382,10 @@ export default function ReaderScreen({ route }: { route: any }) {
         visible.forEach((idx) => range.push(idx));
       }
       for (const idx of range) {
-        const p = bookRef.current?.paragraphs[idx];
-        if (!p) continue;
-        const segs = splitIntoSegments(p.original);
+        const s = sentencesRef.current[idx];
+        if (!s) continue;
         const st = bookRef.current?.sentenceTranslations ?? {};
-        const needTranslate = segs.some((_s, si) => !st[`${p.index * 1000 + si}`]);
-        if (needTranslate) translateBatch(idx, idx);
+        if (!st[String(s.index)]) translateBatch(idx, idx);
       }
       const total = bookRef.current?.paragraphs.length ?? 1;
       const first = visible.size ? Math.min(...visible) : visibleRef.current.first;
@@ -427,14 +423,12 @@ export default function ReaderScreen({ route }: { route: any }) {
     // В режиме 'read' перевод не грузим (пользователь хочет читать оригинал).
     if (mode === 'read') return;
     // Перевод срабатывает по скролл-стопу (onMomentumScrollEnd) и при удержании абзаца в окне >2с.
-    const paras = bookRef.current?.paragraphs ?? [];
-    for (let i = 0; i <= BATCH && i < paras.length; i++) {
-      const p = paras[i];
-      if (!p) continue;
-      const segs = splitIntoSegments(p.original);
+    const sents = sentencesRef.current ?? [];
+    for (let i = 0; i <= BATCH && i < sents.length; i++) {
+      const s = sents[i];
+      if (!s) continue;
       const st = bookRef.current?.sentenceTranslations ?? {};
-      const needTranslate = segs.some((_s, si) => !st[`${p.index * 1000 + si}`]);
-      if (needTranslate) translateBatch(i, i);
+      if (!st[String(s.index)]) translateBatch(i, i);
     }
     // R3: префетч перекладу для наступних 5 чанків уперед від стартової позиції
     const start = bookRef.current?.lastPosition ?? 0;
