@@ -50,7 +50,7 @@ import { getBookChapters } from '../services/bookImport';
 import { translateBatch as translateBatchV2 } from '../services/translationServiceV2';
 import { buildChunks, nextChunkIndices, ChunkOptions } from '../services/readerChunker';
 import * as Speech from 'expo-speech';
-import { onTtsIndex, onTtsState, ttsPlay, ttsPause, ttsResume, ttsStop } from '../services/bookTts';
+import { onTtsIndex, onTtsState } from '../services/bookTts';
 
 interface RouteParams {
   bookId: string;
@@ -176,28 +176,6 @@ export default function ReaderScreen({ route }: { route: any }) {
     },
     [mode],
   );
-
-  const playBook = useCallback(() => {
-    if (!book) return;
-    const lang = effectiveLang(book.language);
-    const paras = chapters.map((p) => p.original).filter((t) => t && t.trim().length > 0);
-    if (paras.length === 0) return;
-    if (paused) {
-      ttsResume();
-    } else {
-      setCurrentIndex(0);
-      ttsPlay(paras, lang);
-    }
-  }, [book, paused, chapters]);
-
-  const pauseBook = useCallback(() => {
-    ttsPause();
-  }, []);
-
-  const stopBook = useCallback(() => {
-    ttsStop();
-    setCurrentIndex(0);
-  }, []);
 
   // Нативні TTS-події → React-стан
   useEffect(() => {
@@ -531,18 +509,6 @@ export default function ReaderScreen({ route }: { route: any }) {
         <View style={styles.titleGroup}>
           <Marquee text={book.title} textStyle={[styles.title, { color: theme.primaryText }]} />
         </View>
-        {false && (
-          <View style={styles.centerPlay}>
-            {isSpeaking ? (
-              <React.Fragment>
-                <IconButton icon="pause" onPress={pauseBook} variant="circle" size={a.fab()} color={theme.primaryText} hitSlop={10} />
-                <IconButton icon="close" onPress={stopBook} variant="circle" size={a.fab()} color={theme.primaryText} hitSlop={10} />
-              </React.Fragment>
-            ) : (
-              <IconButton icon="volume" onPress={playBook} variant="circle" size={a.fab()} color={theme.primaryText} hitSlop={10} />
-            )}
-          </View>
-        )}
         <View style={[styles.headerRight, { position: 'relative' }]}>
           {mode === 'dual' && (
             <IconButton icon="language" onPress={() => setLangOpen((v) => !v)} variant="circle" size={a.fab()} hitSlop={8} />
@@ -672,7 +638,6 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     },
     headerRight: { flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 12, flexShrink: 0 },
     langDropdown: { position: 'absolute', top: '100%', right: 0, zIndex: 100 },
-    centerPlay: { flexShrink: 0, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: a.tiny ? 2 : 6 },
     playBtn: { ...neuBtn, borderRadius: playSz / 2 },
     title: { fontSize: a.h2, fontFamily: FONTS.bold },
     langChip: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, ...metal(theme, 'inset', { radius: 12 }) },
