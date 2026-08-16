@@ -55,7 +55,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
         {item.coverImage ? (
           <Image source={{ uri: item.coverImage }} style={styles.coverImg} resizeMode="cover" />
         ) : (
-          <Text style={styles.coverText}>{(item.title || '?').trim().charAt(0).toUpperCase()}</Text>
+          <Text style={[styles.coverText, { color: theme.primaryText }]}>{(item.title || '?').trim().charAt(0).toUpperCase()}</Text>
         )}
       </View>
       <View style={{ flex: 1, flexShrink: 1, marginLeft: Math.round(12 * a.scale), minWidth: 0 }}>
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   bookRow: { flexDirection: 'row', alignItems: 'center', padding: 12, marginBottom: 8, borderRadius: 12 },
   cover: { width: 40, height: 56, borderRadius: 6, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   coverImg: { width: 40, height: 56, borderRadius: 6 },
-  coverText: { color: '#fff', fontSize: 22, fontWeight: '700' },
+  coverText: { fontSize: 22, fontWeight: '700' },
   bookTitle: { fontSize: 16, fontWeight: '600' },
   bookMeta: { fontSize: 13, marginTop: 2 },
   rowActions: { marginLeft: 8 },

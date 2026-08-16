@@ -72,7 +72,7 @@ export default function TrainingScreen() {
     counterBadges: { flexDirection: 'row', gap: 6 },
     counter: { fontSize: a.small_fs },
     counterBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
-    counterBadgeText: { color: '#fff', fontFamily: 'bold', fontSize: a.small_fs },
+    counterBadgeText: { color: theme.primaryText, fontFamily: 'bold', fontSize: a.small_fs },
     restart: { fontSize: a.small_fs, fontFamily: 'bold' },
     // Стартовый экран: контент сверху, без «провала» пустоты в центре.
     startScroll: {
@@ -94,7 +94,7 @@ export default function TrainingScreen() {
     sourceCard: { ...metal(theme, 'raised', { radius: a.radius + 4 }), padding: a.tiny ? 10 : a.isTablet ? 18 : 14, gap: a.tiny ? 6 : 10 },
     // На планшете/десктопе две CTA в ряд — заполняют ширину, нет пустоты сбоку.
     actions: { gap: a.tiny ? 8 : 10, flexDirection: 'row' },
-    btnSub: { fontSize: a.tiny ? a.fs(11) : a.fs(12), color: '#ffffffcc', marginTop: 2, textAlign: 'center' },
+    btnSub: { fontSize: a.tiny ? a.fs(11) : a.fs(12), color: theme.primaryText, marginTop: 2, textAlign: 'center' },
     finishStats: { fontSize: a.small_fs, marginTop: 2 },
     sourceLabel: { fontSize: a.small_fs, fontFamily: 'bold' },
     sourceTabs: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
@@ -121,7 +121,7 @@ export default function TrainingScreen() {
     finishTitle: { fontSize: a.title, fontFamily: 'bold' },
     finishSub: { fontSize: a.body, marginTop: 4, marginBottom: 6 },
     btn: { flex: 1, borderRadius: a.radius + 2, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.tiny ? 10 : 16, alignItems: 'center', minHeight: a.tiny ? 56 : 64 },
-    btnText: { color: '#fff', fontFamily: 'bold', fontSize: a.body },
+    btnText: { color: theme.primaryText, fontFamily: 'bold', fontSize: a.body },
     typeCard: { ...metal(theme, 'raised', { radius: a.radius }), padding: a.pad, marginTop: 8 },
     wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' },
     typeWord: { fontSize: a.fs(28), fontFamily: 'bold', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },

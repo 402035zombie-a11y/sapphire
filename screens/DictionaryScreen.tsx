@@ -553,7 +553,7 @@ export default function DictionaryScreen() {
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: theme.primary }]} onPress={confirmDeleteAction}>
-                <Text style={[styles.sortTabText, { color: '#fff' }]}>{t('Delete')}</Text>
+                <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Delete')}</Text>
               </TouchableOpacity>
             </View>
         </View>
@@ -570,7 +570,7 @@ export default function DictionaryScreen() {
           }}
           activeOpacity={0.85}
         >
-          <Icon name="plus" size={a.dim(0.05, 22, 28)} color="#fff" />
+          <Icon name="plus" size={a.dim(0.05, 22, 28)} color={theme.primaryText} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.fab, { backgroundColor: theme.surface }]}
@@ -625,7 +625,7 @@ export default function DictionaryScreen() {
                   setAddOpen(false);
                 }}
               >
-                <Text style={[styles.sortTabText, { color: '#fff' }]}>{t('Add')}</Text>
+                <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Add')}</Text>
               </TouchableOpacity>
             </View>
         </View>
@@ -696,7 +696,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     toolbar: { flexDirection: 'row', gap: 8, marginBottom: a.gap },
     search: { flex: 1, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },
     exportBtn: { borderRadius: a.radius, paddingHorizontal: a.pad, justifyContent: 'center' },
-    exportText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.small_fs },
+    exportText: { color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.small_fs },
     list: { paddingTop: a.headerH + a.insetTop + a.pad + 20, paddingBottom: a.tabBarH + a.pad + a.dim(0.06, 46, 56) + a.gap, gap: a.gap, justifyContent: 'flex-start' },
     empty: { textAlign: 'center', fontSize: a.body },
     row: {

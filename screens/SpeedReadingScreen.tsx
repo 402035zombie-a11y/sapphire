@@ -376,7 +376,7 @@ export default function SpeedReadingScreen() {
             if (!playing && pos >= words.length - 1) setPos(0);
             setPlaying((p) => !p);
           }}>
-            <Icon name={playing ? 'pause' : 'play'} size={a.dim(0.042, 22, 34)} color="#fff" />
+            <Icon name={playing ? 'pause' : 'play'} size={a.dim(0.042, 22, 34)} color={theme.primaryText} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.ctrlBtn, metal(theme, 'circle', { size: ctrlSize })]} onPress={goNextSentence}>
             <Icon name="chevron-forward" size={a.dim(0.032, 18, 26)} color={theme.primaryText} />

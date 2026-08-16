@@ -93,7 +93,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [progress, setProgress] = useState(0);
-  const styles = useMemo(() => makeStyles(a), [a]);
+  const styles = useMemo(() => makeStyles(a, theme), [a, theme]);
   // FAB «+» крупнее стандартных круглых кнопок хедера, чтобы тапалось уверенно.
   const fabSize = Math.round(a.fab() * 1.15);
   const [pickerVisible, setPickerVisible] = useState(false);
@@ -486,7 +486,7 @@ function NativeAdBanner() {
   return <Banner />;
 }
 
-function makeStyles(a: ReturnType<typeof useAdaptive>) {
+function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof useTheme>) {
   const cover = { w: a.dim(0.065, 34, 54), h: a.dim(0.087, 46, 72) };
   return StyleSheet.create({
     container: { flex: 1, paddingTop: 0, paddingBottom: 0, width: '100%', maxWidth: a.gridMaxW, alignSelf: 'center' },
@@ -515,7 +515,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
     importText: { fontSize: a.small_fs, fontFamily: FONTS.bold, textAlign: 'center' },
     actionBtn: { flex: 1, height: Math.round(Math.max(44, 48 * a.scale)), paddingVertical: 10, paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
     actionText: { fontSize: a.body },
-    saveText: { color: '#fff', fontFamily: FONTS.bold, fontSize: a.body },
+    saveText: { color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.body },
     empty: { textAlign: 'center', marginTop: 40, fontSize: a.body },
     bookRow: {
       flexDirection: 'row',
@@ -526,7 +526,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>) {
       minWidth: 0,
     },
     cover: { width: cover.w, height: cover.h, borderRadius: 6, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-    coverText: { color: '#fff', fontSize: a.fs(24), fontFamily: FONTS.bold },
+    coverText: { color: theme.primaryText, fontSize: a.fs(24), fontFamily: FONTS.bold },
     bookTitle: { fontSize: a.body, fontFamily: FONTS.bold },
     bookMeta: { marginTop: 4, fontSize: a.small_fs },
     delete: { fontSize: a.h2, paddingHorizontal: 8 },
