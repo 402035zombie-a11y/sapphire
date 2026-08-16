@@ -323,11 +323,6 @@ export function neuMetalCircleInset(t: ThemePalette, size: number): any {
 export function metalText(t: ThemePalette, color?: string): any {
   return {
     color: color ?? t.primaryText,
-    textShadowColor: 'rgba(0,0,0,0.55)',
-    textShadowOffset: { width: 0, height: -1 },
-    textShadowRadius: 0.5,
-    // светлая подсветка снизу через второй слой невозможна в RN Text (один textShadow),
-    // поэтому полагаемся на specular-фон элемента.
   };
 }
 
