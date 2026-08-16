@@ -531,7 +531,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         <View style={styles.titleGroup}>
           <Marquee text={book.title} textStyle={[styles.title, { color: theme.primaryText }]} />
         </View>
-        {(mode === 'dual' || mode === 'speed') && (
+        {false && (
           <View style={styles.centerPlay}>
             {isSpeaking ? (
               <React.Fragment>

@@ -114,6 +114,7 @@ function SentenceRow({
     textAlign: textAlignValue as any,
     ...(hyphenation ? { hyphenationFactor: 1, wordBreak: 'break-word' } as any : null),
   };
+  const base = [baseText, { color: theme.primaryText }];
   const q = (query ?? '').trim().toLowerCase();
   // токенизируем только когда меняется исходник (иначе пересоздание массива на каждый рендер)
   const tokens = useMemo(() => tokenize(original), [original]);
@@ -150,13 +151,13 @@ function SentenceRow({
         <View style={styles.controls}>
           {/* ▶ озвучка */}
           {showSpeak && (
-            <TouchableOpacity style={[metal(theme, 'circle', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onSpeak(original)} hitSlop={8}>
+            <TouchableOpacity style={[metal(theme, 'circleInset', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onSpeak(original)} hitSlop={8}>
               <Text style={[styles.playIcon, { color: theme.primary }]}>▶</Text>
             </TouchableOpacity>
           )}
           {/* Перевести — по нажатию переводим этот абзац сразу */}
           {onTranslate && !translation && showTranslate && (
-            <TouchableOpacity style={[metal(theme, 'circle', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onTranslate(index)} hitSlop={8}>
+            <TouchableOpacity style={[metal(theme, 'circleInset', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onTranslate(index)} hitSlop={8}>
               <Text style={[styles.translateIcon, { color: theme.primary }]}>⇄</Text>
             </TouchableOpacity>
           )}
@@ -166,17 +167,17 @@ function SentenceRow({
       <View style={styles.body}>
         {isPlain ? (
           // Звичайний режим читання: рендеримо оригінал ОДНИМ Text (без токенізації → пробіли коректні)
-          <Text style={[styles.paragraph, baseText, { fontSize: fs, lineHeight: lh }]}>
+          <Text style={[styles.paragraph, base, { fontSize: fs, lineHeight: lh }]}>
             {original}
           </Text>
         ) : q.length > 0 ? (
           // Режим з перекладом + активний пошук: підсвічуємо збіги, але рендеримо ОДНИМ Text (без токенізації)
-          <Text style={[styles.paragraph, baseText, { fontSize: fs, lineHeight: lh }]}>
+          <Text style={[styles.paragraph, base, { fontSize: fs, lineHeight: lh }]}>
             {highlightMatches(original, q, theme)}
           </Text>
         ) : (
           // Режим з перекладом (без пошуку): оригінал ОДНИМ Text (пробіли коректні, клікабельність слів вимкнена)
-          <Text style={[styles.paragraph, baseText, { fontSize: fs, lineHeight: lh }]}>
+          <Text style={[styles.paragraph, base, { fontSize: fs, lineHeight: lh }]}>
             {original}
           </Text>
         )}

@@ -64,7 +64,7 @@ export default function TrainingScreen() {
 
   const styles = useMemo(() => StyleSheet.create({
     container: { flex: 1, padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center', paddingTop: a.pad },
-    topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, marginTop: 10, flexWrap: 'nowrap' },
+    topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, marginTop: a.insetTop + 10, flexWrap: 'nowrap' },
     counterBadges: { flexDirection: 'row', gap: 6 },
     counter: { fontSize: a.small_fs },
     counterBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
@@ -74,7 +74,7 @@ export default function TrainingScreen() {
     startScroll: {
       flexGrow: 1,
       padding: a.pad,
-      paddingTop: a.insetTop + a.tabBarH + 24 + Math.round(a.fab()) + a.gap,
+      paddingTop: a.insetTop * 2 + a.tabBarH + 24 + Math.round(a.fab()) + a.gap,
       gap: a.gap,
       width: '100%',
       maxWidth: a.isTablet ? 720 : 560,
@@ -427,7 +427,6 @@ export default function TrainingScreen() {
       >
       <View style={styles.topRow}>
         <IconButton icon="arrow-back" onPress={() => { setStarted(false); setFinished(false); setIndex(0); }} variant="circle" size={a.fab()} hitSlop={8} />
-        <Text style={[styles.counter, { color: theme.secondaryText }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>
         <View style={styles.counterBadges}>
           <View style={[styles.counterBadge, { backgroundColor: '#16A34A' }]}>
             <Text style={styles.counterBadgeText}>✓ {stats.correct}</Text>
@@ -437,7 +436,7 @@ export default function TrainingScreen() {
           </View>
         </View>
       </View>
-      <View style={{ position: 'absolute', top: a.insetTop + a.pad + 10, right: a.pad, zIndex: 50 }}>
+      <View style={{ position: 'absolute', top: a.insetTop * 2 + a.pad + 10, right: a.pad, zIndex: 50 }}>
         <SupportButton />
       </View>
 
@@ -446,6 +445,7 @@ export default function TrainingScreen() {
         <View style={styles.dots}>{dots}</View>
         <Text style={[styles.streakNum, { color: theme.primary }]}>{wordStreak}/{TARGET_STREAK}</Text>
       </View>
+      <Text style={[styles.counter, { color: theme.secondaryText, marginTop: 6 }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>
 
       {mode === 'quiz' && quiz && (
         <QuizCard item={quiz} onAnswer={onAnswer} onNext={onNext} progress={currentProgress} resetKey={`${current.word}`} />
