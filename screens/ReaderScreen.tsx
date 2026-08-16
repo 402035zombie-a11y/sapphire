@@ -33,6 +33,7 @@ import { useLibraryStore } from '../store/libraryStore';
 import { BookParagraph } from '../store/libraryStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useSupportStore } from '../store/supportStore';
+import { splitIntoSegments } from '../utils/sentenceSplitter';
 import { translateCached } from '../services/translationService';
 import { showSupportAd } from '../services/monetization';
 import SupportAuthorModal from '../components/SupportAuthorModal';
@@ -109,6 +110,20 @@ export default function ReaderScreen({ route }: { route: any }) {
     }
     return out;
   }, [book]);
+
+  // Розбиваємо кожен параграф на речення (враховуючи переноси рядків — Gutenberg-формат).
+  // Кожен блок FlatList = одне речення (для коректного TTS/перекладу/закладок по параграфу).
+  // index = унікальний id речення (paragraphIndex*1000 + sentenceIndex), paragraphIndex = для закладок.
+  const sentences = React.useMemo(() => {
+    const out: { original: string; translation?: string; paragraphIndex: number; sentenceIndex: number; index: number }[] = [];
+    for (const p of chapters) {
+      const segs = splitIntoSegments(p.original);
+      segs.forEach((s, si) => {
+        out.push({ original: s, translation: p.translation, paragraphIndex: p.index, sentenceIndex: si, index: p.index * 1000 + si });
+      });
+    }
+    return out;
+  }, [chapters]);
 
   const { width, height } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
@@ -458,8 +473,8 @@ export default function ReaderScreen({ route }: { route: any }) {
     <FlatList
       ref={scrollRef}
       style={{ flex: 1 }}
-      data={chapters}
-      keyExtractor={(p) => String(p.index)}
+      data={sentences}
+      keyExtractor={(p) => `${p.paragraphIndex}-${p.sentenceIndex}`}
       numColumns={1}
       contentContainerStyle={[styles.list, { backgroundColor: theme.readerBg, paddingHorizontal: reader.pageMargins ? reader.margin : 0 }]}
       onScrollBeginDrag={onScrollBeginDrag}
@@ -476,6 +491,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       renderItem={({ item }) => (
         <SentenceRow
           index={item.index}
+          paragraphIndex={item.paragraphIndex}
           original={item.original}
           translation={item.translation}
           loading={loadingSet.has(item.index)}
@@ -487,7 +503,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           fontWeight={reader.fontWeight}
           textAlign={reader.textAlign}
           pageMargins={reader.pageMargins}
-          bookmarked={book.bookmarks?.includes(item.index) ?? false}
+          bookmarked={book.bookmarks?.includes(item.paragraphIndex) ?? false}
           onSpeak={speak}
           onTranslate={translateCb}
           showSpeak={reader.showSpeakButton ?? true}

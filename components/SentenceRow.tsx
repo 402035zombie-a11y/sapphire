@@ -13,6 +13,7 @@ import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 
 interface Props {
   index: number;
+  paragraphIndex?: number;
   original: string;
   translation?: string;
   loading?: boolean;
@@ -77,6 +78,7 @@ function highlightMatches(text: string, query: string, theme: any): React.ReactN
 
 function SentenceRow({
   index,
+  paragraphIndex,
   original,
   translation,
   showTranslation,
@@ -146,7 +148,7 @@ function SentenceRow({
   const isPlain = mode === 'read';
 
   return (
-    <View style={[styles.row, isPlain && styles.rowPlain, pageMargins ? { paddingHorizontal: Math.round(12 * a.scale) } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
+    <View style={[styles.row, isPlain && styles.rowPlain, pageMargins ? { paddingHorizontal: Math.round(12 * a.scale) } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
       {!isPlain && (showSpeak || (onTranslate && !translation && showTranslate)) && (
         <View style={styles.controls}>
           {/* ▶ озвучка */}
