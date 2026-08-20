@@ -12,6 +12,7 @@
  * LINGVA_BASE_URL має вказувати на /api/v1 (інстанс віддає GET /api/v1/{from}/{to}/{q}).
  */
 import { lookupWord, isDictLoaded } from './dictionaryLookup';
+import { translateCached as gtxTranslateCached } from './translationService';
 
 export type LangCode = string;
 
@@ -29,6 +30,18 @@ export async function translate(
   to: LangCode
 ): Promise<TranslateResult> {
   if (!text.trim()) return { text: '', source: 'none' };
+
+  // 0) Якщо Lingva-інстанс не налаштовано (LINGVA_BASE_URL порожній) — фолбек на
+  //    безключовий Google GTX (v1), щоб переклад/prefetch працював без зовнішнього сервера.
+  //    (Без цього translationServiceV2 повертав '' → prefetchAhead у ReaderScreen не працював.)
+  if (!LINGVA_BASE) {
+    try {
+      const r = await gtxTranslateCached(text, from, to);
+      if (r.text) return { text: r.text, detectedSourceLang: r.detectedSourceLang, source: 'lingva' };
+    } catch {
+      // fall through to offline dict
+    }
+  }
 
   // 1) Спроба Lingva (мережа)
   if (LINGVA_BASE) {

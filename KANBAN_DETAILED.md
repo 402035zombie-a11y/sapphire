@@ -122,8 +122,9 @@
 - [x] FORMATS_ROUND: DOCX/ODT/RTF/HTML парсери + LibraryScreen format switch — Є в коді. DONE.
 - [~] ROUND5 PERF-1/2: DictionaryScreen вже FlatList + importEntries (batch). DONE.
 - [~] ROUND5 PERF-4: SentenceRow `export default memo(SentenceRow)`. DONE.
-- [ ] ROUND5 PERF-3: StyleSheet.create У ТІЛІ компонента лишається (Reader:669, Library:490, Dictionary:666).
-      Кожен ререндер реалокує стилі. СЕРЕД — винести в useMemo/hoist.
+- [x] ROUND5 PERF-3: СПРОСТОВАНО (хибнопозитивний) — StyleSheet.create викликається всередині makeStyles(),
+      який обгорнутий у useMemo(() => makeStyles(a, theme), [a, theme]) у ВСІХ екранах. Стилі НЕ реалокуються
+      кожен рендер. Закрито.
 - [ ] ROUND5 PERF-5: ReaderScreen відкриття великої книги → freeze. sentenceTranslations у AsyncStorage+JSON (libraryStore).
       ТЕХБОРГ: треба перенести в SQLite як chapters (ARCH_ANALYSIS FILE 1/2). НЕ блокує поточний білд.
 - [ ] T678/T11b (з BUGS_FROM_USER): SupportAuthorModal — канбани суперечать (один DONE, інший НЕ ЗРОБЛЕНО).
@@ -142,3 +143,13 @@
 - [ ] 15.2 Користувач ставить на телефон, перевіряє library/reader/словник/тренінг.
 - [ ] 15.3 Якщо OK → `eas build --profile production` з AdMob ENV (ca-app-pub-* з .env / brbrbr.txt).
 - [ ] 15.4 `eas submit --platform android` → Play Console (закритий тест ≥14д + ≥20 тестувальників перед продом).
+
+## 16 — САМОСТІЙНІ ФІКСИ ОСНОВНОГО АГЕНТА (2026-08-20, без втручання юзера)
+- [x] 16.1 PERF-4 (ReaderScreen): `chapters`-memo залежність `[book]` → `[bookId]`. Раніше кожен
+      переклад міняв `book` (нова reference) → memo перераховувався і читав БД заново на кожен тап/скрол.
+      Тепер читає БД лише при зміні книги. +tsc EXIT 0.
+- [x] 16.2 Пункт 7 (translationServiceV2): додано фолбек на v1 Google GTX коли LINGVA_BASE_URL порожній.
+      Раніше без Lingva-інстансу v2 повертав '' → prefetchAhead у ReaderScreen не працював. Тепер переклад
+      працює без зовнішнього сервера. Без циклу імпортів (v1 не імпортує v2). +tsc EXIT 0.
+- [x] 16.3 PERF-3 СПРОСТОВАНО: StyleSheet.create у makeStyles()+useMemo — коректний патерн, не реалокує щорендеру.
+- [x] 16.4 Закомічено `fix(perf): chapters memo keyed by bookId + v2 translate fallback to GTX`.

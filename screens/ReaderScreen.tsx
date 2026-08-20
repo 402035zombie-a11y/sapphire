@@ -85,10 +85,12 @@ export default function ReaderScreen({ route }: { route: any }) {
    * Конвертує contentHtml глави → BookParagraph[] (strip tags + split). Fallback на chapters якщо БД порожня.
    * Працює і веб, і моб (expo-sqlite універсальний).
    */
+  // Залежність [bookId], а не [book]: book змінюється при кожному updateSentenceTranslations
+  // (нова reference) → memo перераховувався і читав БД заново на кожен переклад (PERF-4).
   const chapters = React.useMemo<BookParagraph[]>(() => {
-    if (!book) return [];
-    const dbChapters = getBookChapters(book.id);
-    if (dbChapters.length === 0) return book.paragraphs;
+    if (!bookId) return [];
+    const dbChapters = getBookChapters(bookId);
+    if (dbChapters.length === 0) return useLibraryStore.getState().books.find((b) => b.id === bookId)?.paragraphs ?? [];
     const out: BookParagraph[] = [];
     for (const ch of dbChapters) {
       // ВЕСЬ текст глави → чистий → splitIntoSegments (ріже на речення, не на <p>).
@@ -111,7 +113,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       }
     }
     return out;
-  }, [book]);
+  }, [bookId]);
 
   // Структура речень (БЕЗ перекладу). Переклад дістаємо в renderItem з book.sentenceTranslations
   // за ключем item.index. НЕ залежимо від sentenceTranslations → не перераховуємо весь масив
