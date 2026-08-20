@@ -85,7 +85,7 @@ export async function parseBook(filePath: string): Promise<ParsedBook> {
   if (native) return native;
   const parser = byFormat[fmt];
   if (!parser) {
-    throw new Error(`Unsupported format: .${fmt} (allowed: EPUB/FB2/PDF/TXT — MOBI excluded)`);
+    throw new Error(`Unsupported format: .${fmt} (allowed: EPUB/FB2/TXT/DOCX/ODT/RTF/HTML — PDF/MOBI excluded)`);
   }
   const raw = (await parser(filePath)) as Record<string, unknown>;
   // Tolerant mapping: parsers may return varying shapes.

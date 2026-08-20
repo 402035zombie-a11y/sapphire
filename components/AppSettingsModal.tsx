@@ -35,7 +35,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
 
   const exportData = () => {
     const payload = {
-      app: 'BookReader',
+      app: 'Sapphire',
       exportedAt: new Date().toISOString(),
       library: books.map((b) => ({
         id: b.id, title: b.title, author: b.author,

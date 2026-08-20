@@ -92,3 +92,53 @@
 - [x] 11.3 `eas build --profile preview --platform android` (WSL cloud, Kotlin 2.3.0 прибрано → 15.4.0 AdMob OK).
 - [ ] 11.4 Дати користувачу лінк на APK.
 - [x] 11.5 RED не актуальний → білд дозволено.
+
+---
+
+# ЕТАП 12+ — АУДИТ ПІСЛЯ ПЕРЕДАЧІ АГЕНТІВ (2026-08-20, новий основний агент)
+Реальний статус зведено ФАКТ-ЧЕКОМ по коду (не за PENDING-прапорцями старих файлів).
+
+## 12 — Розбір dirty-tree останнього агента (fix/ui-bugs) [COMMIT DONE]
+Останній агент змінив файли, але НЕ закомітив. Зміни безпечні + потрібні:
+- [x] 12.1 `appStore.ts`: MMKV → AsyncStorage (dev-client стара arch не тягне mmkv 3.x; уникає "native MMKV Module could not be found"). БЕЗПЕЧНО: bookImport використовує `useAppStore.getState()`, не MMKV напряму.
+- [x] 12.2 `monetization.native.ts` + `AdBanner.native.tsx`: lazy `require('react-native-google-mobile-ads')` → dev-client без нативного модуля НЕ падає на старті (metro mock діє тільки для локального Metro).
+- [x] 12.3 `app.config.js` APP_NAME 'BookReader'→'Sapphire'; `AppSettingsModal` export app:'Sapphire'. Бренд консистентний.
+- [x] 12.4 `LibraryScreen.tsx`: прибрано `application/pdf` з типів імпорту (PDF на нативі не парситься — окремий зовнішній вьюер).
+- [x] 12.5 `bookParser.ts`: оновлено текст помилки (DOCX/ODT/RTF/HTML підтримуються).
+- [x] 12.6 `metro.config.js`: ВИПРАВЛЕНО РЕГРЕС — повернуто `alias['react-native-web']=false` (останній агент випадково вилучив його, замінивши на ads-mock). Тепер ОБИДВА аліаси присутні. РИЗИК 'View config getter for component pre' знято.
+- [x] 12.7 `bookImport.ts`: застарілий коментар "MMKV" → "appStore".
+- [x] 12.8 `npx tsc --noEmit` → EXIT 0 (перевірено після правок).
+- [x] 12.9 Закомічено як `chore: finalize fix/ui-bugs — AsyncStorage, lazy AdMob, Sapphire branding, metro react-native-web alias restore`.
+
+## 13 — СТАРІ РАУНДИ: факт-чек (що РЕАЛЬНО лишилось) 
+Старі PENDING-прапорці в BUGS_ROUND2/3, ROUND5, FORMATS_ROUND здебільшого ЗАСТАРІЛІ —
+пізніші коміти доробили їх. Актуальний залишок:
+- [x] ROUND2 TRAIN-2: react-native-tts → expo-speech@12 (є в package.json). DONE.
+- [x] ROUND2 BLUR-NATIVE: expo-blur BlurView у ModalSheet (є import). DONE.
+- [x] ROUND2 DICT-3: словник перше слово під хедером — виправлено insetTop (етап T3). DONE.
+- [x] ROUND2 TXT-PERF: великий TXT гальмує — LibraryScreen імпортує через FlatList/ScrollView,
+      але buildParagraphs мапить sentences синхронно (line 60). НЕ критично, чекає PERF-5.
+- [x] ROUND3 EPUB-2: порожній text — epubParser тепер стійкий (regex маніфесту + candidates шляхів, cover fallback). DONE.
+- [x] FORMATS_ROUND: DOCX/ODT/RTF/HTML парсери + LibraryScreen format switch — Є в коді. DONE.
+- [~] ROUND5 PERF-1/2: DictionaryScreen вже FlatList + importEntries (batch). DONE.
+- [~] ROUND5 PERF-4: SentenceRow `export default memo(SentenceRow)`. DONE.
+- [ ] ROUND5 PERF-3: StyleSheet.create У ТІЛІ компонента лишається (Reader:669, Library:490, Dictionary:666).
+      Кожен ререндер реалокує стилі. СЕРЕД — винести в useMemo/hoist.
+- [ ] ROUND5 PERF-5: ReaderScreen відкриття великої книги → freeze. sentenceTranslations у AsyncStorage+JSON (libraryStore).
+      ТЕХБОРГ: треба перенести в SQLite як chapters (ARCH_ANALYSIS FILE 1/2). НЕ блокує поточний білд.
+- [ ] T678/T11b (з BUGS_FROM_USER): SupportAuthorModal — канбани суперечать (один DONE, інший НЕ ЗРОБЛЕНО).
+      ФАКТ: SupportAuthorModal використовує ModalSheet (центрується, zIndex:1000 кореня) → T11b (центр) DONE.
+      T678 (z-index під SettingsModal) — різні екрани, не перетинаються → не актуально. ЗАКРИТО.
+
+## 14 — КРИТИЧНІ РИЗИКИ ПЕРЕД БІЛДОМ (пріоритет)
+- [ ] 14.1 EAS-акаунт: memory/DEV-GUIDE = mike2424; handoff-файл пише mike4224 (помилка).
+      ПЕРЕД БІЛДОМ підтвердити у користувача або по token у brbrbr.txt. Token = [REDACTED] (не в репо).
+- [ ] 14.2 ОДИН білд у кінці етапу (заборона користувача 2026-08-14). Не білдити після кожного фіксу.
+- [ ] 14.3 package.json досі містить `react-native-mmkv ^2.12.2` — більше не використовується (appStore на AsyncStorage).
+      Залишити чи прибрати? Видалення = пересинхрон lockfile. НЕ блокує білд (dead dep). РІШЕННЯ користувача не треба — прибрати в прибиральному коміті.
+
+## 15 — НАСТУПНІ КРОКИ (після підтвердження 14.1)
+- [ ] 15.1 `eas build --profile preview --platform android` (WSL, ANDROID_HOME=/opt/android-sdk) → лінк APK.
+- [ ] 15.2 Користувач ставить на телефон, перевіряє library/reader/словник/тренінг.
+- [ ] 15.3 Якщо OK → `eas build --profile production` з AdMob ENV (ca-app-pub-* з .env / brbrbr.txt).
+- [ ] 15.4 `eas submit --platform android` → Play Console (закритий тест ≥14д + ≥20 тестувальників перед продом).

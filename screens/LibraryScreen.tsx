@@ -141,7 +141,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         type: [
           'application/epub+zip',
           'application/x-fictionbook',
-          'application/pdf',
           'text/plain',
         ],
         copyToCacheDirectory: true,

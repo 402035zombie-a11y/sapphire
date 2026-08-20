@@ -2,7 +2,7 @@
 // Все секреты/ключи берутся из ENV, НЕ хардкодятся в репо.
 
 const PACKAGE = process.env.EXPO_PUBLIC_ANDROID_PACKAGE || 'com.mike.wolfskin';
-const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME || 'BookReader';
+const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME || 'Sapphire';
 
 // AdMob IDs — з ENV, або hardcoded fallback (згода юзера є у api-keys.txt).
 const ADMOB_APP_ID = process.env.EXPO_PUBLIC_ADMOB_APP_ID || 'ca-app-pub-5113967448800652~8371247908';

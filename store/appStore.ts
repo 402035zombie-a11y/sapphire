@@ -6,10 +6,8 @@
  * НЕ видаляє існуючі store/*.ts — це новий центральний стор; міграція екранів поетапна (E4+).
  */
 import { create } from 'zustand';
-import { MMKV } from 'react-native-mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persist, createJSONStorage } from 'zustand/middleware';
-
-export const mmkv = new MMKV({ id: 'bookreader' });
 
 export type ReaderTheme = 'light' | 'dark' | 'sepia';
 export type SourceLang = string;
@@ -52,11 +50,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'app-store',
-      storage: createJSONStorage(() => ({
-        getItem: (k) => (mmkv.getString(k) ?? null),
-        setItem: (k, v) => mmkv.set(k, v),
-        removeItem: (k) => mmkv.delete(k),
-      })),
+      storage: createJSONStorage(() => AsyncStorage),
     }
   )
 );

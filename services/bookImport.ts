@@ -123,7 +123,7 @@ export function getBookChapters(bookId: string): ParsedChapter[] {
   }));
 }
 
-/** Зберегти прогрес читання (mirror у MMKV appStore для миттєвого відновлення). */
+/** Зберегти прогрес читання (mirror у appStore для миттєвого відновлення). */
 export function saveReadingProgress(bookId: string, chapterIdx: number, position: number): void {
   const db = getBooksDb();
   db.runSync(
