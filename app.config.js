@@ -1,11 +1,11 @@
 // app.config.js — единая точка правды конфигурации сборки.
-// AdMob app id вписується в AndroidManifest через expo-build-properties (plugin
-// react-native-google-mobile-ads НЕСОВМЕСТИМ с expo 54 / eas-cli 22 в режиме config --json).
+// AdMob app id ХАРДКОД в manifest (expo-build-properties), бо plugin
+// react-native-google-mobile-ads ламает expo config в expo 54 / eas-cli 22.
 const PACKAGE = process.env.EXPO_PUBLIC_ANDROID_PACKAGE || "com.mike.wolfskin";
 const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME || "Sapphire";
-const ADMOB_APP_ID = process.env.EXPO_PUBLIC_ADMOB_APP_ID || "ca-app-pub-5113967448800652~8371247908";
-const ADMOB_BANNER_ID = process.env.EXPO_PUBLIC_ADMOB_BANNER_ID || "ca-app-pub-5113967448800652/4712038644";
-const ADMOB_REWARDED_ID = process.env.EXPO_PUBLIC_ADMOB_REWARDED_ID || "ca-app-pub-5113967448800652/1663349260";
+const ADMOB_APP_ID = "ca-app-pub-5113967448800652~8371247908";
+const ADMOB_BANNER_ID = "ca-app-pub-5113967448800652/4712038644";
+const ADMOB_REWARDED_ID = "ca-app-pub-5113967448800652/1663349260";
 
 module.exports = {
   name: APP_NAME,
