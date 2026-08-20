@@ -55,3 +55,39 @@
 - Не видаляй `react-native-mmkv` з package.json (dead-dep, але рве lockfile).
 - Не міняй package `com.mike.wolfskin` (після першої публікації незмінюваний).
 - Не додавай PDF/MOBI парсинг (важкі нативні залежності; PDF — зовнішній вьюер).
+
+## ⚠️ КРИТИЧНИЙ УРОК (2026-08-20, втрачено 3+ білди через це)
+**AdMob + app.config.js — НЕ чіпай без локальної перевірки.**
+- `react-native-google-mobile-ads` plugin НЕСУМІСНИЙ з expo 54 / eas-cli 22 у режимі `expo config --json`
+  (падає мовчки, exit 1 → EAS білд не стартує). ТОМУ plugin прибрано, але тоді у `AndroidManifest.xml`
+  зникає `com.google.android.gms.ads.APPLICATION_ID` → апка крашить на старті:
+  `MobileAdsInitProvider: Invalid application ID`.
+- **РОБОЧЕ РІШЕННЯ** (коміт `37c25a2`): вписати `android:value` напряму в `expo-build-properties` manifest
+  meta-data, і ОБОВ'ЯЗКОВО **хардкодом** (не `process.env` — `expo-build-properties` його не резолвить → value порожній → краш).
+- `expo-build-properties` meta-data формат:
+  ```js
+  ["expo-build-properties", { android: { manifest: { application: { "meta-data": [
+    { "$": { "android:name": "com.google.android.gms.ads.APPLICATION_ID", "android:value": "ca-app-pub-5113967448800652~8371247908" } }
+  ] } } } }]
+  ```
+
+**ПЕРЕД КОЖНИМ БІЛДОМ — локальна перевірка (не витрачай спроби EAS!):**
+1. `./node_modules/.bin/expo config --json > cfg.json 2>cfg.err` → має бути EXIT 0 і непорожній JSON.
+2. Перевірити, що AdMob ID у Manifest НЕ порожній:
+   ```bash
+   # зібрати APK локально НЕ треба — дістати manifest з готового білду:
+   aapt2 dump xmltree APK.apk --file AndroidManifest.xml | grep -A1 "APPLICATION_ID"
+   # має бути android:value="ca-app-pub-5113967448800652~8371247908" (НЕ "")
+   ```
+3. `npx tsc --noEmit` → EXIT 0.
+
+**ЛІМІТ EAS:** безкоштовні білди ОБМЕЖЕНІ на місяць. Не запускай білд, якщо не впевнений на 100% (не перевірив конфіг локально).
+Один білд = 15+ хв + спроба. Витративши всі спроби — дебаг неможливий до наступного місяця.
+
+**СТАРІ РОБОЧІ БІЛДИ (не перебілдовуй, якщо є):** історія `eas build:list` показує готові APK.
+Білд `770c491b` / `bd17a749` (коміт `8db2281`, до зламу app.config.js) — робочий dev-client, АЛЕ старий код.
+Білд `49c5d7a1` (коміт `37c25a2`, хардкод AdMob) — має бути без крашу + нові фікси.
+
+**Metro для дебагу через USB:** запускати НА WINDOWS (`npx expo start --host localhost`), бо WSL2 не біндить localhost.
+Телефон підключений до Windows adb (не WSL). `adb reverse tcp:8081 tcp:8081` → у dev-client вписати `http://localhost:8081`.
+Ноут НЕ в тій же WiFi що телефон (ноут 172.31.x віртуалка, телефон 192.168.1.x) → тільки через USB reverse.
