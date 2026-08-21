@@ -236,6 +236,8 @@ export default function TrainingScreen() {
   // ---- True/False режим: слово + показаний переклад (можливо чужий) → ✓/✗ ----
   const [tfPair, setTfPair] = useState<{ shownTranslation: string; isTrue: boolean } | null>(null);
   const [tfAnswered, setTfAnswered] = useState<null | boolean>(null);
+  // час показу слова — для авто-градації FSRS у type-режимі (швидко=Easy, повільно=Hard)
+  const typeShownAt = useRef(Date.now());
   // pool меняется при каждом ответе (progress), но перемешивать варианты
   // повторно НЕЛЬЗЯ — иначе правильный ответ «прыгает» после клика.
   // Читаем pool через ref, чтобы эффект не переподписывался на progress.
@@ -260,18 +262,20 @@ export default function TrainingScreen() {
   }, [queue, index, opts, sourceBook, fromLang, toLang]);
 
   const onAnswer = useCallback(
-    (correct: boolean) => {
+    (correct: boolean, opts?: { grade?: 2 | 3 | 4 }) => {
       const current = queue[index];
       if (!current) return;
       try {
-        recordBinary(current.word, sourceBook ? fromLang : current.lang, correct);
+        // FSRS-градація: явна (type за часом) або binary-мапінг (quiz/TF)
+        const grade = opts?.grade ?? (correct ? 3 : 1);
+        recordAnswer(current.word, sourceBook ? fromLang : current.lang, grade);
       } catch (e) {
         console.warn('recordAnswer failed', e);
       }
       setStats((s) => ({ correct: s.correct + (correct ? 1 : 0), wrong: s.wrong + (correct ? 0 : 1) }));
       // смена слова — отдельно, через onNext (вызывается QuizCard через 1с)
     },
-    [queue, index, recordBinary],
+    [queue, index, recordAnswer, sourceBook, fromLang],
   );
 
   const onNext = useCallback(() => {
@@ -314,6 +318,7 @@ export default function TrainingScreen() {
   useEffect(() => {
     setTypeChecked(false);
     setTyped('');
+    typeShownAt.current = Date.now(); // для FSRS авто-градації (швидкість відповіді)
     if (mode === 'type') {
       const id = requestAnimationFrame(() => typeInputRef.current?.focus());
       return () => cancelAnimationFrame(id);
@@ -554,7 +559,12 @@ export default function TrainingScreen() {
               const ok = normalize(typed) === normalize(current.translation);
               setTypeOk(ok);
               setTypeChecked(true);
-              onAnswer(ok);
+              const elapsed = Date.now() - typeShownAt.current;
+              let grade: 2 | 3 | 4 = 3;
+              if (!ok) grade = 2;
+              else if (elapsed < 5000) grade = 4;
+              else if (elapsed > 12000) grade = 2;
+              onAnswer(ok, { grade });
               setTimeout(() => onNext(), 700);
             }}
           />
@@ -567,7 +577,13 @@ export default function TrainingScreen() {
                 const ok = normalize(typed) === normalize(current.translation);
                 setTypeOk(ok);
                 setTypeChecked(true);
-                onAnswer(ok);
+                // FSRS авто-градація за швидкістю відповіді (набір руками = точний сигнал)
+                const elapsed = Date.now() - typeShownAt.current;
+                let grade: 2 | 3 | 4 = 3; // good
+                if (!ok) grade = 2; // hard (помилка в наборі)
+                else if (elapsed < 5000) grade = 4; // easy — миттєво і без помилок
+                else if (elapsed > 12000) grade = 2; // довго думав
+                onAnswer(ok, { grade });
                 setTimeout(() => onNext(), 700);
               }}
             >
