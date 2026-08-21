@@ -81,6 +81,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
 export function BookList({ books, bookWordCount, onOpen, onRemove }: Props) {
   const a = useAdaptive();
   const theme = useTheme();
+  const t = useT();
   return (
     <FlashList
       data={books}
