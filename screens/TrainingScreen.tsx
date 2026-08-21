@@ -55,7 +55,12 @@ export default function TrainingScreen() {
   const navigation = useNavigation<any>();
   const entries = useDictionaryStore((s) => s.entries) as DictionaryEntry[];
   const books = useLibraryStore((s) => s.books);
-  const recordAnswer = useTrainingStore((s) => s.recordAnswer) as (word: string, lang: string, correct: boolean) => void;
+  const recordAnswer = useTrainingStore((s) => s.recordAnswer);
+  // binary → FSRS grade: wrong=1(again), correct=3(good). Час відповіді type-режим додає окремо.
+  const recordBinary = useCallback(
+    (word: string, lang: string, correct: boolean) => recordAnswer(word, lang, correct ? 3 : 1),
+    [recordAnswer],
+  );
   const progress = useTrainingStore((s) => s.progress) as Record<string, any>;
 
   // уникальные книги, от которых есть слова в словаре
@@ -256,14 +261,14 @@ export default function TrainingScreen() {
       const current = queue[index];
       if (!current) return;
       try {
-        recordAnswer(current.word, sourceBook ? fromLang : current.lang, correct);
+        recordBinary(current.word, sourceBook ? fromLang : current.lang, correct);
       } catch (e) {
         console.warn('recordAnswer failed', e);
       }
       setStats((s) => ({ correct: s.correct + (correct ? 1 : 0), wrong: s.wrong + (correct ? 0 : 1) }));
       // смена слова — отдельно, через onNext (вызывается QuizCard через 1с)
     },
-    [queue, index, recordAnswer],
+    [queue, index, recordBinary],
   );
 
   const onNext = useCallback(() => {
