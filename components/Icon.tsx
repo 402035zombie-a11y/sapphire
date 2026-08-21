@@ -36,7 +36,8 @@ export type IconName =
   | 'chevron-back'
   | 'chevron-forward-2'
   | 'refresh'
-  | 'swap';
+  | 'swap'
+  | 'anki';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   'arrow-back': <Path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z" />,
@@ -119,6 +120,14 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <Path d="M7 7h12l-3-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <Path d="M17 17H5l3 3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  anki: (
+    <>
+      {/* картка з загнутим кутом + зірочка: асоціація з Anki-карткою */}
+      <Path d="M6 3h9l5 5v13H6z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <Path d="M15 3v5h5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <Path d="M12 11.5l1.2 2.4 2.6.4-1.9 1.8.45 2.6L12 17.5l-2.35 1.2.45-2.6-1.9-1.8 2.6-.4z" fill="currentColor" stroke="none" />
     </>
   ),
 };

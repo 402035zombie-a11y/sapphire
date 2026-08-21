@@ -313,6 +313,51 @@ export default function DictionaryScreen() {
     }
   };
 
+  // Експорт у Anki (.apkg): сумісний формат, юзер відкриває в Anki через "Імпорт"
+  const exportAnki = async () => {
+    if (scopedEntries.length === 0) {
+      Alert.alert(t('Empty'), t('No words to export.'));
+      return;
+    }
+    try {
+      const { buildApkgBase64 } = await import('../services/ankiExport');
+      const cards = scopedEntries
+        .filter((e) => e.word && e.translation)
+        .map((e) => ({ front: e.word, back: e.translation }));
+      if (cards.length === 0) {
+        Alert.alert(t('Empty'), t('No words to export.'));
+        return;
+      }
+      const deckName = source?.type === 'book'
+        ? `Sapphire::${headerTitle || 'Book'}`
+        : 'Sapphire::Dictionary';
+      const b64 = await buildApkgBase64(cards, deckName);
+      if (Platform.OS === 'web') {
+        const blob = new Blob([b64], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${deckName.replace(/[:/\\]/g, '-')}.apkg`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+        // @ts-ignore — legacy API
+        const FileSystem = require('expo-file-system/legacy');
+        const path = `${FileSystem.cacheDirectory}sapphire-export.apkg`;
+        await FileSystem.writeAsStringAsync(path, b64, { encoding: FileSystem.EncodingType.Base64 });
+        const can = await Sharing.isAvailableAsync();
+        if (can) {
+          await Sharing.shareAsync(path, { mimeType: 'application/apkg', dialogTitle: t('Export to Anki') });
+        } else {
+          Alert.alert(t('Export'), t('Sharing not available on this device.'));
+        }
+      }
+      Alert.alert(t('Export'), t('Exported {n} cards to Anki deck.').replace('{n}', String(cards.length)));
+    } catch (err: any) {
+      Alert.alert(t('Export error'), err?.message ?? String(err));
+    }
+  };
+
   const sortOptions: { id: SortMode; label: string }[] = [
     { id: 'az', label: t('A–Z') },
     { id: 'date', label: t('Date') },
@@ -401,6 +446,9 @@ export default function DictionaryScreen() {
             </TouchableOpacity>
             <TouchableOpacity onPress={exportAll} hitSlop={6} style={tb}>
               <Icon name="copy" size={isz} color={theme.primaryText} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={exportAnki} hitSlop={6} style={tb}>
+              <Icon name="anki" size={isz} color={theme.primaryText} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setImportOpen(true)} hitSlop={6} style={tb}>
               <Icon name="scan" size={isz} color={theme.primaryText} />
