@@ -105,7 +105,7 @@ function SentenceRow({
   const theme = useTheme();
   const a = useAdaptive();
   const fs = fontSize ?? 18;
-  const lh = Math.max(lineHeight ?? 1.4, 1.8) * fs;
+  const lh = (lineHeight ?? 1.4) * fs;
   const open = !forceHideTranslation && (!!translation || showTranslation);
   const textAlignValue = textAlign === 'justify' ? 'justify' : textAlign === 'hyphenation' ? 'justify' : 'left';
   const hyphenation = textAlign === 'hyphenation';

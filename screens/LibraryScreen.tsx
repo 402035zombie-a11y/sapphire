@@ -310,6 +310,10 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const importJob = useWordImportStore((s) => (draft ? s.jobs[makeBookId(cleanTitle(draft.title))] : undefined));
   const importing = importJob?.status === 'running' || importJob?.status === 'queued';
   const importProgress = importJob?.progress ?? 0;
+  // Глобальний індикатор фонових імпортів: видно навіть коли модалка чернетки закрита.
+  const activeJobs = useWordImportStore((s) =>
+    Object.values(s.jobs).filter((j) => j.status === 'queued' || j.status === 'running'),
+  );
 
   const openReader = (bookId: string) => {
     if (onSelectBook) {
@@ -427,6 +431,19 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           onClose={() => setTargetPickerVisible(false)}
         />
       </ModalSheet>
+
+      {activeJobs.length > 0 && (
+        <View style={[styles.progressCard, metal(theme, 'raised', { radius: a.radius })]}>
+          {activeJobs.map((j) => (
+            <View key={j.bookId} style={{ marginBottom: 6 }}>
+              <Text style={[styles.progressText, { color: theme.secondaryText }]} numberOfLines={1}>
+                {t('Importing dictionary:')} {j.title} — {Math.round(j.progress * 100)}%
+              </Text>
+              <ProgressBar progress={j.progress} />
+            </View>
+          ))}
+        </View>
+      )}
 
       <BookList
         books={visibleBooks}

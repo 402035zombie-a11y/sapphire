@@ -221,8 +221,14 @@ export default function ReaderScreen({ route }: { route: any }) {
     });
   }, []);
 
-  const viewableRef = useRef<Set<number>>(new Set());
+  // Стабільний колбек висоти рядка: інлайн-стрілка тут ламала memo(SentenceRow)
+  // → кожен переклад/скрол перерендерював усі видимі рядки (головне джерело лагів).
+  const onRowLayoutCb = useCallback((pIdx: number, h: number) => {
+    const prev = rowHeights.current.get(pIdx);
+    if (prev !== h) rowHeights.current.set(pIdx, h);
+  }, []);
 
+  const viewableRef = useRef<Set<number>>(new Set());
   const visibleRef = useRef<{ first: number; last: number }>({ first: 0, last: 20 });
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bookRef = useRef(book);
@@ -536,7 +542,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         showSpeak={reader.showSpeakButton ?? true}
         showTranslate={reader.showTranslateButton ?? true}
         onWordPress={onWordPress}
-        onRowLayout={(_, h) => { const prev = rowHeights.current.get(_); if (prev !== h) rowHeights.current.set(_, h); }}
+        onRowLayout={onRowLayoutCb}
         forceHideTranslation={mode === 'read'}
         mode={mode}
         query={query}

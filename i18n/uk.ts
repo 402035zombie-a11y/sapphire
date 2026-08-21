@@ -28,6 +28,7 @@ export const ukDict: Record<string, string> = {
   'Translation language:': 'Мова перекладу:',
   'Import book dictionary (all words)': 'Імпортувати словник книги (всі слова)',
   'Importing dictionary…': 'Імпорт словника…',
+  'Importing dictionary:': 'Імпорт словника:',
   'Dictionary added from «{title}»: {n} words.': 'Додано у словник з «{title}»: {n} слів.',
   'Error reading file': 'Помилка читання файлу',
   'Error importing dictionary': 'Помилка імпорту словника',
