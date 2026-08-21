@@ -629,6 +629,7 @@ export default function TrainingScreen() {
       )}
 
       {mode === 'tf' && current && tfPair && (
+        <>
         <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad, marginTop: 8 }]}>
           <Text style={[styles.typeWord, { fontSize: a.fs(26) }]}>{current.surfaceForm || current.word}</Text>
           <Text style={{ color: theme.secondaryText, fontSize: a.small_fs, textAlign: 'center', marginTop: 4 }}>
@@ -644,31 +645,44 @@ export default function TrainingScreen() {
                 : `${t("Wrong ✗")} — ${current.translation}`}
             </Text>
           )}
-          <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 18 }}>
+        </View>
+
+        {/* Панель відповіді притиснута до низу: True зліва, рестарт по центру, False справа */}
+        <View style={{ flexGrow: 1 }} />
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: a.gap,
+            paddingHorizontal: neuShadowPad(a.radius),
+            paddingBottom: a.tabBarH + neuShadowPad(a.radius),
+            paddingTop: a.pad,
+          }}
+        >
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.success, flexDirection: 'row', gap: 8 }, tfAnswered !== null && { opacity: 0.5 }]}
+              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.success }, tfAnswered !== null && { opacity: 0.5 }]}
               disabled={tfAnswered !== null}
               onPress={() => answerTf(true)}
             >
               <Text style={[styles.btnText, { color: theme.success }]}>✓ {t("True")}</Text>
             </TouchableOpacity>
+            {/* Рестарт/далі: кругла іконка по центру */}
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger, flexDirection: 'row', gap: 8 }, tfAnswered !== null && { opacity: 0.5 }]}
-              disabled={tfAnswered !== null}
-              onPress={() => answerTf(false)}
-            >
-              <Text style={[styles.btnText, { color: theme.danger }]}>✗ {t("False")}</Text>
-            </TouchableOpacity>
-            {/* Skip: кругла іконка рестарту (після відповіді — перехід далі) */}
-            <TouchableOpacity
-              style={[styles.skipBtn, metal(theme, 'circle', { size: a.icon(40) }), { alignSelf: 'center' }]}
+              style={[styles.skipBtn, metal(theme, 'circle', { size: a.icon(44) })]}
               onPress={() => onNext()}
               hitSlop={8}
             >
               <Icon name="refresh" size={a.dim(0.026, 16, 22)} color={theme.primaryText} />
             </TouchableOpacity>
-          </View>
+            <TouchableOpacity
+              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger }, tfAnswered !== null && { opacity: 0.5 }]}
+              disabled={tfAnswered !== null}
+              onPress={() => answerTf(false)}
+            >
+              <Text style={[styles.btnText, { color: theme.danger }]}>✗ {t("False")}</Text>
+            </TouchableOpacity>
         </View>
+        </>
       )}
       </ScrollView>
       <SupportAuthorModal
