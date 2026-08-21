@@ -391,7 +391,7 @@ export default function SpeedReadingScreen() {
             style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
             onPress={() => { const v = !microPauses; setMicroPauses(v); setReader({ microPauses: v }); }}
           >
-            <View style={[styles.microDot, { backgroundColor: microPauses ? theme.primary : theme.border }]} />
+            <View style={[styles.microDot, { backgroundColor: microPauses ? theme.success : theme.border }, !microPauses && { borderWidth: 1.5, borderColor: theme.secondaryText }]} />
             <Text style={[styles.microLabel, { color: theme.primaryText }]}>{t('Micro-pauses after punctuation')}</Text>
           </TouchableOpacity>
           {microPauses && (
@@ -436,7 +436,7 @@ export default function SpeedReadingScreen() {
           style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
           onPress={() => setTickerDir((d) => (d === 'rtl' ? 'ltr' : 'rtl'))}
         >
-          <View style={[styles.microDot, { backgroundColor: tickerDir === 'rtl' ? theme.primary : theme.border }]} />
+          <View style={[styles.microDot, { backgroundColor: tickerDir === 'rtl' ? theme.success : theme.border }, tickerDir !== 'rtl' && { borderWidth: 1.5, borderColor: theme.secondaryText }]} />
           <Text style={[styles.microLabel, { color: theme.primaryText }]}>{t('Direction:')} {tickerDir === 'rtl' ? t('right → left') : t('left → right')}</Text>
         </TouchableOpacity>
       )}
