@@ -78,7 +78,7 @@ export default function TrainingScreen() {
     counterBadges: { flexDirection: 'row', gap: 6 },
     counter: { fontSize: a.small_fs },
     counterBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
-    counterBadgeText: { color: theme.primaryText, fontFamily: 'bold', fontSize: a.small_fs },
+    counterBadgeText: { color: '#000000', fontFamily: 'bold', fontSize: a.small_fs },
     restart: { fontSize: a.small_fs, fontFamily: 'bold' },
     // Стартовый экран: контент сверху, без «провала» пустоты в центре.
     startScroll: {
