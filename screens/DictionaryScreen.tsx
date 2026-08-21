@@ -439,7 +439,9 @@ export default function DictionaryScreen() {
         windowSize={10}
         contentContainerStyle={{
           paddingHorizontal: neuShadowPad(),
-          paddingTop: a.insetTop + a.pad,
+          // Хедер (лічильник+фільтри) у потоці ВИЩЕ списку — додатковий paddingTop тут
+          // створював мертвий відступ і слова обрізались не досягаючи межі хедера.
+          paddingTop: 0,
           paddingBottom: Math.round(a.height / 2),
         }}
         ListEmptyComponent={() => (
