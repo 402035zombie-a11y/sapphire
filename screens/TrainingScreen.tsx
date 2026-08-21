@@ -121,7 +121,7 @@ export default function TrainingScreen() {
     finishTitle: { fontSize: a.title, fontFamily: 'bold' },
     finishSub: { fontSize: a.body, marginTop: 4, marginBottom: 6 },
     btn: { flex: 1, borderRadius: a.radius + 2, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.tiny ? 10 : 16, alignItems: 'center', minHeight: a.tiny ? 56 : 64 },
-    btnText: { color: theme.primaryText, fontFamily: 'bold', fontSize: a.body },
+    btnText: { color: theme.onPrimary, fontFamily: 'bold', fontSize: a.body },
     typeCard: { ...metal(theme, 'raised', { radius: a.radius }), padding: a.pad, marginTop: 8 },
     wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' },
     typeWord: { fontSize: a.fs(28), fontFamily: 'bold', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },
@@ -358,7 +358,7 @@ export default function TrainingScreen() {
             style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 }), { borderWidth: 0 }]}
             onPress={() => start('type')}
           >
-            <Text style={[styles.btnText, { color: theme.primaryText }]}>
+            <Text style={[styles.btnText, { color: theme.secondaryText }]}>
               {finished ? t("Again: typing") : t("Type the translation")}
             </Text>
             <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Type the translation manually")}</Text>

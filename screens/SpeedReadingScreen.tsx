@@ -153,7 +153,7 @@ export default function SpeedReadingScreen() {
           style={[metal(theme, 'primary', { radius: a.radius }), { paddingVertical: 12, paddingHorizontal: 24 }]}
           onPress={() => navigation.navigate('Library' as never)}
         >
-          <Text style={{ color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.body }}>{t('Select a book')}</Text>
+          <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold, fontSize: a.body }}>{t('Select a book')}</Text>
         </TouchableOpacity>
       </Screen>
     );
@@ -376,7 +376,7 @@ export default function SpeedReadingScreen() {
             if (!playing && pos >= words.length - 1) setPos(0);
             setPlaying((p) => !p);
           }}>
-            <Icon name={playing ? 'pause' : 'play'} size={a.dim(0.042, 22, 34)} color={theme.primaryText} />
+            <Icon name={playing ? 'pause' : 'play'} size={a.dim(0.042, 22, 34)} color={theme.onPrimary} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.ctrlBtn, metal(theme, 'circle', { size: ctrlSize })]} onPress={goNextSentence}>
             <Icon name="chevron-forward" size={a.dim(0.032, 18, 26)} color={theme.primaryText} />
@@ -450,7 +450,7 @@ export default function SpeedReadingScreen() {
                 style={[styles.resetBtn, metal(theme, 'primary')]}
                 onPress={() => { setResetPrompt(false); stopAll(); }}
               >
-                <Text style={{ color: theme.primaryText, fontFamily: FONTS.bold }}>{t('Yes')}</Text>
+                <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold }}>{t('Yes')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.resetBtn, metal(theme, 'inset')]}

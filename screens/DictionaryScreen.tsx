@@ -576,7 +576,7 @@ export default function DictionaryScreen() {
           }}
           activeOpacity={0.85}
         >
-          <Icon name="plus" size={a.dim(0.05, 22, 28)} color={theme.primaryText} />
+          <Icon name="plus" size={a.dim(0.05, 22, 28)} color={theme.onPrimary} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.fab, { backgroundColor: theme.surface }]}

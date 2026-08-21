@@ -460,7 +460,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           onPress={onAddPress}
           hitSlop={12}
         >
-          <Icon name="plus" size={a.dim(0.06, 26, 40)} color={theme.primaryText} />
+          <Icon name="plus" size={a.dim(0.06, 26, 40)} color={theme.onPrimary} />
         </TouchableOpacity>
       )}
       {Platform.OS === 'web' && (
@@ -531,7 +531,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     importText: { fontSize: a.small_fs, fontFamily: FONTS.bold, textAlign: 'center' },
     actionBtn: { flex: 1, height: Math.round(Math.max(44, 48 * a.scale)), paddingVertical: 10, paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
     actionText: { fontSize: a.body },
-    saveText: { color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.body },
+    saveText: { color: theme.onPrimary, fontFamily: FONTS.bold, fontSize: a.body },
     empty: { textAlign: 'center', marginTop: 40, fontSize: a.body },
     bookRow: {
       flexDirection: 'row',

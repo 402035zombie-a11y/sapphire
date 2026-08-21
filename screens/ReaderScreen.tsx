@@ -566,7 +566,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       data={sentences}
       keyExtractor={(p) => `${p.paragraphIndex}-${p.sentenceIndex}`}
       numColumns={1}
-      contentContainerStyle={[styles.list, { backgroundColor: theme.readerBg, paddingHorizontal: reader.pageMargins ? reader.margin : 0 }]}
+      contentContainerStyle={[styles.list, { backgroundColor: theme.readerBg, paddingHorizontal: reader.margin }]}
       onScrollBeginDrag={onScrollBeginDrag}
       onMomentumScrollEnd={onMomentumScrollEnd}
       initialNumToRender={BATCH}

@@ -26,6 +26,7 @@ export interface ThemePalette {
   surface: string; // база неоморфических карточек
   primary: string;
   primaryText: string;
+  onPrimary: string; // колір тексту/іконки ПОВЕРХ primary-заливки (контраст до primary)
   secondaryText: string;
   border: string;
   selected: string;
@@ -53,7 +54,8 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     background: '#EAD9BE',
     surface: '#EAD9BE',
     primary: '#C98A4B', // м'якший теплий карамельний акцент (гармоніює з паперовою палітрою)
-    primaryText: '#FBF4E4', // кремовий знак/текст ПОВЕРХ primary-заливки (було темно на помаранчі — брудно)
+    onPrimary: '#FBF4E4', // кремовий знак/текст ПОВЕРХ карамельної заливки
+    primaryText: '#4A3F2E', // основний текст на фоні (темно-коричневий, читається на бежі)
     secondaryText: '#A08B66', // чистіший теплий сіро-коричневий (не брудний) для навігації/неактивних
     border: '#D8C7A6',
     selected: '#DFCDAC',
@@ -76,6 +78,7 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     background: '#16171A',
     surface: '#1C1D21',
     primary: '#34363C',
+    onPrimary: '#ECE7DB',
     primaryText: '#ECE7DB',
     secondaryText: '#9A958A',
     border: '#2A2B30',
@@ -101,6 +104,7 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     background: '#000000',
     surface: '#050505',
     primary: '#232427',
+    onPrimary: '#787468',
     primaryText: '#787468', // тьмяний сірий (НЕ світло-сірий, НЕ білий)
     secondaryText: '#56524C',
     border: '#161616',

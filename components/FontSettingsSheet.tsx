@@ -106,7 +106,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
 
           <NumberStepper label={t("Font size")} value={reader.fontSize} min={12} max={32} step={1} suffix=" px" onChange={(v) => setReader({ fontSize: v })} st={styles} a={a} />
           <NumberStepper label={t("Line height")} value={reader.lineHeight} min={1} max={2.2} step={0.1} onChange={(v) => setReaderDebounced({ lineHeight: v })} st={styles} a={a} />
-          <NumberStepper label={t("Window edge padding")} value={reader.margin} min={-64} max={64} step={2} suffix=" px" onChange={(v) => setReaderDebounced({ margin: v })} st={styles} a={a} />
+          <NumberStepper label={t("Text side margins")} value={reader.margin} min={-64} max={64} step={2} suffix=" px" onChange={(v) => setReaderDebounced({ margin: v })} st={styles} a={a} />
           <NumberStepper label={t("Letter spacing")} value={reader.letterSpacing} min={0} max={6} step={0.5} suffix=" px" onChange={(v) => setReaderDebounced({ letterSpacing: v })} st={styles} a={a} />
           <NumberStepper label={t("Paragraph spacing")} value={reader.paragraphSpacing} min={0} max={48} step={2} suffix=" px" onChange={(v) => setReaderDebounced({ paragraphSpacing: v })} st={styles} a={a} />
 
@@ -145,7 +145,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
               {[
                 { id: 'left', label: "Left" },
                 { id: 'justify', label: "Justified" },
-                { id: 'hyphenation', label: "Hyphenation" },
+                { id: 'hyphenation', label: "Justified + hyphens" },
               ].map((al) => {
                 const active = reader.textAlign === al.id;
                 return (

@@ -206,7 +206,7 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
         onPress={onSave}
         disabled={saved}
       >
-        <Text style={{ color: theme.primaryText, fontFamily: 'bold', fontSize: a.body }}>{saved ? t("In dictionary ✓") : t("Save to dictionary")}</Text>
+        <Text style={{ color: isKnown ? theme.onPrimary : theme.primaryText, fontFamily: 'bold', fontSize: a.body }}>{saved ? t("In dictionary ✓") : t("Save to dictionary")}</Text>
       </TouchableOpacity>
     </View>
     </ModalSheet>
