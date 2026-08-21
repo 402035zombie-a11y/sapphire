@@ -293,7 +293,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   };
 
   const importBookDict = () => {
-    if (!draft) return;
+    if (!draft || importing) return; // importing = миттєвий блок повторних тапів
     const bookId = makeBookId(cleanTitle(draft.title));
     // НЕ блокуємо UI: ставимо в фонову чергу, керування повертається миттєво.
     enqueueWordImport({
@@ -389,8 +389,9 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.importBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]}
+            style={[styles.importBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }, importing && { opacity: 0.5 }]}
             onPress={importBookDict}
+            disabled={importing}
           >
             <Text style={[styles.importText, { color: theme.primary }]}>
               {importing ? t('Importing dictionary…') : t('Import book dictionary (all words)')}

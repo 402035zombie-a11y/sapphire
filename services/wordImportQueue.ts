@@ -93,6 +93,8 @@ export const useWordImportStore = create<WordImportState>((set, get) => ({
     const existing = get().jobs[job.bookId];
     // Не ставимо в чергу двічі, якщо вже йде або чекає.
     if (existing && (existing.status === 'queued' || existing.status === 'running')) return;
+    // Дедуп швидких повторних тапів: bookId уже в синхронній черзі (setState ще не дійшов).
+    if (queue.some((j) => j.bookId === job.bookId)) return;
     setJob(job.bookId, {
       title: job.title,
       status: 'queued',
