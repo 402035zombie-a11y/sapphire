@@ -435,10 +435,10 @@ export default function TrainingScreen() {
   ));
 
   return (
-    <Screen contentStyle={{ paddingHorizontal: a.pad, paddingTop: a.insetTop, paddingBottom: a.pad }}>
+    <Screen contentStyle={{ paddingHorizontal: 0, paddingTop: a.insetTop, paddingBottom: a.pad }}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: a.tabBarH + a.pad, gap: a.gap }}
+        contentContainerStyle={{ paddingBottom: a.tabBarH + a.pad, gap: a.gap, paddingHorizontal: Math.max(a.pad, neuShadowPad(a.radius + 4)) }}
         showsVerticalScrollIndicator={false}
       >
       <View style={styles.topRow}>
