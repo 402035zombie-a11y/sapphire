@@ -444,6 +444,7 @@ export default function DictionaryScreen() {
           paddingTop: 0,
           paddingBottom: Math.round(a.height / 2),
         }}
+        columnWrapperStyle={a.columns > 1 ? { gap: a.gap } : undefined}
         ListEmptyComponent={() => (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: a.pad, marginTop: a.height * 0.2 }}>
             <Text style={[styles.empty, { color: theme.secondaryText }]}>
@@ -683,7 +684,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, ...metal(theme, 'raised', { radius: a.radius }), marginBottom: a.tiny ? 8 : 12 },
     pickText: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1 },
     pickHint: { fontSize: a.small_fs, marginTop: 8, fontStyle: 'italic' },
-    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 10 : 14, marginBottom: a.gap },
+    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 6 : 10, flexWrap: 'wrap', paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 10 : 14, marginBottom: 0 },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
@@ -711,7 +712,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       alignItems: 'flex-start',
       borderRadius: a.radius,
       padding: a.pad,
-      marginBottom: a.gap,
+      marginBottom: 0,
       width: a.columns > 1 ? '48%' : undefined,
       minWidth: 0,
     },
