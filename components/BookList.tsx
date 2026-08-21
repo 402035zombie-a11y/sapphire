@@ -97,7 +97,7 @@ export function BookList({ books, bookWordCount, onOpen, onRemove }: Props) {
         </View>
       )}
       ListEmptyComponent={() => (
-        <Text style={{ color: theme.secondaryText, padding: 24, textAlign: 'center' }}>Library is empty.</Text>
+        <Text style={{ color: theme.secondaryText, padding: 24, textAlign: 'center' }}>{t('Library is empty.')}</Text>
       )}
     />
   );

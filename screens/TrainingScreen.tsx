@@ -525,11 +525,12 @@ export default function TrainingScreen() {
               <Text style={styles.btnText}>{typeChecked ? (typeOk ? t("Correct ✓") : t("Wrong ✗")) : t("Check")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.skipBtn, metal(theme, 'raised', { radius: 14 })]}
+              style={[styles.skipBtn, metal(theme, 'raised', { radius: 14 }), { flexDirection: 'row', gap: 6, paddingHorizontal: 12 }]}
               onPress={() => { if (!typeChecked) onNext(); }}
               hitSlop={8}
             >
               <Icon name="refresh" size={a.dim(0.026, 16, 22)} color={theme.primaryText} />
+              <Text style={{ color: theme.primaryText, fontSize: a.small_fs, fontWeight: '700' }}>{t("Skip")}</Text>
             </TouchableOpacity>
           </View>
         </View>
