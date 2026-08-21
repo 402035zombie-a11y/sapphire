@@ -254,7 +254,7 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
     stepperBlock: { gap: 4 },
     stepperLabel: { fontSize: a.fs(14) },
     stepperRow: {
-      backgroundColor: theme.neu.base,
+      backgroundColor: 'transparent',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
