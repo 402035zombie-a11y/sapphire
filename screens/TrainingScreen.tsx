@@ -409,9 +409,9 @@ export default function TrainingScreen() {
 
         {/* Действия прижаты к контенту, а не разбросаны по низу экрана */}
         <View style={styles.actions}>
-          <TouchableOpacity style={[styles.btn, metal(theme, 'primary')]} onPress={() => start('quiz')}>
-            <Text style={styles.btnText}>{finished ? t("Again: multiple choice") : t("Multiple choice")}</Text>
-            <Text style={styles.btnSub}>{t("Find the translation among 4 cards")}</Text>
+          <TouchableOpacity style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 })]} onPress={() => start('quiz')}>
+            <Text style={[styles.btnText, { color: theme.secondaryText }]}>{finished ? t("Again: multiple choice") : t("Multiple choice")}</Text>
+            <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Find the translation among 4 cards")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 })]}
