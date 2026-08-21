@@ -141,7 +141,7 @@ export default function TrainingScreen() {
   }), [a, theme]);
 
   const [started, setStarted] = useState(false);
-  const [mode, setMode] = useState<'quiz' | 'type' | 'tf'>('quiz');
+  const [mode, setMode] = useState<'quiz' | 'type' | 'tf' | 'cloze'>('quiz');
   // Напрямок тренування: forward = en→uk (звичайний), reverse = uk→en (зворотні картки)
   const [reverse, setReverse] = useState(false);
   const [index, setIndex] = useState(0); // индекс уникального слова в очереди
@@ -381,6 +381,48 @@ export default function TrainingScreen() {
     [tfPair, tfAnswered, current, onAnswer, onNext],
   );
 
+  // ---- Cloze режим: речення з контексту з пропуском слова → вибір перекладу ----
+  const [cloze, setCloze] = useState<{ sentence: string; masked: string; options: string[] } | null>(null);
+  const [clozePicked, setClozePicked] = useState<string | null>(null);
+  useEffect(() => {
+    if (mode !== 'cloze' || !current) { setCloze(null); setClozePicked(null); return; }
+    // контекст: речення, що містить слово (з DictionaryEntry.context)
+    const entry = entries.find((e) => e.word === current.word && e.lang === current.lang);
+    const target = (current.surfaceForm || current.word).toLowerCase();
+    let sentence = '';
+    if (entry?.context) {
+      // беремо речення зі словом (перше, що містить surfaceForm або word)
+      const cand = entry.context
+        .split(/(?<=[.!?…])\s+/)
+        .find((s: string) => s.toLowerCase().includes(target));
+      sentence = cand || entry.context.slice(0, 220);
+    }
+    if (!sentence || !sentence.toLowerCase().includes(target)) {
+      // немає контексту або слово не знайдено → fallback на звичайне речення-підказку
+      setCloze(null); setClozePicked(null); return;
+    }
+    // маскуємо ПЕРШЕ входження слова (reg-insensitive, ціле слово)
+    const re = new RegExp(`\\b${target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\w*`, 'i');
+    const masked = sentence.replace(re, '______');
+    if (masked === sentence) { setCloze(null); setClozePicked(null); return; }
+    // варіанти: правильний переклад + 3 дистрактори
+    const distractors = shuffle(
+      poolRef.current.filter((e: DictionaryEntry) => e.translation && e.translation.trim() && e.translation !== current.translation),
+    ).slice(0, 3).map((e: DictionaryEntry) => e.translation);
+    setCloze({ sentence: masked, masked: '______', options: shuffle([current.translation, ...distractors]) });
+    setClozePicked(null);
+  }, [mode, current, entries]);
+  const answerCloze = useCallback(
+    (picked: string) => {
+      if (!current || clozePicked !== null) return;
+      const correct = picked === current.translation;
+      setClozePicked(picked);
+      onAnswer(correct);
+      setTimeout(() => onNext(), 900);
+    },
+    [clozePicked, current, onAnswer, onNext],
+  );
+
   // сброс состояния проверки при смене слова
   useEffect(() => {
     setTypeChecked(false);
@@ -392,7 +434,7 @@ export default function TrainingScreen() {
     }
   }, [index, mode]);
 
-  const start = (m: 'quiz' | 'type' | 'tf') => {
+  const start = (m: 'quiz' | 'type' | 'tf' | 'cloze') => {
     const q = buildQueue();
     if (q.length === 0) {
       // нет слов для тренировки — не стартуем с пустой очередью (иначе current=undefined -> краш)
@@ -529,6 +571,15 @@ export default function TrainingScreen() {
               {finished ? t("Again: true or false") : t("True or false")}
             </Text>
             <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Is this the right translation?")}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 })]}
+            onPress={() => start('cloze')}
+          >
+            <Text style={[styles.btnText, { color: theme.secondaryText }]}>
+              {finished ? t("Again: fill the blank") : t("Fill the blank")}
+            </Text>
+            <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Pick translation from sentence context")}</Text>
           </TouchableOpacity>
         </View>
 
@@ -784,6 +835,41 @@ export default function TrainingScreen() {
             </TouchableOpacity>
         </View>
         </>
+      )}
+
+      {mode === 'cloze' && current && cloze && (
+        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad, marginTop: 8 }]}>
+          <Text style={{ color: theme.secondaryText, fontSize: a.small_fs, textAlign: 'center', marginBottom: 10 }}>
+            {t("Fill the blank")}
+          </Text>
+          <Text style={{ color: theme.primaryText, fontSize: a.fs(17), lineHeight: a.fs(17) * 1.5, textAlign: 'center' }}>
+            {cloze.sentence}
+          </Text>
+          {clozePicked !== null && (
+            <Text style={[styles.typeCorrect, { color: clozePicked === current.translation ? theme.success : theme.danger, fontSize: a.fs(15), marginTop: 10, textAlign: 'center' }]}>
+              {clozePicked === current.translation
+                ? t("Correct ✓")
+                : `${t("Correct answer: ")}${current.translation}`}
+            </Text>
+          )}
+          <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 16 }}>
+            {cloze.options.map((opt) => {
+              const isPicked = clozePicked === opt;
+              const isRight = opt === current.translation;
+              const showState = clozePicked !== null;
+              return (
+                <TouchableOpacity
+                  key={opt}
+                  style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: showState && isRight ? theme.success : showState && isPicked ? theme.danger : theme.border }]}
+                  disabled={clozePicked !== null}
+                  onPress={() => answerCloze(opt)}
+                >
+                  <Text style={[styles.btnText, { color: theme.primaryText }]}>{opt}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
       )}
       </ScrollView>
       <SupportAuthorModal

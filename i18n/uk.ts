@@ -94,6 +94,10 @@ export const ukDict: Record<string, string> = {
   'day streak': 'днів підряд',
   'answers today': 'відповідей сьогодні',
   'due now': 'до повторення',
+  // Cloze режим
+  'Fill the blank': 'Заповни пропуск',
+  'Again: fill the blank': 'Знову: заповни пропуск',
+  'Pick translation from sentence context': 'Обери переклад з контексту речення',
   // Dictionary add/edit + sort/filter
   'Add': 'Додати',
   'Add word': 'Додати слово',
