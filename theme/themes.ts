@@ -106,7 +106,7 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     background: '#000000',
     surface: '#050505',
     primary: '#232427',
-    onPrimary: '#787468',
+    onPrimary: '#B8B2A6', // світлий текст на темній primary-заливці (FLAT blackout)
     primaryText: '#787468', // тьмяний сірий (НЕ світло-сірий, НЕ білий)
     secondaryText: '#56524C',
     border: '#161616',

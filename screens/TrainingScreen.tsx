@@ -409,12 +409,12 @@ export default function TrainingScreen() {
 
         {/* Действия прижаты к контенту, а не разбросаны по низу экрана */}
         <View style={styles.actions}>
-          <TouchableOpacity style={[styles.btn, metal(theme, 'primary'), { borderWidth: 0 }]} onPress={() => start('quiz')}>
+          <TouchableOpacity style={[styles.btn, metal(theme, 'primary')]} onPress={() => start('quiz')}>
             <Text style={styles.btnText}>{finished ? t("Again: multiple choice") : t("Multiple choice")}</Text>
             <Text style={styles.btnSub}>{t("Find the translation among 4 cards")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 }), { borderWidth: 0 }]}
+            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 })]}
             onPress={() => start('type')}
           >
             <Text style={[styles.btnText, { color: theme.secondaryText }]}>
@@ -425,7 +425,7 @@ export default function TrainingScreen() {
         </View>
         <View style={styles.actions}>
           <TouchableOpacity
-            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 }), { borderWidth: 0 }]}
+            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 })]}
             onPress={() => start('tf')}
           >
             <Text style={[styles.btnText, { color: theme.secondaryText }]}>
@@ -562,7 +562,7 @@ export default function TrainingScreen() {
           <TextField
             ref={typeInputRef}
             radius={10}
-            style={[styles.typeInput, { borderWidth: 0, color: theme.primaryText }]}
+            style={[styles.typeInput, { borderColor: theme.border, color: theme.primaryText }]}
             value={typed}
             autoFocus
             editable={!typeChecked}
@@ -587,9 +587,11 @@ export default function TrainingScreen() {
           <View style={{ flexDirection: 'row', gap: a.gap, marginTop: 12, alignItems: 'center' }}>
             <TouchableOpacity
               style={[styles.typeCheck, metal(theme, 'primary'), !typed.trim() && { opacity: 0.45 }]}
-              disabled={!typed.trim() || typeChecked}
+              disabled={!typed.trim()}
               onPress={() => {
-                if (typeChecked || !typed.trim()) return;
+                // Другий тап по Check (після перевірки) = перейти до наступного слова
+                if (typeChecked) { onNext(); return; }
+                if (!typed.trim()) return;
                 const ok = normalize(typed) === normalize(current.translation);
                 setTypeOk(ok);
                 setTypeChecked(true);
@@ -600,7 +602,8 @@ export default function TrainingScreen() {
                 else if (elapsed < 5000) grade = 4; // easy — миттєво і без помилок
                 else if (elapsed > 12000) grade = 2; // довго думав
                 onAnswer(ok, { grade });
-                setTimeout(() => onNext(), 700);
+                // НЕ авто-переходимо: юзер читає результат і вирішує —
+                // тап по Check (=Next), Skip, або "Знаю — видалити"
               }}
             >
               <Text style={styles.btnText}>{typeChecked ? (typeOk ? t("Correct ✓") : t("Wrong ✗")) : t("Check")}</Text>
@@ -645,18 +648,18 @@ export default function TrainingScreen() {
           )}
           <View style={{ flexDirection: 'row', gap: a.gap, marginTop: 18 }}>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'primary'), { borderWidth: 0 }, tfAnswered !== null && { opacity: 0.5 }]}
+              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.success }, tfAnswered !== null && { opacity: 0.5 }]}
               disabled={tfAnswered !== null}
               onPress={() => answerTf(true)}
             >
-              <Text style={styles.btnText}>✓ {t("True")}</Text>
+              <Text style={[styles.btnText, { color: theme.success }]}>✓ {t("True")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }, tfAnswered !== null && { opacity: 0.5 }]}
+              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger }, tfAnswered !== null && { opacity: 0.5 }]}
               disabled={tfAnswered !== null}
               onPress={() => answerTf(false)}
             >
-              <Text style={[styles.btnText, { color: theme.secondaryText }]}>✗ {t("False")}</Text>
+              <Text style={[styles.btnText, { color: theme.danger }]}>✗ {t("False")}</Text>
             </TouchableOpacity>
           </View>
         </View>

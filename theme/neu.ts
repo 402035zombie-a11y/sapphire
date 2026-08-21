@@ -413,7 +413,8 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
         return { ...flatBox, backgroundColor: t.primary, borderColor: t.onPrimary };
       case 'tab':
       case 'tabStamp':
-        return { borderRadius: radius, backgroundColor: 'transparent' };
+        // FLAT blackout: неактивні таби з чорним фоном (прозорі зливаються з доком)
+        return { borderRadius: radius, backgroundColor: t.background };
       case 'text':
         return metalText(t, opts.textColor);
       default:
