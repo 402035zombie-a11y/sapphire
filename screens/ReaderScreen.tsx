@@ -229,6 +229,13 @@ export default function ReaderScreen({ route }: { route: any }) {
   }, []);
 
   const viewableRef = useRef<Set<number>>(new Set());
+  // Під час зміни margin/pageMargins FlatList повністю релайаутиться → onViewableItemsChanged
+  // стріляє і запускає translateBatch-шторм поверх релайауту (каскад = багатосекундний лаг).
+  // Короткий cooldown після зміни налаштувань це прибирає.
+  const settingsChangedAt = useRef(0);
+  useEffect(() => {
+    settingsChangedAt.current = Date.now();
+  }, [reader.margin, reader.pageMargins]);
   const visibleRef = useRef<{ first: number; last: number }>({ first: 0, last: 20 });
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bookRef = useRef(book);
@@ -367,6 +374,8 @@ export default function ReaderScreen({ route }: { route: any }) {
         }
       }
       viewableRef.current = set;
+      // cooldown після зміни margin/pageMargins: не перекладати під час релайауту
+      if (Date.now() - settingsChangedAt.current < 800) return;
       // абзац в окне → переводим СРАЗУ (без задержки), якщо ще не всі речення перекладені
       set.forEach((idx) => {
         const s = sentencesRef.current[idx];
