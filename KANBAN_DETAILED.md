@@ -96,8 +96,8 @@
 - [x] 10.1–10.4 Користувач підтвердив RED (targetLang undefined у LibraryScreen:501) → виправлено `(item.targetLang ?? item.language).toUpperCase()`, закомічено 81dd9dd. RED зник після перевірки у браузері. Білд дозволено.
 
 ## Етап 11 — ФІНАЛЬНИЙ БІЛД [IN PROGRESS]
-- [ ] 11.1 `git status` — всі фікси в гілці fix/ui-bugs.
-- [ ] 11.2 `npx tsc --noEmit` → EXIT 0.
+- [x] 11.1 `git status` — всі фікси в гілці fix/ui-bugs (закомічено d96f1bc, 8aeed26, 6e35f37; запушено origin).
+- [x] 11.2 `npx tsc --noEmit` → EXIT 0.
 - [x] 11.3 `eas build --profile preview --platform android` (WSL cloud, Kotlin 2.3.0 прибрано → 15.4.0 AdMob OK).
 - [ ] 11.4 Дати користувачу лінк на APK.
 - [x] 11.5 RED не актуальний → білд дозволено.
