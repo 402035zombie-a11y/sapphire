@@ -511,7 +511,7 @@ export default function TrainingScreen() {
     <Screen contentStyle={{ paddingHorizontal: 0, paddingTop: a.insetTop, paddingBottom: a.pad }}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: a.tabBarH + a.pad, gap: a.gap, paddingHorizontal: Math.max(a.pad, neuShadowPad(a.radius + 4)) }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: a.tabBarH + a.pad, gap: a.gap, paddingHorizontal: Math.max(a.pad, neuShadowPad(a.radius + 4)) }}
         showsVerticalScrollIndicator={false}
       >
       <View style={styles.topRow}>
@@ -630,7 +630,8 @@ export default function TrainingScreen() {
 
       {mode === 'tf' && current && tfPair && (
         <>
-        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad, marginTop: 8 }]}>
+        <View style={{ flexGrow: 1, justifyContent: 'center' }}>
+        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad }]}>
           <Text style={[styles.typeWord, { fontSize: a.fs(26) }]}>{current.surfaceForm || current.word}</Text>
           <Text style={{ color: theme.secondaryText, fontSize: a.small_fs, textAlign: 'center', marginTop: 4 }}>
             {t('Translation:')}
@@ -645,6 +646,7 @@ export default function TrainingScreen() {
                 : `${t("Wrong ✗")} — ${current.translation}`}
             </Text>
           )}
+        </View>
         </View>
 
         {/* Панель відповіді притиснута до низу: True зліва, рестарт по центру, False справа */}
