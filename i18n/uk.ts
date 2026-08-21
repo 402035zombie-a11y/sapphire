@@ -65,6 +65,11 @@ export const ukDict: Record<string, string> = {
   'your translation': 'ваш переклад',
   'Check': 'Перевірити',
   'Skip': 'Пропустити',
+  'True or false': 'Правда чи брехня',
+  'Again: true or false': 'Знову: правда чи брехня',
+  'Is this the right translation?': 'Чи це правильний переклад?',
+  'True': 'Правда',
+  'False': 'Брехня',
   // Dictionary add/edit + sort/filter
   'Add': 'Додати',
   'Add word': 'Додати слово',

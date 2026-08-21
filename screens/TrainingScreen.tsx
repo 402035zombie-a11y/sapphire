@@ -140,7 +140,7 @@ export default function TrainingScreen() {
   }), [a, theme]);
 
   const [started, setStarted] = useState(false);
-  const [mode, setMode] = useState<'quiz' | 'type'>('quiz');
+  const [mode, setMode] = useState<'quiz' | 'type' | 'tf'>('quiz');
   const [index, setIndex] = useState(0); // индекс уникального слова в очереди
   const [stats, setStats] = useState({ correct: 0, wrong: 0 });
   const [finished, setFinished] = useState(false);
@@ -233,6 +233,9 @@ export default function TrainingScreen() {
 
   const [opts, setOpts] = useState<string[]>([]);
   const current = queue[index];
+  // ---- True/False режим: слово + показаний переклад (можливо чужий) → ✓/✗ ----
+  const [tfPair, setTfPair] = useState<{ shownTranslation: string; isTrue: boolean } | null>(null);
+  const [tfAnswered, setTfAnswered] = useState<null | boolean>(null);
   // pool меняется при каждом ответе (progress), но перемешивать варианты
   // повторно НЕЛЬЗЯ — иначе правильный ответ «прыгает» после клика.
   // Читаем pool через ref, чтобы эффект не переподписывался на progress.
@@ -277,6 +280,36 @@ export default function TrainingScreen() {
     else setIndex(next);
   }, [queue, index]);
 
+  // TF: генерація пари при зміні слова (50% справжній переклад, 50% чужий схожої довжини)
+  useEffect(() => {
+    if (mode !== 'tf' || !current) { setTfPair(null); setTfAnswered(null); return; }
+    const makeTrue = Math.random() < 0.5;
+    if (makeTrue) {
+      setTfPair({ shownTranslation: current.translation, isTrue: true });
+    } else {
+      const others = poolRef.current.filter(
+        (e: DictionaryEntry) => e.translation && e.translation.trim() && `${e.word}|${e.lang}` !== `${current.word}|${current.lang}`,
+      );
+      const len = (current.translation || '').length;
+      const similar = others.filter((e: DictionaryEntry) => Math.abs(e.translation.length - len) <= Math.max(6, len * 0.4));
+      const pool2 = similar.length > 0 ? similar : others;
+      const fake = pool2[Math.floor(Math.random() * pool2.length)];
+      setTfPair({ shownTranslation: fake?.translation ?? current.translation, isTrue: false });
+    }
+    setTfAnswered(null);
+  }, [mode, current]);
+
+  const answerTf = useCallback(
+    (userSaysTrue: boolean) => {
+      if (!tfPair || tfAnswered !== null || !current) return;
+      const correct = userSaysTrue === tfPair.isTrue;
+      setTfAnswered(userSaysTrue);
+      onAnswer(correct);
+      setTimeout(() => onNext(), 700);
+    },
+    [tfPair, tfAnswered, current, onAnswer, onNext],
+  );
+
   // сброс состояния проверки при смене слова
   useEffect(() => {
     setTypeChecked(false);
@@ -287,7 +320,7 @@ export default function TrainingScreen() {
     }
   }, [index, mode]);
 
-  const start = (m: 'quiz' | 'type') => {
+  const start = (m: 'quiz' | 'type' | 'tf') => {
     const q = buildQueue();
     if (q.length === 0) {
       // нет слов для тренировки — не стартуем с пустой очередью (иначе current=undefined -> краш)
@@ -367,6 +400,17 @@ export default function TrainingScreen() {
               {finished ? t("Again: typing") : t("Type the translation")}
             </Text>
             <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Type the translation manually")}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.actions}>
+          <TouchableOpacity
+            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 }), { borderWidth: 0 }]}
+            onPress={() => start('tf')}
+          >
+            <Text style={[styles.btnText, { color: theme.secondaryText }]}>
+              {finished ? t("Again: true or false") : t("True or false")}
+            </Text>
+            <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Is this the right translation?")}</Text>
           </TouchableOpacity>
         </View>
 
@@ -536,6 +580,41 @@ export default function TrainingScreen() {
             >
               <Icon name="refresh" size={a.dim(0.026, 16, 22)} color={theme.primaryText} />
               <Text style={{ color: theme.primaryText, fontSize: a.small_fs, fontWeight: '700' }}>{t("Skip")}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {mode === 'tf' && current && tfPair && (
+        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad, marginTop: 8 }]}>
+          <Text style={[styles.typeWord, { fontSize: a.fs(26) }]}>{current.surfaceForm || current.word}</Text>
+          <Text style={{ color: theme.secondaryText, fontSize: a.small_fs, textAlign: 'center', marginTop: 4 }}>
+            {t('Translation:')}
+          </Text>
+          <Text style={{ color: theme.primaryText, fontSize: a.fs(20), fontFamily: 'bold', textAlign: 'center', marginTop: 12 }}>
+            {tfPair.shownTranslation}
+          </Text>
+          {tfAnswered !== null && (
+            <Text style={[styles.typeCorrect, { color: tfAnswered === tfPair.isTrue ? theme.success : theme.danger, fontSize: a.fs(15), marginTop: 10 }]}>
+              {tfAnswered === tfPair.isTrue
+                ? t("Correct ✓")
+                : `${t("Wrong ✗")} — ${current.translation}`}
+            </Text>
+          )}
+          <View style={{ flexDirection: 'row', gap: a.gap, marginTop: 18 }}>
+            <TouchableOpacity
+              style={[styles.typeCheck, metal(theme, 'primary'), { borderWidth: 0 }, tfAnswered !== null && { opacity: 0.5 }]}
+              disabled={tfAnswered !== null}
+              onPress={() => answerTf(true)}
+            >
+              <Text style={styles.btnText}>✓ {t("True")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }, tfAnswered !== null && { opacity: 0.5 }]}
+              disabled={tfAnswered !== null}
+              onPress={() => answerTf(false)}
+            >
+              <Text style={[styles.btnText, { color: theme.secondaryText }]}>✗ {t("False")}</Text>
             </TouchableOpacity>
           </View>
         </View>
