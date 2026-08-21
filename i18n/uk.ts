@@ -79,6 +79,8 @@ export const ukDict: Record<string, string> = {
   'Hardest first': 'Найскладніші',
   // Anki міст
   'From Anki deck (.apkg)': 'З колоди Anki (.apkg)',
+  'To Anki deck (.apkg) — export': 'В колоду Anki (.apkg) — експорт',
+  'Import / Export (Anki)': 'Імпорт / Експорт (Anki)',
   'Export to Anki': 'Експорт в Anki',
   'Please select an .apkg file (Anki deck).': 'Оберіть файл .apkg (колода Anki).',
   'No cards found in this deck.': 'У цій колоді не знайдено карток.',

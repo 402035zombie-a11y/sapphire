@@ -484,9 +484,6 @@ export default function DictionaryScreen() {
             <TouchableOpacity onPress={exportAll} hitSlop={6} style={tb}>
               <Icon name="copy" size={isz} color={theme.primaryText} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={exportAnki} hitSlop={6} style={tb}>
-              <Icon name="anki" size={isz} color={theme.primaryText} />
-            </TouchableOpacity>
             <TouchableOpacity onPress={() => setImportOpen(true)} hitSlop={6} style={tb}>
               <Icon name="scan" size={isz} color={theme.primaryText} />
             </TouchableOpacity>
@@ -612,7 +609,7 @@ export default function DictionaryScreen() {
       {/* Попап выбора источника импорта */}
       <ModalSheet visible={importOpen} onClose={() => setImportOpen(false)}>
         <View style={styles.pickCard}>
-            <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Import dictionary from…')}</Text>
+            <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Import / Export (Anki)')}</Text>
             <TouchableOpacity
               style={[styles.pickItem]}
               onPress={() => { setImportOpen(false); setBookPickOpen(true); }}
@@ -630,6 +627,12 @@ export default function DictionaryScreen() {
               onPress={importAnkiApkg}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From Anki deck (.apkg)')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setImportOpen(false); exportAnki(); }}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('To Anki deck (.apkg) — export')}</Text>
             </TouchableOpacity>
         </View>
       </ModalSheet>
