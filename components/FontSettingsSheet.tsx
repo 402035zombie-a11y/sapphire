@@ -184,17 +184,8 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
           </View>
           )}
 
-          {mode === 'read' && (
-            <View style={styles.toggleRow}>
-              <Text style={[styles.toggleLabel, { color: theme.primaryText }]}>{t("Justify text")}</Text>
-              <Switch
-                value={reader.justify}
-                onValueChange={(v) => setReader({ justify: v })}
-                trackColor={{ false: theme.border, true: theme.primary }}
-                thumbColor="#fff"
-              />
-            </View>
-          )}
+          {/* МЕРТВИЙ ДУБЛЬ ПРИБРАНО: тумблер "Justify text" (reader.justify) ніде не використовувався —
+              вирівнювання керується виключно чипами Text alignment (reader.textAlign). */}
 
           {mode !== 'read' && (
           <View style={styles.toggleRow}>

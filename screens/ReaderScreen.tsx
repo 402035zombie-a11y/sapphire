@@ -538,7 +538,6 @@ export default function ReaderScreen({ route }: { route: any }) {
         showTranslation={mode === 'dual'}
         fontSize={reader.fontSize}
         lineHeight={reader.lineHeight}
-        justify={reader.justify}
         fontFamily={reader.fontFamily}
         fontWeight={reader.fontWeight}
         textAlign={reader.textAlign}
