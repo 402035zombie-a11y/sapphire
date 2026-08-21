@@ -86,6 +86,11 @@ export const ukDict: Record<string, string> = {
   'No cards found in this deck.': 'У цій колоді не знайдено карток.',
   'Imported {n} cards from “{deck}”.': 'Імпортовано {n} карток з «{deck}».',
   'Exported {n} cards to Anki deck.': 'Експортовано {n} карток у колоду Anki.',
+  // Напрямок тренування
+  'Direction': 'Напрямок',
+  'Recognize (word → translation)': 'Розпізнавання (слово → переклад)',
+  'Recall (translation → word)': 'Згадування (переклад → слово)',
+  'Word:': 'Слово:',
   // Dictionary add/edit + sort/filter
   'Add': 'Додати',
   'Add word': 'Додати слово',

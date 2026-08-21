@@ -142,6 +142,8 @@ export default function TrainingScreen() {
 
   const [started, setStarted] = useState(false);
   const [mode, setMode] = useState<'quiz' | 'type' | 'tf'>('quiz');
+  // Напрямок тренування: forward = en→uk (звичайний), reverse = uk→en (зворотні картки)
+  const [reverse, setReverse] = useState(false);
   const [index, setIndex] = useState(0); // индекс уникального слова в очереди
   const [stats, setStats] = useState({ correct: 0, wrong: 0 });
   const [finished, setFinished] = useState(false);
@@ -246,13 +248,34 @@ export default function TrainingScreen() {
   poolRef.current = pool;
   useEffect(() => {
     if (!current) { setOpts([]); return; }
-    const distractors = shuffle(poolRef.current.filter((e: DictionaryEntry) => e.translation && e.translation.trim() && e.translation !== current.translation)).slice(0, 3).map((e) => e.translation);
-    setOpts(shuffle([current.translation, ...distractors]));
-  }, [index, current?.word]);
+    // Reverse-режим: дистрактори — слова (surfaceForm), а не переклади
+    const distractorField = reverse ? 'surfaceForm' : 'translation';
+    const correctVal = reverse ? (current.surfaceForm || current.word) : current.translation;
+    const distractors = shuffle(
+      poolRef.current
+        .filter((e: DictionaryEntry) => {
+          const v = reverse ? (e.surfaceForm || e.word) : e.translation;
+          return v && v.trim() && v !== correctVal;
+        })
+        .slice(0, 3)
+        .map((e: DictionaryEntry) => (reverse ? (e.surfaceForm || e.word) : e.translation)),
+    );
+    setOpts(shuffle([correctVal, ...distractors]));
+  }, [index, current?.word, reverse]);
 
   const quiz: QuizItem | null = useMemo(() => {
     if (queue.length === 0 || index >= queue.length || opts.length === 0) return null;
     const c = queue[index];
+    // Reverse-режим: показуємо переклад, шукаємо слово (uk→en)
+    if (reverse) {
+      return {
+        word: c.translation,
+        correct: c.surfaceForm || c.word,
+        options: opts,
+        fromLang: sourceBook ? toLang : 'en',
+        toLang: sourceBook ? fromLang : c.lang,
+      };
+    }
     return {
       word: c.surfaceForm || c.word,
       correct: c.translation,
@@ -260,7 +283,7 @@ export default function TrainingScreen() {
       fromLang: sourceBook ? fromLang : c.lang,
       toLang: sourceBook ? toLang : 'en',
     };
-  }, [queue, index, opts, sourceBook, fromLang, toLang]);
+  }, [queue, index, opts, sourceBook, fromLang, toLang, reverse]);
 
   const onAnswer = useCallback(
     (correct: boolean, opts?: { grade?: 2 | 3 | 4 }) => {
@@ -301,20 +324,25 @@ export default function TrainingScreen() {
   }, [queue, index, entries, removeEntry, onNext]);
 
   // TF: генерація пари при зміні слова (50% справжній переклад, 50% чужий схожої довжини)
+  // Reverse-режим: показуємо переклад, пара = слово (uk→en)
   useEffect(() => {
     if (mode !== 'tf' || !current) { setTfPair(null); setTfAnswered(null); return; }
+    const prompt = reverse ? (current.translation) : (current.surfaceForm || current.word);
+    const answer = reverse ? (current.surfaceForm || current.word) : current.translation;
     const makeTrue = Math.random() < 0.5;
     if (makeTrue) {
-      setTfPair({ shownTranslation: current.translation, isTrue: true });
+      setTfPair({ shownTranslation: answer, isTrue: true });
     } else {
       const others = poolRef.current.filter(
-        (e: DictionaryEntry) => e.translation && e.translation.trim() && `${e.word}|${e.lang}` !== `${current.word}|${current.lang}`,
+        (e: DictionaryEntry) => `${e.word}|${e.lang}` !== `${current.word}|${current.lang}`,
       );
-      const len = (current.translation || '').length;
-      const similar = others.filter((e: DictionaryEntry) => Math.abs(e.translation.length - len) <= Math.max(6, len * 0.4));
-      const pool2 = similar.length > 0 ? similar : others;
+      const answerVal = reverse ? (current.surfaceForm || current.word) : current.translation;
+      const othersVals = others.map((e: DictionaryEntry) => (reverse ? (e.surfaceForm || e.word) : e.translation)).filter(Boolean);
+      const len = answerVal.length;
+      const similar = othersVals.filter((v: string) => Math.abs(v.length - len) <= Math.max(6, len * 0.4));
+      const pool2 = similar.length > 0 ? similar : othersVals;
       const fake = pool2[Math.floor(Math.random() * pool2.length)];
-      setTfPair({ shownTranslation: fake?.translation ?? current.translation, isTrue: false });
+      setTfPair({ shownTranslation: fake ?? answer, isTrue: false });
     }
     setTfAnswered(null);
   }, [mode, current]);
@@ -404,6 +432,37 @@ export default function TrainingScreen() {
               </Text>
               <SupportButton size={a.icon(34)} iconSize={a.icon(17)} />
             </View>
+          </View>
+        </View>
+
+        {/* Напрямок тренування: forward (en→uk) / reverse (uk→en) */}
+        <View style={[styles.sourceCard, metal(theme, 'raised', { radius: a.radius + 4 })]}>
+          <Text style={[styles.sourceLabel, { color: theme.secondaryText }]}>{t("Direction")}</Text>
+          <View style={styles.sourceTabs}>
+            <TouchableOpacity
+              style={[
+                styles.sourceTab,
+                metal(theme, 'raised', { radius: 999 }),
+                !reverse && { backgroundColor: theme.selected, ...metal(theme, 'inset', { radius: 999 }) },
+              ]}
+              onPress={() => setReverse(false)}
+            >
+              <Text style={[styles.sourceTabText, { color: theme.primaryText }]}>
+                {sourceBook ? `${effectiveLang(sourceBook.language).toUpperCase()} → ${(sourceBook.targetLang || 'uk').toUpperCase()}` : t("Recognize (word → translation)")}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.sourceTab,
+                metal(theme, 'raised', { radius: 999 }),
+                reverse && { backgroundColor: theme.selected, ...metal(theme, 'inset', { radius: 999 }) },
+              ]}
+              onPress={() => setReverse(true)}
+            >
+              <Text style={[styles.sourceTabText, { color: theme.primaryText }]}>
+                {sourceBook ? `${(sourceBook.targetLang || 'uk').toUpperCase()} → ${effectiveLang(sourceBook.language).toUpperCase()}` : t("Recall (translation → word)")}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -550,7 +609,7 @@ export default function TrainingScreen() {
           </View>
           {typeChecked && (
             <Text style={[styles.typeCorrect, { color: typeOk ? theme.success : theme.danger, fontSize: a.fs(15), marginTop: 6 }]}>
-              {typeOk ? t("Correct ✓") : `${t("Correct answer: ")}${current.translation}`}
+              {typeOk ? t("Correct ✓") : `${t("Correct answer: ")}${reverse ? (current.surfaceForm || current.word) : current.translation}`}
             </Text>
           )}
           {currentProgress && (currentProgress.correctCount > 0 || currentProgress.wrongCount > 0) && (
@@ -572,7 +631,8 @@ export default function TrainingScreen() {
             placeholderTextColor={theme.secondaryText}
             onSubmitEditing={() => {
               if (typeChecked) { onNext(); return; }
-              const ok = normalize(typed) === normalize(current.translation);
+              const targetVal = reverse ? (current.surfaceForm || current.word) : current.translation;
+                const ok = normalize(typed) === normalize(targetVal);
               setTypeOk(ok);
               setTypeChecked(true);
               const elapsed = Date.now() - typeShownAt.current;
@@ -592,7 +652,8 @@ export default function TrainingScreen() {
                 // Другий тап по Check (після перевірки) = перейти до наступного слова
                 if (typeChecked) { onNext(); return; }
                 if (!typed.trim()) return;
-                const ok = normalize(typed) === normalize(current.translation);
+                const targetVal = reverse ? (current.surfaceForm || current.word) : current.translation;
+                const ok = normalize(typed) === normalize(targetVal);
                 setTypeOk(ok);
                 setTypeChecked(true);
                 // FSRS авто-градація за швидкістю відповіді (набір руками = точний сигнал)
@@ -632,9 +693,9 @@ export default function TrainingScreen() {
         <>
         <View style={{ flexGrow: 1, justifyContent: 'center' }}>
         <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad }]}>
-          <Text style={[styles.typeWord, { fontSize: a.fs(26) }]}>{current.surfaceForm || current.word}</Text>
+          <Text style={[styles.typeWord, { fontSize: a.fs(26) }]}>{reverse ? current.translation : (current.surfaceForm || current.word)}</Text>
           <Text style={{ color: theme.secondaryText, fontSize: a.small_fs, textAlign: 'center', marginTop: 4 }}>
-            {t('Translation:')}
+            {reverse ? t('Word:') : t('Translation:')}
           </Text>
           <Text style={{ color: theme.primaryText, fontSize: a.fs(20), fontFamily: 'bold', textAlign: 'center', marginTop: 12 }}>
             {tfPair.shownTranslation}
