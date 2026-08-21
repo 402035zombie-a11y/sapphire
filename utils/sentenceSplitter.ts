@@ -119,8 +119,7 @@ function mergeAbbrevFragments(sentences: string[]): string[] {
 export function splitIntoSegments(text: string): string[] {
   if (!text || !text.trim()) return [];
   const normalized = text
-    .replace(/
-\n/g, '\n')
+    .replace(/\r\n/g, '\n')
     .replace(/[ \t]*\n[ \t]*/g, ' ') // одинарный \n (wrap) -> пробел
     .replace(/ {2,}/g, ' ')
     .trim();
