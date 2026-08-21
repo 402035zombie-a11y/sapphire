@@ -339,9 +339,12 @@ export default function TrainingScreen() {
           </View>
           <View style={styles.heroFooter}>
             <Text style={[styles.heroFooterText, { color: theme.secondaryText }]}>{t("Learned (lvl 5)")}</Text>
-            <Text style={[styles.heroFooterValue, { color: theme.success }]}>
-              {learnedCount} / {entries.length} · {pct}%
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Text style={[styles.heroFooterValue, { color: theme.success }]}>
+                {learnedCount} / {entries.length} · {pct}%
+              </Text>
+              <SupportButton size={a.icon(34)} iconSize={a.icon(17)} />
+            </View>
           </View>
         </View>
 
