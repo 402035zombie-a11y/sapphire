@@ -75,6 +75,7 @@ export const ukDict: Record<string, string> = {
   'Frequency': 'Частота',
   'Letter spacing': 'Міжлітерний інтервал',
   'Text side margins': 'Бокові відступи тексту',
+  'Paragraph side padding': 'Відступ абзаців',
   'Justified + hyphens': 'По ширині + переноси',
   'Export dictionary': 'Експорт словника',
   'Export error': 'Помилка експорту',

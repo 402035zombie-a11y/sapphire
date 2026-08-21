@@ -18,7 +18,8 @@ interface SettingsState {
     fontWeight: number; // 300..800 — жирность
     textAlign: 'left' | 'justify' | 'hyphenation';
     letterSpacing: number; // відступ між літерами (px), 0 = за замовчуванням
-    pageMargins: boolean; // вкл/выкл отступы по краям
+    pageMargins: boolean; // застарілий прапорець (залишено для міграції), замінений на pageMarginPx
+    pageMarginPx: number; // внутрішній паддінг рядків абзацу, -32..32 px
     highlightWords: boolean;
     dictionaryOnDoubleTap: boolean;
     showAllTranslations: boolean; // показывать перевод под каждым абзацем сразу
@@ -52,6 +53,7 @@ export const useSettingsStore = persist<SettingsState>(
       textAlign: 'justify',
       letterSpacing: 0,
       pageMargins: false,
+      pageMarginPx: 12,
       highlightWords: true,
       dictionaryOnDoubleTap: true,
       showAllTranslations: false,

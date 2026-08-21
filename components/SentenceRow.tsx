@@ -30,7 +30,7 @@ interface Props {
   textAlign?: 'left' | 'justify' | 'hyphenation';
   letterSpacing?: number;
   paragraphSpacing?: number;
-  pageMargins?: boolean;
+  pageMarginPx?: number;
   onToggleBookmark?: () => void;
   onCopy?: () => void;
   onSpeak: (text: string) => void;
@@ -94,7 +94,7 @@ function SentenceRow({
   textAlign = 'justify',
   letterSpacing = 0,
   paragraphSpacing = 0,
-  pageMargins = true,
+  pageMarginPx = 12,
   onSpeak,
   onTranslate,
   showSpeak,
@@ -107,8 +107,11 @@ function SentenceRow({
   const fs = fontSize ?? 18;
   const lh = (lineHeight ?? 1.4) * fs;
   const open = !forceHideTranslation && (!!translation || showTranslation);
-  const textAlignValue = textAlign === 'justify' ? 'justify' : textAlign === 'hyphenation' ? 'justify' : 'left';
-  const hyphenation = textAlign === 'hyphenation';
+  // Dual-режим: justify по оригіналу дає "кишені" і хвости справа (вузька колонка через
+  // колонку кнопок + блок перекладу під абзацом). Тому justify/переноси — тільки в read.
+  const effectiveTextAlign = mode === 'read' ? textAlign : 'left';
+  const textAlignValue = effectiveTextAlign === 'left' ? 'left' : 'justify';
+  const hyphenation = mode === 'read' && textAlign === 'hyphenation';
   const fontFamilyValue =
     fontFamily === 'serif' ? 'serif'
     : fontFamily === 'sans' ? 'sans-serif'
@@ -153,7 +156,7 @@ function SentenceRow({
   const isPlain = mode === 'read';
 
   return (
-    <View style={[styles.row, isPlain && styles.rowPlain, pageMargins ? { paddingHorizontal: Math.round(12 * a.scale) } : null, paragraphSpacing ? { marginBottom: paragraphSpacing } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
+    <View style={[styles.row, isPlain && styles.rowPlain, pageMarginPx !== 0 ? { paddingHorizontal: pageMarginPx } : null, paragraphSpacing ? { marginBottom: paragraphSpacing } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
       {!isPlain && (showSpeak || (onTranslate && !translation && showTranslate)) && (
         <View style={styles.controls}>
           {/* ▶ озвучка */}

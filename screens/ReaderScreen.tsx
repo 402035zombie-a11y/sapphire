@@ -235,7 +235,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   const settingsChangedAt = useRef(0);
   useEffect(() => {
     settingsChangedAt.current = Date.now();
-  }, [reader.margin, reader.pageMargins]);
+  }, [reader.margin, reader.pageMarginPx]);
   const visibleRef = useRef<{ first: number; last: number }>({ first: 0, last: 20 });
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bookRef = useRef(book);
@@ -543,7 +543,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         textAlign={reader.textAlign}
         letterSpacing={reader.letterSpacing}
         paragraphSpacing={reader.paragraphSpacing}
-        pageMargins={reader.pageMargins}
+        pageMarginPx={reader.pageMarginPx ?? 12}
         bookmarked={book.bookmarks?.includes(item.paragraphIndex) ?? false}
         onSpeak={speak}
         onTranslate={translateCb}

@@ -162,15 +162,8 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
           </View>
           )}
 
-          <View style={styles.toggleRow}>
-            <Text style={[styles.toggleLabel, { color: theme.primaryText }]}>{t("Page margins")}</Text>
-            <Switch
-              value={reader.pageMargins}
-              onValueChange={(v) => setReader({ pageMargins: v })}
-              trackColor={{ false: theme.border, true: theme.primary }}
-              thumbColor="#fff"
-            />
-          </View>
+          {/* Page margins тепер через stepper (внутрішній паддінг рядків), а не тумблер */}
+          <NumberStepper label={t("Paragraph side padding")} value={reader.pageMarginPx ?? 12} min={-32} max={32} step={2} suffix=" px" onChange={(v) => setReaderDebounced({ pageMarginPx: v })} st={styles} a={a} />
 
           {mode !== 'read' && (
           <View style={styles.toggleRow}>
