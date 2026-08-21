@@ -735,7 +735,7 @@ export default function TrainingScreen() {
           />
           <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 12 }}>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'primary'), !typed.trim() && !typeChecked && { opacity: 0.45 }]}
+              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.border }, !typed.trim() && !typeChecked && { opacity: 0.45 }]}
               disabled={!typed.trim()}
               onPress={() => {
                 // Другий тап по Check (після перевірки) = перейти до наступного слова
