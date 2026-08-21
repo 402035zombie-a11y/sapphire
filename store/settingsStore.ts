@@ -43,8 +43,8 @@ export const useSettingsStore = persist<SettingsState>(
     // По умолчанию — тёмная тема (Ночь), как просил пользователь.
     theme: 'night',
     reader: {
-      fontSize: 18,
-      lineHeight: 1.4,
+      fontSize: 14,
+      lineHeight: 1,
       paragraphSpacing: 0,
       margin: 0,
       justify: true,
@@ -53,7 +53,7 @@ export const useSettingsStore = persist<SettingsState>(
       textAlign: 'justify',
       letterSpacing: 0,
       pageMargins: false,
-      pageMarginPx: 12,
+      pageMarginPx: 0,
       highlightWords: true,
       dictionaryOnDoubleTap: true,
       showAllTranslations: false,
