@@ -571,7 +571,7 @@ export default function TrainingScreen() {
             placeholder={t("your translation")}
             placeholderTextColor={theme.secondaryText}
             onSubmitEditing={() => {
-              if (typeChecked) return;
+              if (typeChecked) { onNext(); return; }
               const ok = normalize(typed) === normalize(current.translation);
               setTypeOk(ok);
               setTypeChecked(true);
@@ -581,12 +581,12 @@ export default function TrainingScreen() {
               else if (elapsed < 5000) grade = 4;
               else if (elapsed > 12000) grade = 2;
               onAnswer(ok, { grade });
-              setTimeout(() => onNext(), 700);
+              // без авто-переходу — юзер дивиться правильну відповідь і тапає Check (=Next)
             }}
           />
-          <View style={{ flexDirection: 'row', gap: a.gap, marginTop: 12, alignItems: 'center' }}>
+          <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 12 }}>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'primary'), !typed.trim() && { opacity: 0.45 }]}
+              style={[styles.typeCheck, metal(theme, 'primary'), !typed.trim() && !typeChecked && { opacity: 0.45 }]}
               disabled={!typed.trim()}
               onPress={() => {
                 // Другий тап по Check (після перевірки) = перейти до наступного слова
@@ -608,22 +608,20 @@ export default function TrainingScreen() {
             >
               <Text style={styles.btnText}>{typeChecked ? (typeOk ? t("Correct ✓") : t("Wrong ✗")) : t("Check")}</Text>
             </TouchableOpacity>
+            {/* Skip: кругла іконка рестарту */}
             <TouchableOpacity
-              style={[styles.skipBtn, metal(theme, 'raised', { radius: 14 }), { flexDirection: 'row', gap: 6, paddingHorizontal: 12 }]}
+              style={[styles.skipBtn, metal(theme, 'circle', { size: a.icon(40) }), { alignSelf: 'center' }]}
               onPress={() => { if (!typeChecked) onNext(); }}
               hitSlop={8}
             >
               <Icon name="refresh" size={a.dim(0.026, 16, 22)} color={theme.primaryText} />
-              <Text style={{ color: theme.primaryText, fontSize: a.small_fs, fontWeight: '700' }}>{t("Skip")}</Text>
             </TouchableOpacity>
             {typeChecked && typeOk && (
               <TouchableOpacity
-                style={[styles.skipBtn, metal(theme, 'raised', { radius: 14 }), { flexDirection: 'row', gap: 6, paddingHorizontal: 12 }]}
+                style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger }]}
                 onPress={knowAndRemove}
-                hitSlop={8}
               >
-                <Icon name="close" size={a.dim(0.026, 16, 22)} color={theme.danger} />
-                <Text style={{ color: theme.danger, fontSize: a.small_fs, fontWeight: '700' }}>{t("I know it")}</Text>
+                <Text style={[styles.btnText, { color: theme.danger }]}>✗ {t("I know it")}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -646,20 +644,28 @@ export default function TrainingScreen() {
                 : `${t("Wrong ✗")} — ${current.translation}`}
             </Text>
           )}
-          <View style={{ flexDirection: 'row', gap: a.gap, marginTop: 18 }}>
+          <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 18 }}>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.success }, tfAnswered !== null && { opacity: 0.5 }]}
+              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.success, flexDirection: 'row', gap: 8 }, tfAnswered !== null && { opacity: 0.5 }]}
               disabled={tfAnswered !== null}
               onPress={() => answerTf(true)}
             >
               <Text style={[styles.btnText, { color: theme.success }]}>✓ {t("True")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger }, tfAnswered !== null && { opacity: 0.5 }]}
+              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger, flexDirection: 'row', gap: 8 }, tfAnswered !== null && { opacity: 0.5 }]}
               disabled={tfAnswered !== null}
               onPress={() => answerTf(false)}
             >
               <Text style={[styles.btnText, { color: theme.danger }]}>✗ {t("False")}</Text>
+            </TouchableOpacity>
+            {/* Skip: кругла іконка рестарту (після відповіді — перехід далі) */}
+            <TouchableOpacity
+              style={[styles.skipBtn, metal(theme, 'circle', { size: a.icon(40) }), { alignSelf: 'center' }]}
+              onPress={() => onNext()}
+              hitSlop={8}
+            >
+              <Icon name="refresh" size={a.dim(0.026, 16, 22)} color={theme.primaryText} />
             </TouchableOpacity>
           </View>
         </View>

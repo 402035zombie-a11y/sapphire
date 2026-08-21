@@ -5,7 +5,7 @@ const ADMOB_BANNER_ID = "ca-app-pub-5113967448800652/4712038644";
 const ADMOB_REWARDED_ID = "ca-app-pub-5113967448800652/1663349260";
 module.exports = {
   name: APP_NAME, slug: "bookreader", version: "1.0.0",
-  orientation: "portrait", userInterfaceStyle: "automatic", newArchEnabled: true, scheme: "bookreader",
+  orientation: "all", userInterfaceStyle: "automatic", newArchEnabled: true, scheme: "bookreader",
   privacyPolicyUrl: "https://raw.githubusercontent.com/402035zombie-a11y/bookreader/fix/ui-bugs/docs/privacy-policy.html",
   icon: "./assets/icon.png",
   splash: { image: "./assets/splash.png", resizeMode: "contain", backgroundColor: "#1A1D22" },

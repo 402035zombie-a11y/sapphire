@@ -261,6 +261,15 @@ function metalBg(t: ThemePalette): string {
 
 
 export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): any {
+  // FLAT-режим: плаский бокс з обводкою, без металу
+  if ((t as any).flat) {
+    return {
+      backgroundColor: t.surface,
+      borderRadius: radius,
+      borderWidth: 1,
+      borderColor: t.primaryText,
+    };
+  }
   const off = Math.max(4, Math.round((radius * 0.18 + 4) * strength));
   const x = Math.round(off * 0.92);
   const y = off;
@@ -390,18 +399,31 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
       borderRadius: radius,
       borderWidth: 1,
       borderColor: t.primaryText,
+      backgroundColor: t.surface, // FLAT blackout: без прозорості
     };
     switch (role) {
       case 'circle':
       case 'circleInset':
       case 'primary':
       case 'stamp': {
+        // primary БЕЗ size = велика прямокутна кнопка (Check/Save тощо), а не кружечок
+        if (role === 'primary' && opts.size == null) {
+          return {
+            borderRadius: radius,
+            backgroundColor: t.primary,
+            borderWidth: 1,
+            borderColor: t.onPrimary,
+            alignItems: 'center',
+            justifyContent: 'center',
+          };
+        }
         const size = opts.size ?? 40;
         return {
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: role === 'primary' || (role === 'circle' && opts.filled) ? t.primary : 'transparent',
+          // FLAT blackout: непрозорий фон (surface) — прозорі кнопки зливаються з екраном
+          backgroundColor: role === 'primary' || (role === 'circle' && opts.filled) ? t.primary : t.surface,
           borderWidth: 1,
           borderColor: role === 'primary' || (role === 'circle' && opts.filled) ? t.onPrimary : t.primaryText,
           alignItems: 'center',
