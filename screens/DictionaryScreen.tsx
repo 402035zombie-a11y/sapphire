@@ -358,6 +358,43 @@ export default function DictionaryScreen() {
     }
   };
 
+  // Імпорт Anki-колоди (.apkg): DocumentPicker → parseApkgBase64 → importEntries
+  const importAnkiApkg = async () => {
+    setImportOpen(false);
+    try {
+      const DocumentPicker = await import('expo-document-picker');
+      const res = await DocumentPicker.getDocumentAsync({
+        type: ['application/octet-stream', 'application/apkg', '*/*'],
+        copyToCacheDirectory: true,
+      });
+      if (res.canceled || !res.assets?.[0]) return;
+      const file = res.assets[0];
+      if (!file.name?.toLowerCase().endsWith('.apkg')) {
+        Alert.alert(t('Import error'), t('Please select an .apkg file (Anki deck).'));
+        return;
+      }
+      // @ts-ignore — legacy API
+      const FileSystem = require('expo-file-system/legacy');
+      const b64 = await FileSystem.readAsStringAsync(file.uri, { encoding: FileSystem.EncodingType.Base64 });
+
+      const { parseApkgBase64, toDictionaryEntries } = await import('../services/ankiImport');
+      const { cards, deckName } = await parseApkgBase64(b64);
+      if (cards.length === 0) {
+        Alert.alert(t('Import error'), t('No cards found in this deck.'));
+        return;
+      }
+      const lang = 'en'; // Anki-колоди зазвичай front=англ; юзер може змінити мову редагуванням
+      const entries = toDictionaryEntries(cards, lang);
+      useDictionaryStore.getState().importEntries(entries);
+      Alert.alert(
+        t('Import'),
+        t('Imported {n} cards from “{deck}”.').replace('{n}', String(cards.length)).replace('{deck}', deckName),
+      );
+    } catch (err: any) {
+      Alert.alert(t('Import error'), err?.message ?? String(err));
+    }
+  };
+
   const sortOptions: { id: SortMode; label: string }[] = [
     { id: 'az', label: t('A–Z') },
     { id: 'date', label: t('Date') },
@@ -587,6 +624,12 @@ export default function DictionaryScreen() {
               onPress={() => { setImportOpen(false); document.getElementById('dict-import')?.click(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From system file (JSON)')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={importAnkiApkg}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From Anki deck (.apkg)')}</Text>
             </TouchableOpacity>
         </View>
       </ModalSheet>

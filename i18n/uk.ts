@@ -77,6 +77,13 @@ export const ukDict: Record<string, string> = {
   'Today': 'Сьогодні',
   'This week': 'Цього тижня',
   'Hardest first': 'Найскладніші',
+  // Anki міст
+  'From Anki deck (.apkg)': 'З колоди Anki (.apkg)',
+  'Export to Anki': 'Експорт в Anki',
+  'Please select an .apkg file (Anki deck).': 'Оберіть файл .apkg (колода Anki).',
+  'No cards found in this deck.': 'У цій колоді не знайдено карток.',
+  'Imported {n} cards from “{deck}”.': 'Імпортовано {n} карток з «{deck}».',
+  'Exported {n} cards to Anki deck.': 'Експортовано {n} карток у колоду Anki.',
   // Dictionary add/edit + sort/filter
   'Add': 'Додати',
   'Add word': 'Додати слово',
