@@ -192,6 +192,7 @@ export default function DictionaryScreen() {
   const [sortBy, setSortBy] = useState<SortMode>('date');
   const [levelFilter, setLevelFilter] = useState<'all' | 'new' | 'learning' | 'learned'>('all');
   const [levelPickerOpen, setLevelPickerOpen] = useState(false);
+  const [sortPickerOpen, setSortPickerOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const src = scopedEntries ?? [];
@@ -401,20 +402,15 @@ export default function DictionaryScreen() {
         </Text>
         <Card radius={a.radius} style={styles.filterBlock}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 10, flexWrap: 'wrap' }}>
-          <View style={styles.sortBar}>
-            {sortOptions.map((o) => {
-              const active = sortBy === o.id;
-              return (
-                <TouchableOpacity
-                  key={o.id}
-                  style={[styles.sortTab, active && { backgroundColor: theme.selected }]}
-                  onPress={() => setSortBy(o.id)}
-                >
-                  <Text style={[styles.sortTabText, { color: active ? theme.primaryText : theme.secondaryText }]}>{o.label}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          <TouchableOpacity
+            style={[styles.sortTab, sortBy !== 'date' && { backgroundColor: theme.selected }]}
+            onPress={() => setSortPickerOpen(true)}
+          >
+            <Text style={[styles.sortTabText, { color: theme.primaryText }]}>
+              {t('Sort')}: {sortOptions.find((o) => o.id === sortBy)?.label ?? t('Date')}
+            </Text>
+            <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
+          </TouchableOpacity>
           <TouchableOpacity
             style={[styles.sortTab, levelFilter !== 'all' && { backgroundColor: theme.selected }]}
             onPress={() => setLevelPickerOpen(true)}
@@ -635,6 +631,26 @@ export default function DictionaryScreen() {
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Add')}</Text>
               </TouchableOpacity>
             </View>
+        </View>
+      </ModalSheet>
+      <ModalSheet visible={sortPickerOpen} onClose={() => setSortPickerOpen(false)}>
+        <View style={styles.pickCard}>
+          <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Sort by')}</Text>
+          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
+          {sortOptions.map((o) => {
+            const active = sortBy === o.id;
+            return (
+              <TouchableOpacity
+                key={o.id}
+                style={[styles.pickItem, active && { backgroundColor: theme.selected }]}
+                onPress={() => { setSortBy(o.id); setSortPickerOpen(false); }}
+              >
+                <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
+                {active && <Text style={{ color: theme.primary }}>✓</Text>}
+              </TouchableOpacity>
+            );
+          })}
+          </ScrollView>
         </View>
       </ModalSheet>
       <ModalSheet visible={levelPickerOpen} onClose={() => setLevelPickerOpen(false)}>
