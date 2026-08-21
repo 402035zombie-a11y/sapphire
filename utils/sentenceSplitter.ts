@@ -119,10 +119,50 @@ function mergeAbbrevFragments(sentences: string[]): string[] {
 export function splitIntoSegments(text: string): string[] {
   if (!text || !text.trim()) return [];
   const normalized = text
-    .replace(/\r\n/g, '\n')
+    .replace(/
+\n/g, '\n')
     .replace(/[ \t]*\n[ \t]*/g, ' ') // одинарный \n (wrap) -> пробел
     .replace(/ {2,}/g, ' ')
     .trim();
   const parts = splitIntoSentences(normalized);
-  return parts.map((p) => p.trim()).filter(Boolean);
+  // Довге речення (>maxChars) дробимо на частини по : ; — мовно-нейтрально.
+  // Одне речення = одна секція (або кілька, якщо воно дуже довге).
+  const MAX_SENT_CHARS = 200;
+  return parts
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .flatMap((s) => splitLongSentence(s, MAX_SENT_CHARS));
+}
+
+// Мовно-нейтральне дроблення ДОВГОГО речення на частини — тільки по знаках, які є
+// в усіх мовах (: ;). Слова-сполучники (and/but/і/але) НЕ використовуємо — вони неперекладувані.
+// Правило: частина після знака мусить починатися з малого рядка і бути >= MIN_PART (інакше
+// це час/абревіатура/перелік — не ріжемо). Одне речення = максимум кілька секцій, сенс не ріжемо.
+const SUB_SPLIT_MIN_PART = 40; // коротші хвости не відокремлюємо
+
+function splitLongSentence(sentence: string, maxChars: number): string[] {
+  if (sentence.length <= maxChars) return [sentence];
+  const cuts: number[] = [];
+  for (let i = 0; i < sentence.length; i++) {
+    const c = sentence[i];
+    if (c !== ':' && c !== ';') continue;
+    let j = i + 1;
+    while (j < sentence.length && /\s/.test(sentence[j])) j++;
+    const rest = sentence.slice(j);
+    if (rest.length < SUB_SPLIT_MIN_PART) continue;
+    // після розрізу має йти продовження речення з малої літери (не список/цитата/нове речення)
+    if (/^[A-ZА-ЯЄЇІҐЁ«"']/.test(rest)) continue;
+    cuts.push(j);
+  }
+  if (cuts.length === 0) return [sentence];
+  const out: string[] = [];
+  let prev = 0;
+  for (const cut of cuts) {
+    const part = sentence.slice(prev, cut).trim();
+    if (part) out.push(part);
+    prev = cut;
+  }
+  const tail = sentence.slice(prev).trim();
+  if (tail) out.push(tail);
+  return out;
 }
