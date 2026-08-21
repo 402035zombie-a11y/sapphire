@@ -47,7 +47,7 @@ const speakWord = (text: string, lang: string) => {
   Speech.speak(text, { language: lang || 'en', rate: 0.95 });
 };
 
-type SortMode = 'az' | 'date' | 'lang' | 'freq';
+type SortMode = 'az' | 'date' | 'lang' | 'freq' | 'hard';
 
 // Список выбора в попапе (дедуплицирует 3× ScrollView maxHeight:a.height*0.6 в DictionaryScreen)
 function PickerList({ items, emptyHint, styles }: { items: { key: string; label: string; onPress: () => void }[]; emptyHint?: string; styles: any }) {
@@ -151,6 +151,7 @@ export default function DictionaryScreen() {
   const clearAll = useDictionaryStore((s) => s.clearAll);
   const clearByBook = useDictionaryStore((s) => s.clearByBook);
   const progress = useTrainingStore((s) => s.progress) as Record<string, any>;
+  const trainingProgress = progress; // FSRS-прогрес для due-фільтру/сортування
   const levelOf = useTrainingStore((s) => s.levelOf);
 
   // верхний выбор источника: null = показать попап выбора; 'general' | {bookId}
@@ -193,6 +194,9 @@ export default function DictionaryScreen() {
   const [levelFilter, setLevelFilter] = useState<'all' | 'new' | 'learning' | 'learned'>('all');
   const [levelPickerOpen, setLevelPickerOpen] = useState(false);
   const [sortPickerOpen, setSortPickerOpen] = useState(false);
+  // Due-фільтр: коли слово чекати (по nextReviewAt з FSRS)
+  const [dueFilter, setDueFilter] = useState<'all' | 'today' | 'week' | 'overdue'>('all');
+  const [duePickerOpen, setDuePickerOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const src = scopedEntries ?? [];
@@ -205,15 +209,35 @@ export default function DictionaryScreen() {
     if (levelFilter !== 'all') {
       list = list.filter((e: DictionaryEntry) => levelOf(e.word || '', e.lang || '') === levelFilter);
     }
+    // Due-фільтр (FSRS nextReviewAt): overdue — час вже прийшов; today — протягом доби; week — тижня
+    if (dueFilter !== 'all') {
+      const now = Date.now();
+      const dayMs = 86_400_000;
+      list = list.filter((e: DictionaryEntry) => {
+        const p = trainingProgress[`${e.word}|${e.lang}`];
+        if (!p) return false; // без прогресу немає запланованого повторення
+        if (dueFilter === 'overdue') return p.nextReviewAt <= now;
+        if (dueFilter === 'today') return p.nextReviewAt > now && p.nextReviewAt <= now + dayMs;
+        return p.nextReviewAt > now + dayMs && p.nextReviewAt <= now + 7 * dayMs;
+      });
+    }
     list.sort((a, b) => {
       if (sortBy === 'az') return a.word.localeCompare(b.word);
       if (sortBy === 'lang') return a.lang.localeCompare(b.lang) || a.word.localeCompare(b.word);
       if (sortBy === 'freq') return (b.frequency ?? 1) - (a.frequency ?? 1); // D5: за частотою (топ повторюваних)
+      if (sortBy === 'hard') {
+        // Найскладніші: більше wrongCount і менша stability — першими
+        const pa = trainingProgress[`${a.word}|${a.lang}`];
+        const pb = trainingProgress[`${b.word}|${b.lang}`];
+        const scoreA = (pa?.wrongCount ?? 0) * 10 - (pa?.stability ?? 0);
+        const scoreB = (pb?.wrongCount ?? 0) * 10 - (pb?.stability ?? 0);
+        return scoreB - scoreA;
+      }
       // date — новые сверху
       return (b.createdAt || 0) - (a.createdAt || 0);
     });
     return list;
-  }, [scopedEntries, query, sortBy, levelFilter, levelOf]);
+  }, [scopedEntries, query, sortBy, levelFilter, dueFilter, levelOf, trainingProgress]);
 
   const [supportOpen, setSupportOpen] = useState(false);
   useSupportAutoOpen(() => setSupportOpen(true));
@@ -294,6 +318,7 @@ export default function DictionaryScreen() {
     { id: 'date', label: t('Date') },
     { id: 'lang', label: t('Language') },
     { id: 'freq', label: t('Frequency') },
+    { id: 'hard', label: t('Hardest first') },
   ];
 
   const levelOptions: { id: 'all' | 'new' | 'learning' | 'learned'; label: string }[] = [
@@ -417,6 +442,15 @@ export default function DictionaryScreen() {
           >
             <Text style={[styles.sortTabText, { color: levelFilter !== 'all' ? theme.primaryText : theme.secondaryText }]}>
               {t('Type')}: {levelOptions.find((o) => o.id === levelFilter)?.label ?? t('All')}
+            </Text>
+            <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.sortTab, dueFilter !== 'all' && { backgroundColor: theme.selected }]}
+            onPress={() => setDuePickerOpen(true)}
+          >
+            <Text style={[styles.sortTabText, { color: dueFilter !== 'all' ? theme.primaryText : theme.secondaryText }]}>
+              {t('Due')}: {dueFilter === 'all' ? t('All') : dueFilter === 'overdue' ? t('Overdue') : dueFilter === 'today' ? t('Today') : t('This week')}
             </Text>
             <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
           </TouchableOpacity>
@@ -664,6 +698,31 @@ export default function DictionaryScreen() {
                 key={o.id}
                 style={[styles.pickItem, active && { backgroundColor: theme.selected }]}
                 onPress={() => { setLevelFilter(o.id); setLevelPickerOpen(false); }}
+              >
+                <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
+                {active && <Text style={{ color: theme.primary }}>✓</Text>}
+              </TouchableOpacity>
+            );
+          })}
+          </ScrollView>
+        </View>
+      </ModalSheet>
+      <ModalSheet visible={duePickerOpen} onClose={() => setDuePickerOpen(false)}>
+        <View style={styles.pickCard}>
+          <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Due')}</Text>
+          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
+          {([
+            { id: 'all', label: t('All') },
+            { id: 'overdue', label: t('Overdue') },
+            { id: 'today', label: t('Today') },
+            { id: 'week', label: t('This week') },
+          ] as const).map((o) => {
+            const active = dueFilter === o.id;
+            return (
+              <TouchableOpacity
+                key={o.id}
+                style={[styles.pickItem, active && { backgroundColor: theme.selected }]}
+                onPress={() => { setDueFilter(o.id); setDuePickerOpen(false); }}
               >
                 <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
                 {active && <Text style={{ color: theme.primary }}>✓</Text>}
