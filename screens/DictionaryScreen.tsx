@@ -498,7 +498,7 @@ export default function DictionaryScreen() {
         );
       },
     });
-  }, [navigation, headerTitle, theme.primaryText, exportAll, setImportOpen, handleDeleteAll]);
+  }, [navigation, headerTitle, theme.primaryText, exportAll, exportAnki, setImportOpen, handleDeleteAll]);
 
   return (
     <Screen contentStyle={{ padding: a.pad }}>
