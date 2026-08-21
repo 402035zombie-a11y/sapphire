@@ -70,6 +70,7 @@ export const ukDict: Record<string, string> = {
   'Is this the right translation?': 'Чи це правильний переклад?',
   'True': 'Правда',
   'False': 'Брехня',
+  'I know it': 'Знаю — видалити',
   // Due-фільтр і складність (FSRS)
   'Due': 'Повторення',
   'Overdue': 'Прострочені',

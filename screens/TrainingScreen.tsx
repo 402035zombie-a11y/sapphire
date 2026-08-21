@@ -54,6 +54,7 @@ export default function TrainingScreen() {
   const routeBookId: string | undefined = route.params?.bookId;
   const navigation = useNavigation<any>();
   const entries = useDictionaryStore((s) => s.entries) as DictionaryEntry[];
+  const removeEntry = useDictionaryStore((s) => s.removeEntry);
   const books = useLibraryStore((s) => s.books);
   const recordAnswer = useTrainingStore((s) => s.recordAnswer);
   // binary → FSRS grade: wrong=1(again), correct=3(good). Час відповіді type-режим додає окремо.
@@ -283,6 +284,21 @@ export default function TrainingScreen() {
     if (next >= queue.length) setFinished(true);
     else setIndex(next);
   }, [queue, index]);
+
+  // "Знаю слово" — видаляє його зі словника (і з черги). Альтернатива багаторазовим підтвердженням.
+  const knowAndRemove = useCallback(() => {
+    const current = queue[index];
+    if (!current) return;
+    const entry = entries.find((e) => e.word === current.word && e.lang === current.lang);
+    if (entry) {
+      try {
+        removeEntry(entry.id);
+      } catch (e) {
+        console.warn('removeEntry failed', e);
+      }
+    }
+    onNext();
+  }, [queue, index, entries, removeEntry, onNext]);
 
   // TF: генерація пари при зміні слова (50% справжній переклад, 50% чужий схожої довжини)
   useEffect(() => {
@@ -597,6 +613,16 @@ export default function TrainingScreen() {
               <Icon name="refresh" size={a.dim(0.026, 16, 22)} color={theme.primaryText} />
               <Text style={{ color: theme.primaryText, fontSize: a.small_fs, fontWeight: '700' }}>{t("Skip")}</Text>
             </TouchableOpacity>
+            {typeChecked && typeOk && (
+              <TouchableOpacity
+                style={[styles.skipBtn, metal(theme, 'raised', { radius: 14 }), { flexDirection: 'row', gap: 6, paddingHorizontal: 12 }]}
+                onPress={knowAndRemove}
+                hitSlop={8}
+              >
+                <Icon name="close" size={a.dim(0.026, 16, 22)} color={theme.danger} />
+                <Text style={{ color: theme.danger, fontSize: a.small_fs, fontWeight: '700' }}>{t("I know it")}</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       )}
