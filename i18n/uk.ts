@@ -91,6 +91,9 @@ export const ukDict: Record<string, string> = {
   'Recognize (word → translation)': 'Розпізнавання (слово → переклад)',
   'Recall (translation → word)': 'Згадування (переклад → слово)',
   'Word:': 'Слово:',
+  'day streak': 'днів підряд',
+  'answers today': 'відповідей сьогодні',
+  'due now': 'до повторення',
   // Dictionary add/edit + sort/filter
   'Add': 'Додати',
   'Add word': 'Додати слово',

@@ -171,6 +171,29 @@ export default function TrainingScreen() {
     [progress],
   );
 
+  // Статистика активності (FSRS): streak днів, відповіді сьогодні, до повторення
+  const activityStats = useMemo(() => {
+    const now = Date.now();
+    const dayMs = 86_400_000;
+    const todayStart = new Date().setHours(0, 0, 0, 0);
+    let answeredToday = 0;
+    let dueNow = 0;
+    const activeDays = new Set<number>();
+    for (const p of Object.values(progress) as any[]) {
+      if (!p?.lastSeenAt) continue;
+      if (p.lastSeenAt >= todayStart) answeredToday++;
+      activeDays.add(Math.floor(p.lastSeenAt / dayMs));
+      if (p.nextReviewAt && p.nextReviewAt <= now) dueNow++;
+    }
+    // streak: скільки днів підряд (включно з сьогодні або вчора) були відповіді
+    let streak = 0;
+    let dayCursor = Math.floor(now / dayMs);
+    const todayHas = activeDays.has(dayCursor);
+    if (!todayHas) dayCursor -= 1; // якщо сьогодні ще не займався — рахуємо від вчорашнього
+    while (activeDays.has(dayCursor)) { streak++; dayCursor -= 1; }
+    return { answeredToday, dueNow, streak };
+  }, [progress]);
+
   // пул слов согласно источнику (вся библиотека / книга) и исключая выученные (box>=4)
   const pool = useMemo(() => {
     return entries.filter((e) => {
@@ -431,6 +454,21 @@ export default function TrainingScreen() {
                 {learnedCount} / {entries.length} · {pct}%
               </Text>
               <SupportButton size={a.icon(34)} iconSize={a.icon(17)} />
+            </View>
+          </View>
+          {/* Статистика активності (FSRS): streak / сьогодні / до повторення */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, gap: 8 }}>
+            <View style={{ alignItems: 'center', flex: 1 }}>
+              <Text style={[styles.heroFooterValue, { color: theme.primary }]}>{activityStats.streak}</Text>
+              <Text style={[styles.heroFooterText, { color: theme.secondaryText, fontSize: a.fs(11) }]}>{t("day streak")}</Text>
+            </View>
+            <View style={{ alignItems: 'center', flex: 1 }}>
+              <Text style={[styles.heroFooterValue, { color: theme.primary }]}>{activityStats.answeredToday}</Text>
+              <Text style={[styles.heroFooterText, { color: theme.secondaryText, fontSize: a.fs(11) }]}>{t("answers today")}</Text>
+            </View>
+            <View style={{ alignItems: 'center', flex: 1 }}>
+              <Text style={[styles.heroFooterValue, { color: activityStats.dueNow > 0 ? theme.danger : theme.primary }]}>{activityStats.dueNow}</Text>
+              <Text style={[styles.heroFooterText, { color: theme.secondaryText, fontSize: a.fs(11) }]}>{t("due now")}</Text>
             </View>
           </View>
         </View>
