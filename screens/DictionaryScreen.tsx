@@ -126,7 +126,7 @@ function WordCard({ item, theme, a, styles, progress, editing, setEditing, updat
           />
         ) : (
           <TouchableOpacity onPress={() => { ensureTranslation(item); setEditing({ id: item.id, value: item.translation }); }}>
-            <Text style={[styles.translation, { color: theme.primary }]}>{item.translation}</Text>
+            <Text style={[styles.translation, { color: theme.secondaryText }]}>{item.translation}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -718,7 +718,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     wordLine: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 },
     word: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1, maxWidth: '70%', wordBreak: 'break-word', overflow: 'hidden' } as any,
     speakInline: { ...metal(theme, 'circle', { size: a.dim(0.05, 28, 34) }), alignItems: 'center', justifyContent: 'center' },
-    speakInlineIcon: { fontSize: a.fs(14), color: theme.primary },
+    speakInlineIcon: { fontSize: a.fs(14), color: theme.primaryText },
     lang: { fontSize: a.fs(12), fontFamily: FONTS.regular },
     badge: { ...metal(theme, 'inset', { radius: 8 }), flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     badgeBox: { fontSize: a.fs(12), fontFamily: FONTS.bold },
