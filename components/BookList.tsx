@@ -55,7 +55,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
         {item.coverImage ? (
           <Image source={{ uri: item.coverImage }} style={styles.coverImg} resizeMode="cover" />
         ) : (
-          <Text style={[styles.coverText, { color: theme.primaryText }]}>{(item.title || '?').trim().charAt(0).toUpperCase()}</Text>
+          <Text style={[styles.coverText, { color: '#FBF4E4' }]}>{(item.title || '?').trim().charAt(0).toUpperCase()}</Text>
         )}
       </View>
       <View style={{ flex: 1, flexShrink: 1, marginLeft: Math.round(12 * a.scale), minWidth: 0 }}>
