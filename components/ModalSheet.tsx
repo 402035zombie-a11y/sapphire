@@ -12,7 +12,7 @@
 //   panelStyle            — доп. стили панели (bg, radius)
 //   dismissable           — закрытие по тапу вне (дефолт true)
 import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Modal as RNModal, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
@@ -56,7 +56,11 @@ export default function ModalSheet({
   const mw = maxWidth ?? Math.min(480, a.contentMaxW - a.pad * 2);
   const mh = maxHeight ?? '88%';
   const isSheet = variant === 'sheet';
-  return (
+  // НАТИВ: рендеримо оверлей через RN <Modal> — він малюється поверх ВСЬОГО застосунку
+  // (статус-бар, таб-бар, FAB). Absolute-View всередині Screen обрізає dim по межах Screen
+  // і прогинається під zIndex:200 таб-бара (юзер бачив незатемнені зони).
+  // WEB: RN-web <Modal> у навігаторі не рендериться (skill rn-web-modal-pitfalls) — лишаємо absolute.
+  const overlay = (
     <View style={[{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }, { paddingVertical: a.pad, paddingHorizontal: a.pad }] as any}>
       {blurBackdrop && (
         <BlurView intensity={80} tint="dark" style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} />
@@ -93,6 +97,12 @@ export default function ModalSheet({
         {children}
       </View>
     </View>
+  );
+  if (Platform.OS === 'web') return overlay;
+  return (
+    <RNModal visible={visible} transparent animationType="none" statusBarTranslucent onRequestClose={dismissable ? onClose : undefined}>
+      {overlay}
+    </RNModal>
   );
 }
 
