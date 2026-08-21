@@ -31,6 +31,7 @@ export interface ThemePalette {
   selected: string;
   success: string;
   danger: string;
+  backdrop: string; // затемнення фону модалок/оверлеїв (централізоване, п.9)
   // Ридер (область текста книги)
   readerBg: string;
   readerText: string;
@@ -53,11 +54,12 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     surface: '#EAD9BE',
     primary: '#B5742E',
     primaryText: '#4A3F2E',
-    secondaryText: '#8C7A5E',
+    secondaryText: '#A08B66', // чистіший теплий сіро-коричневий (не брудний) для навігації/неактивних
     border: '#D8C7A6',
     selected: '#DFCDAC',
-    success: '#6E8A4E',
-    danger: '#B5583C',
+    success: '#16A34A',
+    danger: '#DC2626',
+    backdrop: 'rgba(0,0,0,0.45)',
     readerBg: '#F2E6CE',
     readerText: '#4A3F2E',
     readerDim: '#B7A684',
@@ -78,8 +80,9 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     secondaryText: '#9A958A',
     border: '#2A2B30',
     selected: '#232429',
-    success: '#5E8C6A',
-    danger: '#B04646',
+    success: '#22C55E',
+    danger: '#EF4444',
+    backdrop: 'rgba(0,0,0,0.6)',
     readerBg: '#16171A',
     readerText: '#E4DFD2',
     readerDim: '#6A6A70',
@@ -102,8 +105,9 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     secondaryText: '#56524C',
     border: '#161616',
     selected: '#0E0E0E',
-    success: '#4E6B54', // тьмяно-зелений
-    danger: '#8A3A3A', // тьмяно-червоний
+    success: '#22C55E',
+    danger: '#EF4444',
+    backdrop: 'rgba(0,0,0,0.75)',
     readerBg: '#000000',
     readerText: '#726E64', // тьмяний сірий (НЕ білий)
     readerDim: '#3C3C40',

@@ -29,6 +29,7 @@ interface Props {
   fontWeight?: number;
   textAlign?: 'left' | 'justify' | 'hyphenation';
   letterSpacing?: number;
+  paragraphSpacing?: number;
   pageMargins?: boolean;
   onToggleBookmark?: () => void;
   onCopy?: () => void;
@@ -92,6 +93,7 @@ function SentenceRow({
   fontWeight = 400,
   textAlign = 'justify',
   letterSpacing = 0,
+  paragraphSpacing = 0,
   pageMargins = true,
   onSpeak,
   onTranslate,
@@ -151,7 +153,7 @@ function SentenceRow({
   const isPlain = mode === 'read';
 
   return (
-    <View style={[styles.row, isPlain && styles.rowPlain, pageMargins ? { paddingHorizontal: Math.round(12 * a.scale) } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
+    <View style={[styles.row, isPlain && styles.rowPlain, pageMargins ? { paddingHorizontal: Math.round(12 * a.scale) } : null, paragraphSpacing ? { marginBottom: paragraphSpacing } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
       {!isPlain && (showSpeak || (onTranslate && !translation && showTranslate)) && (
         <View style={styles.controls}>
           {/* ▶ озвучка */}

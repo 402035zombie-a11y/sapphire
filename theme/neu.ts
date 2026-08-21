@@ -110,8 +110,8 @@ export function neuPrimary(t: ThemePalette, radius: number): any {
     boxShadow: [
       `${Math.round(x * OUTER_SHADOW)}px ${Math.round(off * OUTER_SHADOW)}px ${Math.round(blur1 * OUTER_SHADOW)}px rgba(0,0,0,0.45)`,
       `${Math.round(x * 1.6 * OUTER_SHADOW)}px ${Math.round(off * 1.6 * OUTER_SHADOW)}px ${Math.round(blur2 * OUTER_SHADOW)}px rgba(0,0,0,0.35)`,
-      `inset 0 1px 2px rgba(255,255,255,0.35)`, // верхний блик
-      `inset 0 -2px 5px rgba(0,0,0,0.30)`, // нижняя внутренняя тень
+      `inset 0 1px 2px ${rim(t)}`, // верхній блік (темозалежний, не хардкод)
+      `inset 0 -2px 5px ${specDark(t)}`, // нижня внутрішня тінь
     ].join(', '),
     elevation: Math.max(3, Math.round(off)),
   };

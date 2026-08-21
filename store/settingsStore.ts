@@ -11,6 +11,7 @@ interface SettingsState {
   reader: {
     fontSize: number;
     lineHeight: number; // множитель межстрочного интервала
+    paragraphSpacing: number; // відступ між абзацами (px), 0 = за замовчуванням
     margin: number;
     justify: boolean;
     fontFamily: string; // гарнитура: 'default' | 'serif' | 'sans' | 'mono'
@@ -43,7 +44,8 @@ export const useSettingsStore = persist<SettingsState>(
     reader: {
       fontSize: 18,
       lineHeight: 1.4,
-      margin: 16,
+      paragraphSpacing: 0,
+      margin: 0,
       justify: true,
       fontFamily: 'default',
       fontWeight: 400,

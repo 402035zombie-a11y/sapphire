@@ -149,17 +149,21 @@ export default function ReaderScreen({ route }: { route: any }) {
   const contentWidth = Math.max(120, Math.min(width, a.readerMaxW ?? width) - 24);
   const charsPerLine = Math.max(10, Math.floor(contentWidth / Math.max(6, fs0 * 0.55)));
   // Опції чанкера стабільні доки не зміниться шрифт/в'юпорт/режим.
+  // R5/T5: lineHeight винесено з chunkerOpts — buildChunks більше НЕ перераховує всю книгу
+  // при зміні міжрядкового інтервалу (було джерелом фрізу 5-10с). lineHeight застосовується
+  // тільки як візуальний стиль <Text> (ReaderScreen L156/521); chunker рахує maxLines за
+  // базовим 1.5 — чанки = одиниці префетчу, не екрани, тому неточність не ламає рендеринг.
   const chunkerOpts: ChunkOptions = React.useMemo(
     () => ({
       viewportHeight: Math.max(120, height - 140),
       fontSize: fs0,
-      lineHeight: reader.lineHeight ?? 1.5,
+      lineHeight: 1.5, // базовий, не залежить від reader.lineHeight (T5 fix)
       charsPerLine,
       showTranslation: mode === 'dual',
       translateExpansion: 1.3,
       maxChunkLines: 80,
     }),
-    [height, width, a.readerMaxW, reader.lineHeight, fs0, mode],
+    [height, width, a.readerMaxW, fs0, mode],
   );
   // Чанки = одиниці планування префетчу перекладу. Перебудовуємось тільки при зміні
   // структури книги (bookId/довжина) або опцій — НЕ на кожен переклад (оригінали
@@ -508,6 +512,39 @@ export default function ReaderScreen({ route }: { route: any }) {
 
 
 
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => (
+      <SentenceRow
+        index={item.index}
+        paragraphIndex={item.paragraphIndex}
+        original={item.original}
+        translation={book.sentenceTranslations?.[item.index] ?? ''}
+        loading={loadingSet.has(item.index)}
+        showTranslation={mode === 'dual'}
+        fontSize={reader.fontSize}
+        lineHeight={reader.lineHeight}
+        justify={reader.justify}
+        fontFamily={reader.fontFamily}
+        fontWeight={reader.fontWeight}
+        textAlign={reader.textAlign}
+        letterSpacing={reader.letterSpacing}
+        paragraphSpacing={reader.paragraphSpacing}
+        pageMargins={reader.pageMargins}
+        bookmarked={book.bookmarks?.includes(item.paragraphIndex) ?? false}
+        onSpeak={speak}
+        onTranslate={translateCb}
+        showSpeak={reader.showSpeakButton ?? true}
+        showTranslate={reader.showTranslateButton ?? true}
+        onWordPress={onWordPress}
+        onRowLayout={(_, h) => { const prev = rowHeights.current.get(_); if (prev !== h) rowHeights.current.set(_, h); }}
+        forceHideTranslation={mode === 'read'}
+        mode={mode}
+        query={query}
+      />
+    ),
+    [book, mode, reader, loadingSet, speak, translateCb, onWordPress, rowHeights],
+  );
+
   const list = (
     <FlatList
       ref={scrollRef}
@@ -527,34 +564,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       ListFooterComponent={
         loadingSet.size > 0 ? <ActivityIndicator style={styles.footer} color={theme.secondaryText} /> : null
       }
-      renderItem={({ item }) => (
-        <SentenceRow
-          index={item.index}
-          paragraphIndex={item.paragraphIndex}
-          original={item.original}
-          translation={book.sentenceTranslations?.[item.index] ?? ''}
-          loading={loadingSet.has(item.index)}
-          showTranslation={mode === 'dual'}
-          fontSize={reader.fontSize}
-          lineHeight={reader.lineHeight}
-          justify={reader.justify}
-          fontFamily={reader.fontFamily}
-          fontWeight={reader.fontWeight}
-          textAlign={reader.textAlign}
-          letterSpacing={reader.letterSpacing}
-          pageMargins={reader.pageMargins}
-          bookmarked={book.bookmarks?.includes(item.paragraphIndex) ?? false}
-          onSpeak={speak}
-          onTranslate={translateCb}
-          showSpeak={reader.showSpeakButton ?? true}
-          showTranslate={reader.showTranslateButton ?? true}
-          onWordPress={onWordPress}
-          onRowLayout={(_, h) => { const prev = rowHeights.current.get(_); if (prev !== h) rowHeights.current.set(_, h); }}
-          forceHideTranslation={mode === 'read'}
-          mode={mode}
-          query={query}
-        />
-      )}
+      renderItem={renderItem}
     />
   );
 
@@ -596,7 +606,7 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   // Модалка поиска по книге
   const searchModal = (
-    <ModalSheet visible={searchOpen} onClose={() => setSearchOpen(false)} panelStyle={{ backgroundColor: theme.readerBg }}>
+    <ModalSheet visible={searchOpen} onClose={() => setSearchOpen(false)} blurBackdrop={false} panelStyle={{ backgroundColor: theme.readerBg }}>
       <View style={[styles.menuCard, { width: '100%', maxWidth: Math.min(a.width - 24, 520) }]}>
           <Text style={[styles.menuTitle, { color: theme.primaryText }]}>{t("Search in book")}</Text>
           <TextField
@@ -700,7 +710,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     list: { paddingVertical: 12, paddingBottom: 40, width: '100%', maxWidth: a.readerMaxW, alignSelf: 'center' },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     footer: { marginVertical: a.gap },
-    modalBackdrop: { flex: 1, backgroundColor: '#00000066', justifyContent: 'flex-start' },
+    modalBackdrop: { flex: 1, backgroundColor: theme.backdrop, justifyContent: 'flex-start' },
     menuCard: {
       maxHeight: a.height * (a.landscape ? 0.85 : 0.7),
       borderBottomLeftRadius: a.radius + 4,

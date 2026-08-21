@@ -30,6 +30,8 @@ export default function ModalSheet({
   panelStyle,
   dismissable = true,
   blurBackdrop = true,
+  // dim фону позаду модалки (затемнення). FontSettingsSheet вимикає, щоб юзер бачив текст позаду.
+  dimBackdrop = true,
   allowNested = false,
 }: {
   visible: boolean;
@@ -43,6 +45,7 @@ export default function ModalSheet({
   // blur фона позади модалки (без затемнения). FontSettingsSheet отключает,
   // чтобы пользователь видел изменения шрифта на заднем фоне в реальном времени.
   blurBackdrop?: boolean;
+  dimBackdrop?: boolean;
   // Дозволяє вкладені ModalSheet (напр. LanguagePicker всередині Settings) не
   // обрізатися батьківським overflow:hidden. Вимикає overflow:hidden на панелі.
   allowNested?: boolean;
@@ -56,9 +59,16 @@ export default function ModalSheet({
   return (
     <View style={[{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }, { paddingVertical: a.pad, paddingHorizontal: a.pad }] as any}>
       {blurBackdrop && (
-        <BlurView intensity={14} tint="light" style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} />
+        <BlurView intensity={80} tint="dark" style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} />
       )}
-      {!blurBackdrop && <View style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'transparent' }} />}
+      {/* затемнення фону позаду модалки (dimBackdrop=false → прозоро, юзер бачить текст позаду, напр. FontSettingsSheet) */}
+      {dimBackdrop && (
+        <>
+          <View style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, backgroundColor: theme.backdrop }} />
+          {/* T3: другий шар — сумарно вдвічі сильніше затемнення */}
+          <View style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, backgroundColor: theme.backdrop }} />
+        </>
+      )}
       {dismissable && <TouchableOpacity style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} activeOpacity={1} onPress={onClose} />}
       <View
         style={[

@@ -35,6 +35,7 @@ import { splitIntoSentences } from '../utils/sentenceSplitter';
 import { extractSections } from '../utils/sections';
 import { langName } from '../utils/languages';
 import { buildBookDictionary } from '../services/bookDictionaryService';
+import { enqueueWordImport, useWordImportStore } from '../services/wordImportQueue';
 import LanguagePicker from '../components/LanguagePicker';
 import ProgressBar from '../components/ProgressBar';
 import IconButton from '../components/ui/IconButton';
@@ -90,12 +91,10 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
 
   const [draft, setDraft] = useState<Draft | null>(null);
   const [loading, setLoading] = useState(false);
-  const [importing, setImporting] = useState(false);
-  const [importProgress, setImportProgress] = useState(0);
   const [progress, setProgress] = useState(0);
   const styles = useMemo(() => makeStyles(a, theme), [a, theme]);
   // FAB «+» крупнее стандартных круглых кнопок хедера, чтобы тапалось уверенно.
-  const fabSize = Math.round(a.fab() * 1.15);
+  const fabSize = Math.round(a.fab() * 1.9);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [targetPickerVisible, setTargetPickerVisible] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'title'>('recent');
@@ -293,25 +292,24 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
     setDraft(null);
   };
 
-  const importBookDict = async () => {
+  const importBookDict = () => {
     if (!draft) return;
-    setImporting(true);
-    setImportProgress(0);
-    try {
-      const list = await buildBookDictionary(
-        draft.paragraphs,
-        draft.language,
-        draft.targetLang,
-        { bookId: makeBookId(cleanTitle(draft.title)), onProgress: setImportProgress },
-      );
-      importEntries(list);
-      Alert.alert(t('Done'), t('Dictionary added from «{title}»: {n} words.').replace(/\{title\}/g, draft.title).replace(/\{n\}/g, String(list.length)));
-    } catch (e: any) {
-      Alert.alert(t('Error importing dictionary'), e?.message ?? String(e));
-    } finally {
-      setImporting(false);
-    }
+    const bookId = makeBookId(cleanTitle(draft.title));
+    // НЕ блокуємо UI: ставимо в фонову чергу, керування повертається миттєво.
+    enqueueWordImport({
+      bookId,
+      title: draft.title,
+      paragraphs: draft.paragraphs,
+      lang: draft.language,
+      targetLang: draft.targetLang,
+    });
+    // Модалку не закриваємо примусово — користувач бачить прогрес і може додати ще книгу.
   };
+
+  // Прогрес імпорту поточної чернетки з фонової черги (не блокує UI).
+  const importJob = useWordImportStore((s) => (draft ? s.jobs[makeBookId(cleanTitle(draft.title))] : undefined));
+  const importing = importJob?.status === 'running' || importJob?.status === 'queued';
+  const importProgress = importJob?.progress ?? 0;
 
   const openReader = (bookId: string) => {
     if (onSelectBook) {
@@ -388,7 +386,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
 
           <TouchableOpacity
             style={[styles.importBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]}
-            disabled={importing}
             onPress={importBookDict}
           >
             <Text style={[styles.importText, { color: theme.primary }]}>
@@ -398,6 +395,9 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           {importing && (
             <View style={{ marginTop: 8 }}>
               <ProgressBar progress={importProgress} />
+              <Text style={[styles.importText, { color: theme.secondaryText, fontSize: a.small_fs }]}>
+                {importJob?.status === 'queued' ? t('Queued…') : `${Math.round(importProgress * 100)}%`}
+              </Text>
             </View>
           )}
 
@@ -493,7 +493,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     progressCard: { borderRadius: a.radius, padding: a.pad, marginHorizontal: a.pad, marginBottom: a.gap },
     progressText: { marginBottom: 8, fontSize: a.small_fs },
     draftCard: { width: '100%', maxWidth: 420, borderRadius: a.radius, padding: a.pad },
-    draftBackdrop: { flex: 1, backgroundColor: '#00000080', justifyContent: 'center', alignItems: 'center', padding: a.pad },
+    draftBackdrop: { flex: 1, backgroundColor: theme.backdrop, justifyContent: 'center', alignItems: 'center', padding: a.pad },
     draftCenter: { width: '100%', maxWidth: 420, alignItems: 'stretch' },
     draftTitle: { fontSize: a.h2, fontFamily: FONTS.bold },
     draftMeta: { marginTop: 4, marginBottom: a.gap, fontSize: a.small_fs },
@@ -538,7 +538,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     },
     modalBackdrop: {
       flex: 1,
-      backgroundColor: '#00000066',
+      backgroundColor: theme.backdrop,
       justifyContent: 'center',
       alignItems: 'center',
       padding: a.modal().backdropPad,

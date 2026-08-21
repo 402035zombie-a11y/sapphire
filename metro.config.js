@@ -24,7 +24,8 @@ config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
   'react-native-google-mobile-ads': path.resolve(__dirname, '__mocks__/react-native-google-mobile-ads.ts'),
 };
-// гарантуємо, що .ts mock резолвиться
-config.resolver.sourceExts = ['ts', 'tsx', 'js', 'jsx', ...config.resolver.sourceExts.filter((e) => e !== 'ts' && e !== 'tsx')];
+// гарантуємо, що .ts mock резолвиться + wasm для expo-sqlite web (інакше бандл падає на
+// "Unable to resolve ./wa-sqlite/wa-sqlite.wasm" і браузер показує порожній екран)
+config.resolver.sourceExts = ['wasm', 'ts', 'tsx', 'js', 'jsx', ...config.resolver.sourceExts.filter((e) => e !== 'ts' && e !== 'tsx' && e !== 'wasm')];
 
 module.exports = config;

@@ -22,7 +22,7 @@ export default function BackFab({
   const theme = useTheme();
   const a = useAdaptive();
   const s = size ?? a.fab();
-  const pad = Math.max(10, a.pad); // пропорциональный отступ от стен (не менее 10)
+  const pad = Math.max(28, a.pad * 2.5); // збільшено: зовнішня тінь не обрізається (T7б) + кнопка трохи нижче/лівіше (T7а)
   const safeTop = Platform.OS === 'ios' ? 8 : 0;
   return (
     <TouchableOpacity

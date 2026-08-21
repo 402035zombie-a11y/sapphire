@@ -40,6 +40,7 @@ export default function SupportAuthorModal({
     <ModalSheet
       visible={visible}
       onClose={onDismiss}
+      blurBackdrop={true}
       panelStyle={{
         backgroundColor: theme.popupBg ?? theme.neu.base,
         // maxHeight ограничивает панель, чтобы она НЕ растягивалась на весь экран

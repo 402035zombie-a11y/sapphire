@@ -104,8 +104,8 @@ function WordCard({ item, theme, a, styles, progress, editing, setEditing, updat
           {(c > 0 || w > 0) && (
             <View style={[styles.badge, badgeStyle]}>
               <Text style={[styles.badgeBox, { color: theme.primary }]}>{t('Lvl')} {box}</Text>
-              <Text style={{ color: '#16A34A' }}>✓{c}</Text>
-              <Text style={{ color: '#DC2626' }}>✗{w}</Text>
+              <Text style={{ color: theme.success }}>✓{c}</Text>
+              <Text style={{ color: theme.danger }}>✗{w}</Text>
             </View>
           )}
           {item.frequency && item.frequency > 1 && (
@@ -306,24 +306,28 @@ export default function DictionaryScreen() {
     const book = books.find((b) => b.id === bookId);
     if (!book) return;
     const lang = effectiveLang(book.language);
-    // extractBookWords нормализует (только буквы) и считает частоту вхождений
-    const freqs = extractBookWords(book.paragraphs);
-    // БАТЧ: один importEntries вместо 1000+ addEntry (каждый addEntry писал
-    // весь словарь в AsyncStorage → 5с freeze на 1000+ слов). importEntries
-    // делает один set + один persist.
-    const toAdd = freqs.map(({ word, frequency }) => ({
-      word,
-      surfaceForm: word,
-      translation: '',
-      context: '',
-      lang,
-      bookId,
-      frequency,
-    }));
-    importEntries(toAdd);
-    // переключаемся на вид «по книге», чтобы пользователь сразу увидел добавленные слова
-    setSource({ type: 'book', bookId });
-    Alert.alert(t('Import from book'), t('Unique words added: {n}').replace(/\{n\}/g, String(toAdd.length)));
+    // T1: не блокуємо UI — важка робота (парсинг усієї книги) у асинхронному мікротасці.
+    // Одразу повідомляємо юзера, що команда прийнята (фідбек без затримки).
+    Alert.alert(t('Import from book'), t('Book queued for processing…'));
+    setBookPickOpen(false);
+    // відкладаємо важку синхронну роботу, щоб UI розблокувався й показав Alert
+    Promise.resolve().then(() => {
+      const freqs = extractBookWords(book.paragraphs);
+      // БАТЧ: один importEntries замість 1000+ addEntry
+      const toAdd = freqs.map(({ word, frequency }) => ({
+        word,
+        surfaceForm: word,
+        translation: '',
+        context: '',
+        lang,
+        bookId,
+        frequency,
+      }));
+      importEntries(toAdd);
+      // перемикаємося на вид «по книзі», щоб юзер одразу побачив додані слова
+      setSource({ type: 'book', bookId });
+      Alert.alert(t('Import from book'), t('Unique words added: {n}').replace(/\{n\}/g, String(toAdd.length)));
+    });
   };
 
   const handleDeleteAll = () => {
@@ -376,7 +380,7 @@ export default function DictionaryScreen() {
               <Icon name="scan" size={isz} color={theme.primaryText} />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleDeleteAll} hitSlop={6} style={tb}>
-              <Icon name="close" size={isz} color="#DC2626" />
+              <Icon name="close" size={isz} color={theme.danger} />
             </TouchableOpacity>
             <SupportButton />
           </View>

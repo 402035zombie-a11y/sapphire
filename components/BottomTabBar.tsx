@@ -84,6 +84,10 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
               ...(focused
                 ? neuPrimary(theme, a.radius)
                 : metal(theme, 'inset', { radius: a.radius })),
+              // Neo: легка зовнішня неоморфічна тінь 3px (поверх металу, не глушиться OUTER_SHADOW)
+              boxShadow: focused
+                ? '2px 3px 6px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.25)'
+                : '2px 3px 6px rgba(0,0,0,0.28), inset 0 1px 1px rgba(255,255,255,0.18)',
             }}
           >
             <Icon

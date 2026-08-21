@@ -570,7 +570,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     pauseBtnText: { fontSize: a.fs(24), fontFamily: FONTS.bold },
     pauseValue: { fontSize: a.title, fontFamily: FONTS.bold, minWidth: 54, textAlign: 'center' },
     pauseHint: { fontSize: a.fs(12) },
-    resetBackdrop: { backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', zIndex: 50 },
+    resetBackdrop: { backgroundColor: theme.backdrop, alignItems: 'center', justifyContent: 'center', zIndex: 50 },
     resetModal: { width: Math.min(320, a.contentMaxW - a.pad * 2), borderRadius: a.radius, padding: a.pad, alignItems: 'center' },
     resetTitle: { fontSize: a.h2, fontFamily: FONTS.bold, marginBottom: a.gap },
     resetRow: { flexDirection: 'row', gap: a.gap, width: '100%' },

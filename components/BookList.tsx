@@ -80,6 +80,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
 
 export function BookList({ books, bookWordCount, onOpen, onRemove }: Props) {
   const a = useAdaptive();
+  const theme = useTheme();
   return (
     <FlashList
       data={books}
@@ -96,7 +97,7 @@ export function BookList({ books, bookWordCount, onOpen, onRemove }: Props) {
         </View>
       )}
       ListEmptyComponent={() => (
-        <Text style={{ color: '#888', padding: 24, textAlign: 'center' }}>Library is empty.</Text>
+        <Text style={{ color: theme.secondaryText, padding: 24, textAlign: 'center' }}>Library is empty.</Text>
       )}
     />
   );

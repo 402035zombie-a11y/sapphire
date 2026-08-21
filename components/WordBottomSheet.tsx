@@ -164,7 +164,7 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
             </View>
           ))}
           {translation ? (
-            <View style={{ marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#00000010' }}>
+            <View style={{ marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: theme.backdrop }}>
               <Text style={{ fontSize: a.small_fs, marginBottom: 2, color: theme.secondaryText }}>{t("Translation:")}</Text>
               <Text style={{ fontSize: a.h2, fontFamily: 'bold', color: theme.posColor }}>{translation}</Text>
             </View>

@@ -4,6 +4,15 @@
 Верифікація: `npx tsc --noEmit` після кожного файлу + `expo start --web --port 8082` (користувач перевіряє в браузері).
 Гілка: `fix/ui-bugs`. Файли: `components/`, `screens/`, `services/`, `theme/`.
 
+## Етап 4 — T9: аудит хардкоду кольорів [DONE 2026-08-20]
+- [x] 4.1 Знайдено хардкод у 7 файлів: TrainingScreen, DictionaryScreen, SpeedReadingScreen, ReaderScreen, LibraryScreen, WordBottomSheet, ModalSheet (`#16A34A`/`#DC2626`/`rgba(0,0,0,…)`/`#00000066`).
+- [x] 4.2 Додано `backdrop` токен у `theme/themes.ts` для ВСІХ 3 тем (day `rgba(0,0,0,0.45)` / night `0.6` / blackout `0.75`).
+- [x] 4.3 Зроблено `success`/`danger` яскравими та theme-driven (day `16A34A`/`DC2626`, night+blackout `22C55E`/`EF4444`) — централізовано (п.9 користувача).
+- [x] 4.4 Замінено хардкод на `theme.success`/`theme.danger`/`theme.backdrop` у всіх 7 файлах.
+- [x] 4.5 `npx tsc --noEmit` → EXIT 0.
+- [x] 4.6 НЕ чіпали (свідомо): `FontSettingsSheet.tsx` capture-шар `#00000066` (тимчасовий скріншот) + `BottomTabBar.tsx` boxShadow (flat навмисне, `OUTER_SHADOW=0`).
+- ЗАЛИШИЛОСЯ: **T6** (blur + біла обводка модалок) — ЗАБЛОКОВАНО: потрібен скрін з телефону (користувач забрав пристрій). Верифікація через `expo start --web` + browser-скрін.
+
 ## Етап 0 — ПІДГОТОВКА [DONE]
 - [x] 0.1 `npx tsc --noEmit` — перевірити базовий стан (EXIT 0 на старті).
 - [x] 0.2 Перевірити `react-native-safe-area-context` встановлено (INSTALLED).
@@ -139,7 +148,20 @@
       Залишити чи прибрати? Видалення = пересинхрон lockfile. НЕ блокує білд (dead dep). РІШЕННЯ користувача не треба — прибрати в прибиральному коміті.
 
 ## 15 — НАСТУПНІ КРОКИ (після підтвердження 14.1)
-- [ ] 15.1 `eas build --profile preview --platform android` (WSL, ANDROID_HOME=/opt/android-sdk) → лінк APK.
+- [x] 15.1 `eas build --profile preview --platform android` (WSL cloud, mike2424) — ЗАПУЩЕНО. Build ID: `71ff286f-56e9-488d-8289-3aa7aa594b34`.
+      Лог: https://expo.dev/accounts/mike2424/projects/bookreader/builds/71ff286f-56e9-488d-8289-3aa7aa594b34
+- [x] 15.1b КРИТИЧНИЙ ФІКС білду: `react-native-google-mobile-ads` plugin ламав `expo config --json`
+      (EAS CLI 22 + expo 54, мовчазне exit 1). Видалено plugin-обгортку з app.config.js; AdMob ініціалізується
+      через `extra.admob` + рантайм monetization.native.ts. Закомічено `709cae0`. tsc EXIT 0.
+- [ ] 15.2 Користувач ставить на телефон, перевіряє library/reader/словник/тренінг.
+
+## 17 — ПРИБИРАННЯ + HANDOFF ДЛЯ МАЙБУТНІХ АГЕНТІВ (2026-08-20)
+- [x] 17.1 Видалено застарілі файли: BUGS_ROUND2.md, BUGS_ROUND3.md, ROUND5.md, FORMATS_ROUND.md, ARCH_ANALYSIS.md.
+      Вони містили застарілі PENDING → спровокували хибний висновок PERF-3 (StyleSheet.create в тілі).
+- [x] 17.2 Створено HANDOFF.md — єдине джерело правди: потік даних, нативні модулі, 5 критичних правил
+      білду, EAS-акаунт mike2424, що зроблено, що НЕ робити.
+- [x] 17.3 Закомічено `docs: add HANDOFF.md + remove stale round/analysis docs`.
+- [x] 17.4 EAS залогінений як mike2424 (підтверджено eas whoami через токен brbrbr.txt).
 - [ ] 15.2 Користувач ставить на телефон, перевіряє library/reader/словник/тренінг.
 - [ ] 15.3 Якщо OK → `eas build --profile production` з AdMob ENV (ca-app-pub-* з .env / brbrbr.txt).
 - [ ] 15.4 `eas submit --platform android` → Play Console (закритий тест ≥14д + ≥20 тестувальників перед продом).

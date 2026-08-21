@@ -110,7 +110,7 @@ export default function TrainingScreen() {
     streakLabel: { fontSize: a.small_fs },
     dots: { flexDirection: 'row', gap: 6, flex: 1, flexWrap: 'wrap' },
     dot: { width: a.icon(14), height: a.icon(14), borderRadius: a.icon(14) / 2 },
-    streakNum: { fontSize: a.body, fontFamily: 'bold' },
+    streakNum: { fontSize: a.body, fontFamily: 'bold', marginRight: a.fab() * 2 },
     accuracy: { fontSize: a.small_fs, textAlign: 'center', marginBottom: a.gap },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: a.pad },
     empty: { textAlign: 'center', padding: 40, fontSize: a.body },
@@ -129,7 +129,7 @@ export default function TrainingScreen() {
     speakIcon: { fontSize: a.fs(18), color: theme.primary },
     typeHint: { fontSize: a.fs(14), textAlign: 'center', marginTop: 12, marginBottom: 8 },
     typeInput: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: a.tiny ? 8 : 12, fontSize: a.body },
-    typeCheck: { borderRadius: a.radius, paddingVertical: a.tiny ? 17 : 21, alignItems: 'center', flex: 1 },
+    typeCheck: { borderRadius: a.radius, paddingVertical: a.tiny ? 17 : 21, alignItems: 'center', justifyContent: 'center', flex: 1 },
     skipBtn: { width: Math.round(Math.max(36, 44 * a.scale)), height: Math.round(Math.max(36, 44 * a.scale)), borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
     typeCorrect: { fontSize: a.small_fs, textAlign: 'center', marginTop: 10, fontStyle: 'italic' },
   }), [a, theme]);
@@ -444,10 +444,10 @@ export default function TrainingScreen() {
       <View style={styles.topRow}>
         <IconButton icon="arrow-back" onPress={() => { setStarted(false); setFinished(false); setIndex(0); }} variant="circle" size={a.fab()} hitSlop={8} />
         <View style={styles.counterBadges}>
-          <View style={[styles.counterBadge, { backgroundColor: '#16A34A' }]}>
+          <View style={[styles.counterBadge, { backgroundColor: theme.success }]}>
             <Text style={styles.counterBadgeText}>✓ {stats.correct}</Text>
           </View>
-          <View style={[styles.counterBadge, { backgroundColor: '#DC2626' }]}>
+          <View style={[styles.counterBadge, { backgroundColor: theme.danger }]}>
             <Text style={styles.counterBadgeText}>✗ {stats.wrong}</Text>
           </View>
         </View>
@@ -476,7 +476,7 @@ export default function TrainingScreen() {
             </TouchableOpacity>
           </View>
           {typeChecked && (
-            <Text style={[styles.typeCorrect, { color: typeOk ? '#16A34A' : '#DC2626', fontSize: a.fs(15), marginTop: 6 }]}>
+            <Text style={[styles.typeCorrect, { color: typeOk ? theme.success : theme.danger, fontSize: a.fs(15), marginTop: 6 }]}>
               {typeOk ? t("Correct ✓") : `${t("Correct answer: ")}${current.translation}`}
             </Text>
           )}
