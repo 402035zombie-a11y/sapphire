@@ -21,6 +21,7 @@ export interface NeuColors {
 }
 
 export interface ThemePalette {
+  flat?: boolean; // FLAT-режим (blackout): без неоморфізму — текст+бордер кольору тексту
   // Приложение (табы, карточки, кнопки)
   background: string;
   surface: string; // база неоморфических карточек
@@ -101,6 +102,7 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
   // Никакого белого: текст и кнопки — светло-серые. Неоморфизм на чёрном не виден,
   // поэтому base делаем светло-серым (#1C1C1E) для видимости кнопок (хрестик удаления и т.п.).
   blackout: {
+    flat: true, // FLAT-режим: без неоморфізму (rollback: git tag blackout-before-flat)
     background: '#000000',
     surface: '#050505',
     primary: '#232427',

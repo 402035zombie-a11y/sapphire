@@ -40,6 +40,14 @@ function extrude(t: ThemePalette): string {
 
 // выпуклый (raised): мягкий многослойный объём
 export function neuRaised(t: ThemePalette, radius: number, strength = 1): any {
+  // FLAT-режим (blackout): без неоморфізму — прозорий фон + тонкий бордер кольору тексту
+  if ((t as any).flat) {
+    return {
+      borderRadius: radius,
+      borderWidth: 1,
+      borderColor: t.primaryText,
+    };
+  }
   const off = Math.max(4, Math.round((radius * 0.18 + 4) * strength)); // базовый сдвиг
   const x = off * 0.5;
   const y = off * 0.5;
@@ -74,6 +82,14 @@ export function neuRaised(t: ThemePalette, radius: number, strength = 1): any {
 
 // утопленный (inset): мягкое углубление с читаемым бортиком
 export function neuInset(t: ThemePalette, radius: number, strength = 1): any {
+  // FLAT-режим: як raised — бордер кольору тексту, без тіней
+  if ((t as any).flat) {
+    return {
+      borderRadius: radius,
+      borderWidth: 1,
+      borderColor: t.primaryText,
+    };
+  }
   const off = Math.max(4, Math.round((radius * 0.42 + 5) * strength));
   const x = off * 0.5;
   const y = off * 0.5;
@@ -99,6 +115,15 @@ export function neuInset(t: ThemePalette, radius: number, strength = 1): any {
 
 // акцентная кнопка (primary): заливка primary + мягкий объём + верхний блик
 export function neuPrimary(t: ThemePalette, radius: number): any {
+  // FLAT: заливка primary + бордер кольору onPrimary, без тіней
+  if ((t as any).flat) {
+    return {
+      backgroundColor: t.primary,
+      borderRadius: radius,
+      borderWidth: 1,
+      borderColor: t.onPrimary,
+    };
+  }
   const off = Math.max(3, Math.round(radius * 0.22 + 3));
   const blur1 = Math.round(off * 2.2);
   const blur2 = Math.round(off * 4.0);
@@ -135,6 +160,10 @@ export function neuInsetCard(t: ThemePalette, radius: number): any {
 // Градиентный фон экрана (премиум-глубина): сверху-центр светлее → края темнее.
 // Используется вместо плоского backgroundColor: theme.background на корнях экранов.
 export function screenBg(t: ThemePalette): any {
+  // FLAT: чистий колір без градієнта
+  if ((t as any).flat) {
+    return { backgroundColor: t.background };
+  }
   return {
     backgroundColor: t.background,
     backgroundImage: `linear-gradient(160deg, ${t.bgTop} 0%, ${t.background} 45%, ${t.bgBot} 100%)`,
@@ -144,6 +173,19 @@ export function screenBg(t: ThemePalette): any {
 
 // круглая кнопка (play/fab/icon): raised — для круга равное смещение корректно
 export function neuCircle(t: ThemePalette, size: number, filled = false): any {
+  // FLAT: коло з бордером кольору тексту; filled — заливка primary
+  if ((t as any).flat) {
+    return {
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      backgroundColor: filled ? t.primary : 'transparent',
+      borderWidth: 1,
+      borderColor: filled ? t.onPrimary : t.primaryText,
+      alignItems: 'center',
+      justifyContent: 'center',
+    };
+  }
   const off = Math.max(4, Math.round(size * 0.14));
   const blur1 = Math.round(off * 2.0);
   const blur2 = Math.round(off * 4.0);
@@ -342,6 +384,42 @@ interface MetalOpts {
 }
 export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): any {
   const radius = opts.radius ?? 14;
+  // FLAT-режим (blackout): весь метал-скін → пласкі елементи з бордером кольору тексту
+  if ((t as any).flat) {
+    const flatBox = {
+      borderRadius: radius,
+      borderWidth: 1,
+      borderColor: t.primaryText,
+    };
+    switch (role) {
+      case 'circle':
+      case 'circleInset':
+      case 'primary':
+      case 'stamp': {
+        const size = opts.size ?? 40;
+        return {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: role === 'primary' || (role === 'circle' && opts.filled) ? t.primary : 'transparent',
+          borderWidth: 1,
+          borderColor: role === 'primary' || (role === 'circle' && opts.filled) ? t.onPrimary : t.primaryText,
+          alignItems: 'center',
+          justifyContent: 'center',
+        };
+      }
+      case 'tabActive':
+      case 'tabStampActive':
+        return { ...flatBox, backgroundColor: t.primary, borderColor: t.onPrimary };
+      case 'tab':
+      case 'tabStamp':
+        return { borderRadius: radius, backgroundColor: 'transparent' };
+      case 'text':
+        return metalText(t, opts.textColor);
+      default:
+        return flatBox;
+    }
+  }
   switch (role) {
     case 'circle':
       return neuMetalCircle(t, opts.size ?? 40, opts.filled ?? false);
