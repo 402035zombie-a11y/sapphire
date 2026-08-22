@@ -475,7 +475,7 @@ const importAnkiApkg = async () => {
           updateEntry(e.id, { translation: r.text });
         }
       })
-      .catch(() => {});
+      .catch((e) => console.warn('[dict] lazy translate failed:', e));
   }, [books, updateEntry]);
 
   // ТУЛБАР: Dictionary живе в Tab-навігаторі з headerShown:false → navigation.setOptions

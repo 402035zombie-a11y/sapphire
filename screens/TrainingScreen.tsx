@@ -395,10 +395,15 @@ export default function TrainingScreen() {
   // ---- Cloze режим: речення з контексту з пропуском слова → вибір перекладу ----
   const [cloze, setCloze] = useState<{ sentence: string; maskedWord: string; options: string[] } | null>(null);
   const [clozePicked, setClozePicked] = useState<string | null>(null);
+  // Map-індекс entries по word|lang — O(1) замість O(n) find на кожне слово
+  const entryIndex = useMemo(
+    () => new Map(entries.map((e) => [`${e.word}|${e.lang}`, e] as const)),
+    [entries],
+  );
   useEffect(() => {
     if (mode !== 'cloze' || !current) { setCloze(null); setClozePicked(null); return; }
     // контекст: речення, що містить слово (з DictionaryEntry.context)
-    const entry = entries.find((e) => e.word === current.word && e.lang === current.lang);
+    const entry = entryIndex.get(`${current.word}|${current.lang}`);
     const target = (current.surfaceForm || current.word).toLowerCase();
     let sentence = '';
     if (entry?.context) {
@@ -409,8 +414,12 @@ export default function TrainingScreen() {
       sentence = cand || entry.context.slice(0, 220);
     }
     if (!sentence || !sentence.toLowerCase().includes(target)) {
-      // немає контексту або слово не знайдено → fallback на звичайне речення-підказку
-      setCloze(null); setClozePicked(null); return;
+      // FALLBACK: немає контексту → показуємо звичайну картку слово→переклад (замість skip)
+      const distractors = shuffle(
+        poolRef.current.filter((e: DictionaryEntry) => e.translation && e.translation.trim() && e.translation !== current.translation),
+      ).slice(0, 3).map((e: DictionaryEntry) => e.translation);
+      setCloze({ sentence: `${current.surfaceForm || current.word} → ______`, maskedWord: current.translation, options: shuffle([current.translation, ...distractors]) });
+      setClozePicked(null); return;
     }
     // маскуємо ПЕРШЕ входження слова (reg-insensitive, ціле слово) і запам'ятовуємо його
     const re = new RegExp(`\\b${target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\w*`, 'i');
