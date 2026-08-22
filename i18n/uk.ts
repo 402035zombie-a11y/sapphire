@@ -100,6 +100,7 @@ export const ukDict: Record<string, string> = {
   'due now': 'до повторення',
   'Daily goal': 'Ціль на день',
   'Translate to': 'Перекладати на',
+  "If the ad doesn't load, try again or use donate": 'Якщо реклама не завантажилась — спробуйте ще раз або підтримайте донатом',
   // Бургер-меню словника
   'Dictionary menu': 'Меню словника',
   'Search words': 'Пошук слів',

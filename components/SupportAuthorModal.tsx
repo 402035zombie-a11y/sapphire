@@ -70,6 +70,10 @@ export default function SupportAuthorModal({
 
         <TouchableOpacity style={[metal(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onSupport}>
           <Text style={btnText}>{t("Watch an ad (30s)")}</Text>
+          {/* Fallback: якщо реклама не завантажилась — юзер все одно може підтримати донатом */}
+          <Text style={{ color: theme.secondaryText, fontSize: a.fs(10), marginTop: 2 }}>
+            {t("If the ad doesn't load, try again or use donate")}
+          </Text>
         </TouchableOpacity>
         {onDonate && (
           <TouchableOpacity style={[metal(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onDonate}>
