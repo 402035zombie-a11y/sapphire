@@ -581,7 +581,6 @@ export default function DictionaryScreen() {
           </TouchableOpacity>
         </View>
       </Card>
-      {toolbar}
       {/* B9: FlatList замість ScrollView — віртуалізація (не рендерить 1000+ карток одразу).
           numColumns={a.columns} — адаптивна сітка (1-6 колонок). Context прибрано зі списку. */}
       <FlatList
