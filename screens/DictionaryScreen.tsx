@@ -545,6 +545,7 @@ export default function DictionaryScreen() {
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
+        key={`dict-cols-${a.columns}`}
         numColumns={a.columns}
         initialNumToRender={20}
         maxToRenderPerBatch={30}
