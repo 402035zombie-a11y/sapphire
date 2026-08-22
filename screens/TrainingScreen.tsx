@@ -472,7 +472,7 @@ export default function TrainingScreen() {
       >
         <BackFab onPress={() => navigation.goBack()} />
         {/* SupportButton — absolute, той самий рівень що BackFab (правий верхній кут) */}
-        <View style={{ position: 'absolute', top: a.pad + (a.insetTop || 0), right: a.pad, zIndex: 50 }}>
+        <View style={{ position: 'absolute', top: Math.max(28, a.pad * 2.5), right: Math.max(28, a.pad * 2.5), zIndex: 50 }}>
           <SupportButton size={a.fab()} iconSize={Math.round(a.fab() * 0.5)} />
         </View>
         {finished && (
