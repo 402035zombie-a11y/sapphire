@@ -697,9 +697,7 @@ export default function TrainingScreen() {
             <Text style={styles.counterBadgeText}>✗ {stats.wrong}</Text>
           </View>
         </View>
-      </View>
-      <View style={{ position: 'absolute', top: a.insetTop * 2 + a.pad + 10, right: a.pad, zIndex: 50 }}>
-        <SupportButton />
+        <SupportButton size={a.fab()} iconSize={Math.round(a.fab() * 0.5)} />
       </View>
 
       <View style={styles.streakRow}>
