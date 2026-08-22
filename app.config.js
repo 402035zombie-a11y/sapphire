@@ -11,7 +11,7 @@ module.exports = {
   splash: { image: "./assets/splash.png", resizeMode: "contain", backgroundColor: "#1A1D22" },
   assetBundlePatterns: ["**/*"],
   ios: { supportsTablet: true, bundleIdentifier: "com.mike.wolfskin", infoPlist: { SKAdNetworkItems: [{ SKAdNetworkIdentifier: "cstr6suwn9.skadnetwork" }] } },
-  android: { package: PACKAGE, versionCode: 1, permissions: [], adaptiveIcon: { foregroundImage: "./assets/adaptive-icon.png", backgroundColor: "#000000" }, softwareKeyboardLayoutMode: "pan" },
+  android: { package: PACKAGE, versionCode: 2, permissions: [], adaptiveIcon: { foregroundImage: "./assets/adaptive-icon.png", backgroundColor: "#000000" }, softwareKeyboardLayoutMode: "pan" },
   web: { favicon: "./assets/favicon.png", bundler: "metro" },
   plugins: [
     ["expo-build-properties", {
