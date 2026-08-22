@@ -545,7 +545,7 @@ export default function TrainingScreen() {
                 styles.sourceTab,
                 { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
                 metal(theme, 'raised', { radius: 999 }),
-                !reverse && { backgroundColor: theme.selected, borderWidth: 1.5, borderColor: theme.success },
+                !reverse && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success },
               ]}
               onPress={() => setReverse(false)}
             >
@@ -559,7 +559,7 @@ export default function TrainingScreen() {
                 styles.sourceTab,
                 { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
                 metal(theme, 'raised', { radius: 999 }),
-                reverse && { backgroundColor: theme.selected, borderWidth: 1.5, borderColor: theme.success },
+                reverse && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success },
               ]}
               onPress={() => setReverse(true)}
             >
@@ -616,7 +616,7 @@ export default function TrainingScreen() {
                 style={[
                   styles.sourceTab,
                   metal(theme, 'raised', { radius: 999 }),
-                  source === 'all' && { backgroundColor: theme.selected, ...metal(theme, 'inset', { radius: 999 }) },
+                  source === 'all' && { backgroundColor: '#4A4A50' },
                 ]}
                 onPress={() => setSource('all')}
               >
@@ -630,7 +630,7 @@ export default function TrainingScreen() {
                   style={[
                     styles.sourceTab,
                     metal(theme, 'raised', { radius: 999 }),
-                    source === b.id && { backgroundColor: theme.selected, ...metal(theme, 'inset', { radius: 999 }) },
+                    source === b.id && { backgroundColor: '#4A4A50' },
                   ]}
                   onPress={() => setSource(b.id)}
                 >
