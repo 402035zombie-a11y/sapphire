@@ -387,7 +387,7 @@ export default function TrainingScreen() {
   );
 
   // ---- Cloze режим: речення з контексту з пропуском слова → вибір перекладу ----
-  const [cloze, setCloze] = useState<{ sentence: string; masked: string; options: string[] } | null>(null);
+  const [cloze, setCloze] = useState<{ sentence: string; maskedWord: string; options: string[] } | null>(null);
   const [clozePicked, setClozePicked] = useState<string | null>(null);
   useEffect(() => {
     if (mode !== 'cloze' || !current) { setCloze(null); setClozePicked(null); return; }
@@ -406,21 +406,32 @@ export default function TrainingScreen() {
       // немає контексту або слово не знайдено → fallback на звичайне речення-підказку
       setCloze(null); setClozePicked(null); return;
     }
-    // маскуємо ПЕРШЕ входження слова (reg-insensitive, ціле слово)
+    // маскуємо ПЕРШЕ входження слова (reg-insensitive, ціле слово) і запам'ятовуємо його
     const re = new RegExp(`\\b${target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\w*`, 'i');
+    const match = sentence.match(re);
+    if (!match) { setCloze(null); setClozePicked(null); return; }
+    const maskedWord = match[0]; // саме це слово стояло в пропускі (з закінченням)
     const masked = sentence.replace(re, '______');
-    if (masked === sentence) { setCloze(null); setClozePicked(null); return; }
-    // варіанти: правильний переклад + 3 дистрактори
-    const distractors = shuffle(
-      poolRef.current.filter((e: DictionaryEntry) => e.translation && e.translation.trim() && e.translation !== current.translation),
-    ).slice(0, 3).map((e: DictionaryEntry) => e.translation);
-    setCloze({ sentence: masked, masked: '______', options: shuffle([current.translation, ...distractors]) });
+
+    // Варіанти — СЛОВА ТОЄЇ Ж МОВИ що й речення. Юзер вгадує, яке слово стояло в пропускі.
+    const others = poolRef.current
+      .filter((e: DictionaryEntry) => {
+        const w = (e.surfaceForm || e.word);
+        return w && `${e.word}|${e.lang}` !== `${current.word}|${current.lang}`;
+      })
+      .map((e: DictionaryEntry) => (e.surfaceForm || e.word));
+    const len = maskedWord.length;
+    const similar = others.filter((w: string) => Math.abs(w.length - len) <= Math.max(4, len * 0.5));
+    const pool2 = similar.length >= 3 ? similar : others;
+    const distractors = shuffle(pool2).slice(0, 3);
+
+    setCloze({ sentence: masked, maskedWord, options: shuffle([maskedWord, ...distractors]) });
     setClozePicked(null);
   }, [mode, current, entries]);
   const answerCloze = useCallback(
     (picked: string) => {
       if (!current || clozePicked !== null) return;
-      const correct = picked === current.translation;
+      const correct = picked === (cloze?.maskedWord ?? '');
       setClozePicked(picked);
       onAnswer(correct);
       setTimeout(() => onNext(), 900);
@@ -876,10 +887,10 @@ export default function TrainingScreen() {
             {cloze.sentence}
           </Text>
           {clozePicked !== null && (
-            <Text style={[styles.typeCorrect, { color: clozePicked === current.translation ? theme.success : theme.danger, fontSize: a.fs(15), marginTop: 10, textAlign: 'center' }]}>
-              {clozePicked === current.translation
+            <Text style={[styles.typeCorrect, { color: clozePicked === cloze.maskedWord ? theme.success : theme.danger, fontSize: a.fs(15), marginTop: 10, textAlign: 'center' }]}>
+              {clozePicked === cloze.maskedWord
                 ? t("Correct ✓")
-                : `${t("Correct answer: ")}${current.translation}`}
+                : `${t("Correct answer: ")}${cloze.maskedWord}`}
             </Text>
           )}
           <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 16 }}>
