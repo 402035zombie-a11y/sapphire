@@ -497,6 +497,32 @@ export default function DictionaryScreen() {
     });
   }, [navigation, headerTitle, theme.primaryText, exportAll, exportAnki, setImportOpen, handleDeleteAll]);
 
+  // ТУЛБАР: Dictionary живе в Tab-навігаторі з headerShown:false → navigation.setOptions
+  // headerRight НІДЕ не рендериться. Тулбар малюємо в тілі екрана як звичайний рядок.
+  const tbSize = a.dim(0.06, 30, 40);
+  const tb = metal(theme, 'circle', { size: tbSize });
+  const isz = a.dim(0.028, 16, 24);
+  const toolbar = (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+      <TouchableOpacity onPress={() => setSearchOpen(true)} hitSlop={6} style={tb}>
+        <Icon name="search" size={isz} color={theme.primaryText} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={exportAll} hitSlop={6} style={tb}>
+        <Icon name="copy" size={isz} color={theme.primaryText} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => setImportOpen(true)} hitSlop={6} style={tb}>
+        <Icon name="scan" size={isz} color={theme.primaryText} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={exportAnki} hitSlop={6} style={tb}>
+        <Icon name="anki" size={isz} color={theme.primaryText} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleDeleteAll} hitSlop={6} style={tb}>
+        <Icon name="close" size={isz} color={theme.danger} />
+      </TouchableOpacity>
+      <SupportButton size={tbSize} iconSize={isz} />
+    </View>
+  );
+
   return (
     <Screen contentStyle={{ padding: a.pad }}>
       <View style={[styles.counterRow, metal(theme, 'inset', { radius: a.radius })]}>
@@ -507,7 +533,9 @@ export default function DictionaryScreen() {
             return sum + (tp?.correctCount ?? 0) + (tp?.wrongCount ?? 0);
           }, 0)}</Text>
         </Text>
-        <Card radius={a.radius} style={styles.filterBlock}>
+        {toolbar}
+      </View>
+      <Card radius={a.radius} style={styles.filterBlock}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 10, flexWrap: 'wrap' }}>
           <TouchableOpacity
             style={[styles.sortTab, sortBy !== 'date' && { backgroundColor: theme.selected }]}
@@ -538,7 +566,6 @@ export default function DictionaryScreen() {
           </TouchableOpacity>
         </View>
       </Card>
-      </View>
 
       {/* B9: FlatList замість ScrollView — віртуалізація (не рендерить 1000+ карток одразу).
           numColumns={a.columns} — адаптивна сітка (1-6 колонок). Context прибрано зі списку. */}
