@@ -49,6 +49,10 @@ export function useSupportAutoOpen(
   const dismissCount = useSupportStore((s) => s.dismissCount ?? 0);
   const markShown = useSupportStore((s) => s.markShown);
   const shownThisSession = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Перерахунок умов (forceCheck через зміну dismissCount/lastShownTime відбувається
+  // автоматично — useEffect залежить від lastShownTime)
+  const forceCheck = () => {};
 
   useEffect(() => {
     // Глобальні вимикачі
@@ -56,9 +60,19 @@ export function useSupportAutoOpen(
     // Frequency cap: один показ на сесію екрана
     if (shownThisSession.current) return;
 
-    // Показ 1 раз на ДЕНЬ (не на сесію): якщо вже показували сьогодні — чекаємо завтра.
-    const todayStart = new Date().setHours(0, 0, 0, 0);
-    if (lastShownTime > 0 && lastShownTime >= todayStart) return;
+    // Внутрішньоденний повтор: якщо юзер відмовився — наступна спроба через +5 хв
+    // (5, 10, 15, 20... хв від останнього показу). Щодня скидається.
+    if (lastShownTime > 0) {
+      const stepMinutes = 5 * Math.max(1, dismissCount); // 1-й раз: 5хв, потім 10, 15...
+      const nextAllowedAt = lastShownTime + stepMinutes * 60_000;
+      const todayStart = new Date().setHours(0, 0, 0, 0);
+      // показуємо тільки якщо настав час І це ще сьогодні
+      if (Date.now() < nextAllowedAt) {
+        timerRef.current = setTimeout(() => markShown(), nextAllowedAt - Date.now());
+        return;
+      }
+      if (lastShownTime >= todayStart) return; // вже показували сьогодні
+    }
 
     let timer: ReturnType<typeof setTimeout> | undefined;
     const show = () => {
