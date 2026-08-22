@@ -283,6 +283,9 @@ export default function DictionaryScreen() {
     reader.readAsText(file);
   };
 
+  // Експорт у Anki (.apkg): сумісний формат, юзер відкриває в Anki через "Імпорт"
+
+  // JSON імпорт через DocumentPicker (працює на Android/iOS/web — document.getElementById був web-only)
   const exportAll = async () => {
     if (scopedEntries.length === 0) {
       Alert.alert(t('Empty'), t('No words to export.'));
@@ -315,53 +318,7 @@ export default function DictionaryScreen() {
     }
   };
 
-  // Експорт у Anki (.apkg): сумісний формат, юзер відкриває в Anki через "Імпорт"
-  const exportAnki = async () => {
-    if (scopedEntries.length === 0) {
-      Alert.alert(t('Empty'), t('No words to export.'));
-      return;
-    }
-    try {
-      const { buildApkgBase64 } = await import('../services/ankiExport');
-      const cards = scopedEntries
-        .filter((e) => e.word && e.translation)
-        .map((e) => ({ front: e.word, back: e.translation }));
-      if (cards.length === 0) {
-        Alert.alert(t('Empty'), t('No words to export.'));
-        return;
-      }
-      const deckName = source?.type === 'book'
-        ? `Sapphire::${headerTitle || 'Book'}`
-        : 'Sapphire::Dictionary';
-      const b64 = await buildApkgBase64(cards, deckName);
-      if (Platform.OS === 'web') {
-        const blob = new Blob([b64], { type: 'application/octet-stream' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${deckName.replace(/[:/\\]/g, '-')}.apkg`;
-        a.click();
-        URL.revokeObjectURL(url);
-      } else {
-        // @ts-ignore — legacy API
-        const FileSystem = require('expo-file-system/legacy');
-        const path = `${FileSystem.cacheDirectory}sapphire-export.apkg`;
-        await FileSystem.writeAsStringAsync(path, b64, { encoding: FileSystem.EncodingType.Base64 });
-        const can = await Sharing.isAvailableAsync();
-        if (can) {
-          await Sharing.shareAsync(path, { mimeType: 'application/apkg', dialogTitle: t('Export to Anki') });
-        } else {
-          Alert.alert(t('Export'), t('Sharing not available on this device.'));
-        }
-      }
-      Alert.alert(t('Export'), t('Exported {n} cards to Anki deck.').replace('{n}', String(cards.length)));
-    } catch (err: any) {
-      Alert.alert(t('Export error'), err?.message ?? String(err));
-    }
-  };
-
-  // Імпорт Anki-колоди (.apkg): DocumentPicker → parseApkgBase64 → importEntries
-  const importAnkiApkg = async () => {
+const importAnkiApkg = async () => {
     setImportOpen(false);
     try {
       const DocumentPicker = await import('expo-document-picker');
@@ -396,6 +353,59 @@ export default function DictionaryScreen() {
       Alert.alert(t('Import error'), err?.message ?? String(err));
     }
   };
+
+  // Експорт у Anki (.apkg): сумісний формат, юзер відкриває в Anki через "Імпорт"
+  const importJsonFromPicker = async () => {
+    try {
+      const DocumentPicker = await import('expo-document-picker');
+      const res = await DocumentPicker.getDocumentAsync({
+        type: ['application/json', 'text/plain', '*/*'],
+        copyToCacheDirectory: true,
+      });
+      if (res.canceled || !res.assets?.[0]) return;
+      // @ts-ignore — legacy API
+      const FileSystem = require('expo-file-system/legacy');
+      const text = await FileSystem.readAsStringAsync(res.assets[0].uri, { encoding: 'utf8' });
+      importFromFile(text);
+    } catch (err: any) {
+      Alert.alert(t('Import error'), err?.message ?? String(err));
+    }
+  };
+
+  const exportAnki = async () => {
+    if (scopedEntries.length === 0) {
+      Alert.alert(t('Empty'), t('No words to export.'));
+      return;
+    }
+    const json = JSON.stringify(scopedEntries, null, 2);
+    if (Platform.OS === 'web') {
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bookreader-dictionary.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      try {
+        // @ts-ignore — legacy API типи конфліктують з tsc node_modules
+        const FileSystem = require('expo-file-system/legacy');
+        const path = `${FileSystem.cacheDirectory}bookreader-dictionary.json`;
+        await FileSystem.writeAsStringAsync(path, json, { encoding: 'utf8' });
+        const can = await Sharing.isAvailableAsync();
+        if (can) {
+          await Sharing.shareAsync(path, { mimeType: 'application/json', dialogTitle: t('Export dictionary') });
+        } else {
+          Alert.alert(t('Export'), t('Sharing not available on this device.'));
+        }
+      } catch (err: any) {
+        Alert.alert(t('Export error'), err?.message ?? String(err));
+      }
+    }
+  };
+
+  // Експорт у Anki (.apkg): сумісний формат, юзер відкриває в Anki через "Імпорт"
+  
 
   const sortOptions: { id: SortMode; label: string }[] = [
     { id: 'az', label: t('A–Z') },
@@ -633,7 +643,7 @@ export default function DictionaryScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.pickItem]}
-              onPress={() => { setImportOpen(false); document.getElementById('dict-import')?.click(); }}
+              onPress={() => { setImportOpen(false); importJsonFromPicker(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From system file (JSON)')}</Text>
             </TouchableOpacity>
@@ -764,7 +774,7 @@ export default function DictionaryScreen() {
             {/* Імпорт JSON */}
             <TouchableOpacity
               style={[styles.pickItem]}
-              onPress={() => { setMenuOpen(false); document.getElementById('dict-import')?.click(); }}
+              onPress={() => { setMenuOpen(false); importJsonFromPicker(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From system file (JSON)')}</Text>
             </TouchableOpacity>
