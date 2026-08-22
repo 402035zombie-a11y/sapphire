@@ -543,8 +543,9 @@ export default function TrainingScreen() {
             <TouchableOpacity
               style={[
                 styles.sourceTab,
+                { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
                 metal(theme, 'raised', { radius: 999 }),
-                !reverse && { backgroundColor: theme.selected, borderWidth: 1.5, borderColor: theme.success, ...metal(theme, 'inset', { radius: 999 }) },
+                !reverse && { backgroundColor: theme.selected, borderWidth: 1.5, borderColor: theme.success },
               ]}
               onPress={() => setReverse(false)}
             >
@@ -556,8 +557,9 @@ export default function TrainingScreen() {
             <TouchableOpacity
               style={[
                 styles.sourceTab,
+                { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
                 metal(theme, 'raised', { radius: 999 }),
-                reverse && { backgroundColor: theme.selected, borderWidth: 1.5, borderColor: theme.success, ...metal(theme, 'inset', { radius: 999 }) },
+                reverse && { backgroundColor: theme.selected, borderWidth: 1.5, borderColor: theme.success },
               ]}
               onPress={() => setReverse(true)}
             >
