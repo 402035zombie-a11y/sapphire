@@ -59,14 +59,17 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
 
   const c = progress?.correctCount ?? 0;
   const w = progress?.wrongCount ?? 0;
-  const box = progress?.box ?? 1;
+  // FSRS stability (днів) замість legacy lvl-боксів — інформативніша метрика
+  const stability = Math.round(progress?.stability ?? 0);
 
   return (
     <View style={[styles.card, metal(theme, 'inset', { radius: a.radius })]}>
       <View style={styles.wordRow}>
-        <View style={[styles.boxBadge, metal(theme, 'inset', { radius: 8 })]}>
-          <Text style={styles.boxText}>{t("lvl {n}").replace(/\{n\}/g, String(box))}</Text>
-        </View>
+        {stability > 0 && (
+          <View style={[styles.boxBadge, metal(theme, 'inset', { radius: 8 })]}>
+            <Text style={styles.boxText}>{t("{n}d").replace("{n}", String(stability))}</Text>
+          </View>
+        )}
         <Text style={styles.word}>{item.word}</Text>
         <TouchableOpacity style={styles.speakBtn} onPress={() => speak(item.word, item.fromLang || 'en')} hitSlop={6}>
           <Text style={styles.speakIcon}>▶</Text>

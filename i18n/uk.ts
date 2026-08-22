@@ -92,6 +92,8 @@ export const ukDict: Record<string, string> = {
   'Recall (translation → word)': 'Згадування (переклад → слово)',
   'Word:': 'Слово:',
   'day streak': 'днів підряд',
+  '{n}d memory': 'памʼять {n}д',
+  '{n}d': '{n}д',
   'answers today': 'відповідей сьогодні',
   'due now': 'до повторення',
   'Daily goal': 'Ціль на день',

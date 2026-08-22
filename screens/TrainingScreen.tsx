@@ -724,7 +724,7 @@ export default function TrainingScreen() {
           )}
           {currentProgress && (currentProgress.correctCount > 0 || currentProgress.wrongCount > 0) && (
             <Text style={[styles.typeHint, { color: theme.secondaryText }]}>
-              ✓ {currentProgress.correctCount}  ✗ {currentProgress.wrongCount}  ·  {t("lvl")}{currentProgress.box}
+              ✓ {currentProgress.correctCount}  ✗ {currentProgress.wrongCount}  ·  {t("{n}d memory").replace("{n}", String(Math.round(currentProgress.stability ?? 0)))}
             </Text>
           )}
           <Text style={[styles.typeHint, { color: theme.secondaryText }]}>{t("Enter the translation:")}</Text>
