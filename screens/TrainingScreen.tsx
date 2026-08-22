@@ -536,14 +536,9 @@ export default function TrainingScreen() {
           </View>
         </View>
 
-        {/* Напрямок тренування: forward (en→uk) / reverse (uk→en) */}
+        {/* Напрямок тренування: forward (en→uk) / reverse (uk→en) — компактний */}
         <View style={[styles.sourceCard, metal(theme, 'raised', { radius: a.radius + 4 })]}>
           <Text style={[styles.sourceLabel, { color: theme.secondaryText }]}>{t("Direction")}</Text>
-          <Text style={[styles.heroFooterText, { color: theme.secondaryText, fontSize: a.fs(11), marginBottom: 6 }]}>
-            {reverse
-              ? t("Recall (translation → word)")
-              : t("Recognize (word → translation)")}
-          </Text>
           <View style={styles.sourceTabs}>
             <TouchableOpacity
               style={[
@@ -554,7 +549,7 @@ export default function TrainingScreen() {
               onPress={() => setReverse(false)}
             >
               <Text style={[styles.sourceTabText, { color: !reverse ? theme.primaryText : theme.secondaryText }]}>
-                {sourceBook ? `${effectiveLang(sourceBook.language).toUpperCase()} → ${(sourceBook.targetLang || 'uk').toUpperCase()}` : t("Recognize (word → translation)")}
+                {sourceBook ? `${effectiveLang(sourceBook.language).toUpperCase()} → ${(sourceBook.targetLang || 'uk').toUpperCase()}` : t("word → translation")}
               </Text>
               {!reverse && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
             </TouchableOpacity>
@@ -562,12 +557,12 @@ export default function TrainingScreen() {
               style={[
                 styles.sourceTab,
                 metal(theme, 'raised', { radius: 999 }),
-                reverse && { backgroundColor: theme.selected, borderWidth: 1.5, borderColor: theme.primary, ...metal(theme, 'inset', { radius: 999 }) },
+                reverse && { backgroundColor: theme.selected, borderWidth: 1.5, borderColor: theme.success, ...metal(theme, 'inset', { radius: 999 }) },
               ]}
               onPress={() => setReverse(true)}
             >
               <Text style={[styles.sourceTabText, { color: reverse ? theme.primaryText : theme.secondaryText }]}>
-                {sourceBook ? `${(sourceBook.targetLang || 'uk').toUpperCase()} → ${effectiveLang(sourceBook.language).toUpperCase()}` : t("Recall (translation → word)")}
+                {sourceBook ? `${(sourceBook.targetLang || 'uk').toUpperCase()} → ${effectiveLang(sourceBook.language).toUpperCase()}` : t("translation → word")}
               </Text>
               {reverse && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
             </TouchableOpacity>

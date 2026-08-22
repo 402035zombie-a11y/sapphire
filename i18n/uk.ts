@@ -88,8 +88,8 @@ export const ukDict: Record<string, string> = {
   'Exported {n} cards to Anki deck.': 'Експортовано {n} карток у колоду Anki.',
   // Напрямок тренування
   'Direction': 'Напрямок',
-  'Recognize (word → translation)': 'Розпізнавання (слово → переклад)',
-  'Recall (translation → word)': 'Згадування (переклад → слово)',
+  'word → translation': 'слово → переклад',
+  'translation → word': 'переклад → слово',
   'Word:': 'Слово:',
   'day streak': 'днів підряд',
   '{n}d memory': 'памʼять {n}д',
