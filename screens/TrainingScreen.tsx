@@ -594,7 +594,7 @@ export default function TrainingScreen() {
           {/* Цільова мова перекладу (для 'all' джерела) — синхронізована з налаштуваннями читання */}
           {!sourceBook && (
             <TouchableOpacity
-              style={[styles.sortTab, { alignSelf: 'flex-start', marginTop: 8, borderWidth: 1, borderColor: theme.border }]}
+              style={[styles.sourceTab, { alignSelf: 'flex-start', marginTop: 8, borderWidth: 1, borderColor: theme.border }]}
               onPress={() => {
                 const langs = ['uk', 'en', 'de', 'fr', 'es', 'it', 'pl', 'zh', 'ja', 'ar'];
                 const i = langs.indexOf(effectiveToLang);
