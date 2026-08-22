@@ -467,37 +467,6 @@ export default function DictionaryScreen() {
       .catch(() => {});
   }, [books, updateEntry]);
 
-  // заголовок + иконки → в нативный хедер (убираем дублирующий кастомный headerRow)
-  useEffect(() => {
-    navigation.setOptions({
-      // Название экрана убрано — освобождаем ширину под иконки действий.
-      title: '',
-      headerRight: () => {
-        // все иконки тулбара — выпуклые круги (raised снаружи + внутренняя окантовка внутри)
-        const tbSize = a.dim(0.06, 30, 40);
-        const tb = metal(theme, 'circle', { size: tbSize });
-        const isz = a.dim(0.028, 16, 24);
-        return (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginRight: 8, paddingTop: a.insetTop }}>
-            <TouchableOpacity onPress={() => setSearchOpen(true)} hitSlop={6} style={tb}>
-              <Icon name="search" size={isz} color={theme.primaryText} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={exportAll} hitSlop={6} style={tb}>
-              <Icon name="copy" size={isz} color={theme.primaryText} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setImportOpen(true)} hitSlop={6} style={tb}>
-              <Icon name="scan" size={isz} color={theme.primaryText} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleDeleteAll} hitSlop={6} style={tb}>
-              <Icon name="close" size={isz} color={theme.danger} />
-            </TouchableOpacity>
-            <SupportButton />
-          </View>
-        );
-      },
-    });
-  }, [navigation, headerTitle, theme.primaryText, exportAll, exportAnki, setImportOpen, handleDeleteAll]);
-
   // ТУЛБАР: Dictionary живе в Tab-навігаторі з headerShown:false → navigation.setOptions
   // headerRight НІДЕ не рендериться. Тулбар малюємо в тілі екрана як звичайний рядок.
   const tbSize = a.dim(0.06, 30, 40);
@@ -579,6 +548,9 @@ export default function DictionaryScreen() {
             </Text>
             <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
           </TouchableOpacity>
+          <View style={{ marginLeft: 'auto' }}>
+            <SupportButton size={a.icon(30)} iconSize={a.icon(15)} />
+          </View>
         </View>
       </Card>
       {/* B9: FlatList замість ScrollView — віртуалізація (не рендерить 1000+ карток одразу).

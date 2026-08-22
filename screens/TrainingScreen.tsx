@@ -471,6 +471,10 @@ export default function TrainingScreen() {
         showsVerticalScrollIndicator={false}
       >
         <BackFab onPress={() => navigation.goBack()} />
+        {/* SupportButton — absolute, той самий рівень що BackFab (правий верхній кут) */}
+        <View style={{ position: 'absolute', top: a.pad + (a.insetTop || 0), right: a.pad, zIndex: 50 }}>
+          <SupportButton size={a.fab()} iconSize={Math.round(a.fab() * 0.5)} />
+        </View>
         {finished && (
           <View style={[styles.finishBanner, metal(theme, 'raised', { radius: a.radius + 4 }), { borderColor: theme.success }]}>
             <Text style={[styles.finishTitle, { color: theme.success }]}>{t("Keep it up! 🎉")}</Text>
@@ -492,12 +496,9 @@ export default function TrainingScreen() {
           </View>
           <View style={styles.heroFooter}>
             <Text style={[styles.heroFooterText, { color: theme.secondaryText }]}>{t("Learned (lvl 5)")}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <Text style={[styles.heroFooterValue, { color: theme.success }]}>
-                {learnedCount} / {entries.length} · {pct}%
-              </Text>
-              <SupportButton size={a.icon(34)} iconSize={a.icon(17)} />
-            </View>
+            <Text style={[styles.heroFooterValue, { color: theme.success }]}>
+              {learnedCount} / {entries.length} · {pct}%
+            </Text>
           </View>
           {/* Статистика активності (FSRS): streak / сьогодні / до повторення */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, gap: 8 }}>
