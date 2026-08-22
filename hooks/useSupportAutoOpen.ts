@@ -56,12 +56,9 @@ export function useSupportAutoOpen(
     // Frequency cap: один показ на сесію екрана
     if (shownThisSession.current) return;
 
-    // Frequency capping між сесіями: зростаючий бекоф від останнього показу.
-    // dismissCount збільшується при закритті без реклами.
-    if (lastShownTime > 0) {
-      const backoffDays = Math.min(14, Math.pow(2, Math.min(dismissCount, 4))); // 1,2,4,8,16→14
-      if (Date.now() - lastShownTime < backoffDays * 86_400_000) return;
-    }
+    // Показ 1 раз на ДЕНЬ (не на сесію): якщо вже показували сьогодні — чекаємо завтра.
+    const todayStart = new Date().setHours(0, 0, 0, 0);
+    if (lastShownTime > 0 && lastShownTime >= todayStart) return;
 
     let timer: ReturnType<typeof setTimeout> | undefined;
     const show = () => {
