@@ -712,10 +712,12 @@ export default function TrainingScreen() {
       {mode === 'type' && current && (
         <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius })]}>
           <View style={styles.wordRow}>
-            <Text style={styles.typeWord}>{current.surfaceForm || current.word}</Text>
-            <TouchableOpacity style={styles.speakBtn} onPress={() => { if (current.word) Speech.speak(current.word, { language: current.lang || 'en', rate: 0.95 }); }} hitSlop={6}>
-              <Text style={styles.speakIcon}>▶</Text>
-            </TouchableOpacity>
+            <Text style={styles.typeWord}>{reverse ? current.translation : (current.surfaceForm || current.word)}</Text>
+            {!reverse && (
+              <TouchableOpacity style={styles.speakBtn} onPress={() => { if (current.word) Speech.speak(current.word, { language: current.lang || 'en', rate: 0.95 }); }} hitSlop={6}>
+                <Text style={styles.speakIcon}>▶</Text>
+              </TouchableOpacity>
+            )}
           </View>
           {typeChecked && (
             <Text style={[styles.typeCorrect, { color: typeOk ? theme.success : theme.danger, fontSize: a.fs(15), marginTop: 6 }]}>
