@@ -94,6 +94,7 @@ export const ukDict: Record<string, string> = {
   'day streak': 'днів підряд',
   'answers today': 'відповідей сьогодні',
   'due now': 'до повторення',
+  'Daily goal': 'Ціль на день',
   // Cloze режим
   'Fill the blank': 'Заповни пропуск',
   'Again: fill the blank': 'Знову: заповни пропуск',

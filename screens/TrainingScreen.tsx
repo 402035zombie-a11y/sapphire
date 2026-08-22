@@ -144,6 +144,7 @@ export default function TrainingScreen() {
   const [mode, setMode] = useState<'quiz' | 'type' | 'tf' | 'cloze'>('quiz');
   // Напрямок тренування: forward = en→uk (звичайний), reverse = uk→en (зворотні картки)
   const [reverse, setReverse] = useState(false);
+  const DAILY_GOAL = 10; // відповідей на день (daily goal)
   const [index, setIndex] = useState(0); // индекс уникального слова в очереди
   const [stats, setStats] = useState({ correct: 0, wrong: 0 });
   const [finished, setFinished] = useState(false);
@@ -511,6 +512,26 @@ export default function TrainingScreen() {
             <View style={{ alignItems: 'center', flex: 1 }}>
               <Text style={[styles.heroFooterValue, { color: activityStats.dueNow > 0 ? theme.danger : theme.primary }]}>{activityStats.dueNow}</Text>
               <Text style={[styles.heroFooterText, { color: theme.secondaryText, fontSize: a.fs(11) }]}>{t("due now")}</Text>
+            </View>
+          </View>
+          {/* Daily goal (10 відповідей/день): прогрес-бар */}
+          <View style={{ marginTop: 12 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+              <Text style={[styles.heroFooterText, { color: theme.secondaryText, fontSize: a.fs(11) }]}>{t("Daily goal")}</Text>
+              <Text style={[styles.heroFooterValue, { color: activityStats.answeredToday >= DAILY_GOAL ? theme.success : theme.primary, fontSize: a.fs(11) }]}>
+                {Math.min(activityStats.answeredToday, DAILY_GOAL)} / {DAILY_GOAL}
+              </Text>
+            </View>
+            <View style={[styles.progressTrack, { backgroundColor: theme.border }]}>
+              <View
+                style={[
+                  styles.progressFill,
+                  {
+                    width: `${Math.min(100, Math.round((activityStats.answeredToday / DAILY_GOAL) * 100))}%`,
+                    backgroundColor: activityStats.answeredToday >= DAILY_GOAL ? theme.success : theme.primary,
+                  },
+                ]}
+              />
             </View>
           </View>
         </View>
