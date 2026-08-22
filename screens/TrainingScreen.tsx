@@ -569,7 +569,7 @@ export default function TrainingScreen() {
               <Text style={[styles.sourceTabText, { color: reverse ? theme.primaryText : theme.secondaryText }]}>
                 {sourceBook ? `${(sourceBook.targetLang || 'uk').toUpperCase()} → ${effectiveLang(sourceBook.language).toUpperCase()}` : t("Recall (translation → word)")}
               </Text>
-              {reverse && <Text style={{ color: theme.primary, fontFamily: 'bold' }}>✓</Text>}
+              {reverse && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
             </TouchableOpacity>
           </View>
         </View>
