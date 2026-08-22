@@ -197,6 +197,7 @@ export default function DictionaryScreen() {
   // Due-фільтр: коли слово чекати (по nextReviewAt з FSRS)
   const [dueFilter, setDueFilter] = useState<'all' | 'today' | 'week' | 'overdue'>('all');
   const [duePickerOpen, setDuePickerOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const src = scopedEntries ?? [];
@@ -747,16 +748,85 @@ export default function DictionaryScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.fab, { backgroundColor: theme.surface }]}
-          onPress={() => {
-            if (source?.type === 'book') setSource({ type: 'general' });
-            else if (books.length > 0) setBookPickOpen(true);
-            else setSource({ type: 'general' });
-          }}
+          onPress={() => { if (source?.type === 'book') setSource({ type: 'general' }); else if (books.length > 0) setBookPickOpen(true); else setSource({ type: 'general' }); }}
           activeOpacity={0.85}
         >
           <Icon name="swap" size={a.dim(0.05, 22, 28)} color={theme.primaryText} />
         </TouchableOpacity>
+        {/* Бургер-меню: усі функції словника в одній модалці (зі скролом) */}
+        <TouchableOpacity
+          style={[styles.fab, { backgroundColor: theme.surface }]}
+          onPress={() => setMenuOpen(true)}
+          activeOpacity={0.85}
+        >
+          <Icon name="menu" size={a.dim(0.05, 22, 28)} color={theme.primaryText} />
+        </TouchableOpacity>
       </View>
+
+      {/* Бургер-меню словника: перелік функцій зі скролом */}
+      <ModalSheet visible={menuOpen} onClose={() => setMenuOpen(false)}>
+        <View style={styles.pickCard}>
+          <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Dictionary menu')}</Text>
+          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 8 }} keyboardShouldPersistTaps="handled">
+            {/* Пошук */}
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setMenuOpen(false); setSearchOpen(true); }}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Search words')}</Text>
+            </TouchableOpacity>
+            {/* Змінити джерело (книга / весь словник) */}
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setMenuOpen(false); if (source?.type === 'book') setSource({ type: 'general' }); else if (books.length > 0) setBookPickOpen(true); else setSource({ type: 'general' }); }}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Change source')}</Text>
+            </TouchableOpacity>
+            {/* Імпорт з книги */}
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setMenuOpen(false); setBookPickOpen(true); }}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From book (extract words)')}</Text>
+            </TouchableOpacity>
+            {/* Імпорт JSON */}
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setMenuOpen(false); document.getElementById('dict-import')?.click(); }}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From system file (JSON)')}</Text>
+            </TouchableOpacity>
+            {/* Імпорт Anki */}
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setMenuOpen(false); importAnkiApkg(); }}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From Anki deck (.apkg)')}</Text>
+            </TouchableOpacity>
+            {/* Експорт JSON */}
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setMenuOpen(false); exportAll(); }}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Export dictionary (JSON)')}</Text>
+            </TouchableOpacity>
+            {/* Експорт Anki */}
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setMenuOpen(false); exportAnki(); }}
+            >
+              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('To Anki deck (.apkg) — export')}</Text>
+            </TouchableOpacity>
+            {/* Очистити все */}
+            <TouchableOpacity
+              style={[styles.pickItem]}
+              onPress={() => { setMenuOpen(false); handleDeleteAll(); }}
+            >
+              <Text style={[styles.pickText, { color: theme.danger }]}>{t('Delete all words')}</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      </ModalSheet>
 
       <ModalSheet visible={addOpen} onClose={() => setAddOpen(false)}>
         <View style={styles.searchPop}>

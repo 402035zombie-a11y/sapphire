@@ -97,6 +97,11 @@ export const ukDict: Record<string, string> = {
   'answers today': 'відповідей сьогодні',
   'due now': 'до повторення',
   'Daily goal': 'Ціль на день',
+  // Бургер-меню словника
+  'Dictionary menu': 'Меню словника',
+  'Search words': 'Пошук слів',
+  'Export dictionary (JSON)': 'Експорт словника (JSON)',
+  'Delete all words': 'Видалити всі слова',
   // Cloze режим
   'Fill the blank': 'Заповни пропуск',
   'Again: fill the blank': 'Знову: заповни пропуск',
