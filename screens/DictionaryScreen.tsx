@@ -424,11 +424,11 @@ export default function DictionaryScreen() {
     Promise.resolve().then(() => {
       const freqs = extractBookWords(book.paragraphs);
       // БАТЧ: один importEntries замість 1000+ addEntry
-      const toAdd = freqs.map(({ word, frequency }) => ({
+      const toAdd = freqs.map(({ word, frequency, context }) => ({
         word,
         surfaceForm: word,
         translation: '',
-        context: '',
+        context,
         lang,
         bookId,
         frequency,
