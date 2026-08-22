@@ -1,0 +1,58 @@
+# dependencies
+node_modules/
+.expo/
+dist/
+web-build/
+
+# native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# misc
+.DS_Store
+Thumbs.db
+.env
+.env.local
+
+# generated native project (restored via `expo prebuild`)
+android/
+ios/
+
+# local artifacts
+expo_qr.png
+expo-go.apk
+node_modules/
+.expo/
+dist/
+web-build/
+test-results/
+*.tmp.js
+verify_*.js
+diag_*.js
+
+# Large data files (dictionaries, DB)
+data/
+*.db
+*.sqlite
+*.gz
+
+# apktool decoded APK + build artifacts (too big for git)
+apkpatch/dev_final/
+apkpatch/*.jar
+apkpatch/*.apk
+apkpatch/patched-signed.apk/
+===
+apkpatch/
+*.apk
+*.jks
+*.keystore
