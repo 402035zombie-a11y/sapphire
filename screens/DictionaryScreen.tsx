@@ -523,18 +523,32 @@ export default function DictionaryScreen() {
     </View>
   );
 
+  // Загальні лічильники відповідей за весь час (по всьому прогресу, не тільки видимі слова)
+  const { totalAnswers, totalCorrect, totalWrong } = useMemo(() => {
+    let answers = 0, correct = 0, wrong = 0;
+    for (const p of Object.values(progress) as any[]) {
+      if (!p) continue;
+      answers += (p.correctCount ?? 0) + (p.wrongCount ?? 0);
+      correct += p.correctCount ?? 0;
+      wrong += p.wrongCount ?? 0;
+    }
+    return { totalAnswers: answers, totalCorrect: correct, totalWrong: wrong };
+  }, [progress]);
+
   return (
     <Screen contentStyle={{ padding: a.pad }}>
       <View style={[styles.counterRow, metal(theme, 'inset', { radius: a.radius })]}>
         <Text style={[styles.counterText, { color: theme.primaryText }]}>
           {t('Total words:')} <Text style={styles.counterNum}>{scopedEntries.length}</Text>
-          {'  '}·{'  '}{t('Answers:')} <Text style={styles.counterNum}>{scopedEntries.reduce((sum, e) => {
-            const tp = progress[`${e.word}|${e.lang}`];
-            return sum + (tp?.correctCount ?? 0) + (tp?.wrongCount ?? 0);
-          }, 0)}</Text>
+          {'  '}·{'  '}{t('Answers:')} <Text style={styles.counterNum}>{totalAnswers}</Text>
         </Text>
-        {toolbar}
+        {/* Загальна статистика правильних/неправильних за весь час */}
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <Text style={{ color: theme.success, fontFamily: 'bold', fontSize: a.small_fs }}>✓ {totalCorrect}</Text>
+          <Text style={{ color: theme.danger, fontFamily: 'bold', fontSize: a.small_fs }}>✗ {totalWrong}</Text>
+        </View>
       </View>
+      {/* Фільтри — окремий блок ПІД лічильниками */}
       <Card radius={a.radius} style={styles.filterBlock}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: a.tiny ? 6 : 10, flexWrap: 'wrap' }}>
           <TouchableOpacity
@@ -566,7 +580,7 @@ export default function DictionaryScreen() {
           </TouchableOpacity>
         </View>
       </Card>
-
+      {toolbar}
       {/* B9: FlatList замість ScrollView — віртуалізація (не рендерить 1000+ карток одразу).
           numColumns={a.columns} — адаптивна сітка (1-6 колонок). Context прибрано зі списку. */}
       <FlatList
@@ -581,7 +595,7 @@ export default function DictionaryScreen() {
           paddingHorizontal: neuShadowPad(),
           // Хедер (лічильник+фільтри) у потоці ВИЩЕ списку — додатковий paddingTop тут
           // створював мертвий відступ і слова обрізались не досягаючи межі хедера.
-          paddingTop: 0,
+          paddingTop: 6,
           paddingBottom: Math.round(a.height / 2),
         }}
         columnWrapperStyle={a.columns > 1 ? { gap: 4 } : undefined}
