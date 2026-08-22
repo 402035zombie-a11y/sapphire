@@ -45,3 +45,9 @@ data/
 *.db
 *.sqlite
 *.gz
+
+# apktool decoded APK + build artifacts (too big for git)
+apkpatch/dev_final/
+apkpatch/*.jar
+apkpatch/*.apk
+apkpatch/patched-signed.apk/
