@@ -13,6 +13,9 @@ interface SupportState {
   markAdWatched: () => void;
   lastShownTime: number;
   markShown: () => void;
+  /** Скільки разів юзер закрив модалку без підтримки — для зростаючого бекофу показів */
+  dismissCount: number;
+  incrementDismiss: () => void;
 }
 
 export const useSupportStore = persist<SupportState>(
@@ -23,6 +26,8 @@ export const useSupportStore = persist<SupportState>(
     markAdWatched: () => set({ hasWatchedAd: true }),
     lastShownTime: 0,
     markShown: () => set({ lastShownTime: Date.now() }),
+    dismissCount: 0,
+    incrementDismiss: () => set((s) => ({ dismissCount: (s.dismissCount ?? 0) + 1 })),
   }),
   { name: 'bookreader-support' },
 );

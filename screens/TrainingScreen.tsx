@@ -154,8 +154,8 @@ export default function TrainingScreen() {
   const [, setStreak] = useState(0); // верные подряд по текущему слову
   const [queue, setQueue] = useState<DictionaryEntry[]>([]); // фиксированная очередь на сессию
   const [supportOpen, setSupportOpen] = useState(false);
-  useSupportAutoOpen(() => setSupportOpen(true));
-
+  // Support: після виконання daily goal (peak moment) або через 3 хв активного тренування
+  useSupportAutoOpen(() => setSupportOpen(true), { surface: 'training', sessionAnswers: stats.correct + stats.wrong });
   const onSupportConfirm = async () => {
     setSupportOpen(false);
     const ok = await showSupportAd();
@@ -164,6 +164,10 @@ export default function TrainingScreen() {
   const onDonate = () => {
     setSupportOpen(false);
     useSupportStore.getState().setDontShowSupport(true);
+  };
+  const onSupportDismiss = () => {
+    setSupportOpen(false);
+    useSupportStore.getState().incrementDismiss();
   };
   const typeInputRef = useRef<any>(null);
 
@@ -902,7 +906,7 @@ export default function TrainingScreen() {
         visible={supportOpen}
         onSupport={onSupportConfirm}
         onDonate={onDonate}
-        onDismiss={() => setSupportOpen(false)}
+        onDismiss={onSupportDismiss}
       />
     </Screen>
   );

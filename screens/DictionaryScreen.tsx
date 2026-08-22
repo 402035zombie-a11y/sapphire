@@ -241,7 +241,8 @@ export default function DictionaryScreen() {
   }, [scopedEntries, query, sortBy, levelFilter, dueFilter, levelOf, trainingProgress]);
 
   const [supportOpen, setSupportOpen] = useState(false);
-  useSupportAutoOpen(() => setSupportOpen(true));
+  // Support-модалка в словнику НЕ показується автоматично (найвищий interruption cost).
+  // Лише ручна кнопка серця в тулбарі.
 
   const onSupportConfirm = async () => {
     setSupportOpen(false);

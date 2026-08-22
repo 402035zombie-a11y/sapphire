@@ -420,15 +420,21 @@ export default function ReaderScreen({ route }: { route: any }) {
     [translateBatch, bookId, setProgress, prefetchAhead],
   );
 
-  // Окно «Поддержать автора» — плата за бесплатное приложение.
-  // Тайминг через useSupportAutoOpen: первый раз 30с, потом каждые 5 мин (если не смотрел рекламу).
+  // Окно «Поддержать автора» — після 90с занурення в читання (Reciprocity: юзер
+  // вже отримав цінність). Peak-момент (завершена глава) пришвидшує показ.
   const dontShowSupport = useSupportStore((s) => s.dontShowSupport);
-  useSupportAutoOpen(() => setSupportOpen(true));
+  useSupportAutoOpen(() => setSupportOpen(true), { surface: 'reader' });
 
   const onSupportConfirm = async () => {
     setSupportOpen(false);
     const ok = await showSupportAd();
     if (ok) useSupportStore.getState().markAdWatched();
+  };
+
+  // Закриття без підтримки → лічильник для зростаючого бекофу показів
+  const onSupportDismiss = () => {
+    setSupportOpen(false);
+    useSupportStore.getState().incrementDismiss();
   };
 
   // Донат/подписка: ставим флаг «больше не показывать» и запускаем платёж (mock в вебе).
@@ -679,7 +685,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         visible={supportOpen}
         onSupport={onSupportConfirm}
         onDonate={onDonate}
-        onDismiss={() => setSupportOpen(false)}
+        onDismiss={onSupportDismiss}
       />
       <TouchableOpacity style={[styles.upFab]} onPress={() => scrollRef.current?.scrollToOffset({ offset: 0, animated: true })} hitSlop={8}>
         <Text style={[styles.upFabText, { color: theme.primaryText }]}>↑</Text>
