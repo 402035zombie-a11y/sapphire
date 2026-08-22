@@ -15,6 +15,7 @@ import Screen from '../components/Screen';
 import TextField from '../components/ui/TextField';
 import { useTheme } from '../theme/ThemeContext';
 import { effectiveLang } from '../utils/lang';
+import { useSettingsStore } from '../store/settingsStore';
 import { useT } from '../i18n';
 import { useAdaptive } from '../theme/useAdaptive';
 import { useDictionaryStore } from '../store/dictionaryStore';
@@ -254,13 +255,18 @@ export default function TrainingScreen() {
     return shuffleNoAdjacentDup(weighted).slice(0, Math.max(10, unique.length));
   }, [pool, progress]);
 
-  // языки выбранной книги (оригинал → перевод), если источник — книга
+  // Мови тренування: пріоритет — мови обраної книги (як у читанні).
+  // 'all' → цільова мова з глобальних налаштувань читання (targetLang), оригінал auto.
+  const settingsTargetLang = useSettingsStore((s) => s.targetLang);
   const sourceBook = useMemo(
     () => (source !== 'all' ? books.find((b) => b.id === source) : undefined),
     [source, books],
   );
   const fromLang = effectiveLang(sourceBook?.language);
-  const toLang = sourceBook?.targetLang ?? 'en';
+  const toLang = sourceBook?.targetLang ?? settingsTargetLang ?? 'uk';
+  // Зміна цільової мови прямо в тренуванні (для 'all' джерела)
+  const [trainTargetLang, setTrainTargetLang] = useState<string | null>(null);
+  const effectiveToLang = trainTargetLang ?? toLang;
 
   const [opts, setOpts] = useState<string[]>([]);
   const current = queue[index];
@@ -309,9 +315,9 @@ export default function TrainingScreen() {
       correct: c.translation,
       options: opts,
       fromLang: sourceBook ? fromLang : c.lang,
-      toLang: sourceBook ? toLang : 'en',
+      toLang: effectiveToLang,
     };
-  }, [queue, index, opts, sourceBook, fromLang, toLang, reverse]);
+  }, [queue, index, opts, sourceBook, fromLang, toLang, effectiveToLang, reverse]);
 
   const onAnswer = useCallback(
     (correct: boolean, opts?: { grade?: 2 | 3 | 4 }) => {
@@ -585,6 +591,23 @@ export default function TrainingScreen() {
               {reverse && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
             </TouchableOpacity>
           </View>
+          {/* Цільова мова перекладу (для 'all' джерела) — синхронізована з налаштуваннями читання */}
+          {!sourceBook && (
+            <TouchableOpacity
+              style={[styles.sortTab, { alignSelf: 'flex-start', marginTop: 8, borderWidth: 1, borderColor: theme.border }]}
+              onPress={() => {
+                const langs = ['uk', 'en', 'de', 'fr', 'es', 'it', 'pl', 'zh', 'ja', 'ar'];
+                const i = langs.indexOf(effectiveToLang);
+                const next = langs[(i + 1) % langs.length];
+                setTrainTargetLang(next);
+                useSettingsStore.getState().setTargetLang(next);
+              }}
+            >
+              <Text style={[styles.sourceTabText, { color: theme.primaryText }]}>
+                {t('Translate to')}: {effectiveToLang.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Действия прижаты к контенту, а не разбросаны по низу экрана */}
