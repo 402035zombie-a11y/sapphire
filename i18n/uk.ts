@@ -77,6 +77,8 @@ export const ukDict: Record<string, string> = {
   'Today': 'Сьогодні',
   'This week': 'Цього тижня',
   'Hardest first': 'Найскладніші',
+  'Sort': 'Сортування',
+  'Sort by': 'Сортувати за',
   // Anki міст
   'From Anki deck (.apkg)': 'З колоди Anki (.apkg)',
   'To Anki deck (.apkg) — export': 'В колоду Anki (.apkg) — експорт',
