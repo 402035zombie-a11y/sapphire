@@ -57,8 +57,17 @@ export function buildAnkiSql(cards: AnkiCard[], deckName: string): string {
 
   lines.push('PRAGMA writable_schema = OFF;');
   lines.push('BEGIN TRANSACTION;');
-  // col — мінімальний рядок (Anki перечитає конфіг при відкритті)
-  lines.push(`INSERT INTO col VALUES(1,${now},${now},{},{},'{"1": {"deckConfId":1,"name":"Default","maxTaken":60,"autoplay":true,"timer":0,"replayq":true,"new":[{"delays":[1,10],"ints":[1,4,7],"initialFactor":2500,"perDay":20,"units":"d","order":1,"separate":true,"ints2":[1] }],"rev":{"perDay":200,"fuzz":0.05,"ivlFct":1,"maxIvl":36500,"ease4":1.3,"bury":true,"minSpace":1},"lapse":{"delays":[10],"newIvl":0,"leechFails":8,"leechAction":0}}','{}','{}');`);
+  // col — ПОВНИЙ рядок (13 полів): id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags
+  // Попередня версія писала тільки 6 значень → Anki відмовлялась відкривати файл.
+  const confJson = JSON.stringify({
+    1: {
+      deckConfId: 1, name: 'Default', maxTaken: 60, autoplay: true, timer: 0, replayq: true,
+      new: [{ delays: [1, 10], ints: [1, 4, 7], initialFactor: 2500, perDay: 20, units: 'd', order: 1, separate: true, ints2: [1] }],
+      rev: { perDay: 200, fuzz: 0.05, ivlFct: 1, maxIvl: 36500, ease4: 1.3, bury: true, minSpace: 1 },
+      lapse: { delays: [10], newIvl: 0, leechFails: 8, leechAction: 0 },
+    },
+  }).replace(/'/g, "''");
+  lines.push(`INSERT INTO col VALUES(1,${now},${now},${now * 1000},11,0,-1,0,'${confJson}','{}','{}','{}','{}');`);
   // decks: Default + наша колода
   const decksJson = JSON.stringify({
     [DECK_ID]: {
