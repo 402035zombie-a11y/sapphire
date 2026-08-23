@@ -1,14 +1,15 @@
 // store/trainingStore.ts
 // Прогрес інтервального повторення — FSRS (модель пам'яті D/S/R).
-// Міграція зі старих Leitner-боксів: box конвертується в stability при першому FSRS-ответе.
+// Дані в books.db (services/fsrsDb.ts): UPSERT при відповіді, знімок у пам'яті для рендеру.
 import { persist } from './createStore';
 import { DictionaryEntry } from './dictionaryStore';
+import * as fsrsDb from '../services/fsrsDb';
 import { FsrsState, Grade, review as fsrsReview, retrievability, fromBox } from '../services/fsrs';
 
 export interface TrainingProgress extends FsrsState {
   word: string;
   lang: string;
-  /** @deprecated старий Leitner box (1..5) — лишено для міграції/сумісності UI */
+  /** @deprecated старий Leitner box (1..5) — лишено для сумісності UI */
   box: number;
   nextReviewAt: number;
   correctStreak: number;
@@ -22,10 +23,10 @@ export type AnswerGrade = Grade;
 
 interface TrainingState {
   progress: Record<string, TrainingProgress>;
+  reload: () => void;
   recordAnswer: (word: string, lang: string, grade: AnswerGrade) => void;
   dueWords: (entries: DictionaryEntry[], now?: number, opts?: { bookId?: string; excludeLearned?: boolean }) => TrainingProgress[];
   levelOf: (word: string, lang: string) => 'new' | 'learning' | 'learned';
-  /** Сортувальний ключ: чим менше — тим терміновіше показувати (R падає). */
   urgencyOf: (word: string, lang: string) => number;
 }
 
@@ -36,12 +37,12 @@ function keyOf(word: string, lang: string) {
 export const useTrainingStore = persist<TrainingState>(
   (set, get) => ({
     progress: {},
+    reload: () => set(() => ({ progress: fsrsDb.getAllProgress() as Record<string, TrainingProgress> })),
     recordAnswer: (word, lang, grade) =>
       set((s) => {
         const k = keyOf(word, lang);
         const prev = s.progress[k];
         const now = Date.now();
-        // Міграція: якщо є старий box але немає FSRS-полів → конвертуємо
         const base: FsrsState =
           prev && prev.stability != null
             ? { difficulty: prev.difficulty, stability: prev.stability, lastReview: prev.lastReview ?? 0 }
@@ -63,6 +64,8 @@ export const useTrainingStore = persist<TrainingState>(
           wrongCount: (prev?.wrongCount ?? 0) + (grade === 1 ? 1 : 0),
           lastSeenAt: now,
         };
+        // джерело істини — БД; знімок у пам'яті оновлюється для рендеру
+        fsrsDb.upsertProgress(next);
         return { progress: { ...s.progress, [k]: next } };
       }),
     dueWords: (entries, now = Date.now(), opts) =>
@@ -75,7 +78,6 @@ export const useTrainingStore = persist<TrainingState>(
           return p.nextReviewAt <= now;
         })
         .sort((a, b) => {
-          // найтерміновіші першими: менша retrievability → вище в черзі
           const ra = retrievability(a, now);
           const rb = retrievability(b, now);
           return ra - rb;
@@ -92,5 +94,15 @@ export const useTrainingStore = persist<TrainingState>(
       return retrievability(p);
     },
   }),
-  { name: 'bookreader-training' },
+  {
+    name: 'bookreader-training',
+    partialize: () => ({}), // дані в БД, AsyncStorage не використовується
+    onRehydrateStorage: () => () => {
+      try {
+        useTrainingStore.getState().reload();
+      } catch (e) {
+        console.warn('[trainingStore] initial reload failed:', e);
+      }
+    },
+  },
 );

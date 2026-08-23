@@ -1,10 +1,11 @@
 // store/dictionaryStore.ts
-// Локальный словарь: слово + контекст (предложение) + язык + дата.
-// Ключ уникальности — word|lang. Дубликаты при добавлении/импорте отсекаются.
-// Для счётчика в UI используйте entries (уже дедуплицированы в селекторах).
+// Словник: дані в books.db (SQLite, services/dictDb.ts).
+// Масив entries у пам'яті = знімок для рендеру; кожна мутація спочатку пишеться
+// в БД (джерело істини), потім оновлює знімок. Перезапису всього JSON немає.
 import { persist } from './createStore';
 import { translateCached } from '../services/translationService';
 import { useSettingsStore } from './settingsStore';
+import * as dictDb from '../services/dictDb';
 
 export interface DictionaryEntry {
   id: string;
@@ -14,12 +15,26 @@ export interface DictionaryEntry {
   context: string;
   lang: string;
   bookId?: string;
-  frequency?: number; // сколько раз слово встретилось в книге (растёт при дедупе)
+  frequency?: number;
   createdAt: number;
 }
 
+const rowToEntry = (r: dictDb.DictRow): DictionaryEntry => ({
+  id: String(r.id),
+  word: r.word,
+  surfaceForm: r.surfaceForm,
+  translation: r.translation,
+  context: r.context,
+  lang: r.lang,
+  bookId: r.bookId,
+  frequency: r.frequency,
+  createdAt: r.createdAt,
+});
+
 interface DictionaryState {
   entries: DictionaryEntry[];
+  /** Перезавантажити знімок із БД (після batch-імпортів / на старті екрана). */
+  reload: () => void;
   addEntry: (entry: Omit<DictionaryEntry, 'id' | 'createdAt'>) => void;
   removeEntry: (id: string) => void;
   updateEntry: (id: string, patch: Partial<Pick<DictionaryEntry, 'translation' | 'context'>>) => void;
@@ -29,87 +44,88 @@ interface DictionaryState {
   clearByBook: (bookId: string) => void;
 }
 
-// нормализация ключа (как в addEntry)
 function keyOf(word: string, lang: string): string {
   return `${word.trim().toLowerCase()}|${lang}`;
 }
 
 export const useDictionaryStore = persist<DictionaryState>(
-  (set, get) => {
-    // при загрузке из сторадж убираем возможные дубли (по word|lang)
-    return {
-      entries: [],
-      addEntry: (entry) =>
-        set((s) => {
+  (set, get) => ({
+    entries: [],
+    reload: () => set(() => ({ entries: dictDb.getAllEntries().map(rowToEntry) })),
+    addEntry: (entry) =>
+      set((s) => {
+        // C9: не додаємо слово якщо мова оригіналу == цільова (дубль-переклад на ту ж мову)
+        const targetLang = useSettingsStore.getState().targetLang;
+        if (entry.lang === targetLang) return {};
+        const res = dictDb.insertEntry(entry);
+        if (res.merged) {
+          // дедуп: слово вже є — оновлюємо частоту в знімку
           const key = keyOf(entry.word, entry.lang);
-          const existing = s.entries.find((e) => keyOf(e.word, e.lang) === key);
-          if (existing) {
-            // дедуп: карточка не дублируется, но частота растёт
-            return {
-              entries: s.entries.map((e) =>
-                e === existing
-                  ? { ...e, frequency: (e.frequency ?? 1) + (entry.frequency ?? 1) }
-                  : e,
-              ),
-            };
-          }
-          const id = `${entry.word}-${Date.now()}`;
-          const newEntry = { ...entry, id, createdAt: Date.now() };
-          // C9: не додаємо слово якщо мова оригіналу == мова перекладу (дубль-переклад на ту ж мову).
-          const targetLang = useSettingsStore.getState().targetLang;
-          if (newEntry.lang === targetLang) {
-            return {}; // ігноруємо (не додаємо в словник)
-          }
-          // підгружаємо translation, якщо пусте (fire-and-forget) — щоб тренування бачило слово
-          if (!newEntry.translation || !newEntry.translation.trim()) {
-            const from = newEntry.lang || 'en';
-            const to = targetLang || 'uk';
-            translateCached(newEntry.word, from, to)
-              .then((r) => { if (r?.text) get().updateEntry(id, { translation: r.text }); })
-              .catch(() => {});
-          }
-          return { entries: [...s.entries, newEntry] };
-        }),
-      removeEntry: (id) => set((s) => ({ entries: s.entries.filter((e) => e.id !== id) })),
-      updateEntry: (id, patch) =>
-        set((s) => ({ entries: s.entries.map((e) => (e.id === id ? { ...e, ...patch } : e)) })),
-      importEntries: (list) =>
-        set((s) => {
-          // Map за ключем word|lang замість find() у циклі: 200к слів = O(n), не O(n²).
-          const byKey = new Map<string, DictionaryEntry>();
-          for (const e of s.entries) byKey.set(keyOf(e.word, e.lang), e);
-          const now = Date.now();
-          for (const item of list) {
-            if (!item?.word) continue;
-            const k = keyOf(item.word, item.lang);
-            const existing = byKey.get(k);
-            if (existing) {
-              // дедуп: суммируем частоту, не дублируем (мутуємо копію в мапі)
-              byKey.set(k, { ...existing, frequency: (existing.frequency ?? 1) + (item.frequency ?? 1) });
-              continue;
-            }
-            byKey.set(k, { ...item, id: `${item.word}-${now}-${byKey.size}`, createdAt: now });
-          }
-          return { entries: Array.from(byKey.values()) };
-        }),
-      hasWord: (word) => {
-        const w = word.trim().toLowerCase();
-        return get().entries.some((e) => e.word.toLowerCase() === w);
-      },
-      clearAll: () => set({ entries: [] }),
-      clearByBook: (bookId) => set((s) => ({ entries: s.entries.filter((e) => e.bookId !== bookId) })),
-    } as DictionaryState;
-  },
+          return {
+            entries: s.entries.map((e) =>
+              keyOf(e.word, e.lang) === key ? { ...e, frequency: (e.frequency ?? 1) + (entry.frequency ?? 1) } : e
+            ),
+          };
+        }
+        const newEntry: DictionaryEntry = {
+          ...entry,
+          id: String(res.id),
+          createdAt: Date.now(),
+        };
+        // підгружаємо переклад, якщо пустий (fire-and-forget) — щоб тренування бачило слово
+        if (!newEntry.translation || !newEntry.translation.trim()) {
+          const from = newEntry.lang || 'en';
+          const to = targetLang || 'uk';
+          translateCached(newEntry.word, from, to)
+            .then((r) => {
+              if (r?.text) {
+                dictDb.updateTranslation(res.id, { translation: r.text });
+                get().reload();
+              }
+            })
+            .catch(() => {});
+        }
+        return { entries: [newEntry, ...s.entries] };
+      }),
+    removeEntry: (id) =>
+      set((s) => {
+        dictDb.deleteEntry(Number(id));
+        return { entries: s.entries.filter((e) => e.id !== id) };
+      }),
+    updateEntry: (id, patch) =>
+      set((s) => {
+        dictDb.updateTranslation(Number(id), patch);
+        return { entries: s.entries.map((e) => (e.id === id ? { ...e, ...patch } : e)) };
+      }),
+    importEntries: (list) =>
+      set((s) => {
+        // Батч-INSERT однією транзакцією; знімок перечитується повністю
+        // (при десятках тисяч слів дешевше одного reload-пасу все одно).
+        dictDb.importEntriesBatch(list);
+        return { entries: dictDb.getAllEntries().map(rowToEntry) };
+      }),
+    hasWord: (word) => dictDb.hasEntry(word),
+    clearAll: () =>
+      set(() => {
+        dictDb.clearAll();
+        return { entries: [] };
+      }),
+    clearByBook: (bookId) =>
+      set((s) => {
+        dictDb.clearByBook(bookId);
+        return { entries: s.entries.filter((e) => e.bookId !== bookId) };
+      }),
+  }),
   {
     name: 'bookreader-dictionary',
-    onRehydrateStorage: () => (state) => {
-      if (!state?.entries?.length) return;
-      // Чистим bookId от timestamp-суффикса (старые записи ссылались на дубли книг)
-      for (const e of state.entries) {
-        if (e.bookId) e.bookId = e.bookId.replace(/[-_ ]\d{10,}$/, '');
+    partialize: () => ({}), // НІЧОГО не серіалізуємо в AsyncStorage — дані в БД
+    onRehydrateStorage: () => () => {
+      // старт екрана: підтягнути знімок із БД (async-safe)
+      try {
+        useDictionaryStore.getState().reload();
+      } catch (e) {
+        console.warn('[dictionaryStore] initial reload failed:', e);
       }
     },
   },
 );
-
-

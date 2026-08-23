@@ -73,9 +73,36 @@ CREATE TABLE IF NOT EXISTS sentence_translations (
   translation TEXT NOT NULL,
   PRIMARY KEY (book_id, skey)
 );
+CREATE TABLE IF NOT EXISTS dict_entries (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  word TEXT NOT NULL,
+  lang TEXT NOT NULL,
+  surface_form TEXT,
+  translation TEXT DEFAULT '',
+  context TEXT DEFAULT '',
+  book_id TEXT,
+  frequency INTEGER DEFAULT 1,
+  created_at INTEGER NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_dict_word_lang ON dict_entries(word, lang);
+CREATE INDEX IF NOT EXISTS idx_dict_book ON dict_entries(book_id);
+CREATE TABLE IF NOT EXISTS fsrs_state (
+  word TEXT NOT NULL,
+  lang TEXT NOT NULL,
+  difficulty REAL DEFAULT 7,
+  stability REAL DEFAULT 0,
+  last_review INTEGER DEFAULT 0,
+  box INTEGER DEFAULT 1,
+  next_review_at INTEGER NOT NULL,
+  correct_streak INTEGER DEFAULT 0,
+  correct_count INTEGER DEFAULT 0,
+  wrong_count INTEGER DEFAULT 0,
+  last_seen_at INTEGER,
+  PRIMARY KEY (word, lang)
+);
 `;
 
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 let booksDb: SQLite.SQLiteDatabase | null = null;
 
@@ -100,6 +127,35 @@ export function getBooksDb(): SQLite.SQLiteDatabase {
         skey TEXT NOT NULL,
         translation TEXT NOT NULL,
         PRIMARY KEY (book_id, skey)
+      );`);
+    }
+    if (ver < 4) {
+      db.execSync(`CREATE TABLE IF NOT EXISTS dict_entries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        word TEXT NOT NULL,
+        lang TEXT NOT NULL,
+        surface_form TEXT,
+        translation TEXT DEFAULT '',
+        context TEXT DEFAULT '',
+        book_id TEXT,
+        frequency INTEGER DEFAULT 1,
+        created_at INTEGER NOT NULL
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_dict_word_lang ON dict_entries(word, lang);
+      CREATE INDEX IF NOT EXISTS idx_dict_book ON dict_entries(book_id);
+      CREATE TABLE IF NOT EXISTS fsrs_state (
+        word TEXT NOT NULL,
+        lang TEXT NOT NULL,
+        difficulty REAL DEFAULT 7,
+        stability REAL DEFAULT 0,
+        last_review INTEGER DEFAULT 0,
+        box INTEGER DEFAULT 1,
+        next_review_at INTEGER NOT NULL,
+        correct_streak INTEGER DEFAULT 0,
+        correct_count INTEGER DEFAULT 0,
+        wrong_count INTEGER DEFAULT 0,
+        last_seen_at INTEGER,
+        PRIMARY KEY (word, lang)
       );`);
     }
     db.execSync(`PRAGMA user_version = ${DB_VERSION};`);
