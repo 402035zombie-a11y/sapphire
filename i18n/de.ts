@@ -70,7 +70,7 @@ export const deDict: Record<string, string> = {
   'New': 'Neu',
   'Learning': 'Lernend',
   'Learned': 'Gelernt',
-  'Lvl': 'Lvl',
+  'Lvl': 'Stufe',
   'lvl {n}': 'Lvl {n}',
   'Date': 'Datum',
   'Context:': 'Kontext:',
