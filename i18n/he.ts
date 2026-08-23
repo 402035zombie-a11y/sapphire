@@ -187,7 +187,7 @@ export const heDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'הוסף',
   'Add word': 'הוסף מילה',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'שוב: נכון או לא נכון',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'כיוון',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const heDict: Record<string, string> = {
   'Text side margins': 'שולי הטקסט',
   'Translation': 'תרגום',
   'True': 'נכון',
-  'True or false': 'True or false',
+  'True or false': 'נכון או לא נכון',
   'Type': 'סוג',
   'Word': 'מילה',
   'Word type': 'סוג מילה',

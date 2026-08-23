@@ -187,7 +187,7 @@ export const itDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Aggiungi',
   'Add word': 'Aggiungi parola',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Ancora: vero o falso',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Direzione',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const itDict: Record<string, string> = {
   'Text side margins': 'Margini laterali del testo',
   'Translation': 'Traduzione',
   'True': 'Vero',
-  'True or false': 'True or false',
+  'True or false': 'Vero o falso',
   'Type': 'Tipo',
   'Word': 'Parola',
   'Word type': 'Tipo di parola',

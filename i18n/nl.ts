@@ -187,7 +187,7 @@ export const nlDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Toevoegen',
   'Add word': 'Woord toevoegen',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Opnieuw: waar of onwaar',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Richting',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const nlDict: Record<string, string> = {
   'Text side margins': 'Tekstranden',
   'Translation': 'Vertaling',
   'True': 'Waar',
-  'True or false': 'True or false',
+  'True or false': 'Waar of onwaar',
   'Type': 'Type',
   'Word': 'Woord',
   'Word type': 'Woordtype',

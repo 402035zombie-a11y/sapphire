@@ -187,7 +187,7 @@ export const idDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Tambah',
   'Add word': 'Tambah kata',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Lagi: benar atau salah',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Arah',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const idDict: Record<string, string> = {
   'Text side margins': 'Margin samping teks',
   'Translation': 'Terjemahan',
   'True': 'Benar',
-  'True or false': 'True or false',
+  'True or false': 'Benar atau salah',
   'Type': 'Tipe',
   'Word': 'Kata',
   'Word type': 'Jenis kata',

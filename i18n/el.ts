@@ -187,7 +187,7 @@ export const elDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Προσθήκη',
   'Add word': 'Προσθήκη λέξης',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Ξανά: σωστό ή λάθος',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Κατεύθυνση',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const elDict: Record<string, string> = {
   'Text side margins': 'Πλαϊνα περιθώρια κειμένου',
   'Translation': 'Μετάφραση',
   'True': 'Σωστό',
-  'True or false': 'True or false',
+  'True or false': 'Σωστό ή λάθος',
   'Type': 'Τύπος',
   'Word': 'Λέξη',
   'Word type': 'Είδος λέξης',

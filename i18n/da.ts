@@ -187,7 +187,7 @@ export const daDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Tilføj',
   'Add word': 'Tilføj ord',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Igen: sandt eller falsk',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Retning',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const daDict: Record<string, string> = {
   'Text side margins': 'Tekstmargener',
   'Translation': 'Oversættelse',
   'True': 'Sand',
-  'True or false': 'True or false',
+  'True or false': 'Sandt eller falsk',
   'Type': 'Type',
   'Word': 'Ord',
   'Word type': 'Ordklasse',

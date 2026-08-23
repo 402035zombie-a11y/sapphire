@@ -187,7 +187,7 @@ export const srDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Додај',
   'Add word': 'Додај реч',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Поново: тачно или нетачно',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Смер',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const srDict: Record<string, string> = {
   'Text side margins': 'Бочне маргине текста',
   'Translation': 'Превод',
   'True': 'Тачно',
-  'True or false': 'True or false',
+  'True or false': 'Тачно или нетачно',
   'Type': 'Врста',
   'Word': 'Реч',
   'Word type': 'Врст речи',

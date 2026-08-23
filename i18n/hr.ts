@@ -187,7 +187,7 @@ export const hrDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Dodaj',
   'Add word': 'Dodaj riječ',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Ponovno: točno ili netočno',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Smjer',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const hrDict: Record<string, string> = {
   'Text side margins': 'Bočne margine teksta',
   'Translation': 'Prijevod',
   'True': 'Točno',
-  'True or false': 'True or false',
+  'True or false': 'Točno ili netočno',
   'Type': 'Vrsta',
   'Word': 'Riječ',
   'Word type': 'Vrsta riječi',

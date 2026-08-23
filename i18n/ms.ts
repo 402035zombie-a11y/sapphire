@@ -187,7 +187,7 @@ export const msDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Tambah',
   'Add word': 'Tambah perkataan',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Semula: benar atau salah',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Arah',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const msDict: Record<string, string> = {
   'Text side margins': 'Margin sisi teks',
   'Translation': 'Terjemahan',
   'True': 'Benar',
-  'True or false': 'True or false',
+  'True or false': 'Benar atau salah',
   'Type': 'Jenis',
   'Word': 'Perkataan',
   'Word type': 'Jenis perkataan',

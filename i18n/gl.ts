@@ -187,7 +187,7 @@ export const glDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Engadir',
   'Add word': 'Engadir palabra',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Outra vez: certo ou falso',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Dirección',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const glDict: Record<string, string> = {
   'Text side margins': 'Marxes laterais do texto',
   'Translation': 'Tradución',
   'True': 'Certo',
-  'True or false': 'True or false',
+  'True or false': 'Certo ou falso',
   'Type': 'Tipo',
   'Word': 'Palabra',
   'Word type': 'Tipo de palabra',

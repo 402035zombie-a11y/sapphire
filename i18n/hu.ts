@@ -187,7 +187,7 @@ export const huDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Hozzáadás',
   'Add word': 'Szó hozzáadása',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Újra: igaz vagy hamis',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Irány',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const huDict: Record<string, string> = {
   'Text side margins': 'Szöveg oldalmargói',
   'Translation': 'Fordítás',
   'True': 'Igaz',
-  'True or false': 'True or false',
+  'True or false': 'Igaz vagy hamis',
   'Type': 'Típus',
   'Word': 'Szó',
   'Word type': 'Szófaj',

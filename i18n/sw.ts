@@ -187,7 +187,7 @@ export const swDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Ongeza',
   'Add word': 'Ongeza neno',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Tenaa: kweli au uongo',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Mwelekeo',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const swDict: Record<string, string> = {
   'Text side margins': 'Pembezoni za maandishi',
   'Translation': 'Tafsiri',
   'True': 'Kweli',
-  'True or false': 'True or false',
+  'True or false': 'Kweli au uongo',
   'Type': 'Aina',
   'Word': 'Neno',
   'Word type': 'Aina ya neno',

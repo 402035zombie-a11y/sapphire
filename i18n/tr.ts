@@ -191,7 +191,7 @@ export const trDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Ekle',
   'Add word': 'Kelime ekle',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Tekrar: doğru mu yanlış mı',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Yön',
   'Export dictionary': 'Export dictionary',
@@ -209,7 +209,7 @@ export const trDict: Record<string, string> = {
   'Text side margins': 'Metin kenar boşlukları',
   'Translation': 'Çeviri',
   'True': 'Doğru',
-  'True or false': 'True or false',
+  'True or false': 'Doğru mu yanlış mı',
   'Type': 'Tür',
   'Word': 'Kelime',
   'Word type': 'Kelime türü',

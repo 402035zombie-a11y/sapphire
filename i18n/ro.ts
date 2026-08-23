@@ -187,7 +187,7 @@ export const roDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Adaugă',
   'Add word': 'Adaugă cuvânt',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Din nou: adevărat sau fals',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Direcție',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const roDict: Record<string, string> = {
   'Text side margins': 'Margini laterale text',
   'Translation': 'Traducere',
   'True': 'Adevărat',
-  'True or false': 'True or false',
+  'True or false': 'Adevărat sau fals',
   'Type': 'Tip',
   'Word': 'Cuvânt',
   'Word type': 'Tip de cuvânt',

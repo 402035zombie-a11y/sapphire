@@ -187,7 +187,7 @@ export const hiDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'जोड़ें',
   'Add word': 'शब्द जोड़ें',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'फिर से: सही या गलत',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'दिशा',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const hiDict: Record<string, string> = {
   'Text side margins': 'टेक्स्ट साइड मार्जिन',
   'Translation': 'अनुवाद',
   'True': 'सही',
-  'True or false': 'True or false',
+  'True or false': 'सही या गलत',
   'Type': 'प्रकार',
   'Word': 'शब्द',
   'Word type': 'शब्द प्रकार',

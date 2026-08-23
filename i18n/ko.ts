@@ -191,7 +191,7 @@ export const koDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': '추가',
   'Add word': '단어 추가',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': '다시: 참 또는 거짓',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': '방향',
   'Export dictionary': 'Export dictionary',
@@ -209,7 +209,7 @@ export const koDict: Record<string, string> = {
   'Text side margins': '텍스트 좌우 여백',
   'Translation': '번역',
   'True': '정답',
-  'True or false': 'True or false',
+  'True or false': '참 또는 거짓',
   'Type': '유형',
   'Word': '단어',
   'Word type': '품사',

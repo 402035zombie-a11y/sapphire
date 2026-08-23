@@ -187,7 +187,7 @@ export const cyDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Ychwanegu',
   'Add word': 'Ychwanegu gair',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Etto: gwir neu gau',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Cyfeiriad',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const cyDict: Record<string, string> = {
   'Text side margins': 'Ymylon y testun',
   'Translation': 'Cyfieithiad',
   'True': 'Cywir',
-  'True or false': 'True or false',
+  'True or false': 'Gwir neu gau',
   'Type': 'Math',
   'Word': 'Gair',
   'Word type': 'Math o air',

@@ -187,7 +187,7 @@ export const bgDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Добави',
   'Add word': 'Добави дума',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Отново: вярно или невярно',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Посока',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const bgDict: Record<string, string> = {
   'Text side margins': 'Странични полета на текста',
   'Translation': 'Превод',
   'True': 'Вярно',
-  'True or false': 'True or false',
+  'True or false': 'Вярно или невярно',
   'Type': 'Тип',
   'Word': 'Дума',
   'Word type': 'Вид дума',

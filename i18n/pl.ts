@@ -187,7 +187,7 @@ export const plDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Dodaj',
   'Add word': 'Dodaj słowo',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Znowu: prawda czy fałsz',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Kierunek',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const plDict: Record<string, string> = {
   'Text side margins': 'Marginesy boczne tekstu',
   'Translation': 'Tłumaczenie',
   'True': 'Prawda',
-  'True or false': 'True or false',
+  'True or false': 'Prawda czy fałsz',
   'Type': 'Typ',
   'Word': 'Słowo',
   'Word type': 'Część mowy',

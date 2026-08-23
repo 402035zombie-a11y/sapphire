@@ -191,7 +191,7 @@ export const jaDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': '追加',
   'Add word': '単語を追加',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'もう一度：○か×か',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': '方向',
   'Export dictionary': 'Export dictionary',
@@ -209,7 +209,7 @@ export const jaDict: Record<string, string> = {
   'Text side margins': 'テキストの左右マージン',
   'Translation': '翻訳',
   'True': '正解',
-  'True or false': 'True or false',
+  'True or false': '○か×か',
   'Type': 'タイプ',
   'Word': '単語',
   'Word type': '品詞',

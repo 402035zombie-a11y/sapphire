@@ -187,7 +187,7 @@ export const caDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Afegeix',
   'Add word': 'Afegeix paraula',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Una altra vegada: vertader o fals',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Direcció',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const caDict: Record<string, string> = {
   'Text side margins': 'Marges laterals del text',
   'Translation': 'Traducció',
   'True': 'Cert',
-  'True or false': 'True or false',
+  'True or false': 'Vertader o fals',
   'Type': 'Tipus',
   'Word': 'Paraula',
   'Word type': 'Tipus de paraula',

@@ -187,7 +187,7 @@ export const euDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Gehitu',
   'Add word': 'Gehitu hitza',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Berriro: egiazkoa ala gezurrezkoa',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Norabidea',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const euDict: Record<string, string> = {
   'Text side margins': 'Testuaren alboko marjinak',
   'Translation': 'Itzulpena',
   'True': 'Egiazkoa',
-  'True or false': 'True or false',
+  'True or false': 'Egiazkoa ala gezurrezkoa',
   'Type': 'Mota',
   'Word': 'Hitza',
   'Word type': 'Hitzen mota',

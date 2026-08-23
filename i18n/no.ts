@@ -187,7 +187,7 @@ export const noDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Legg til',
   'Add word': 'Legg til ord',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Igjen: sant eller usant',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Retning',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const noDict: Record<string, string> = {
   'Text side margins': 'Tekstmargener',
   'Translation': 'Oversettelse',
   'True': 'Sant',
-  'True or false': 'True or false',
+  'True or false': 'Sant eller usant',
   'Type': 'Type',
   'Word': 'Ord',
   'Word type': 'Ordtype',

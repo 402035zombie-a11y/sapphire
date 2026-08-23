@@ -191,7 +191,7 @@ export const thDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'เพิ่ม',
   'Add word': 'เพิ่มคำ',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'อีกครั้ง: จริงหรือเท็จ',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'ทิศทาง',
   'Export dictionary': 'Export dictionary',
@@ -209,7 +209,7 @@ export const thDict: Record<string, string> = {
   'Text side margins': 'ระยะขอบด้านข้างข้อความ',
   'Translation': 'คำแปล',
   'True': 'ถูกต้อง',
-  'True or false': 'True or false',
+  'True or false': 'จริงหรือเท็จ',
   'Type': 'ประเภท',
   'Word': 'คำ',
   'Word type': 'ชนิดคำ',

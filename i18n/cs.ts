@@ -187,7 +187,7 @@ export const csDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Přidat',
   'Add word': 'Přidat slovo',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Znovu: pravda nebo nepravda',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Směr',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const csDict: Record<string, string> = {
   'Text side margins': 'Postranní okraje textu',
   'Translation': 'Překlad',
   'True': 'Pravda',
-  'True or false': 'True or false',
+  'True or false': 'Pravda nebo nepravda',
   'Type': 'Typ',
   'Word': 'Slovo',
   'Word type': 'Druh slova',

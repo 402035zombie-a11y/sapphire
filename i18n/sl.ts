@@ -187,7 +187,7 @@ export const slDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Dodaj',
   'Add word': 'Dodaj besedo',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Zopet: prav ali napačno',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Smer',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const slDict: Record<string, string> = {
   'Text side margins': 'Bočni robovi besedila',
   'Translation': 'Prevod',
   'True': 'Pravilno',
-  'True or false': 'True or false',
+  'True or false': 'Prav ali napačno',
   'Type': 'Vrsta',
   'Word': 'Beseda',
   'Word type': 'Besedna vrsta',

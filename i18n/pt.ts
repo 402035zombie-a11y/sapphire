@@ -191,7 +191,7 @@ export const ptDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Adicionar',
   'Add word': 'Adicionar palavra',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'De novo: verdadeiro ou falso',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Direção',
   'Export dictionary': 'Export dictionary',
@@ -209,7 +209,7 @@ export const ptDict: Record<string, string> = {
   'Text side margins': 'Margens laterais do texto',
   'Translation': 'Tradução',
   'True': 'Verdadeiro',
-  'True or false': 'True or false',
+  'True or false': 'Verdadeiro ou falso',
   'Type': 'Tipo',
   'Word': 'Palavra',
   'Word type': 'Tipo de palavra',

@@ -187,7 +187,7 @@ export const fiDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Lisää',
   'Add word': 'Lisää sana',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Uudelleen: totta vai tarua',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Suunta',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const fiDict: Record<string, string> = {
   'Text side margins': 'Tekstin sivumarginaalit',
   'Translation': 'Käännös',
   'True': 'Tosi',
-  'True or false': 'True or false',
+  'True or false': 'Totta vai tarua',
   'Type': 'Tyyppi',
   'Word': 'Sana',
   'Word type': 'Sanaluokka',

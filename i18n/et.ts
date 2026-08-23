@@ -187,7 +187,7 @@ export const etDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Lisa',
   'Add word': 'Lisa sõna',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Uuesti: tõene või väär',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Suund',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const etDict: Record<string, string> = {
   'Text side margins': 'Teksti küljeveerised',
   'Translation': 'Tõlge',
   'True': 'Tõene',
-  'True or false': 'True or false',
+  'True or false': 'Tõene või väär',
   'Type': 'Tüüp',
   'Word': 'Sõna',
   'Word type': 'Sõnaliik',

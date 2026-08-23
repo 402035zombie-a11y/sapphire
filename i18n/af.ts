@@ -187,7 +187,7 @@ export const afDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Voeg by',
   'Add word': 'Voeg woord by',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Weer: waar of vals',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Rigting',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const afDict: Record<string, string> = {
   'Text side margins': 'Tekskantlyne',
   'Translation': 'Vertaling',
   'True': 'Waar',
-  'True or false': 'True or false',
+  'True or false': 'Waar of vals',
   'Type': 'Tipe',
   'Word': 'Woord',
   'Word type': 'Woordsoort',

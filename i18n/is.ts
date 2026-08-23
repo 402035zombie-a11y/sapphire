@@ -187,7 +187,7 @@ export const isDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Bæta við',
   'Add word': 'Bæta við orði',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Aftur: rétt eða rangt',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Stefna',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const isDict: Record<string, string> = {
   'Text side margins': 'Textaspásser',
   'Translation': 'Þýðing',
   'True': 'Rétt',
-  'True or false': 'True or false',
+  'True or false': 'Rétt eða rangt',
   'Type': 'Gerð',
   'Word': 'Orð',
   'Word type': 'Orðflokkur',

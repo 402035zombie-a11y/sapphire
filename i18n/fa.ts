@@ -187,7 +187,7 @@ export const faDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'افزودن',
   'Add word': 'افزودن کلمه',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'دوباره: درست یا غلط',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'جهت',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const faDict: Record<string, string> = {
   'Text side margins': 'حاشیه‌های کناری متن',
   'Translation': 'ترجمه',
   'True': 'درست',
-  'True or false': 'True or false',
+  'True or false': 'درست یا غلط',
   'Type': 'نوع',
   'Word': 'کلمه',
   'Word type': 'نوع کلمه',

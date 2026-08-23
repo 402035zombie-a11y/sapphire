@@ -187,7 +187,7 @@ export const viDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Thêm',
   'Add word': 'Thêm từ',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Lại lần nữa: đúng hay sai',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Chiều',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const viDict: Record<string, string> = {
   'Text side margins': 'Lề hai bên văn bản',
   'Translation': 'Bản dịch',
   'True': 'Đúng',
-  'True or false': 'True or false',
+  'True or false': 'Đúng hay sai',
   'Type': 'Loại',
   'Word': 'Từ',
   'Word type': 'Từ loại',

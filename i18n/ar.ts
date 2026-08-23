@@ -187,7 +187,7 @@ export const arDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'إضافة',
   'Add word': 'إضافة كلمة',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'مرة أخرى: صحيح أم خطأ',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'الاتجاه',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const arDict: Record<string, string> = {
   'Text side margins': 'الهوامش الجانبية للنص',
   'Translation': 'الترجمة',
   'True': 'صحيح',
-  'True or false': 'True or false',
+  'True or false': 'صحيح أم خطأ',
   'Type': 'النوع',
   'Word': 'كلمة',
   'Word type': 'نوع الكلمة',

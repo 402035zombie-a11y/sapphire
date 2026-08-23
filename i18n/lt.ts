@@ -187,7 +187,7 @@ export const ltDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Pridėti',
   'Add word': 'Pridėti žodį',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Dar kartą: teisinga ar neteisinga',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Kryptis',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const ltDict: Record<string, string> = {
   'Text side margins': 'Teksto šoniniai paraštės',
   'Translation': 'Vertimas',
   'True': 'Teisinga',
-  'True or false': 'True or false',
+  'True or false': 'Teisinga ar neteisinga',
   'Type': 'Tipas',
   'Word': 'Žodis',
   'Word type': 'Žodžio rūšis',

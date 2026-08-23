@@ -187,7 +187,7 @@ export const svDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Lägg till',
   'Add word': 'Lägg till ord',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Igen: sant eller falskt',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Riktning',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const svDict: Record<string, string> = {
   'Text side margins': 'Textmarginaler',
   'Translation': 'Översättning',
   'True': 'Sant',
-  'True or false': 'True or false',
+  'True or false': 'Sant eller falskt',
   'Type': 'Typ',
   'Word': 'Ord',
   'Word type': 'Ordtyp',

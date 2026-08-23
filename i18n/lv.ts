@@ -187,7 +187,7 @@ export const lvDict: Record<string, string> = {
   // FSRS + Anki + Direction + Cloze + Filters
   'Add': 'Pievienot',
   'Add word': 'Pievienot vārdu',
-  'Again: true or false': 'Again: true or false',
+  'Again: true or false': 'Atkal: pareizi vai nepareizi',
   'Book queued for processing…': 'Book queued for processing…',
   'Direction': 'Virziens',
   'Export dictionary': 'Export dictionary',
@@ -205,7 +205,7 @@ export const lvDict: Record<string, string> = {
   'Text side margins': 'Teksta sānu malas',
   'Translation': 'Tulkojums',
   'True': 'Pareizi',
-  'True or false': 'True or false',
+  'True or false': 'Pareizi vai nepareizi',
   'Type': 'Veids',
   'Word': 'Vārds',
   'Word type': 'Vārda veids',
