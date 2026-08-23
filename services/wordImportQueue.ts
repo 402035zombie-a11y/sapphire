@@ -38,6 +38,8 @@ export interface ImportJob {
 interface WordImportState {
   // ключ — bookId; прогрес/статус кожної книги окремо
   jobs: Record<string, ImportJobState>;
+  /** Кешований масив активних jobs (queued|running) — стабільне посилання для useSyncExternalStore. */
+  activeJobsList: ImportJobState[];
   enqueue: (job: ImportJob) => void;
 }
 
@@ -51,11 +53,15 @@ let active = 0;
 function setJob(bookId: string, patch: Partial<ImportJobState>) {
   useWordImportStore.setState((s) => {
     const prev = s.jobs[bookId];
+    const jobs = {
+      ...s.jobs,
+      [bookId]: { ...(prev as ImportJobState), ...patch, bookId },
+    };
     return {
-      jobs: {
-        ...s.jobs,
-        [bookId]: { ...(prev as ImportJobState), ...patch, bookId },
-      },
+      jobs,
+      activeJobsList: Object.values(jobs).filter(
+        (j) => j.status === 'queued' || j.status === 'running'
+      ),
     };
   });
 }
@@ -89,6 +95,7 @@ async function runJob(job: ImportJob) {
 
 export const useWordImportStore = create<WordImportState>((set, get) => ({
   jobs: {},
+  activeJobsList: [],
   enqueue: (job) => {
     const existing = get().jobs[job.bookId];
     // Не ставимо в чергу двічі, якщо вже йде або чекає.

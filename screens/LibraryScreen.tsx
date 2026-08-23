@@ -326,9 +326,10 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const importing = importJob?.status === 'running' || importJob?.status === 'queued';
   const importProgress = importJob?.progress ?? 0;
   // Глобальний індикатор фонових імпортів: видно навіть коли модалка чернетки закрита.
-  const activeJobs = useWordImportStore((s) =>
-    Object.values(s.jobs).filter((j) => j.status === 'queued' || j.status === 'running'),
-  );
+  // Глобальний індикатор фонових імпортів: видно навіть коли модалка чернетки закрита.
+  // Селектор мусить повертати СТАБІЛЬНЕ посилання (useSyncExternalStore), тому фільтр
+  // кешується в сторе і перераховується тільки при зміні jobs.
+  const activeJobs = useWordImportStore((s) => s.activeJobsList);
 
   const openReader = (bookId: string) => {
     if (onSelectBook) {
