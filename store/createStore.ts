@@ -37,12 +37,13 @@ function buildStore<T extends object>(creator: StoreCreator<T>): UseStoreFn<T> {
   state = creator(setState, getState);
 
   const useStore = ((selector?: (s: T) => any) => {
-    const [, forceUpdate] = React.useReducer((x: number) => x + 1, 0);
-    React.useEffect(() => {
-      const unsub = subscribe(() => forceUpdate());
-      return unsub;
-    }, []);
-    return (selector ? selector(state) : state) as any;
+    // useSyncExternalStore: ререндер ТОЛЬКИ если результат селектора изменился.
+    // Без селектора — весь state (ссылка меняется на каждый setState).
+    const getSnapshot = React.useCallback(
+      () => (selector ? selector(state) : state),
+      [selector],
+    );
+    return React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot) as any;
   }) as unknown as UseStoreFn<T>;
   useStore.getState = getState;
   useStore.setState = setState;
