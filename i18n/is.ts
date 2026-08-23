@@ -15,7 +15,7 @@ export const isDict: Record<string, string> = {
   'Library is empty. Upload your first book.': 'Bókasafnið er tómt. Hlaða inn fyrstu bókinni.',
   'Search library': 'Leita í bókasafni',
   'Recent': 'Nýlegt',
-  'A–Z': 'A–Z',
+  'A–Z': 'A–Þ',
   'Reading file…': 'Les skrá…',
   'Empty': 'Tómt',
   'Could not extract text from this file.': 'Gat ekki tekið texta úr þessari skrá.',

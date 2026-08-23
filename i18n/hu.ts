@@ -15,7 +15,7 @@ export const huDict: Record<string, string> = {
   'Library is empty. Upload your first book.': 'A könyvtár üres. Töltsd fel az első könyved.',
   'Search library': 'Keresés a könyvtárban',
   'Recent': 'Legutóbbi',
-  'A–Z': 'A–Z',
+  'A–Z': 'A–ZS',
   'Reading file…': 'Fájl olvasása…',
   'Empty': 'Üres',
   'Could not extract text from this file.': 'Nem sikerült kinyerni a szöveget ebből a fájlból.',

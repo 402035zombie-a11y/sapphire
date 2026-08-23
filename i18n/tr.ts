@@ -15,7 +15,7 @@ export const trDict: Record<string, string> = {
   'Library is empty. Upload your first book.': 'Kütüphane boş. İlk kitabınızı yükleyin.',
   'Search library': 'Kütüphanede ara',
   'Recent': 'Son',
-  'A–Z': 'A–Z',
+  'A–Z': 'A-Z',
   'Reading file…': 'Dosya okunuyor…',
   'Empty': 'Boş',
   'Could not extract text from this file.': 'Bu dosyadan metin çıkarılamadı.',

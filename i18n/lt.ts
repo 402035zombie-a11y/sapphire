@@ -15,7 +15,7 @@ export const ltDict: Record<string, string> = {
   'Library is empty. Upload your first book.': 'Biblioteka tuščia. Įkelkite savo pirmą knygą.',
   'Search library': 'Ieškoti bibliotekoje',
   'Recent': 'Neseniai',
-  'A–Z': 'A–Z',
+  'A–Z': 'A–Ž',
   'Reading file…': 'Failo skaitymas…',
   'Empty': 'Tuščia',
   'Could not extract text from this file.': 'Nepavyko ištraukti teksto iš šio failo.',

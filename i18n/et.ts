@@ -15,7 +15,7 @@ export const etDict: Record<string, string> = {
   'Library is empty. Upload your first book.': 'Raamatukogu on tühi. Lae üles oma esimene raamat.',
   'Search library': 'Otsi raamatukogust',
   'Recent': 'Hiljutised',
-  'A–Z': 'A–Z',
+  'A–Z': 'A–Ü',
   'Reading file…': 'Faili lugemine…',
   'Empty': 'Tühi',
   'Could not extract text from this file.': 'Selle faili teksti ei õnnestunud ekstraheerida.',

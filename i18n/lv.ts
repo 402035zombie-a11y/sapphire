@@ -15,7 +15,7 @@ export const lvDict: Record<string, string> = {
   'Library is empty. Upload your first book.': 'Bibliotēka ir tukša. Augšupielādē savu pirmo grāmatu.',
   'Search library': 'Meklēt bibliotēkā',
   'Recent': 'Nesenie',
-  'A–Z': 'A–Z',
+  'A–Z': 'A–Ž',
   'Reading file…': 'Faila lasīšana…',
   'Empty': 'Tukšs',
   'Could not extract text from this file.': 'Nevarēja izvilkt tekstu no šī faila.',

@@ -15,7 +15,7 @@ export const cyDict: Record<string, string> = {
   'Library is empty. Upload your first book.': 'Mae\'r llyfrgell yn wag. Llwytho\'ch llyfr cyntaf.',
   'Search library': 'Chwilio\'r llyfrgell',
   'Recent': 'Diweddar',
-  'A–Z': 'A–Z',
+  'A–Z': 'A–Y',
   'Reading file…': 'Darllen ffeil…',
   'Empty': 'Gwag',
   'Could not extract text from this file.': 'Methu echdynnu testun o\'r ffeil hon.',
