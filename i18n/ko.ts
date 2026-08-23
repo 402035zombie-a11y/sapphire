@@ -214,7 +214,6 @@ export const koDict: Record<string, string> = {
   'Word': '단어',
   'Word type': '품사',
   'Word:': '단어:',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
   
   // FSRS + Anki + Direction + Cloze
   'Sort': '정렬',

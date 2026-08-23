@@ -210,7 +210,6 @@ export const elDict: Record<string, string> = {
   'Word': 'Λέξη',
   'Word type': 'Είδος λέξης',
   'Word:': 'Λέξη:',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Ταξινόμηση',

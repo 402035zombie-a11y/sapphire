@@ -210,7 +210,6 @@ export const euDict: Record<string, string> = {
   'Word': 'Hitza',
   'Word type': 'Hitzen mota',
   'Word:': 'Hitza:',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Ordenatu',

@@ -210,7 +210,6 @@ export const cyDict: Record<string, string> = {
   'Word': 'Gair',
   'Word type': 'Math o air',
   'Word:': 'Gair:',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Trefnu',

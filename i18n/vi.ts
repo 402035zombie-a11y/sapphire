@@ -210,7 +210,6 @@ export const viDict: Record<string, string> = {
   'Word': 'Từ',
   'Word type': 'Từ loại',
   'Word:': 'Từ:',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Sắp xếp',

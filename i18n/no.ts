@@ -210,7 +210,6 @@ export const noDict: Record<string, string> = {
   'Word': 'Ord',
   'Word type': 'Ordtype',
   'Word:': 'Ord:',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Sorter',

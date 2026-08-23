@@ -210,7 +210,6 @@ export const hiDict: Record<string, string> = {
   'Word': 'शब्द',
   'Word type': 'शब्द प्रकार',
   'Word:': 'शब्द:',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'क्रमबद्ध करें',

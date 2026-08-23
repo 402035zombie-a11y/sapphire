@@ -210,7 +210,6 @@ export const svDict: Record<string, string> = {
   'Word': 'Ord',
   'Word type': 'Ordtyp',
   'Word:': 'Ord:',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Sortera',

@@ -210,7 +210,6 @@ export const huDict: Record<string, string> = {
   'Word': 'Szó',
   'Word type': 'Szófaj',
   'Word:': 'Szó:',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Rendez',
