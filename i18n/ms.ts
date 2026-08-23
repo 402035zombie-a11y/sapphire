@@ -259,4 +259,11 @@ export const msDict: Record<string, string> = {
   'Ticker line': 'Baris ticker',
   'Text scrolls along a line at the same speed': 'Teks menatalian sepanjang garis pada kelajuan yang sama',
     'Blackout': 'Gelap',
+  'System': 'Sistem',
+  'Left': 'Kiri',
+  'Justified': 'Rata kiri-kanan',
+  'Justified + hyphens': 'Rata kiri-kanan + sempang',
+  'Serif': 'Serif',
+  'Sans-serif': 'Tanpa serifa',
+  'Mono': 'Mono',
 };

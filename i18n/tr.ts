@@ -263,4 +263,11 @@ export const trDict: Record<string, string> = {
   'Ticker line': 'Kayan satır',
   'Text scrolls along a line at the same speed': 'Metin aynı hızda bir çizgi boyunca kayar',
     'Blackout': 'Karartma',
+  'System': 'Sistem',
+  'Left': 'Sola dayalı',
+  'Justified': 'İki yana yaslanmış',
+  'Justified + hyphens': 'İki yana yaslanmış + hecelleme',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sans-serif',
+  'Mono': 'Sabit genişlikli',
 };

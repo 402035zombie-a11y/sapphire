@@ -259,4 +259,11 @@ export const huDict: Record<string, string> = {
   'Ticker line': 'Futó sor',
   'Text scrolls along a line at the same speed': 'A szöveg azonos sebességgel görgetül egy vonal mentén',
     'Blackout': 'Fekete',
+  'System': 'Rendszer',
+  'Left': 'Balra',
+  'Justified': 'Sorkizárt',
+  'Justified + hyphens': 'Sorkizárt + elválasztás',
+  'Serif': 'Serif',
+  'Sans-serif': 'Verdali',
+  'Mono': 'Írógép',
 };

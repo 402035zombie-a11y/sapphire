@@ -260,4 +260,11 @@ export const daDict: Record<string, string> = {
   'Ticker line': 'Rullende linje',
   'Text scrolls along a line at the same speed': 'Teksten ruller langs en linje med samme hastighed',
     'Blackout': 'Nedtoning',
+  'System': 'System',
+  'Left': 'Venstre',
+  'Justified': 'Justeret',
+  'Justified + hyphens': 'Justeret + orddeling',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sans-serif',
+  'Mono': 'Mono',
 };

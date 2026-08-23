@@ -259,4 +259,11 @@ export const heDict: Record<string, string> = {
   'Ticker line': 'שורת טיקר',
   'Text scrolls along a line at the same speed': 'הטקסט גולש לאורך קו באותה מהירות',
     'Blackout': 'כיבוי',
+  'System': 'מערכת',
+  'Left': 'שמאל',
+  'Justified': 'מיושר',
+  'Justified + hyphens': 'מיושר + מיקוף',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sans-serif',
+  'Mono': 'רווח אחיד',
 };

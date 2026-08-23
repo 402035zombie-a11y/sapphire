@@ -259,4 +259,11 @@ export const roDict: Record<string, string> = {
   'Ticker line': 'Linie derulantă',
   'Text scrolls along a line at the same speed': 'Textul se derulează de-a lungul unei linii cu aceeași viteză',
     'Blackout': 'Stins',
+  'System': 'Sistem',
+  'Left': 'Stânga',
+  'Justified': 'Aliniat stânga-dreapta',
+  'Justified + hyphens': 'Aliniat + crateme',
+  'Serif': 'Cu serife',
+  'Sans-serif': 'Fără serife',
+  'Mono': 'Lățime fixă',
 };

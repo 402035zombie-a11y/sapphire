@@ -259,4 +259,11 @@ export const euDict: Record<string, string> = {
   'Ticker line': 'Ticker lerroa',
   'Text scrolls along a line at the same speed': 'Testuak lerro batean zehar mugitzen da abiadura berean',
     'Blackout': 'Itzalita',
+  'System': 'Sistema',
+  'Left': 'Ezkerrera',
+  'Justified': 'Justifikatua',
+  'Justified + hyphens': 'Justifikatua + marrak',
+  'Serif': 'Serif',
+  'Sans-serif': 'Serifik',
+  'Mono': 'Monospace',
 };

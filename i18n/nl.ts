@@ -259,4 +259,11 @@ export const nlDict: Record<string, string> = {
   'Ticker line': 'Ticker-regel',
   'Text scrolls along a line at the same speed': 'Tekst scrolt met dezelfde snelheid langs een regel',
     'Blackout': 'Verduisterd',
+  'System': 'Systeem',
+  'Left': 'Links',
+  'Justified': 'Uitgevuld',
+  'Justified + hyphens': 'Uitgevuld + afbreekstrepen',
+  'Serif': 'Serif',
+  'Sans-serif': 'Schreefloos',
+  'Mono': 'Monospace',
 };

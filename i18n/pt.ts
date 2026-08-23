@@ -263,4 +263,11 @@ export const ptDict: Record<string, string> = {
   'Ticker line': 'Linha ticker',
   'Text scrolls along a line at the same speed': 'O texto rola ao longo de uma linha na mesma velocidade',
     'Blackout': 'Escurecido',
+  'System': 'Sistema',
+  'Left': 'Esquerda',
+  'Justified': 'Justificado',
+  'Justified + hyphens': 'Justificado + hifens',
+  'Serif': 'Serifada',
+  'Sans-serif': 'Sem serifa',
+  'Mono': 'Monoespaçado',
 };

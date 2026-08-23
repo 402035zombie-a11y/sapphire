@@ -259,4 +259,11 @@ export const cyDict: Record<string, string> = {
   'Ticker line': 'Llinen ticwr',
   'Text scrolls along a line at the same speed': 'Mae\'r testun yn sgrolio ar hyd llinell ar yr un cyflymder',
     'Blackout': 'Du gwawr',
+  'System': 'System',
+  'Left': 'Chwith',
+  'Justified': 'Cyfiawnu',
+  'Justified + hyphens': 'Cyfiawnu + cysylltnodau',
+  'Serif': 'Serif',
+  'Sans-serif': 'Di-serif',
+  'Mono': 'Mono',
 };

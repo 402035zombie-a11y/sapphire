@@ -259,4 +259,11 @@ export const viDict: Record<string, string> = {
   'Ticker line': 'Dòng cuộn',
   'Text scrolls along a line at the same speed': 'Văn bản cuộn dọc theo một dòng với cùng tốc độ',
     'Blackout': 'Chìm trong bóng tối',
+  'System': 'Hệ thống',
+  'Left': 'Trái',
+  'Justified': 'Canh đều hai bên',
+  'Justified + hyphens': 'Canh đều + gạch nối',
+  'Serif': 'Có chân',
+  'Sans-serif': 'Không chân',
+  'Mono': 'Độ rộng cố định',
 };

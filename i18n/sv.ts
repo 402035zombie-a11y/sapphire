@@ -259,4 +259,11 @@ export const svDict: Record<string, string> = {
   'Ticker line': 'Rullande rad',
   'Text scrolls along a line at the same speed': 'Texten rullar längs en linje med samma hastighet',
     'Blackout': 'Mörkläggning',
+  'System': 'System',
+  'Left': 'Vänster',
+  'Justified': 'Marginaljusterad',
+  'Justified + hyphens': 'Marginaljusterad + avstavelser',
+  'Serif': 'Serif',
+  'Sans-serif': 'Barock',
+  'Mono': 'Fast bredd',
 };

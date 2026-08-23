@@ -259,4 +259,11 @@ export const lvDict: Record<string, string> = {
   'Ticker line': 'Ritoša līnija',
   'Text scrolls along a line at the same speed': 'Teksts rit gar līniju ar to pašu ātrumu',
     'Blackout': 'Aptumšots',
+  'System': 'Sistēmas',
+  'Left': 'Pa kreisi',
+  'Justified': 'Izlīdzināts abās pusēs',
+  'Justified + hyphens': 'Izlīdzināts + defises',
+  'Serif': 'Serif',
+  'Sans-serif': 'Bez serifiem',
+  'Mono': 'Vienplatums',
 };

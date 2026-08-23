@@ -259,4 +259,11 @@ export const bgDict: Record<string, string> = {
   'Ticker line': 'Лента за движение',
   'Text scrolls along a line at the same speed': 'Текстът се превърта по линия със същата скорост',
     'Blackout': 'Потъмняване',
+  'System': 'Системен',
+  'Left': 'Ляво',
+  'Justified': 'Двустранно',
+  'Justified + hyphens': 'Двустранно + пренос',
+  'Serif': 'Серифен',
+  'Sans-serif': 'Безсерифен',
+  'Mono': 'Монопространствен',
 };

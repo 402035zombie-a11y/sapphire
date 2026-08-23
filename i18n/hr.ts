@@ -259,4 +259,11 @@ export const hrDict: Record<string, string> = {
   'Ticker line': 'Klizna linija',
   'Text scrolls along a line at the same speed': 'Tekst se pomaka duž linije istom brzinom',
     'Blackout': 'Prigušeno',
+  'System': 'Sustav',
+  'Left': 'Lijevo',
+  'Justified': 'Poravnato obostrano',
+  'Justified + hyphens': 'Poravnato + crtica',
+  'Serif': 'Serif',
+  'Sans-serif': 'Bez serifа',
+  'Mono': 'Mono',
 };

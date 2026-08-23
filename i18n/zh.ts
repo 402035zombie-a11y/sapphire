@@ -264,4 +264,11 @@ export const zhDict: Record<string, string> = {
   'Ticker line': '滚动行',
   'Text scrolls along a line at the same speed': '文本以相同速度沿行滚动',
     'Blackout': '熄灯模式',
+  'System': '系统',
+  'Left': '左对齐',
+  'Justified': '两端对齐',
+  'Justified + hyphens': '两端对齐 + 连字符',
+  'Serif': '衬线体',
+  'Sans-serif': '无衬线体',
+  'Mono': '等宽字体',
 };

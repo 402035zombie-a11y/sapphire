@@ -259,4 +259,11 @@ export const arDict: Record<string, string> = {
   'Ticker line': 'خط متحرك',
   'Text scrolls along a line at the same speed': 'ينزلق النص على طول خط بنفس السرعة',
     'Blackout': 'الإطفاء',
+  'System': 'النظام',
+  'Left': 'يسار',
+  'Justified': 'مضبوط',
+  'Justified + hyphens': 'مضبوط + شرطات',
+  'Serif': 'مذيّل',
+  'Sans-serif': 'بدون مذيّل',
+  'Mono': 'أحادي المسافة',
 };

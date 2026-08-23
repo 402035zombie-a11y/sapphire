@@ -259,4 +259,11 @@ export const slDict: Record<string, string> = {
   'Ticker line': 'Drsna vrstica',
   'Text scrolls along a line at the same speed': 'Besedilo se premika po vrstici z isto hitrostjo',
     'Blackout': 'Zatemnjeno',
+  'System': 'Sistemski',
+  'Left': 'Levo',
+  'Justified': 'Obojestransko',
+  'Justified + hyphens': 'Obojestransko + deljenje besed',
+  'Serif': 'Serifni',
+  'Sans-serif': 'Brez serifov',
+  'Mono': 'Mono',
 };

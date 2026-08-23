@@ -260,4 +260,11 @@ export const esDict: Record<string, string> = {
   'Ticker line': 'Línea ticker',
   'Text scrolls along a line at the same speed': 'El texto se desplaza a lo largo de una línea a la misma velocidad',
     'Blackout': 'Apagado',
+  'System': 'Sistema',
+  'Left': 'Izquierda',
+  'Justified': 'Justificado',
+  'Justified + hyphens': 'Justificado + guiones',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sans-serif',
+  'Mono': 'Monospace',
 };

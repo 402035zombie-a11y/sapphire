@@ -263,4 +263,11 @@ export const thDict: Record<string, string> = {
   'Ticker line': 'เส้นเลื่อน',
   'Text scrolls along a line at the same speed': 'ข้อความเลื่อนตามเส้นด้วยความเร็วเท่ากัน',
     'Blackout': 'มืดสนิท',
+  'System': 'ระบบ',
+  'Left': 'ชิดซ้าย',
+  'Justified': 'ชิดขอบ',
+  'Justified + hyphens': 'ชิดขอบ + ยัติภังค์',
+  'Serif': 'เซริฟ',
+  'Sans-serif': 'ไม่มีเชิง',
+  'Mono': 'ความกว้างคงที่',
 };

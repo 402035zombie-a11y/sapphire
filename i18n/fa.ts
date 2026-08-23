@@ -259,4 +259,11 @@ export const faDict: Record<string, string> = {
   'Ticker line': 'خط متحرک',
   'Text scrolls along a line at the same speed': 'متن با همان سرعت در طول یک خط اسکرول می‌شود',
     'Blackout': 'تاریک',
+  'System': 'سیستم',
+  'Left': 'چپ',
+  'Justified': 'هم‌ترازی کامل',
+  'Justified + hyphens': 'هم‌ترازی کامل + خط تیره',
+  'Serif': 'Serif',
+  'Sans-serif': 'بدون سریف',
+  'Mono': 'تک‌فاصله',
 };

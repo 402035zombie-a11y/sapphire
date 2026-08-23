@@ -259,4 +259,11 @@ export const ltDict: Record<string, string> = {
   'Ticker line': 'Slenkanti eilutė',
   'Text scrolls along a line at the same speed': 'Tekstas slenka palei eilutę tuo pačiu greičiu',
     'Blackout': 'Užteminta',
+  'System': 'Sisteminis',
+  'Left': 'Kairėje',
+  'Justified': 'Lygiuoti pagal abi puses',
+  'Justified + hyphens': 'Lygiuoti + skiemenys',
+  'Serif': 'Serif',
+  'Sans-serif': 'Be serifų',
+  'Mono': 'Lygiaplotis',
 };

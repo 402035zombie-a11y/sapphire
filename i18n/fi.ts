@@ -259,4 +259,11 @@ export const fiDict: Record<string, string> = {
   'Ticker line': 'Vierivä rivi',
   'Text scrolls along a line at the same speed': 'Teksti vierii rivin pitkin samalla nopeudella',
     'Blackout': 'Pimennys',
+  'System': 'Järjestelmä',
+  'Left': 'Vasen',
+  'Justified': 'Tasattu',
+  'Justified + hyphens': 'Tasattu + tavutus',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sans-serif',
+  'Mono': 'Mono',
 };

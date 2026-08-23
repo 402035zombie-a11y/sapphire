@@ -259,4 +259,11 @@ export const etDict: Record<string, string> = {
   'Ticker line': 'Keriv rida',
   'Text scrolls along a line at the same speed': 'Tekst kerib mööda joont sama kiirusega',
     'Blackout': 'Summutatud',
+  'System': 'Süsteem',
+  'Left': 'Vasak',
+  'Justified': 'Rööpjoondus',
+  'Justified + hyphens': 'Rööpjoondus + sidekriipsud',
+  'Serif': 'Serif',
+  'Sans-serif': 'Serifta',
+  'Mono': 'Fikseeritud',
 };

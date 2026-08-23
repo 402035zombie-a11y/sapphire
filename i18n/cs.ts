@@ -259,4 +259,11 @@ export const csDict: Record<string, string> = {
   'Ticker line': 'Běžící pás',
   'Text scrolls along a line at the same speed': 'Text se posouvá po čáře stejnou rychlostí',
     'Blackout': 'Zhasnutí',
+  'System': 'Systémový',
+  'Left': 'Vlevo',
+  'Justified': 'Zarovnat do bloku',
+  'Justified + hyphens': 'Do bloku + dělení slov',
+  'Serif': 'Patkové',
+  'Sans-serif': 'Bezpatkové',
+  'Mono': 'Monospace',
 };

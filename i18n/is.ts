@@ -259,4 +259,11 @@ export const isDict: Record<string, string> = {
   'Ticker line': 'Síðustu lína',
   'Text scrolls along a line at the same speed': 'Textinn skrunar eftir línu á sömu hraða',
     'Blackout': 'Mykjað',
+  'System': 'Kerfis',
+  'Left': 'Vinstri',
+  'Justified': 'Jafnaður',
+  'Justified + hyphens': 'Jafnaður + bandstriki',
+  'Serif': 'Serif',
+  'Sans-serif': 'Berbókstafur',
+  'Mono': 'Jafnbreitt',
 };

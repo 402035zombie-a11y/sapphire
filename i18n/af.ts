@@ -259,4 +259,11 @@ export const afDict: Record<string, string> = {
   'Ticker line': 'Borrel lyn',
   'Text scrolls along a line at the same speed': 'Teks skuif langs n lyn teen dieselfde spoed',
     'Blackout': 'Swart uit',
+  'System': 'System',
+  'Left': 'Left',
+  'Justified': 'Justified',
+  'Justified + hyphens': 'Justified + hyphens',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sans-serif',
+  'Mono': 'Mono',
 };

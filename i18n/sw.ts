@@ -259,4 +259,11 @@ export const swDict: Record<string, string> = {
   'Ticker line': 'Mstari unaojiri',
   'Text scrolls along a line at the same speed': 'Maandishi yanayosogeza kwenye mstari kwa kasi ile ile',
     'Blackout': 'Giza',
+  'System': 'Mfumo',
+  'Left': 'Kushoto',
+  'Justified': 'Sawazishwa',
+  'Justified + hyphens': 'Sawazishwa + mistari',
+  'Serif': 'Serif',
+  'Sans-serif': 'Bila serif',
+  'Mono': 'Upano sawa',
 };

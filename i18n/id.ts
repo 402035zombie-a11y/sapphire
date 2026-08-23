@@ -259,4 +259,11 @@ export const idDict: Record<string, string> = {
   'Ticker line': 'Garis berjalan',
   'Text scrolls along a line at the same speed': 'Teks bergulir di sepanjang garis dengan kecepatan yang sama',
     'Blackout': 'Gelap',
+  'System': 'Sistem',
+  'Left': 'Kiri',
+  'Justified': 'Rata kanan-kiri',
+  'Justified + hyphens': 'Rata kanan-kiri + tanda hubung',
+  'Serif': 'Serif',
+  'Sans-serif': 'Tanpa serif',
+  'Mono': 'Mono',
 };

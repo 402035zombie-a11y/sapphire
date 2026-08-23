@@ -259,4 +259,11 @@ export const noDict: Record<string, string> = {
   'Ticker line': 'Rullende linje',
   'Text scrolls along a line at the same speed': 'Teksten ruller langs en linje med samme hastighet',
     'Blackout': 'Svart',
+  'System': 'System',
+  'Left': 'Venstre',
+  'Justified': 'Justeret',
+  'Justified + hyphens': 'Justeret + bindestreker',
+  'Serif': 'Serif',
+  'Sans-serif': 'Uten serif',
+  'Mono': 'Fast bredde',
 };

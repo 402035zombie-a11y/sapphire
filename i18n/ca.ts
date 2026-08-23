@@ -259,4 +259,11 @@ export const caDict: Record<string, string> = {
   'Ticker line': 'Línia ticker',
   'Text scrolls along a line at the same speed': 'El text es desplaça al llarg d\'una línia a la mateixa velocitat',
     'Blackout': 'Atenuat',
+  'System': 'System',
+  'Left': 'Esquerra',
+  'Justified': 'Justificat',
+  'Justified + hyphens': 'Justificat + guionets',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sense serif',
+  'Mono': 'Mono',
 };

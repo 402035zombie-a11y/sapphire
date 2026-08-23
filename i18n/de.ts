@@ -270,4 +270,11 @@ export const deDict: Record<string, string> = {
   'Ticker line': 'Ticker-Zeile',
   'Text scrolls along a line at the same speed': 'Text scrollt mit gleicher Geschwindigkeit entlang einer Linie',
     'Blackout': 'Abgedunkelt',
+  'System': 'System',
+  'Left': 'Links',
+  'Justified': 'Blocksatz',
+  'Justified + hyphens': 'Blocksatz + Trennstriche',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sans-serif',
+  'Mono': 'Mono',
 };

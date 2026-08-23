@@ -263,4 +263,11 @@ export const koDict: Record<string, string> = {
   'Ticker line': '틱커 라인',
   'Text scrolls along a line at the same speed': '텍스트가 같은 속도로 선을 따라 스크롤',
     'Blackout': '블랙아웃',
+  'System': '시스템',
+  'Left': '왼쪽',
+  'Justified': '양쪽 정렬',
+  'Justified + hyphens': '양쪽 정렬 + 하이픈',
+  'Serif': 'Serif',
+  'Sans-serif': '산세리프',
+  'Mono': '고정폭',
 };

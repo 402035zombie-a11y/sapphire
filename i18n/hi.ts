@@ -259,4 +259,11 @@ export const hiDict: Record<string, string> = {
   'Ticker line': 'टिकर लाइन',
   'Text scrolls along a line at the same speed': 'पाठ एक रेखा के साथ उसी गति से स्क्रॉल होता है',
     'Blackout': 'ब्लैकआउट',
+  'System': 'सिस्टम',
+  'Left': 'बाएँ',
+  'Justified': 'संतुलित',
+  'Justified + hyphens': 'संतुलित + हाइफ़न',
+  'Serif': 'Serif',
+  'Sans-serif': 'सैंस-सेरिफ',
+  'Mono': 'मोनोस्पेस',
 };

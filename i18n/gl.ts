@@ -259,4 +259,11 @@ export const glDict: Record<string, string> = {
   'Ticker line': 'Liña ticker',
   'Text scrolls along a line at the same speed': 'O texto desprázase ao longo dunha liña á mesma velocidade',
     'Blackout': 'Apagado',
+  'System': 'Sistema',
+  'Left': 'Esquerda',
+  'Justified': 'Xustificado',
+  'Justified + hyphens': 'Xustificado + guións',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sen serif',
+  'Mono': 'Monoespazado',
 };

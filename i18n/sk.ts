@@ -259,4 +259,11 @@ export const skDict: Record<string, string> = {
   'Ticker line': 'Bežiaci pás',
   'Text scrolls along a line at the same speed': 'Text sa posúva po čiare rovnakou rýchlosťou',
     'Blackout': 'Zhasnuté',
+  'System': 'Systémový',
+  'Left': 'Vľavo',
+  'Justified': 'Zarovnané do bloku',
+  'Justified + hyphens': 'Zarovnané + delenie slov',
+  'Serif': 'Pätkové',
+  'Sans-serif': 'Bezpätkové',
+  'Mono': 'Mono',
 };

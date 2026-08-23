@@ -259,4 +259,11 @@ export const itDict: Record<string, string> = {
   'Ticker line': 'Linea ticker',
   'Text scrolls along a line at the same speed': 'Il testo scorre lungo una linea alla stessa velocità',
     'Blackout': 'Oscurato',
+  'System': 'Sistema',
+  'Left': 'Sinistra',
+  'Justified': 'Giustificato',
+  'Justified + hyphens': 'Giustificato + sillabazione',
+  'Serif': 'Serif',
+  'Sans-serif': 'Senza grazie',
+  'Mono': 'Mono',
 };

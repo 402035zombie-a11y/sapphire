@@ -259,4 +259,11 @@ export const srDict: Record<string, string> = {
   'Ticker line': 'Клизна линија',
   'Text scrolls along a line at the same speed': 'Текст се помера дуж линије истом брзином',
     'Blackout': 'Затамњено',
+  'System': 'Системски',
+  'Left': 'Лево',
+  'Justified': 'Обострано',
+  'Justified + hyphens': 'Обострано + цртице',
+  'Serif': 'Серифни',
+  'Sans-serif': 'Без серифних',
+  'Mono': 'Једнака ширина',
 };

@@ -270,4 +270,10 @@ export const ukDict: Record<string, string> = {
   // FontSettingsSheet (Paragraph spacing — новий ключ, інші вже існують вище)
   'Paragraph spacing': 'Інтервал між абзацами',
   'Blackout': 'Blackout (повна темрява)',
+  'System': 'System',
+  'Left': 'За лівим краєм',
+  'Justified': 'По ширині',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sans-serif',
+  'Mono': 'Mono',
 };

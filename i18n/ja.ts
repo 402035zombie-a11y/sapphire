@@ -263,4 +263,11 @@ export const jaDict: Record<string, string> = {
   'Ticker line': 'ティッカーライン',
   'Text scrolls along a line at the same speed': 'テキストが一定速度で行に沿ってスクロール',
     'Blackout': 'ブラックアウト',
+  'System': 'システム',
+  'Left': '左揃え',
+  'Justified': '両端揃え',
+  'Justified + hyphens': '両端揃え + ハイフン',
+  'Serif': 'セリフ体',
+  'Sans-serif': 'サンセリフ',
+  'Mono': '等幅',
 };

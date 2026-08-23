@@ -261,4 +261,11 @@ export const frDict: Record<string, string> = {
   'Ticker line': 'Ligne défilante',
   'Text scrolls along a line at the same speed': 'Le texte défile le long d\'une ligne à vitesse constante',
     'Blackout': 'Veilleuse',
+  'System': 'Système',
+  'Left': 'Gauche',
+  'Justified': 'Justifié',
+  'Justified + hyphens': 'Justifié + césures',
+  'Serif': 'Serif',
+  'Sans-serif': 'Sans-serif',
+  'Mono': 'Monospace',
 };

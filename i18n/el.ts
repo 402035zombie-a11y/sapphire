@@ -259,4 +259,11 @@ export const elDict: Record<string, string> = {
   'Ticker line': 'Γραμμή κύλισης',
   'Text scrolls along a line at the same speed': 'Το κείμενο κυλάει κατά μήκος μιας γραμμής με την ίδια ταχύτητα',
     'Blackout': 'Σκοτεινό',
+  'System': 'Συστήματος',
+  'Left': 'Αριστερά',
+  'Justified': 'Πλήρης στοίχιση',
+  'Justified + hyphens': 'Πλήρης στοίχιση + παύλες',
+  'Serif': 'Serif',
+  'Sans-serif': 'Χωρίς serif',
+  'Mono': 'Μονοδιάστατο',
 };
