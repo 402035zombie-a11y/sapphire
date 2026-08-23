@@ -439,7 +439,19 @@ export default function TrainingScreen() {
     const maskedWord = match[0]; // саме це слово стояло в пропускі (з закінченням)
     const masked = sentence.replace(re, '______');
 
-    // Варіанти — СЛОВА ТОЄЇ Ж МОВИ що й речення. Юзер вгадує, яке слово стояло в пропускі.
+    if (reverse) {
+      // REVERSE: речення англ. з пропуском → варіанти УКРАЇНСЬКІ (переклади).
+      // Юзер вибирає переклад пропущеного слова.
+      const distractors = shuffle(
+        poolRef.current.filter((e: DictionaryEntry) =>
+          e.translation && e.translation.trim() && e.translation !== current.translation),
+      ).slice(0, 3).map((e: DictionaryEntry) => e.translation);
+      setCloze({ sentence: masked, maskedWord: current.translation,
+                 options: shuffle([current.translation, ...distractors]) });
+      setClozePicked(null); return;
+    }
+
+    // FORWARD: речення англ. → варіанти англійські слова тієї ж мови.
     const others = poolRef.current
       .filter((e: DictionaryEntry) => {
         const w = (e.surfaceForm || e.word);
@@ -453,7 +465,7 @@ export default function TrainingScreen() {
 
     setCloze({ sentence: masked, maskedWord, options: shuffle([maskedWord, ...distractors]) });
     setClozePicked(null);
-  }, [mode, current, entries]);
+  }, [mode, current, entries, reverse]);
   const answerCloze = useCallback(
     (picked: string) => {
       if (!current || clozePicked !== null) return;
@@ -462,7 +474,7 @@ export default function TrainingScreen() {
       onAnswer(correct);
       setTimeout(() => onNext(), 900);
     },
-    [clozePicked, current, onAnswer, onNext],
+    [clozePicked, current, onAnswer, onNext, cloze],
   );
 
   // сброс состояния проверки при смене слова
