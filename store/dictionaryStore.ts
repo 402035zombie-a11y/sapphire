@@ -75,23 +75,27 @@ export const useDictionaryStore = persist<DictionaryState>(
         set((s) => ({ entries: s.entries.map((e) => (e.id === id ? { ...e, ...patch } : e)) })),
       importEntries: (list) =>
         set((s) => {
-          const seen = new Set(s.entries.map((e) => keyOf(e.word, e.lang)));
-          const merged = [...s.entries];
+          // Map за ключем word|lang замість find() у циклі: 200к слів = O(n), не O(n²).
+          const byKey = new Map<string, DictionaryEntry>();
+          for (const e of s.entries) byKey.set(keyOf(e.word, e.lang), e);
+          const now = Date.now();
           for (const item of list) {
+            if (!item?.word) continue;
             const k = keyOf(item.word, item.lang);
-            const existing = merged.find((e) => keyOf(e.word, e.lang) === k);
+            const existing = byKey.get(k);
             if (existing) {
-              // дедуп: суммируем частоту, не дублируем
-              existing.frequency = (existing.frequency ?? 1) + (item.frequency ?? 1);
+              // дедуп: суммируем частоту, не дублируем (мутуємо копію в мапі)
+              byKey.set(k, { ...existing, frequency: (existing.frequency ?? 1) + (item.frequency ?? 1) });
               continue;
             }
-            if (seen.has(k)) continue;
-            seen.add(k);
-            merged.push({ ...item, id: `${item.word}-${Date.now()}-${merged.length}`, createdAt: Date.now() });
+            byKey.set(k, { ...item, id: `${item.word}-${now}-${byKey.size}`, createdAt: now });
           }
-          return { entries: merged };
+          return { entries: Array.from(byKey.values()) };
         }),
-      hasWord: (word) => get().entries.some((e) => e.word.toLowerCase() === word.trim().toLowerCase()),
+      hasWord: (word) => {
+        const w = word.trim().toLowerCase();
+        return get().entries.some((e) => e.word.toLowerCase() === w);
+      },
       clearAll: () => set({ entries: [] }),
       clearByBook: (bookId) => set((s) => ({ entries: s.entries.filter((e) => e.bookId !== bookId) })),
     } as DictionaryState;

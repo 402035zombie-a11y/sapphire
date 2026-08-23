@@ -41,14 +41,17 @@ function makeBookId(filePath: string): string {
 export async function importBook(
   filePath: string,
   format: string,
-  onProgress?: (p: number) => void
+  onProgress?: (p: number) => void,
+  forcedBookId?: string
 ): Promise<ImportResult> {
   onProgress?.(0.05);
   const parsed: ParsedBook = await parseBook(filePath);
   onProgress?.(0.7);
 
   const db: SQLite.SQLiteDatabase = getBooksDb();
-  const bookId = makeBookId(filePath);
+  // forcedBookId: LibraryScreen передає СВІЙ id (makeBookId) — інакше id в БД (hash шляху)
+  // не збігався з id у сторе і getBookChapters(storeId) завжди повертав [] (parse-once не працював).
+  const bookId = forcedBookId ?? makeBookId(filePath);
 
   db.withTransactionSync(() => {
     db.runSync(

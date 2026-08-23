@@ -90,6 +90,14 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   );
 
   const [draft, setDraft] = useState<Draft | null>(null);
+  // Id поточної чернетки: генерується ОДИН раз при setDraft і юзається importBook/saveDraft/importBookDict.
+  const draftIdRef = useRef<string>('');
+  const setDraftWithId = (d: Draft | null) => {
+    if (d && (!draft || draft.title !== d.title)) {
+      draftIdRef.current = `${d.title.replace(/[^\p{L}\p{N}]+/gu, '_')}`;
+    }
+    setDraft(d);
+  };
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const styles = useMemo(() => makeStyles(a, theme), [a, theme]);
@@ -123,7 +131,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       Alert.alert(t('Empty'), t('Could not extract text from this file.'));
       return;
     }
-    setDraft({
+    setDraftWithId({
       title: cleanTitle(name),
       format: 'txt',
       uri: name,
@@ -193,7 +201,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         Alert.alert(t('Empty'), t('Could not extract text from this file.'));
         return;
       }
-      setDraft({
+      setDraftWithId({
         title: cleanTitle(parsed.title || asset.name),
         author: parsed.author,
         format,
@@ -205,7 +213,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         cover: parsed.cover,
       });
       // E3: parse-once → books.db.chapters (для миттєвого повторного відкриття).
-      importBook(asset.uri, format).catch((e) => {
+      // id той самий, що піде в store (draftBookId) — інакше Reader не знайде глави в БД.
+      if (draftIdRef.current) importBook(asset.uri, format, undefined, draftIdRef.current).catch((e) => {
         console.warn('[bookImport] failed (non-fatal):', e);
       });
     } catch (e: any) {
@@ -233,7 +242,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           Alert.alert(t('Empty'), t('Could not extract text from this FB2 file.'));
           return;
         }
-        setDraft({
+        setDraftWithId({
           title: cleanTitle(parsed.title || file.name),
           author: parsed.author,
           format: 'fb2',
@@ -262,6 +271,10 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
 
   const makeBookId = (title: string) => `${title.replace(/[^\p{L}\p{N}]+/gu, '_')}_${Date.now().toString(36)}`;
 
+  // Детермінований id на весь життєвий цикл чернетки: раніше makeBookId містив Date.now()
+  // і викликався окремо для книги та словник-імпорту → різні id однієї книги (дублі словника).
+  const draftBookId = draft ? draftIdRef.current || `${draft.title.replace(/[^\p{L}\p{N}]+/gu, '_')}` : null;
+
   const onAddPress = () => {
     if (Platform.OS === 'web') {
       fileInputRef.current?.click();
@@ -271,16 +284,18 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   };
 
   const saveDraft = () => {
-    if (!draft) return;
+    if (!draft || !draftBookId) return;
     const book: Book = {
-      id: makeBookId(cleanTitle(draft.title)),
+      id: draftBookId,
       title: cleanTitle(draft.title),
       author: draft.author,
       format: draft.format,
       uri: draft.uri,
       language: draft.language,
       targetLang: draft.targetLang,
-      paragraphs: draft.paragraphs,
+      // ТЕКСТ книги більше НЕ в сторе (SQLite books.db.chapters — джерело істини).
+      // Легкий desc → AsyncStorage не росте, старт апки не парсить мегабайти JSON.
+      paragraphs: [],
       sections: draft.sections,
       coverImage: draft.cover,
       createdAt: Date.now(),
@@ -293,8 +308,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   };
 
   const importBookDict = () => {
-    if (!draft || importing) return; // importing = миттєвий блок повторних тапів
-    const bookId = makeBookId(cleanTitle(draft.title));
+    if (!draft || importing || !draftBookId) return; // importing = миттєвий блок повторних тапів
+    const bookId = draftBookId;
     // НЕ блокуємо UI: ставимо в фонову чергу, керування повертається миттєво.
     enqueueWordImport({
       bookId,

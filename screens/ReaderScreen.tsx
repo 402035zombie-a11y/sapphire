@@ -35,6 +35,7 @@ import { useSettingsStore } from '../store/settingsStore';
 import { useSupportStore } from '../store/supportStore';
 import { splitIntoSegments } from '../utils/sentenceSplitter';
 import { translateCached } from '../services/translationService';
+import { saveSentenceTranslations, getSentenceTranslations, clearSentenceTranslations } from '../services/sentenceTranslationsDb';
 import { showSupportAd } from '../services/monetization';
 import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
@@ -71,7 +72,6 @@ export default function ReaderScreen({ route }: { route: any }) {
   const styles = React.useMemo(() => makeStyles(a, theme), [a, theme]);
 
   const book = useLibraryStore((s) => s.books.find((b) => b.id === bookId));
-  const updateSentenceTranslations = useLibraryStore((s) => s.updateSentenceTranslations);
   const setProgress = useLibraryStore((s) => s.setProgress);
   const toggleBookmark = useLibraryStore((s) => s.toggleBookmark);
   const settingsTarget = useSettingsStore((s) => s.targetLang);
@@ -254,12 +254,35 @@ export default function ReaderScreen({ route }: { route: any }) {
   const prefetchedChunks = useRef<Set<number>>(new Set());
   const prefetchInFlight = useRef<Set<number>>(new Set());
 
+  // Переклади речень тепер у books.db (SQLite), НЕ в libraryStore JSON.
+  // Локальний кеш на сесію → renderItem читає з пам'яті, запис іде точково в БД.
+  const translationsRef = useRef<Record<string, string>>({});
+  React.useEffect(() => {
+    // при зміні книги: підтягнути вже перекладені речення одним запитом
+    translationsRef.current = getSentenceTranslations(
+      bookId,
+      sentences.map((s) => String(s.index)),
+    );
+    setTranslationsVersion((v) => v + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookId, sentences.length]);
+  const [translationsVersion, setTranslationsVersion] = useState(0);
+
+  const persistTranslations = useCallback(
+    (entries: { key: string; translation: string }[]) => {
+      for (const e of entries) translationsRef.current[e.key] = e.translation;
+      saveSentenceTranslations(bookId, entries);
+      setTranslationsVersion((v) => v + 1); // тригер ререндеру рядків з новим перекладом
+    },
+    [bookId],
+  );
+
   const translateBatch = useCallback(
     async (first: number, last: number) => {
       const b = bookRef.current;
       if (!b) return;
       const from = b.language === 'auto' ? 'auto' : b.language;
-      const st = b.sentenceTranslations ?? {};
+      const st = translationsRef.current;
       const sents = sentencesRef.current;
       const indices: { key: string; idx: number; text: string }[] = [];
       for (let i = first; i <= last && i < sents.length; i++) {
@@ -283,7 +306,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           }),
         );
         const ok = results.filter((r): r is { key: string; translation: string } => r !== null);
-        if (ok.length) updateSentenceTranslations(b.id, ok);
+        if (ok.length) persistTranslations(ok);
       } catch {
         // ігноруємо — переклад відновиться при наступному показі
       } finally {
@@ -294,7 +317,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         });
       }
     },
-    [targetLang, updateSentenceTranslations],
+    [targetLang, persistTranslations],
   );
   // Стабильный коллбек для SentenceRow.onTranslate(index) — інакше renderItem створює нову
   // функцію на кожен рендер і ламає React.memo(SentenceRow), викликаючи перерендер всіх рядків.
@@ -325,10 +348,10 @@ export default function ReaderScreen({ route }: { route: any }) {
         const chunk = chunks[ci];
         if (!chunk) continue;
         // зібрати речення чанка без перекладу
-        const st = b.sentenceTranslations ?? {};
+        const st = translationsRef.current;
         const items: { id: string; text: string }[] = [];
-        for (const pIdx of chunk.paragraphIndices) {
-          const p = b.paragraphs[pIdx];
+        for (const sIdx of chunk.paragraphIndices) {
+          const p = chaptersRef.current.find((c) => c.index === sIdx);
           if (!p) continue;
           const segs = splitIntoSegments(p.original);
           segs.forEach((s, si) => {
@@ -347,7 +370,7 @@ export default function ReaderScreen({ route }: { route: any }) {
             map.forEach((res, id) => {
               if (res && res.text) entries.push({ key: id as string, translation: res.text });
             });
-            if (entries.length) updateSentenceTranslations(b.id, entries);
+            if (entries.length) persistTranslations(entries);
           })
           .catch(() => {
             /* ігноруємо — переклад відновиться при наступному показі/скролі */
@@ -358,7 +381,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           });
       }
     },
-    [chunks, mode, targetLang, updateSentenceTranslations],
+    [chunks, mode, targetLang, persistTranslations],
   );
 
 
@@ -380,9 +403,10 @@ export default function ReaderScreen({ route }: { route: any }) {
       set.forEach((idx) => {
         const s = sentencesRef.current[idx];
         if (!s) return;
-        const st = bookRef.current?.sentenceTranslations ?? {};
+        const st = translationsRef.current;
         if (!st[String(s.index)]) translateBatch(idx, idx);
       });
+
       // R3: префетч перекладу для наступних 5 чанків уперед
       if (minIdx !== Infinity) prefetchAhead(minIdx);
     },
@@ -406,10 +430,10 @@ export default function ReaderScreen({ route }: { route: any }) {
       for (const idx of range) {
         const s = sentencesRef.current[idx];
         if (!s) continue;
-        const st = bookRef.current?.sentenceTranslations ?? {};
+        const st = translationsRef.current;
         if (!st[String(s.index)]) translateBatch(idx, idx);
       }
-      const total = bookRef.current?.paragraphs.length ?? 1;
+      const total = sentencesRef.current.length || 1;
       const first = visible.size ? Math.min(...visible) : visibleRef.current.first;
       const atEnd = first >= total - 2;
       const pct = atEnd ? 1 : Math.min(1, Math.max(0, first / total));
@@ -455,7 +479,7 @@ export default function ReaderScreen({ route }: { route: any }) {
     for (let i = 0; i <= BATCH && i < sents.length; i++) {
       const s = sents[i];
       if (!s) continue;
-      const st = bookRef.current?.sentenceTranslations ?? {};
+      const st = translationsRef.current;
       if (!st[String(s.index)]) translateBatch(i, i);
     }
     // R3: префетч перекладу для наступних 5 чанків уперед від стартової позиції
@@ -477,7 +501,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   useEffect(() => {
     const jumpTo = (route.params as any)?.jumpTo;
     if (jumpTo == null || !scrollRef.current) return;
-    const idx = Math.max(0, Math.min(jumpTo, bookRef.current?.paragraphs.length ?? 1));
+    const idx = Math.max(0, Math.min(jumpTo, sentencesRef.current.length || 1));
     const sentenceIdx = paraToFirstSentence[idx] ?? 0;
     const t = setTimeout(() => {
       scrollRef.current?.scrollToOffset({ offset: sentenceIdx * 120, animated: true });
@@ -539,7 +563,8 @@ export default function ReaderScreen({ route }: { route: any }) {
         index={item.index}
         paragraphIndex={item.paragraphIndex}
         original={item.original}
-        translation={book.sentenceTranslations?.[item.index] ?? ''}
+        translation={translationsRef.current[item.index] ?? ''}
+        extraKey={translationsVersion}
         loading={loadingSet.has(item.index)}
         showTranslation={mode === 'dual'}
         fontSize={reader.fontSize}
@@ -562,7 +587,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         query={query}
       />
     ),
-    [book, mode, reader, loadingSet, speak, translateCb, onWordPress, rowHeights],
+    [mode, reader, loadingSet, speak, translateCb, onWordPress, rowHeights, translationsVersion],
   );
 
   const list = (
@@ -608,10 +633,12 @@ export default function ReaderScreen({ route }: { route: any }) {
               onSelect={(code) => {
                 setTargetLang(code);
                 if (book?.id) setBookTargetLang(book.id, code);
-                // сбросить перевод, чтобы перегрузить на новый язык
+                // сбросить перевод: чистим кеш сесии + таблицю БД для цієї книги
                 if (book?.id) {
-                  const entries = Object.keys(book.sentenceTranslations ?? {}).map((key) => ({ key, translation: '' }));
-                  updateSentenceTranslations(book.id, entries);
+                  translationsRef.current = {};
+                  clearSentenceTranslations(book.id);
+                  prefetchedChunks.current.clear();
+                  setTranslationsVersion((v) => v + 1);
                 }
               }}
               onClose={() => setLangOpen(false)}

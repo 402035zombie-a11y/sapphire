@@ -31,6 +31,7 @@ import { useLibraryStore } from '../store/libraryStore';
 import * as Speech from 'expo-speech';
 import { langName } from '../utils/languages';
 import { extractBookWords } from '../utils/bookWords';
+import { getBookParagraphs } from '../services/bookText';
 import { effectiveLang } from '../utils/lang';
 import Icon from '../components/Icon';
 import { neuShadowPad, screenBg, metal } from '../theme/neu';
@@ -432,7 +433,7 @@ const importAnkiApkg = async () => {
     setBookPickOpen(false);
     // відкладаємо важку синхронну роботу, щоб UI розблокувався й показав Alert
     Promise.resolve().then(() => {
-      const freqs = extractBookWords(book.paragraphs);
+      const freqs = extractBookWords(getBookParagraphs(bookId));
       // БАТЧ: один importEntries замість 1000+ addEntry
       const toAdd = freqs.map(({ word, frequency, context }) => ({
         word,

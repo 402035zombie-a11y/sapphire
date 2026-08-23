@@ -16,6 +16,8 @@ interface Props {
   paragraphIndex?: number;
   original: string;
   translation?: string;
+  /** Зміна тригерить перерендер memo-рядка (нові переклади з БД). */
+  extraKey?: number;
   loading?: boolean;
   showTranslation?: boolean;
   fontSize?: number;
@@ -83,6 +85,7 @@ function SentenceRow({
   paragraphIndex,
   original,
   translation,
+  extraKey: _extraKey,
   showTranslation,
   fontSize,
   lineHeight,

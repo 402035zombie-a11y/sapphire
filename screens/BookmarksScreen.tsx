@@ -7,6 +7,7 @@ import IconButton from '../components/ui/IconButton';
 import Icon from '../components/Icon';
 import { useTheme } from '../theme/ThemeContext';
 import { useLibraryStore } from '../store/libraryStore';
+import { getBookParagraphs } from '../services/bookText';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
 import { metal, neuShadowPad } from '../theme/neu';
@@ -25,11 +26,12 @@ export default function BookmarksScreen() {
 
   const items = React.useMemo(() => {
     if (!book) return [];
+    const paras = getBookParagraphs(bookId);
     return (book.bookmarks ?? [])
-      .map((idx) => book.paragraphs[idx])
+      .map((idx) => paras.find((p) => p.index === idx))
       .filter(Boolean)
-      .map((p) => ({ index: p.index, original: p.original, translation: p.translation }));
-  }, [book]);
+      .map((p) => ({ index: p!.index, original: p!.original, translation: p!.translation }));
+  }, [book, bookId]);
 
   const open = (paragraphIndex: number) => {
     navigation.navigate('Reader', { bookId, jumpTo: paragraphIndex });

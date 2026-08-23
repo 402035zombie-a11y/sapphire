@@ -1,6 +1,7 @@
 // store/libraryStore.ts
 // Хранилище загруженных книг. persist → AsyncStorage.
 import { persist } from './createStore';
+import { deleteBookData } from '../services/bookText';
 
 export type BookFormat = 'epub' | 'txt' | 'fb2' | 'pdf' | 'docx' | 'odt' | 'rtf' | 'html';
 
@@ -46,7 +47,7 @@ interface LibraryState {
   setProgress: (bookId: string, progress: number, lastPosition: number) => void;
   toggleBookmark: (bookId: string, paragraphIndex: number) => void;
   getBook: (id: string) => Book | undefined;
-  updateSentenceTranslations: (bookId: string, entries: { key: string; translation: string }[]) => void;
+  updateSentenceTranslations?: (bookId: string, entries: { key: string; translation: string }[]) => void;
 }
 
 export const useLibraryStore = persist<LibraryState>(
@@ -60,7 +61,16 @@ export const useLibraryStore = persist<LibraryState>(
           : [...s.books, book],
       };
     }),
-    removeBook: (id) => set((s) => ({ books: s.books.filter((b) => b.id !== id) })),
+    removeBook: (id) => set((s) => {
+      // Повне прибирання: текст глав + переклади речень у books.db теж видаляються,
+      // інакше вони лишаються назавжди (витік місця).
+      try {
+        deleteBookData(id);
+      } catch (e) {
+        console.warn('[libraryStore] deleteBookData failed:', e);
+      }
+      return { books: s.books.filter((b) => b.id !== id) };
+    }),
     updateParagraphTranslation: (bookId, paragraphIndex, translation) =>
       set((s) => {
         const book = s.books.find((b) => b.id === bookId);
@@ -70,16 +80,8 @@ export const useLibraryStore = persist<LibraryState>(
         }
         return {};
       }),
-    updateSentenceTranslations: (bookId, entries: { key: string; translation: string }[]) =>
-      set((s) => {
-        const book = s.books.find((b) => b.id === bookId);
-        if (book) {
-          const st = { ...(book.sentenceTranslations ?? {}) };
-          for (const e of entries) st[e.key] = e.translation;
-          book.sentenceTranslations = st;
-        }
-        return {};
-      }),
+    // updateSentenceTranslations видалено: переклади речень тепер у books.db
+    // (services/sentenceTranslationsDb.ts), не в JSON стора.
     getBook: (id) => get().books.find((b) => b.id === id),
     setBookTargetLang: (bookId, targetLang) =>
       set((s) => {

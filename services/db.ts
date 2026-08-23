@@ -67,9 +67,15 @@ CREATE TABLE IF NOT EXISTS word_cards (
 );
 CREATE INDEX IF NOT EXISTS idx_word_cards_due ON word_cards(due_at);
 CREATE VIRTUAL TABLE IF NOT EXISTS books_fts USING fts5(title, author, content='books', content_rowid='id');
+CREATE TABLE IF NOT EXISTS sentence_translations (
+  book_id TEXT NOT NULL,
+  skey TEXT NOT NULL,
+  translation TEXT NOT NULL,
+  PRIMARY KEY (book_id, skey)
+);
 `;
 
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 let booksDb: SQLite.SQLiteDatabase | null = null;
 
@@ -87,6 +93,14 @@ export function getBooksDb(): SQLite.SQLiteDatabase {
       } catch {
         // колонка вже є (свіжа БД з V2 схемою)
       }
+    }
+    if (ver < 3) {
+      db.execSync(`CREATE TABLE IF NOT EXISTS sentence_translations (
+        book_id TEXT NOT NULL,
+        skey TEXT NOT NULL,
+        translation TEXT NOT NULL,
+        PRIMARY KEY (book_id, skey)
+      );`);
     }
     db.execSync(`PRAGMA user_version = ${DB_VERSION};`);
   }

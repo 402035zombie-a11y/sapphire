@@ -12,6 +12,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { FONTS } from '../theme/constants';
 import { useLibraryStore } from '../store/libraryStore';
+import { getBookParagraphs } from '../services/bookText';
 import { useSettingsStore } from '../store/settingsStore';
 import Icon from '../components/Icon';
 import SupportButton from '../components/SupportButton';
@@ -51,7 +52,8 @@ export default function SpeedReadingScreen() {
   const words = useMemo(() => {
     if (!book) return [];
     const raw: { text: string; para: number }[] = [];
-    for (const p of book.paragraphs) {
+    const paras = bookId ? getBookParagraphs(bookId) : [];
+    for (const p of paras) {
       const toks = p.original.match(/[\p{L}][\p{L}\p{M}'’-]*[^\p{L}\p{N}\s]*|\p{N}+[^\p{L}\p{N}\s]*|[^\p{L}\p{N}\s]+/gu) ?? [];
       for (const t of toks) raw.push({ text: t, para: p.index });
     }
@@ -94,7 +96,7 @@ export default function SpeedReadingScreen() {
       out.push({ text: m.text, para: m.para, boundaryType });
     }
     return out;
-  }, [book]);
+  }, [book, bookId]);
 
   const [wpm, setWpm] = useState(300);
   const [microPauses, setMicroPauses] = useState(useSettingsStore((s) => s.reader.microPauses ?? true));
