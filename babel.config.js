@@ -4,8 +4,8 @@ module.exports = function (api) {
     presets: ['babel-preset-expo'],
     plugins: [
       'react-native-reanimated/plugin',
-      // Production: прибирає console.* з бандла (менше ваги, чистий logcat)
-      ['transform-remove-console', { exclude: ['error', 'warn'] }],
+      // Production: прибирає console.* (тимчасово вимкнено — підозра на конфлікт з тінями)
+      // ['transform-remove-console', { exclude: ['error', 'warn'] }],
     ],
   };
 };
