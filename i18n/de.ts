@@ -153,7 +153,7 @@ export const deDict: Record<string, string> = {
   // Open mode modal
   'How do you want to open the book?': 'Wie möchtest du das Buch öffnen?',
   // Support
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Lesen ist kostenlos und bleibt es — das ist der Preis für eine kostenlose App. Unterstütze das Projekt auf die Art, die dir liegt.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Lesen ist kostenlos und bleibt es — das ist der Preis für eine kostenlose App. Unterstütze das Projekt auf die Art, die dir liegt.',
   'Watch an ad (30s)': 'Werbung ansehen (30s)',
   'Buy a subscription / Donate': 'Abo kaufen / Spenden',
   'Thanks, not now': 'Danke, nicht jetzt',

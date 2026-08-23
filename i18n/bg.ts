@@ -144,7 +144,7 @@ export const bgDict: Record<string, string> = {
   'end . ! ?': 'край . ! ?',
   'Start over?': 'Започване отначало?',
   'How do you want to open the book?': 'Как искаш да отвориш книгата?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Четенето е безплатно и винаги ще бъде — това е цената на безплатно приложение. Подкрепи проекта както желаеш.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Четенето е безплатно и винаги ще бъде — това е цената на безплатно приложение. Подкрепи проекта както желаеш.',
   'Watch an ad (30s)': 'Гледай реклама (30с)',
   'Buy a subscription / Donate': 'Купи абонамент / Дари',
   'Thanks, not now': 'Благодаря, не сега',

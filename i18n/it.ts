@@ -144,7 +144,7 @@ export const itDict: Record<string, string> = {
   'end . ! ?': 'fine . ! ?',
   'Start over?': 'Ricominciare?',
   'How do you want to open the book?': 'Come vuoi aprire il libro?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Leggere è gratis e lo sarà sempre — questo è il prezzo di un\'app gratuita. Sostieni il progetto come preferisci.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Leggere è gratis e lo sarà sempre — questo è il prezzo di un\'app gratuita. Sostieni il progetto come preferisci.',
   'Watch an ad (30s)': 'Guarda un annuncio (30s)',
   'Buy a subscription / Donate': 'Acquista abbonamento / Fai una donazione',
   'Thanks, not now': 'Grazie, ora no',

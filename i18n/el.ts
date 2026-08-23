@@ -144,7 +144,7 @@ export const elDict: Record<string, string> = {
   'end . ! ?': 'τέλος . ! ?',
   'Start over?': 'Εκκίνηση από την αρχή;',
   'How do you want to open the book?': 'Πώς θέλετε να ανοίξετε το βιβλίο;',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Η ανάγνωση είναι δωρεάν και θα παραμείνει — αυτή είναι η τιμή μιας δωρεάν εφαρμογής. Υποστηρίξτε το έργο όπως σας ταιριάζει.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Η ανάγνωση είναι δωρεάν και θα παραμείνει — αυτή είναι η τιμή μιας δωρεάν εφαρμογής. Υποστηρίξτε το έργο όπως σας ταιριάζει.',
   'Watch an ad (30s)': 'Παρακολούθηση διαφήμισης (30s)',
   'Buy a subscription / Donate': 'Αγορά συνδρομής / Δωρεά',
   'Thanks, not now': 'Ευχαριστώ, όχι τώρα',

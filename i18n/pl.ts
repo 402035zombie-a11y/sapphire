@@ -144,7 +144,7 @@ export const plDict: Record<string, string> = {
   'end . ! ?': 'koniec . ! ?',
   'Start over?': 'Zacząć od nowa?',
   'How do you want to open the book?': 'Jak chcesz otworzyć książkę?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Czytanie jest i zawsze będzie darmowe — to cena darmowej aplikacji. Wspieraj projekt, jak wolisz.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Czytanie jest i zawsze będzie darmowe — to cena darmowej aplikacji. Wspieraj projekt, jak wolisz.',
   'Watch an ad (30s)': 'Obejrzyj reklamę (30s)',
   'Buy a subscription / Donate': 'Kup subskrypcję / Wspomóż',
   'Thanks, not now': 'Dzięki, nie teraz',

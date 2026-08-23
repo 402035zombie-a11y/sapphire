@@ -144,7 +144,7 @@ export const euDict: Record<string, string> = {
   'end . ! ?': 'amaiera . ! ?',
   'Start over?': 'Hasi berriro?',
   'How do you want to open the book?': 'Nola ireki nahi duzu liburua?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Irakurtzea doakoa da eta hala izango da beti — hori da aplikazio doako baten prezioa. Babestu proiektua nahi duzun moduan.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Irakurtzea doakoa da eta hala izango da beti — hori da aplikazio doako baten prezioa. Babestu proiektua nahi duzun moduan.',
   'Watch an ad (30s)': 'Ikusi iragarki bat (30s)',
   'Buy a subscription / Donate': 'Erosi harpidetza / Egin dohaintza',
   'Thanks, not now': 'Eskerrik asko, orain ez',

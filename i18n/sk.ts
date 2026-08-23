@@ -144,7 +144,7 @@ export const skDict: Record<string, string> = {
   'end . ! ?': 'koniec . ! ?',
   'Start over?': 'Začať znova?',
   'How do you want to open the book?': 'Ako chcete otvoriť knihu?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Čítanie je zadarmo a vždy bude — to je cena za bezplatnú aplikáciu. Podporte projekt akokoľvek vám vyhovuje.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Čítanie je zadarmo a vždy bude — to je cena za bezplatnú aplikáciu. Podporte projekt akokoľvek vám vyhovuje.',
   'Watch an ad (30s)': 'Pozrieť si reklamu (30s)',
   'Buy a subscription / Donate': 'Kúpiť predplatné / Prispieť',
   'Thanks, not now': 'Ďakujem, teraz nie',

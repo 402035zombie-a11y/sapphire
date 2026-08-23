@@ -144,7 +144,7 @@ export const daDict: Record<string, string> = {
   'end . ! ?': 'slut . ! ?',
   'Start over?': 'Starte forfra?',
   'How do you want to open the book?': 'Hvordan vil du åbne bogen?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Læsning er gratis og vil altid være — det er prisen for en gratis app. Støt projektet på den måde der passer dig.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Læsning er gratis og vil altid være — det er prisen for en gratis app. Støt projektet på den måde der passer dig.',
   'Watch an ad (30s)': 'Se en reklame (30s)',
   'Buy a subscription / Donate': 'Køb abonnement / Donér',
   'Thanks, not now': 'Tak, ikke nu',

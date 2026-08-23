@@ -144,7 +144,7 @@ export const etDict: Record<string, string> = {
   'end . ! ?': 'lõpp . ! ?',
   'Start over?': 'Alusta otsast?',
   'How do you want to open the book?': 'Kuidas soovid raamatu avada?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Lugemine on tasuta ja jääb alati — see on tasuta rakenduse hind. Toeta projekti nii nagu soovid.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Lugemine on tasuta ja jääb alati — see on tasuta rakenduse hind. Toeta projekti nii nagu soovid.',
   'Watch an ad (30s)': 'Vaata reklaami (30s)',
   'Buy a subscription / Donate': 'Osta tellimus / Toeta',
   'Thanks, not now': 'Tänan, mitte praegu',

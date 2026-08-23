@@ -146,7 +146,7 @@ export const ptDict: Record<string, string> = {
   'end . ! ?': 'fim . ! ?',
   'Start over?': 'Recomeçar?',
   'How do you want to open the book?': 'Como você quer abrir o livro?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Ler é gratuito e sempre será — esse é o preço de um app gratuito. Apoie o projeto do seu jeito.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Ler é gratuito e sempre será — esse é o preço de um app gratuito. Apoie o projeto do seu jeito.',
   'Watch an ad (30s)': 'Assista a um anúncio (30s)',
   'Buy a subscription / Donate': 'Comprar assinatura / Doar',
   'Thanks, not now': 'Obrigado, agora não',

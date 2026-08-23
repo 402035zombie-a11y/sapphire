@@ -144,7 +144,7 @@ export const svDict: Record<string, string> = {
   'end . ! ?': 'slut . ! ?',
   'Start over?': 'Börja om?',
   'How do you want to open the book?': 'Hur vill du öppna boken?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Läsning är gratis och kommer alltid vara — det är priset för en gratis app. Stöd projektet på det sätt som passar dig.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Läsning är gratis och kommer alltid vara — det är priset för en gratis app. Stöd projektet på det sätt som passar dig.',
   'Watch an ad (30s)': 'Titta på en annons (30s)',
   'Buy a subscription / Donate': 'Köp prenumeration / Donera',
   'Thanks, not now': 'Tack, inte nu',

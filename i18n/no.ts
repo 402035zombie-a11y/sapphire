@@ -144,7 +144,7 @@ export const noDict: Record<string, string> = {
   'end . ! ?': 'slutt . ! ?',
   'Start over?': 'Starte på nytt?',
   'How do you want to open the book?': 'Hvordan vil du åpne boken?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Lesing er gratis og vil alltid være — det er prisen for en gratis app. Støtt prosjektet på den måten som passer deg.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Lesing er gratis og vil alltid være — det er prisen for en gratis app. Støtt prosjektet på den måten som passer deg.',
   'Watch an ad (30s)': 'Se en reklame (30s)',
   'Buy a subscription / Donate': 'Kjøp abonnement / Doner',
   'Thanks, not now': 'Takk, ikke nå',

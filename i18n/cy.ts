@@ -144,7 +144,7 @@ export const cyDict: Record<string, string> = {
   'end . ! ?': 'diwedd . ! ?',
   'Start over?': 'Ailgychwyn?',
   'How do you want to open the book?': 'Sut rydych am agor y llyfr?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Mae darllen yn rhad ac am ddim ac felly bydd — dyna bris app am ddim. Cefnogwch y prosiect yn unrhyw ffordd sy\'n addas i chi.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Mae darllen yn rhad ac am ddim ac felly bydd — dyna bris app am ddim. Cefnogwch y prosiect yn unrhyw ffordd sy\'n addas i chi.',
   'Watch an ad (30s)': 'Gwylio hysbyseb (30s)',
   'Buy a subscription / Donate': 'Prynu tanysgrifiad / Rhodd',
   'Thanks, not now': 'Diolch, nid nawr',

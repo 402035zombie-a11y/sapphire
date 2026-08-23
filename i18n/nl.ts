@@ -144,7 +144,7 @@ export const nlDict: Record<string, string> = {
   'end . ! ?': 'einde . ! ?',
   'Start over?': 'Opnieuw beginnen?',
   'How do you want to open the book?': 'Hoe wil je het boek openen?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Lezen is gratis en blijft dat — dat is de prijs van een gratis app. Steun het project op jouw manier.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Lezen is gratis en blijft dat — dat is de prijs van een gratis app. Steun het project op jouw manier.',
   'Watch an ad (30s)': 'Bekijk een advertentie (30s)',
   'Buy a subscription / Donate': 'Koop abonnement / Doneer',
   'Thanks, not now': 'Bedankt, nu niet',

@@ -146,7 +146,7 @@ export const trDict: Record<string, string> = {
   'end . ! ?': 'son . ! ?',
   'Start over?': 'Baştan başla?',
   'How do you want to open the book?': 'Kitabı nasıl açmak istersiniz?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Okumak ücretsizdir ve her zaman öyle kalacak — bu, ücretsiz bir uygulamanın bedelidir. Projeyi dilediğiniz şekilde destekleyin.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Okumak ücretsizdir ve her zaman öyle kalacak — bu, ücretsiz bir uygulamanın bedelidir. Projeyi dilediğiniz şekilde destekleyin.',
   'Watch an ad (30s)': 'Bir reklam izle (30s)',
   'Buy a subscription / Donate': 'Abonelik satın al / Bağış yap',
   'Thanks, not now': 'Teşekkürler, şimdi değil',

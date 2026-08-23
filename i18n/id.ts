@@ -144,7 +144,7 @@ export const idDict: Record<string, string> = {
   'end . ! ?': 'akhir . ! ?',
   'Start over?': 'Mulai lagi?',
   'How do you want to open the book?': 'Bagaimana Anda ingin membuka buku?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Membaca gratis dan akan selalu gratis — itulah harga aplikasi gratis. Dukung proyek dengan cara apa pun yang Anda suka.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Membaca gratis dan akan selalu gratis — itulah harga aplikasi gratis. Dukung proyek dengan cara apa pun yang Anda suka.',
   'Watch an ad (30s)': 'Tonton iklan (30s)',
   'Buy a subscription / Donate': 'Beli langganan / Donasi',
   'Thanks, not now': 'Terima kasih, tidak sekarang',

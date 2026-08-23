@@ -144,7 +144,7 @@ export const huDict: Record<string, string> = {
   'end . ! ?': 'vég . ! ?',
   'Start over?': 'Újrakezdés?',
   'How do you want to open the book?': 'Hogyan szeretnéd megnyitni a könyvet?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Az olvasás ingyenes és az is marad — ez egy ingyenes app ára. Támogasd a projektet ahogy neked tetszik.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Az olvasás ingyenes és az is marad — ez egy ingyenes app ára. Támogasd a projektet ahogy neked tetszik.',
   'Watch an ad (30s)': 'Nézz meg egy reklámot (30s)',
   'Buy a subscription / Donate': 'Vásárolj előfizetést / Támogass',
   'Thanks, not now': 'Köszönöm, most nem',

@@ -144,7 +144,7 @@ export const esDict: Record<string, string> = {
   'end . ! ?': 'fin . ! ?',
   'Start over?': '¿Empezar de nuevo?',
   'How do you want to open the book?': '¿Cómo quieres abrir el libro?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Leer es gratis y siempre lo será — ese es el precio de una app gratuita. Apoya el proyecto como prefieras.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Leer es gratis y siempre lo será — ese es el precio de una app gratuita. Apoya el proyecto como prefieras.',
   'Watch an ad (30s)': 'Ver un anuncio (30s)',
   'Buy a subscription / Donate': 'Comprar suscripción / Donar',
   'Thanks, not now': 'Gracias, ahora no',

@@ -146,7 +146,7 @@ export const koDict: Record<string, string> = {
   'end . ! ?': '끝 . ! ?',
   'Start over?': '다시 시작할까요?',
   'How do you want to open the book?': '책을 어떻게 열까요?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': '읽기는 무료이며 앞으로도 그럴 것입니다 — 그것은 무료 앱의 대가입니다. 원하는 방식으로 프로젝트를 후원하세요.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': '읽기는 무료이며 앞으로도 그럴 것입니다 — 그것은 무료 앱의 대가입니다. 원하는 방식으로 프로젝트를 후원하세요.',
   'Watch an ad (30s)': '광고 보기 (30초)',
   'Buy a subscription / Donate': '구독 구매 / 후원',
   'Thanks, not now': '고마워요, 지금은 아니요',

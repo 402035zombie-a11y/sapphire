@@ -144,7 +144,7 @@ export const faDict: Record<string, string> = {
   'end . ! ?': 'پایان . ! ?',
   'Start over?': 'شروع دوباره؟',
   'How do you want to open the book?': 'چگونه می‌خواهید کتاب را باز کنید؟',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'مطالعه رایگان است و همیشه خواهد بود — این قیمت یک برنامه رایگان است. پروژه را به هر شکل که دوست دارید حمایت کنید.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'مطالعه رایگان است و همیشه خواهد بود — این قیمت یک برنامه رایگان است. پروژه را به هر شکل که دوست دارید حمایت کنید.',
   'Watch an ad (30s)': 'تماشای تبلیغ (30ث)',
   'Buy a subscription / Donate': 'خرید اشتراک / کمک مالی',
   'Thanks, not now': 'ممنون، نه الان',

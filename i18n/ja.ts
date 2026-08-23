@@ -146,7 +146,7 @@ export const jaDict: Record<string, string> = {
   'end . ! ?': '終わり . ! ?',
   'Start over?': '最初からやり直しますか？',
   'How do you want to open the book?': '本をどう開きますか？',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': '読書は無料で、今後もずっと無料です — それが無料アプリの代償です。あなたに合った方法でプロジェクトを支援してください。',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': '読書は無料で、今後もずっと無料です — それが無料アプリの代償です。あなたに合った方法でプロジェクトを支援してください。',
   'Watch an ad (30s)': '広告を見る (30秒)',
   'Buy a subscription / Donate': 'サブスクリプション購入 / 寄付',
   'Thanks, not now': 'ありがとう、今はいいです',

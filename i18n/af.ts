@@ -144,7 +144,7 @@ export const afDict: Record<string, string> = {
   'end . ! ?': 'einde . ! ?',
   'Start over?': 'Van vooraf begin?',
   'How do you want to open the book?': 'Hoe wil jy die boek oopmaak?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Lees is gratis en sal altyd wees — dit is die prys van \'n gratis app. Ondersteun die projek op enige manier wat jou pas.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Lees is gratis en sal altyd wees — dit is die prys van \'n gratis app. Ondersteun die projek op enige manier wat jou pas.',
   'Watch an ad (30s)': 'Kyk \'n advertensie (30s)',
   'Buy a subscription / Donate': 'Koop \'n intekening / Skenk',
   'Thanks, not now': 'Dankie, nie nou nie',

@@ -144,7 +144,7 @@ export const ltDict: Record<string, string> = {
   'end . ! ?': 'pabaiga . ! ?',
   'Start over?': 'Pradėti iš naujo?',
   'How do you want to open the book?': 'Kaip norite atidaryti knygą?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Skaitymas nemokamas ir visada bus — tai nemokamos programos kaina. Palyginkite projektą kaip patinka.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Skaitymas nemokamas ir visada bus — tai nemokamos programos kaina. Palyginkite projektą kaip patinka.',
   'Watch an ad (30s)': 'Žiūrėti reklamą (30s)',
   'Buy a subscription / Donate': 'Pirkti prenumeratą / Paaukoti',
   'Thanks, not now': 'Ačiū, ne dabar',

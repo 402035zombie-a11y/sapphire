@@ -144,7 +144,7 @@ export const arDict: Record<string, string> = {
   'end . ! ?': 'نهاية . ! ?',
   'Start over?': 'البدء من جديد؟',
   'How do you want to open the book?': 'كيف تريد فتح الكتاب؟',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'القراءة مجانية وستبقى دائماً — هذا هو ثمن تطبيق مجاني. ادعم المشروع بالطريقة التي تناسبك.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'القراءة مجانية وستبقى دائماً — هذا هو ثمن تطبيق مجاني. ادعم المشروع بالطريقة التي تناسبك.',
   'Watch an ad (30s)': 'شاهد إعلاناً (30ث)',
   'Buy a subscription / Donate': 'شراء اشتراك / تبرع',
   'Thanks, not now': 'شكراً، ليس الآن',

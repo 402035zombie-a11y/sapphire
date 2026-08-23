@@ -144,7 +144,7 @@ export const msDict: Record<string, string> = {
   'end . ! ?': 'akhir . ! ?',
   'Start over?': 'Mula semula?',
   'How do you want to open the book?': 'Bagaimana anda mahu membuka buku?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Membaca percuma dan akan sentiasa percuma — itulah harga aplikasi percuma. Sokong projek dengan cara yang anda suka.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Membaca percuma dan akan sentiasa percuma — itulah harga aplikasi percuma. Sokong projek dengan cara yang anda suka.',
   'Watch an ad (30s)': 'Tonton iklan (30s)',
   'Buy a subscription / Donate': 'Beli langganan / Derma',
   'Thanks, not now': 'Terima kasih, tidak sekarang',

@@ -144,7 +144,7 @@ export const swDict: Record<string, string> = {
   'end . ! ?': 'mwisho . ! ?',
   'Start over?': 'Anza tena?',
   'How do you want to open the book?': 'Unataka kufungua kitabu vipi?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Kusoma ni bure na kitaendelea kuwa — hiyo ndio bei ya programu ya bure. Saidia mradi kwa njia yoyote inayokufaa.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Kusoma ni bure na kitaendelea kuwa — hiyo ndio bei ya programu ya bure. Saidia mradi kwa njia yoyote inayokufaa.',
   'Watch an ad (30s)': 'Tazama tangazo (30s)',
   'Buy a subscription / Donate': 'Nunua usajili / Toa mchango',
   'Thanks, not now': 'Asante, sivyo sasa',

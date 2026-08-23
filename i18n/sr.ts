@@ -144,7 +144,7 @@ export const srDict: Record<string, string> = {
   'end . ! ?': 'крај . ! ?',
   'Start over?': 'Поново почети?',
   'How do you want to open the book?': 'Како желиш да отвориш књигу?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Читање је бесплатно и увек ће бити — то је цена бесплатне апликације. Подржи пројекат како год желиш.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Читање је бесплатно и увек ће бити — то је цена бесплатне апликације. Подржи пројекат како год желиш.',
   'Watch an ad (30s)': 'Гледај рекламу (30s)',
   'Buy a subscription / Donate': 'Купи претплату / Донирај',
   'Thanks, not now': 'Хвала, не сада',

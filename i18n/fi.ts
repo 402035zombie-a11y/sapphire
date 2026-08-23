@@ -144,7 +144,7 @@ export const fiDict: Record<string, string> = {
   'end . ! ?': 'loppu . ! ?',
   'Start over?': 'Aloita alusta?',
   'How do you want to open the book?': 'Miten haluat avata kirjan?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Lukeminen on ilmaista ja tulee aina olemaan — se on ilmaisen sovelluksen hinta. Tue projektia niin kuin haluat.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Lukeminen on ilmaista ja tulee aina olemaan — se on ilmaisen sovelluksen hinta. Tue projektia niin kuin haluat.',
   'Watch an ad (30s)': 'Katso mainos (30s)',
   'Buy a subscription / Donate': 'Osta tilaus / Lahjoita',
   'Thanks, not now': 'Kiitos, ei nyt',

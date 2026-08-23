@@ -144,7 +144,7 @@ export const isDict: Record<string, string> = {
   'end . ! ?': 'endir . ! ?',
   'Start over?': 'Byrja aftur?',
   'How do you want to open the book?': 'Hvernig viltu opna bókina?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Að lesa er ókeypis og verður alltaf — það er verðið fyrir ókeypis app. Styðja verkefnið á þann hátt sem hentar þér.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Að lesa er ókeypis og verður alltaf — það er verðið fyrir ókeypis app. Styðja verkefnið á þann hátt sem hentar þér.',
   'Watch an ad (30s)': 'Horfa á auglýsingu (30s)',
   'Buy a subscription / Donate': 'Kaupa áskrift / Styrkja',
   'Thanks, not now': 'Takk, ekki núna',

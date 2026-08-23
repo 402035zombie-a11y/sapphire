@@ -144,7 +144,7 @@ export const roDict: Record<string, string> = {
   'end . ! ?': 'sfârșit . ! ?',
   'Start over?': 'Reîncepi?',
   'How do you want to open the book?': 'Cum vrei să deschizi cartea?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Cititul este gratuit și va rămâne — acesta este prețul unei aplicații gratuite. Susține proiectul cum dorești.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Cititul este gratuit și va rămâne — acesta este prețul unei aplicații gratuite. Susține proiectul cum dorești.',
   'Watch an ad (30s)': 'Urmărește o reclamă (30s)',
   'Buy a subscription / Donate': 'Cumpără abonament / Donează',
   'Thanks, not now': 'Mulțumesc, nu acum',

@@ -145,7 +145,7 @@ export const frDict: Record<string, string> = {
   'end . ! ?': 'fin . ! ?',
   'Start over?': 'Recommencer ?',
   'How do you want to open the book?': 'Comment voulez-vous ouvrir le livre ?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'La lecture est gratuite et le restera — c\'est le prix d\'une application gratuite. Soutenez le projet comme vous le souhaitez.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'La lecture est gratuite et le restera — c\'est le prix d\'une application gratuite. Soutenez le projet comme vous le souhaitez.',
   'Watch an ad (30s)': 'Regarder une publicité (30s)',
   'Buy a subscription / Donate': 'Acheter un abonnement / Faire un don',
   'Thanks, not now': 'Merci, pas maintenant',

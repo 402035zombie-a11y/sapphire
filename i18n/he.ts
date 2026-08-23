@@ -144,7 +144,7 @@ export const heDict: Record<string, string> = {
   'end . ! ?': 'סוף . ! ?',
   'Start over?': 'להתחיל מחדש?',
   'How do you want to open the book?': 'איך ברצונך לפתוח את הספר?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'הקריאה חינמית ותישאר כזו — זה המחיר של אפליקציה חינמית. תמוך בפרויקט בכל דרך שנוחה לך.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'הקריאה חינמית ותישאר כזו — זה המחיר של אפליקציה חינמית. תמוך בפרויקט בכל דרך שנוחה לך.',
   'Watch an ad (30s)': 'צפה בפרסומת (30ש)',
   'Buy a subscription / Donate': 'קנה מנוי / תרום',
   'Thanks, not now': 'תודה, לא עכשיו',

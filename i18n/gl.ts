@@ -144,7 +144,7 @@ export const glDict: Record<string, string> = {
   'end . ! ?': 'fin . ! ?',
   'Start over?': 'Comezar de novo?',
   'How do you want to open the book?': 'Como queres abrir o libro?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Ler é gratis e sempre o será — ese é o prezo dunha app gratuíta. Apoia o proxecto como queiras.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Ler é gratis e sempre o será — ese é o prezo dunha app gratuíta. Apoia o proxecto como queiras.',
   'Watch an ad (30s)': 'Ver un anuncio (30s)',
   'Buy a subscription / Donate': 'Comprar subscrición / Doar',
   'Thanks, not now': 'Grazas, agora non',

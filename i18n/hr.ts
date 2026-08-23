@@ -144,7 +144,7 @@ export const hrDict: Record<string, string> = {
   'end . ! ?': 'kraj . ! ?',
   'Start over?': 'Ponovno početi?',
   'How do you want to open the book?': 'Kako želiš otvoriti knjigu?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Čitanje je besplatno i uvijek će biti — to je cijena besplatne aplikacije. Podrži projekt kako god želiš.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Čitanje je besplatno i uvijek će biti — to je cijena besplatne aplikacije. Podrži projekt kako god želiš.',
   'Watch an ad (30s)': 'Gledaj reklamu (30s)',
   'Buy a subscription / Donate': 'Kupi pretplatu / Doniraj',
   'Thanks, not now': 'Hvala, ne sad',

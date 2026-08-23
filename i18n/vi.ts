@@ -144,7 +144,7 @@ export const viDict: Record<string, string> = {
   'end . ! ?': 'kết thúc . ! ?',
   'Start over?': 'Bắt đầu lại?',
   'How do you want to open the book?': 'Bạn muốn mở sách như thế nào?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Đọc miễn phí và sẽ luôn miễn phí — đó là giá của một ứng dụng miễn phí. Hãy ủng hộ dự án theo cách bạn muốn.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Đọc miễn phí và sẽ luôn miễn phí — đó là giá của một ứng dụng miễn phí. Hãy ủng hộ dự án theo cách bạn muốn.',
   'Watch an ad (30s)': 'Xem quảng cáo (30s)',
   'Buy a subscription / Donate': 'Mua gói / Quyên góp',
   'Thanks, not now': 'Cảm ơn, không phải bây giờ',

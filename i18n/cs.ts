@@ -144,7 +144,7 @@ export const csDict: Record<string, string> = {
   'end . ! ?': 'konec . ! ?',
   'Start over?': 'Začít znovu?',
   'How do you want to open the book?': 'Jak chcete otevřít knihu?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Čtení je zdarma a vždy bude — to je cena za bezplatnou aplikaci. Podpořte projekt jakkoliv vám vyhovuje.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Čtení je zdarma a vždy bude — to je cena za bezplatnou aplikaci. Podpořte projekt jakkoliv vám vyhovuje.',
   'Watch an ad (30s)': 'Sledovat reklamu (30s)',
   'Buy a subscription / Donate': 'Koupit předplatné / Přispět',
   'Thanks, not now': 'Díky, teď ne',

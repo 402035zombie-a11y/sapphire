@@ -144,7 +144,7 @@ export const caDict: Record<string, string> = {
   'end . ! ?': 'fi . ! ?',
   'Start over?': 'Començar de nou?',
   'How do you want to open the book?': 'Com vols obrir el llibre?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Llegir és gratuït i ho serà sempre — aquest és el preu d\'una aplicació gratuïta. Dona suport al projecte com vulguis.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Llegir és gratuït i ho serà sempre — aquest és el preu d\'una aplicació gratuïta. Dona suport al projecte com vulguis.',
   'Watch an ad (30s)': 'Mira un anunci (30s)',
   'Buy a subscription / Donate': 'Compra una subscripció / Fes un donatiu',
   'Thanks, not now': 'Gràcies, ara no',

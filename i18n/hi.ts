@@ -144,7 +144,7 @@ export const hiDict: Record<string, string> = {
   'end . ! ?': 'अंत . ! ?',
   'Start over?': 'फिर से शुरू करें?',
   'How do you want to open the book?': 'आप पुस्तक कैसे खोलना चाहते हैं?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'पढ़ना मुफ़्त है और हमेशा रहेगा — यही एक मुफ़्त ऐप की कीमत है। प्रोजेक्ट का जैसे चाहें समर्थन करें।',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'पढ़ना मुफ़्त है और हमेशा रहेगा — यही एक मुफ़्त ऐप की कीमत है। प्रोजेक्ट का जैसे चाहें समर्थन करें।',
   'Watch an ad (30s)': 'विज्ञापन देखें (30s)',
   'Buy a subscription / Donate': 'सदस्यता खरीदें / दान करें',
   'Thanks, not now': 'धन्यवाद, अभी नहीं',

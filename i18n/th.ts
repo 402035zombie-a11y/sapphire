@@ -146,7 +146,7 @@ export const thDict: Record<string, string> = {
   'end . ! ?': 'จบ . ! ?',
   'Start over?': 'เริ่มใหม่หรือไม่',
   'How do you want to open the book?': 'คุณต้องการเปิดหนังสืออย่างไร',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'การอ่านฟรีและจะเป็นเช่นนั้นตลอดไป — นี่คือราคาของแอปฟรี สนับสนุนโครงการในวิธีที่คุณสะดวก',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'การอ่านฟรีและจะเป็นเช่นนั้นตลอดไป — นี่คือราคาของแอปฟรี สนับสนุนโครงการในวิธีที่คุณสะดวก',
   'Watch an ad (30s)': 'ดูโฆษณา (30ว)',
   'Buy a subscription / Donate': 'ซื้อสมาชิก / บริจาค',
   'Thanks, not now': 'ขอบคุณ ไม่ใช่ตอนนี้',

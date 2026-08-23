@@ -144,7 +144,7 @@ export const lvDict: Record<string, string> = {
   'end . ! ?': 'beigas . ! ?',
   'Start over?': 'Sākt no jauna?',
   'How do you want to open the book?': 'Kā vēlaties atvērt grāmatu?',
-  'Reading is free and always will be — this is the price for a free app. Support the project in any way that suits you.': 'Lasīšana ir bez maksas un vienmēr būs — tā ir bezmaksas lietotnes cena. Atbalstiet projektu tā, kā jums patīk.',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Lasīšana ir bez maksas un vienmēr būs — tā ir bezmaksas lietotnes cena. Atbalstiet projektu tā, kā jums patīk.',
   'Watch an ad (30s)': 'Skatīties reklāmu (30s)',
   'Buy a subscription / Donate': 'Pirkt abonementu / Ziedot',
   'Thanks, not now': 'Paldies, ne tagad',
