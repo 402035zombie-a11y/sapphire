@@ -246,4 +246,11 @@ export const noDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Hvis annonsen ikke lastes, prøv igjen eller doner',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Kun originaltekst',
+  'With translation': 'Med oversettelse',
+  'Original + translation under the line': 'Original + oversettelse under',
+  'Fast word-by-word reading (RSVP)': 'Hurtiglesning ord for ord (RSVP)',
+  };

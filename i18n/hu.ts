@@ -246,4 +246,11 @@ export const huDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Ha a hirdetés nem töltődik be, próbálja újra vagy adományozzon',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normál',
+  'Original text only': 'Csak eredeti szöveg',
+  'With translation': 'Fordítással',
+  'Original + translation under the line': 'Eredeti + fordítás alatta',
+  'Fast word-by-word reading (RSVP)': 'Gyors szóról szóra olvasás (RSVP)',
+  };

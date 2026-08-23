@@ -246,4 +246,11 @@ export const glDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Se o anuncio non carga, ténteo de novo ou doa',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Só texto orixinal',
+  'With translation': 'Con tradución',
+  'Original + translation under the line': 'Orixinal + tradución debaixo',
+  'Fast word-by-word reading (RSVP)': 'Lectura rápida palabra por palabra (RSVP)',
+  };

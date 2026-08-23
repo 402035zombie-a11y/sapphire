@@ -246,4 +246,11 @@ export const msDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Jika iklan tidak dimuatkan, cuba lagi atau derma',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Biasa',
+  'Original text only': 'Teks asli sahaja',
+  'With translation': 'Dengan terjemahan',
+  'Original + translation under the line': 'Asal + terjemahan di bawah',
+  'Fast word-by-word reading (RSVP)': 'Membaca pantas perkataan demi perkataan (RSVP)',
+  };

@@ -246,4 +246,11 @@ export const bgDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Ако рекламата не се зареди, опитайте отново или дарете',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Нормален',
+  'Original text only': 'Само оригинален текст',
+  'With translation': 'С превод',
+  'Original + translation under the line': 'Оригинал + превод под него',
+  'Fast word-by-word reading (RSVP)': 'Бързо четене дума по дума (RSVP)',
+  };

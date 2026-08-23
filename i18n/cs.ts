@@ -246,4 +246,11 @@ export const csDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Pokud se reklama nenačte, zkuste to znovu nebo přispějte',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normální',
+  'Original text only': 'Pouze původní text',
+  'With translation': 'S překladem',
+  'Original + translation under the line': 'Originál + překlad pod řádkem',
+  'Fast word-by-word reading (RSVP)': 'Rychlé čtení slovo po slovu (RSVP)',
+  };

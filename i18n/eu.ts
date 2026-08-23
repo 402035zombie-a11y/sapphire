@@ -246,4 +246,11 @@ export const euDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Iragarkia kargatzen ez bada, saiatu berriro edo egin dohaintza',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Arrunta',
+  'Original text only': 'Jatorrizko testua soilik',
+  'With translation': 'Itzulpenearekin',
+  'Original + translation under the line': 'Jatorrizkoa + itzulpena azpian',
+  'Fast word-by-word reading (RSVP)': 'Hitz-hitzez irakurketa azkarra (RSVP)',
+  };

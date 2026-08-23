@@ -246,4 +246,11 @@ export const faDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'اگر تبلیغ بارگیری نشد، دوباره تلاش کنید یا کمک مالی کنید',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Original text only',
+  'With translation': 'With translation',
+  'Original + translation under the line': 'Original + translation under the line',
+  'Fast word-by-word reading (RSVP)': 'Fast word-by-word reading (RSVP)',
+  };

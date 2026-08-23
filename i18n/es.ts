@@ -246,4 +246,11 @@ export const esDict: Record<string, string> = {
   'Pick translation from sentence context': 'Elige la traducción del contexto',
   'I know it': 'Ya lo sé',
     "If the ad doesn't load, try again or use donate": 'Si el anuncio no carga, inténtalo de nuevo o dona',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Solo texto original',
+  'With translation': 'Con traducción',
+  'Original + translation under the line': 'Original + traducción debajo',
+  'Fast word-by-word reading (RSVP)': 'Lectura rápida palabra por palabra (RSVP)',
+  };

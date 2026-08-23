@@ -246,4 +246,11 @@ export const plDict: Record<string, string> = {
   'Pick translation from sentence context': 'Wybierz tłumaczenie z kontekstu zdania',
   'I know it': 'Wiem to',
     "If the ad doesn't load, try again or use donate": 'Jeśli reklama się nie załaduje, spróbuj ponownie lub przekaż darowiznę',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Zwykły',
+  'Original text only': 'Tylko tekst oryginalny',
+  'With translation': 'Z tłumaczeniem',
+  'Original + translation under the line': 'Oryginał + tłumaczenie pod spodem',
+  'Fast word-by-word reading (RSVP)': 'Szybkie czytanie słowo po słowie (RSVP)',
+  };

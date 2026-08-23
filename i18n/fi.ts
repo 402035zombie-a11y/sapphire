@@ -246,4 +246,11 @@ export const fiDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Jos mainos ei lataudu, yritä uudelleen tai lahjoita',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normaali',
+  'Original text only': 'Vain alkuperäinen teksti',
+  'With translation': 'Käännöksellä',
+  'Original + translation under the line': 'Alkuperäinen + käännös alla',
+  'Fast word-by-word reading (RSVP)': 'Nopea sana sanalta lukeminen (RSVP)',
+  };

@@ -246,4 +246,11 @@ export const daDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Hvis annoncen ikke indlæses, prøv igen eller donér',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Kun originaltekst',
+  'With translation': 'Med oversættelse',
+  'Original + translation under the line': 'Original + oversættelse under',
+  'Fast word-by-word reading (RSVP)': 'Hurtig læsning ord for ord (RSVP)',
+  };

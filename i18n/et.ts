@@ -246,4 +246,11 @@ export const etDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Kui reklaam ei laadi, proovige uuesti või annetage',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Tavaline',
+  'Original text only': 'Ainult originaaltekst',
+  'With translation': 'Koos tõlkega',
+  'Original + translation under the line': 'Originaal + tõlge all',
+  'Fast word-by-word reading (RSVP)': 'Kiire sõna-sõnalt lugemine (RSVP)',
+  };

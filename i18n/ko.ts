@@ -250,4 +250,11 @@ export const koDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": '광고가 로드되지 않으면 다시 시도하거나 기부해 주세요',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': '일반',
+  'Original text only': '원문만',
+  'With translation': '번역 포함',
+  'Original + translation under the line': '원문 + 아래 번역',
+  'Fast word-by-word reading (RSVP)': '빠른 낱말별 읽기 (RSVP)',
+  };

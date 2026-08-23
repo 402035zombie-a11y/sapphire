@@ -246,4 +246,11 @@ export const svDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Om annonsen inte laddar, försök igen eller donera',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Endast originaltext',
+  'With translation': 'Med översättning',
+  'Original + translation under the line': 'Original + översättning under',
+  'Fast word-by-word reading (RSVP)': 'Snabb läsning ord för ord (RSVP)',
+  };

@@ -246,4 +246,11 @@ export const lvDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Ja reklāma netiek ielādēta, mēģiniet vēlreiz vai ziedojet',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Parasts',
+  'Original text only': 'Tikai oriģinālteksts',
+  'With translation': 'Ar tulkojumu',
+  'Original + translation under the line': 'Oriģināls + tulkojums zem tā',
+  'Fast word-by-word reading (RSVP)': 'Ātra lasīšana vārds no vārda (RSVP)',
+  };

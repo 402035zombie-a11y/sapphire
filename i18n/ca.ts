@@ -246,4 +246,11 @@ export const caDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Si l\'anunci no carrega, torneu-ho a provar o feu una donació',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Només text original',
+  'With translation': 'Amb traducció',
+  'Original + translation under the line': 'Original + traducció a sota',
+  'Fast word-by-word reading (RSVP)': 'Lectura ràpida paraula a paraula (RSVP)',
+  };

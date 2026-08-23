@@ -246,4 +246,11 @@ export const idDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Jika iklan tidak dimuat, coba lagi atau berdonasi',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Hanya teks asli',
+  'With translation': 'Dengan terjemahan',
+  'Original + translation under the line': 'Asli + terjemahan di bawahnya',
+  'Fast word-by-word reading (RSVP)': 'Membaca cepat kata demi kata (RSVP)',
+  };

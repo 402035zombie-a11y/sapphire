@@ -246,4 +246,11 @@ export const afDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'As die advertensie nie laai nie, probeer weer of skenk',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normaal',
+  'Original text only': 'Slegs oorspronklike teks',
+  'With translation': 'Met vertaling',
+  'Original + translation under the line': 'Origineel + vertaling daaronder',
+  'Fast word-by-word reading (RSVP)': 'Vinnige woord-vir-woord lees (RSVP)',
+  };

@@ -246,4 +246,11 @@ export const slDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Če se oglas ne naloži, poskusite znova ali prispevajte',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Navadno',
+  'Original text only': 'Samo izvirno besedilo',
+  'With translation': 'S prevodom',
+  'Original + translation under the line': 'Izvirnik + prevod pod njim',
+  'Fast word-by-word reading (RSVP)': 'Hitro branje beseda za besedo (RSVP)',
+  };

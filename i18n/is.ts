@@ -246,4 +246,11 @@ export const isDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Ef auglýsingin hleðst ekki, reyndu aftur eða styrkðu',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Venjulegt',
+  'Original text only': 'Aðeins upprunalegur texti',
+  'With translation': 'Með þýðingu',
+  'Original + translation under the line': 'Frumtexti + þýðing fyrir neðan',
+  'Fast word-by-word reading (RSVP)': 'Hraðlestur orð fyrir orð (RSVP)',
+  };

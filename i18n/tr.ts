@@ -250,4 +250,11 @@ export const trDict: Record<string, string> = {
   'Pick translation from sentence context': 'Cümle bağlamından çeviriyi seç',
   'I know it': 'Biliyorum',
     "If the ad doesn't load, try again or use donate": 'Reklam yüklenmezse tekrar deneyin veya bağış yapın',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Sadece orijinal metin',
+  'With translation': 'Çeviri ile',
+  'Original + translation under the line': 'Orijinal + altında çeviri',
+  'Fast word-by-word reading (RSVP)': 'Hızlı kelime kelime okuma (RSVP)',
+  };

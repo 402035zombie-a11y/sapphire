@@ -250,4 +250,11 @@ export const thDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'หากโฆษณาไม่โหลด ลองอีกครั้งหรือบริจาค',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'ปกติ',
+  'Original text only': 'ข้อความต้นฉบับเท่านั้น',
+  'With translation': 'พร้อมคำแปล',
+  'Original + translation under the line': 'ต้นฉบับ + คำแปลด้านล่าง',
+  'Fast word-by-word reading (RSVP)': 'การอ่านเร็วทีละคำ (RSVP)',
+  };

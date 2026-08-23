@@ -246,4 +246,11 @@ export const arDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'إذا لم يظهر الإعلان، حاول مرة أخرى أو تبرّع',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'عادي',
+  'Original text only': 'النص الأصلي فقط',
+  'With translation': 'مع الترجمة',
+  'Original + translation under the line': 'الأصلي + الترجمة أسفله',
+  'Fast word-by-word reading (RSVP)': 'قراءة سريعة كلمة بكلمة (RSVP)',
+  };

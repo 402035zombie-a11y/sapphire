@@ -256,4 +256,11 @@ export const deDict: Record<string, string> = {
   'Pick translation from sentence context': 'Übersetzung aus dem Satzkontext wählen',
   'I know it': 'Ich weiß es',
     "If the ad doesn't load, try again or use donate": 'Wenn die Werbung nicht lädt, versuche es erneut oder spende',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Nur Originaltext',
+  'With translation': 'Mit Übersetzung',
+  'Original + translation under the line': 'Original + Übersetzung darunter',
+  'Fast word-by-word reading (RSVP)': 'Schnelles Wort-für-Wort-Lesen (RSVP)',
+  };

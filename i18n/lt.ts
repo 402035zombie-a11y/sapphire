@@ -246,4 +246,11 @@ export const ltDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Jei skelbimas neįkeliamas, bandykite dar kartą arba paaukokite',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Įprasta',
+  'Original text only': 'Tik originalus tekstas',
+  'With translation': 'Su vertimu',
+  'Original + translation under the line': 'Originalas + vertimas žemiau',
+  'Fast word-by-word reading (RSVP)': 'Greitas skaitymas žodį po žodžio (RSVP)',
+  };

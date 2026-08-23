@@ -246,4 +246,11 @@ export const cyDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Os nad yw\'r hysbyseb yn llwytho, ceisiwch etchwaig neu roi rhodd',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Arferol',
+  'Original text only': 'Testun gwreiddiol yn unig',
+  'With translation': 'Gyd chyfieithiad',
+  'Original + translation under the line': 'Gwreiddiol + cyfieithiad o dan',
+  'Fast word-by-word reading (RSVP)': 'Darllen cyflym gair wrth air (RSVP)',
+  };

@@ -246,4 +246,11 @@ export const nlDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Als de advertentie niet laadt, probeer opnieuw of doneer',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normaal',
+  'Original text only': 'Alleen originele tekst',
+  'With translation': 'Met vertaling',
+  'Original + translation under the line': 'Origineel + vertaling eronder',
+  'Fast word-by-word reading (RSVP)': 'Snel woord-voor-woord lezen (RSVP)',
+  };

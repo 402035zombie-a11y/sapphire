@@ -250,4 +250,11 @@ export const ptDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Se o anúncio não carregar, tente novamente ou doe',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Apenas texto original',
+  'With translation': 'Com tradução',
+  'Original + translation under the line': 'Original + tradução abaixo',
+  'Fast word-by-word reading (RSVP)': 'Leitura rápida palavra por palavra (RSVP)',
+  };

@@ -246,4 +246,11 @@ export const hrDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Ako se oglas ne učita, pokušajte ponovno ili donirajte',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normalno',
+  'Original text only': 'Samo izvorni tekst',
+  'With translation': 'S prijevodom',
+  'Original + translation under the line': 'Izvorno + prijevod ispod',
+  'Fast word-by-word reading (RSVP)': 'Brzo čitanje riječ po riječ (RSVP)',
+  };

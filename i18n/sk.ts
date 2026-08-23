@@ -246,4 +246,11 @@ export const skDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Ak sa reklama nenačíta, skúste znova alebo prispievajte',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normálny',
+  'Original text only': 'Iba pôvodný text',
+  'With translation': 'S prekladom',
+  'Original + translation under the line': 'Originál + preklad pod riadkom',
+  'Fast word-by-word reading (RSVP)': 'Rýchle čítanie slovo po slove (RSVP)',
+  };

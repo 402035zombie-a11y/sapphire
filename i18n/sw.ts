@@ -246,4 +246,11 @@ export const swDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Ikiwa tangazo halipaki, jaribu tena au changa',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Kawaida',
+  'Original text only': 'Maandishi ya asili tu',
+  'With translation': 'Pamoja na tafsiri',
+  'Original + translation under the line': 'Asili + tafsiri chini',
+  'Fast word-by-word reading (RSVP)': 'Kusoma kwa haraka neno kwa neno (RSVP)',
+  };

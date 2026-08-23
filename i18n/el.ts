@@ -246,4 +246,11 @@ export const elDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Αν η διαφήμιση δεν φορτώσει, δοκιμάστε ξανά ή κάντε δωρεά',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Κανονικό',
+  'Original text only': 'Μόνο το πρωτότυπο κείμενο',
+  'With translation': 'Με μετάφραση',
+  'Original + translation under the line': 'Πρωτότυπο + μετάφραση από κάτω',
+  'Fast word-by-word reading (RSVP)': 'Ταχεία ανάγνωση λέξη προς λέξη (RSVP)',
+  };

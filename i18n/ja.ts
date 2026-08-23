@@ -250,4 +250,11 @@ export const jaDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": '広告が読み込まれない場合は、再試行するか寄付してください',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': '通常',
+  'Original text only': '原文のみ',
+  'With translation': '翻訳付き',
+  'Original + translation under the line': '原文＋下に翻訳',
+  'Fast word-by-word reading (RSVP)': '高速逐語読書 (RSVP)',
+  };

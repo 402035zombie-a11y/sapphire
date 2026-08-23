@@ -246,4 +246,11 @@ export const viDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Nếu quảng cáo không tải được, hãy thử lại hoặc quyên góp',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Thường',
+  'Original text only': 'Chỉ văn bản gốc',
+  'With translation': 'Có bản dịch',
+  'Original + translation under the line': 'Bản gốc + bản dịch bên dưới',
+  'Fast word-by-word reading (RSVP)': 'Đọc nhanh từng từ (RSVP)',
+  };

@@ -246,4 +246,11 @@ export const hiDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'यदि विज्ञापन लोड नहीं होता, तो फिर से कोशिश करें या दान करें',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'सामान्य',
+  'Original text only': 'केवल मूल पाठ',
+  'With translation': 'अनुवाद के साथ',
+  'Original + translation under the line': 'मूल + अनुवाद नीचे',
+  'Fast word-by-word reading (RSVP)': 'तेज़ शब्द-दर-शब्द पढ़ना (RSVP)',
+  };

@@ -246,4 +246,11 @@ export const heDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'אם המודעה לא נטענת, נסו שוב או תרמו',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'רגיל',
+  'Original text only': 'טקסט מקורי בלבד',
+  'With translation': 'עם תרגום',
+  'Original + translation under the line': 'מקור + תרגום מתחת לשורה',
+  'Fast word-by-word reading (RSVP)': 'קריאה מהירה מילה במילה (RSVP)',
+  };

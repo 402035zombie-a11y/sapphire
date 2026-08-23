@@ -247,4 +247,11 @@ export const frDict: Record<string, string> = {
   'Pick translation from sentence context': 'Choisissez la traduction dans le contexte',
   'I know it': 'Je le sais',
     "If the ad doesn't load, try again or use donate": 'Si la pub ne se charge pas, réessayez ou faites un don',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Texte original uniquement',
+  'With translation': 'Avec traduction',
+  'Original + translation under the line': 'Original + traduction en dessous',
+  'Fast word-by-word reading (RSVP)': 'Lecture rapide mot à mot (RSVP)',
+  };

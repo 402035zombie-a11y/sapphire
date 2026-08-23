@@ -250,4 +250,11 @@ export const zhDict: Record<string, string> = {
   'Pick translation from sentence context': '从句子语境中选择翻译',
   'I know it': '我知道了',
     "If the ad doesn't load, try again or use donate": '如果广告无法加载，请重试或使用捐赠',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': '普通',
+  'Original text only': '仅原文',
+  'With translation': '带翻译',
+  'Original + translation under the line': '原文+翻译在下',
+  'Fast word-by-word reading (RSVP)': '快速逐词阅读 (RSVP)',
+  };

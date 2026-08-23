@@ -246,4 +246,11 @@ export const roDict: Record<string, string> = {
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
     "If the ad doesn't load, try again or use donate": 'Dacă reclama nu se încarcă, încercați din nou sau donați',
-};
+
+  // OpenModeModal + Speed Reading labels
+  'Normal': 'Normal',
+  'Original text only': 'Doar textul original',
+  'With translation': 'Cu traducere',
+  'Original + translation under the line': 'Original + traducerea sub el',
+  'Fast word-by-word reading (RSVP)': 'Citire rapidă cuvânt cu cuvânt (RSVP)',
+  };
