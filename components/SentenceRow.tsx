@@ -122,6 +122,9 @@ function SentenceRow({
     fontWeight: fontWeight as any,
     textAlign: textAlignValue as any,
     letterSpacing: letterSpacing || undefined,
+    // Компенсація letter-spacing при justify: Android додає spacing після останнього
+    // символу рядка → фіктивний відступ справа. Негативний marginRight прибирає його.
+    ...(letterSpacing && textAlignValue === 'justify' ? { marginRight: -letterSpacing } : null),
     ...(hyphenation ? { hyphenationFactor: 1, wordBreak: 'break-word' } as any : null),
   };
   const base = [baseText, { color: theme.primaryText }];
