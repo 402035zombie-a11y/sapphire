@@ -138,7 +138,8 @@ export function neuPrimary(t: ThemePalette, radius: number): any {
       `inset 0 1px 2px ${rim(t)}`, // верхній блік (темозалежний, не хардкод)
       `inset 0 -2px 5px ${specDark(t)}`, // нижня внутрішня тінь
     ].join(', '),
-    elevation: Math.max(3, Math.round(off)),
+    // Android: суцільний фон t.primary є → elevation безпечний
+    ...(Platform.OS === 'web' ? {} : { elevation: Math.max(3, Math.round(off)) }),
   };
 }
 
@@ -198,7 +199,8 @@ export function neuCircle(t: ThemePalette, size: number, filled = false): any {
     height: size,
     borderRadius: size / 2,
     backgroundColor: filled ? t.primary : t.neu.base,
-    backgroundImage: filled ? undefined : extrude(t),
+    // Android: градієнт не рендериться, а elevation з градієнтним фоном = квадратна тінь
+    backgroundImage: Platform.OS === 'web' && !filled ? extrude(t) : undefined,
     backgroundClip: 'padding-box',
     alignItems: 'center',
     justifyContent: 'center',
@@ -509,7 +511,9 @@ function metalStamp(t: ThemePalette, size: number): any {
       // холодный edge-rim
       `inset 0 0 0 1px ${rim(t)}`,
     ].join(', '),
-    elevation: Math.max(3, Math.round(o)),
+    // Android: elevation без суцільного фону малює КВАДРАТНУ тінь поверх скруглення
+    // (backgroundImage-градієнти на Android не рендеряться) → вимикаємо.
+    ...(Platform.OS === 'web' ? {} : { elevation: 0 }),
   };
 }
 
