@@ -898,7 +898,9 @@ export default function TrainingScreen() {
           <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 16 }}>
             {cloze.options.map((opt) => {
               const isPicked = clozePicked === opt;
-              const isRight = opt === current.translation;
+              // Правильна опція = та, що збігається з maskedWord (у reverse це переклад,
+              // у forward — слово з речення). Порівняння з current.translation ламало forward.
+              const isRight = opt === cloze.maskedWord;
               const showState = clozePicked !== null;
               return (
                 <TouchableOpacity

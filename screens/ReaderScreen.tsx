@@ -36,6 +36,7 @@ import { useSupportStore } from '../store/supportStore';
 import { splitIntoSegments } from '../utils/sentenceSplitter';
 import { translateCached } from '../services/translationService';
 import { saveSentenceTranslations, getSentenceTranslations, clearSentenceTranslations } from '../services/sentenceTranslationsDb';
+import { stripHtmlToText } from '../services/bookText';
 import { showSupportAd } from '../services/monetization';
 import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
@@ -96,15 +97,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       // ВЕСЬ текст глави → чистий → splitIntoSegments (ріже на речення, не на <p>).
       // Було: різка по <p> → кожен <p> окремим original, потім hope що sentences-memo доріже.
       // Alice (довгі <p> з кількома реченнями) лишалась цілою. Фікс: ріжемо тут одразу.
-      const plain = ch.contentHtml
-        .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-        .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-        .replace(/<[^>]+>/g, ' ')            // ВСІ теги (вкл. <p>) → пробіл, не \n
-        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&nbsp;/g, ' ')
-        .replace(/[ \t]+/g, ' ')
-        .replace(/\n{2,}/g, '\n')
-        .trim();
+      const plain = stripHtmlToText(ch.contentHtml);
       const segs = splitIntoSegments(plain);
       let si = 0;
       for (const s of segs) {

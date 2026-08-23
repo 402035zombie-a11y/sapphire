@@ -123,7 +123,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
     });
   }, [navigation, theme.primaryText, onSelectBook]);
 
-  const processTxtText = (text: string, name: string) => {
+  // processTxtText отримує uri через замикання (draft.uri = file path) — потрібен для importBook.
+  const processTxtText = (text: string, name: string, sourceUri?: string) => {
     setProgress(0.95);
     const paragraphs = buildParagraphs(text);
     setProgress(1);
@@ -140,6 +141,12 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       paragraphs,
       sections: extractSections(paragraphs),
     });
+    // E3: текст → books.db.chapters (інакше Reader/SpeedReading/Bookmarks не побачать книгу).
+    if (sourceUri && draftIdRef.current) {
+      importBook(sourceUri, 'txt', undefined, draftIdRef.current).catch((e) => {
+        console.warn('[bookImport] failed (non-fatal):', e);
+      });
+    }
   };
 
   const pickDocument = async () => {
@@ -254,7 +261,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         });
         return;
       }
-      processTxtText(text, file.name);
+      processTxtText(text, file.name, file.name);
     } catch (err: any) {
       Alert.alert(t('Error reading file'), err?.message ?? String(err));
     } finally {

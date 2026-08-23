@@ -52,7 +52,9 @@ export default function SpeedReadingScreen() {
   const words = useMemo(() => {
     if (!book) return [];
     const raw: { text: string; para: number }[] = [];
-    const paras = bookId ? getBookParagraphs(bookId) : [];
+    const paras = bookId
+      ? getBookParagraphs(bookId, useLibraryStore.getState().books.find((b) => b.id === bookId)?.paragraphs)
+      : [];
     for (const p of paras) {
       const toks = p.original.match(/[\p{L}][\p{L}\p{M}'’-]*[^\p{L}\p{N}\s]*|\p{N}+[^\p{L}\p{N}\s]*|[^\p{L}\p{N}\s]+/gu) ?? [];
       for (const t of toks) raw.push({ text: t, para: p.index });
