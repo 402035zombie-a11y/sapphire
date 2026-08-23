@@ -259,4 +259,5 @@ export const skDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Jedno slovo v strede (RSVP)',
   'Ticker line': 'Bežiaci pás',
   'Text scrolls along a line at the same speed': 'Text sa posúva po čiare rovnakou rýchlosťou',
-  };
+    'Blackout': 'Zhasnuté',
+};

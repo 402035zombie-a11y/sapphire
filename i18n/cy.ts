@@ -259,4 +259,5 @@ export const cyDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Un gair ar y tro yn y canol (RSVP)',
   'Ticker line': 'Llinen ticwr',
   'Text scrolls along a line at the same speed': 'Mae\'r testun yn sgrolio ar hyd llinell ar yr un cyflymder',
-  };
+    'Blackout': 'Du gwawr',
+};

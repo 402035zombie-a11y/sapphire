@@ -259,4 +259,5 @@ export const heDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'מילה אחת בכל פעם במרכז (RSVP)',
   'Ticker line': 'שורת טיקר',
   'Text scrolls along a line at the same speed': 'הטקסט גולש לאורך קו באותה מהירות',
-  };
+    'Blackout': 'כיבוי',
+};

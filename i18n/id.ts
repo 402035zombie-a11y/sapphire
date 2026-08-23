@@ -259,4 +259,5 @@ export const idDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Satu kata sekaligus di tengah (RSVP)',
   'Ticker line': 'Garis berjalan',
   'Text scrolls along a line at the same speed': 'Teks bergulir di sepanjang garis dengan kecepatan yang sama',
-  };
+    'Blackout': 'Gelap',
+};

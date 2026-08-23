@@ -259,4 +259,5 @@ export const elDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Μία λέξη τη φορά στο κέντρο (RSVP)',
   'Ticker line': 'Γραμμή κύλισης',
   'Text scrolls along a line at the same speed': 'Το κείμενο κυλάει κατά μήκος μιας γραμμής με την ίδια ταχύτητα',
-  };
+    'Blackout': 'Σκοτεινό',
+};

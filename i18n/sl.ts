@@ -259,4 +259,5 @@ export const slDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Ena beseda na sredini (RSVP)',
   'Ticker line': 'Drsna vrstica',
   'Text scrolls along a line at the same speed': 'Besedilo se premika po vrstici z isto hitrostjo',
-  };
+    'Blackout': 'Zatemnjeno',
+};

@@ -263,4 +263,5 @@ export const trDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Ortada birer kelime (RSVP)',
   'Ticker line': 'Kayan satır',
   'Text scrolls along a line at the same speed': 'Metin aynı hızda bir çizgi boyunca kayar',
-  };
+    'Blackout': 'Karartma',
+};

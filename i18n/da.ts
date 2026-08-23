@@ -260,4 +260,5 @@ export const daDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Ét ord ad gangen i midten (RSVP)',
   'Ticker line': 'Rullende linje',
   'Text scrolls along a line at the same speed': 'Teksten ruller langs en linje med samme hastighed',
-  };
+    'Blackout': 'Nedtoning',
+};

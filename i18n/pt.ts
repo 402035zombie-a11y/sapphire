@@ -263,4 +263,5 @@ export const ptDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Uma palavra por vez no centro (RSVP)',
   'Ticker line': 'Linha ticker',
   'Text scrolls along a line at the same speed': 'O texto rola ao longo de uma linha na mesma velocidade',
-  };
+    'Blackout': 'Escurecido',
+};

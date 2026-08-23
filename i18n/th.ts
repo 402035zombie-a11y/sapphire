@@ -263,4 +263,5 @@ export const thDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'ทีละคำตรงกลาง (RSVP)',
   'Ticker line': 'เส้นเลื่อน',
   'Text scrolls along a line at the same speed': 'ข้อความเลื่อนตามเส้นด้วยความเร็วเท่ากัน',
-  };
+    'Blackout': 'มืดสนิท',
+};

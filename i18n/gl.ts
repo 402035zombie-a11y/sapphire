@@ -259,4 +259,5 @@ export const glDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Unha palabra á vez no centro (RSVP)',
   'Ticker line': 'Liña ticker',
   'Text scrolls along a line at the same speed': 'O texto desprázase ao longo dunha liña á mesma velocidade',
-  };
+    'Blackout': 'Apagado',
+};

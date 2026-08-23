@@ -259,4 +259,5 @@ export const isDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Eitt orð í einu í miðjunni (RSVP)',
   'Ticker line': 'Síðustu lína',
   'Text scrolls along a line at the same speed': 'Textinn skrunar eftir línu á sömu hraða',
-  };
+    'Blackout': 'Mykjað',
+};

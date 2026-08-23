@@ -259,4 +259,5 @@ export const etDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Üks sõna korraga keskel (RSVP)',
   'Ticker line': 'Keriv rida',
   'Text scrolls along a line at the same speed': 'Tekst kerib mööda joont sama kiirusega',
-  };
+    'Blackout': 'Summutatud',
+};

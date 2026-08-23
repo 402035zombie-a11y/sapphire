@@ -259,4 +259,5 @@ export const hrDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Jedna riječ u sredini (RSVP)',
   'Ticker line': 'Klizna linija',
   'Text scrolls along a line at the same speed': 'Tekst se pomaka duž linije istom brzinom',
-  };
+    'Blackout': 'Prigušeno',
+};

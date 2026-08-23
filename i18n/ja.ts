@@ -263,4 +263,5 @@ export const jaDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': '中央に一語ずつ表示 (RSVP)',
   'Ticker line': 'ティッカーライン',
   'Text scrolls along a line at the same speed': 'テキストが一定速度で行に沿ってスクロール',
-  };
+    'Blackout': 'ブラックアウト',
+};

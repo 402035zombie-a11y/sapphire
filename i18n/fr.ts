@@ -260,4 +260,5 @@ export const frDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Un mot à la fois au centre (RSVP)',
   'Ticker line': 'Ligne défilante',
   'Text scrolls along a line at the same speed': 'Le texte défile le long d\'une ligne à vitesse constante',
-  };
+    'Blackout': 'Veilleuse',
+};

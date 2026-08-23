@@ -259,4 +259,5 @@ export const afDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Een woord op n slag in die middel (RSVP)',
   'Ticker line': 'Borrel lyn',
   'Text scrolls along a line at the same speed': 'Teks skuif langs n lyn teen dieselfde spoed',
-  };
+    'Blackout': 'Swart uit',
+};

@@ -259,4 +259,5 @@ export const nlDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Eén woord per keer in het midden (RSVP)',
   'Ticker line': 'Ticker-regel',
   'Text scrolls along a line at the same speed': 'Tekst scrolt met dezelfde snelheid langs een regel',
-  };
+    'Blackout': 'Verduisterd',
+};

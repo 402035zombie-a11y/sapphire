@@ -259,4 +259,5 @@ export const euDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Hitz bat aldi berean erdian (RSVP)',
   'Ticker line': 'Ticker lerroa',
   'Text scrolls along a line at the same speed': 'Testuak lerro batean zehar mugitzen da abiadura berean',
-  };
+    'Blackout': 'Itzalita',
+};

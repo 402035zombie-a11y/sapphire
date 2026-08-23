@@ -259,4 +259,5 @@ export const huDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Egyszerre egy szó a középen (RSVP)',
   'Ticker line': 'Futó sor',
   'Text scrolls along a line at the same speed': 'A szöveg azonos sebességgel görgetül egy vonal mentén',
-  };
+    'Blackout': 'Fekete',
+};

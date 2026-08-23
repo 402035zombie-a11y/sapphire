@@ -263,4 +263,5 @@ export const zhDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': '一次一个单词居中显示 (RSVP)',
   'Ticker line': '滚动行',
   'Text scrolls along a line at the same speed': '文本以相同速度沿行滚动',
-  };
+    'Blackout': '熄灯模式',
+};

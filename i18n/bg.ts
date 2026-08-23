@@ -259,4 +259,5 @@ export const bgDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Една дума в центъра (RSVP)',
   'Ticker line': 'Лента за движение',
   'Text scrolls along a line at the same speed': 'Текстът се превърта по линия със същата скорост',
-  };
+    'Blackout': 'Потъмняване',
+};

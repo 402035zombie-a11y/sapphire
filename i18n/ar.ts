@@ -259,4 +259,5 @@ export const arDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'كلمة واحدة في كل مرة في الوسط (RSVP)',
   'Ticker line': 'خط متحرك',
   'Text scrolls along a line at the same speed': 'ينزلق النص على طول خط بنفس السرعة',
-  };
+    'Blackout': 'الإطفاء',
+};

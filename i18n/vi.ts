@@ -259,4 +259,5 @@ export const viDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Một từ mỗi lần ở giữa (RSVP)',
   'Ticker line': 'Dòng cuộn',
   'Text scrolls along a line at the same speed': 'Văn bản cuộn dọc theo một dòng với cùng tốc độ',
-  };
+    'Blackout': 'Chìm trong bóng tối',
+};

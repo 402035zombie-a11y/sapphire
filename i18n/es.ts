@@ -259,4 +259,5 @@ export const esDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Una palabra a la vez en el centro (RSVP)',
   'Ticker line': 'Línea ticker',
   'Text scrolls along a line at the same speed': 'El texto se desplaza a lo largo de una línea a la misma velocidad',
-  };
+    'Blackout': 'Apagado',
+};

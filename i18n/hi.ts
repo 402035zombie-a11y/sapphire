@@ -259,4 +259,5 @@ export const hiDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'केंद्र में एक बार में एक शब्द (RSVP)',
   'Ticker line': 'टिकर लाइन',
   'Text scrolls along a line at the same speed': 'पाठ एक रेखा के साथ उसी गति से स्क्रॉल होता है',
-  };
+    'Blackout': 'ब्लैकआउट',
+};

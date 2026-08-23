@@ -263,4 +263,5 @@ export const koDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': '중앙에 한 단어씩 표시 (RSVP)',
   'Ticker line': '틱커 라인',
   'Text scrolls along a line at the same speed': '텍스트가 같은 속도로 선을 따라 스크롤',
-  };
+    'Blackout': '블랙아웃',
+};

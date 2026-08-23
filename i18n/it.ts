@@ -259,4 +259,5 @@ export const itDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Una parola alla volta al centro (RSVP)',
   'Ticker line': 'Linea ticker',
   'Text scrolls along a line at the same speed': 'Il testo scorre lungo una linea alla stessa velocità',
-  };
+    'Blackout': 'Oscurato',
+};

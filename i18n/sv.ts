@@ -259,4 +259,5 @@ export const svDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Ett ord i taget i mitten (RSVP)',
   'Ticker line': 'Rullande rad',
   'Text scrolls along a line at the same speed': 'Texten rullar längs en linje med samma hastighet',
-  };
+    'Blackout': 'Mörkläggning',
+};

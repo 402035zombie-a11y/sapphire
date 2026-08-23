@@ -259,4 +259,5 @@ export const srDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Једна реч у центру (RSVP)',
   'Ticker line': 'Клизна линија',
   'Text scrolls along a line at the same speed': 'Текст се помера дуж линије истом брзином',
-  };
+    'Blackout': 'Затамњено',
+};

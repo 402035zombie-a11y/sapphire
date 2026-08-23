@@ -269,4 +269,5 @@ export const deDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Ein Wort nach dem anderen in der Mitte (RSVP)',
   'Ticker line': 'Ticker-Zeile',
   'Text scrolls along a line at the same speed': 'Text scrollt mit gleicher Geschwindigkeit entlang einer Linie',
-  };
+    'Blackout': 'Abgedunkelt',
+};

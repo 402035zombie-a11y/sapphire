@@ -259,4 +259,5 @@ export const faDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'یک کلمه در هر بار در مرکز (RSVP)',
   'Ticker line': 'خط متحرک',
   'Text scrolls along a line at the same speed': 'متن با همان سرعت در طول یک خط اسکرول می‌شود',
-  };
+    'Blackout': 'تاریک',
+};

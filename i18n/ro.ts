@@ -259,4 +259,5 @@ export const roDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Un cuvânt o dată în centru (RSVP)',
   'Ticker line': 'Linie derulantă',
   'Text scrolls along a line at the same speed': 'Textul se derulează de-a lungul unei linii cu aceeași viteză',
-  };
+    'Blackout': 'Stins',
+};

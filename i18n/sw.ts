@@ -259,4 +259,5 @@ export const swDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Neno moja kwa wakati katikati (RSVP)',
   'Ticker line': 'Mstari unaojiri',
   'Text scrolls along a line at the same speed': 'Maandishi yanayosogeza kwenye mstari kwa kasi ile ile',
-  };
+    'Blackout': 'Giza',
+};

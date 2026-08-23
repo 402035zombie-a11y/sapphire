@@ -259,4 +259,5 @@ export const plDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Jedno słowo na raz na środku (RSVP)',
   'Ticker line': 'Linia paska',
   'Text scrolls along a line at the same speed': 'Tekst przewija się wzdłuż linii z tą samą prędkością',
-  };
+    'Blackout': 'Wygaszenie',
+};

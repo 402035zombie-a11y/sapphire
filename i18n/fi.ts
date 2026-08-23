@@ -259,4 +259,5 @@ export const fiDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Yksi sana kerrallaan keskellä (RSVP)',
   'Ticker line': 'Vierivä rivi',
   'Text scrolls along a line at the same speed': 'Teksti vierii rivin pitkin samalla nopeudella',
-  };
+    'Blackout': 'Pimennys',
+};

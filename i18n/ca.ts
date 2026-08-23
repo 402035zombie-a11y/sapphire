@@ -259,4 +259,5 @@ export const caDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Una paraula al centre (RSVP)',
   'Ticker line': 'Línia ticker',
   'Text scrolls along a line at the same speed': 'El text es desplaça al llarg d\'una línia a la mateixa velocitat',
-  };
+    'Blackout': 'Atenuat',
+};

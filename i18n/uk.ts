@@ -269,4 +269,5 @@ export const ukDict: Record<string, string> = {
   'Text scrolls along a line at the same speed': 'Текст прокручується по рядку з тією ж швидкістю',
   // FontSettingsSheet (Paragraph spacing — новий ключ, інші вже існують вище)
   'Paragraph spacing': 'Інтервал між абзацами',
+  'Blackout': 'Blackout (повна темрява)',
 };

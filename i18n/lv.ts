@@ -259,4 +259,5 @@ export const lvDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Viens vārds centrā (RSVP)',
   'Ticker line': 'Ritoša līnija',
   'Text scrolls along a line at the same speed': 'Teksts rit gar līniju ar to pašu ātrumu',
-  };
+    'Blackout': 'Aptumšots',
+};

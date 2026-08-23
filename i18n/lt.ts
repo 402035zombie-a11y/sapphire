@@ -259,4 +259,5 @@ export const ltDict: Record<string, string> = {
   'One word at a time in the center (RSVP)': 'Po vieną žodį centre (RSVP)',
   'Ticker line': 'Slenkanti eilutė',
   'Text scrolls along a line at the same speed': 'Tekstas slenka palei eilutę tuo pačiu greičiu',
-  };
+    'Blackout': 'Užteminta',
+};
