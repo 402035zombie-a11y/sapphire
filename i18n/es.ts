@@ -229,7 +229,6 @@ export const esDict: Record<string, string> = {
   'Translate to': 'Traducir a',
   '{n}d memory': 'memoria {n}d',
   '{n}d': '{n}d',
-  'If the ad doesn\'t load, try again or use donate': 'Si el anuncio no carga, inténtalo de nuevo o dona',
   'From Anki deck (.apkg)': 'Desde mazo Anki (.apkg)',
   'To Anki deck (.apkg) — export': 'A mazo Anki (.apkg) — exportar',
   'Import / Export (Anki)': 'Importar / Exportar (Anki)',

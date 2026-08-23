@@ -239,7 +239,6 @@ export const deDict: Record<string, string> = {
   'Translate to': 'Übersetzen nach',
   '{n}d memory': '{n}T Gedächtnis',
   '{n}d': '{n}T',
-  'If the ad doesn\'t load, try again or use donate': 'Wenn die Werbung nicht lädt, versuche es erneut oder spende',
   'From Anki deck (.apkg)': 'Aus Anki-Stapel (.apkg)',
   'To Anki deck (.apkg) — export': 'Zu Anki-Stapel (.apkg) — Export',
   'Import / Export (Anki)': 'Import / Export (Anki)',

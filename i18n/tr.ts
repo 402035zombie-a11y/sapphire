@@ -233,7 +233,6 @@ export const trDict: Record<string, string> = {
   'Translate to': 'Şuna çevir',
   '{n}d memory': '{n}g hafıza',
   '{n}d': '{n}g',
-  'If the ad doesn\'t load, try again or use donate': 'Reklam yüklenmezse tekrar deneyin veya bağış yapın',
   'From Anki deck (.apkg)': 'Anki destesinden (.apkg)',
   'To Anki deck (.apkg) — export': 'Anki destesine (.apkg) — dışa aktar',
   'Import / Export (Anki)': 'İçe / Dışa aktarma (Anki)',

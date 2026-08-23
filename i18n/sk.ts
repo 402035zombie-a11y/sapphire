@@ -229,7 +229,6 @@ export const skDict: Record<string, string> = {
   'Translate to': 'Translate to',
   '{n}d memory': '{n}d memory',
   '{n}d': '{n}d',
-  'If the ad doesn\'t load, try again or use donate': 'If the ad doesn\'t load, try again or use donate',
   'From Anki deck (.apkg)': 'From Anki deck (.apkg)',
   'To Anki deck (.apkg) — export': 'To Anki deck (.apkg) — export',
   'Import / Export (Anki)': 'Import / Export (Anki)',

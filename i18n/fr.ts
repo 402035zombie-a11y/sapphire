@@ -230,7 +230,6 @@ export const frDict: Record<string, string> = {
   'Translate to': 'Traduire en',
   '{n}d memory': 'mémoire {n}j',
   '{n}d': '{n}j',
-  'If the ad doesn\'t load, try again or use donate': 'Si la pub ne se charge pas, réessayez ou faites un don',
   'From Anki deck (.apkg)': 'Depuis un paquet Anki (.apkg)',
   'To Anki deck (.apkg) — export': 'Vers paquet Anki (.apkg) — export',
   'Import / Export (Anki)': 'Import / Export (Anki)',

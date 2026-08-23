@@ -233,7 +233,6 @@ export const zhDict: Record<string, string> = {
   'Translate to': '翻译成',
   '{n}d memory': '{n}天记忆',
   '{n}d': '{n}天',
-  'If the ad doesn\'t load, try again or use donate': '如果广告无法加载，请重试或使用捐赠',
   'From Anki deck (.apkg)': '从 Anki 牌组 (.apkg)',
   'To Anki deck (.apkg) — export': '到 Anki 牌组 (.apkg) — 导出',
   'Import / Export (Anki)': '导入 / 导出 (Anki)',

@@ -229,7 +229,6 @@ export const plDict: Record<string, string> = {
   'Translate to': 'Tłumacz na',
   '{n}d memory': 'pamięć {n}d',
   '{n}d': '{n}d',
-  'If the ad doesn\'t load, try again or use donate': 'Jeśli reklama się nie załaduje, spróbuj ponownie lub przekaż darowiznę',
   'From Anki deck (.apkg)': 'Z talii Anki (.apkg)',
   'To Anki deck (.apkg) — export': 'Do talii Anki (.apkg) — eksport',
   'Import / Export (Anki)': 'Import / Export (Anki)',
