@@ -24,6 +24,7 @@ import { useTrainingStore } from '../store/trainingStore';
 import { useLibraryStore } from '../store/libraryStore';
 import QuizCard, { QuizItem } from '../components/QuizCard';
 import Icon from '../components/Icon';
+import ModalSheet from '../components/ModalSheet';
 import SupportButton from '../components/SupportButton';
 import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
@@ -266,6 +267,7 @@ export default function TrainingScreen() {
   const toLang = sourceBook?.targetLang ?? settingsTargetLang ?? 'uk';
   // Зміна цільової мови прямо в тренуванні (для 'all' джерела)
   const [trainTargetLang, setTrainTargetLang] = useState<string | null>(null);
+  const [langPickerOpen, setLangPickerOpen] = useState(false);
   const effectiveToLang = trainTargetLang ?? toLang;
 
   const [opts, setOpts] = useState<string[]>([]);
@@ -600,21 +602,16 @@ export default function TrainingScreen() {
               {reverse && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
             </TouchableOpacity>
           </View>
-          {/* Цільова мова перекладу (для 'all' джерела) — синхронізована з налаштуваннями читання */}
+          {/* Цільова мова перекладу (для 'all' джерела) — модалка зі списком мов */}
           {!sourceBook && (
             <TouchableOpacity
               style={[styles.sourceTab, { alignSelf: 'flex-start', marginTop: 8, borderWidth: 1, borderColor: theme.border }]}
-              onPress={() => {
-                const langs = ['uk', 'en', 'de', 'fr', 'es', 'it', 'pl', 'zh', 'ja', 'ar'];
-                const i = langs.indexOf(effectiveToLang);
-                const next = langs[(i + 1) % langs.length];
-                setTrainTargetLang(next);
-                useSettingsStore.getState().setTargetLang(next);
-              }}
+              onPress={() => setLangPickerOpen(true)}
             >
               <Text style={[styles.sourceTabText, { color: theme.primaryText }]}>
                 {t('Translate to')}: {effectiveToLang.toUpperCase()}
               </Text>
+              <Icon name="chevron-down" size={12} color={theme.secondaryText} />
             </TouchableOpacity>
           )}
         </View>
@@ -945,6 +942,31 @@ export default function TrainingScreen() {
         </View>
       )}
       </ScrollView>
+      {/* Модалка вибору цільової мови перекладу */}
+      <ModalSheet visible={langPickerOpen} onClose={() => setLangPickerOpen(false)}>
+        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad }]}>
+          <Text style={[styles.typeWord, { fontSize: a.h2, color: theme.primaryText }]}>{t('Translate to')}</Text>
+          <ScrollView style={{ maxHeight: Math.round(a.height * 0.55) }} contentContainerStyle={{ paddingBottom: 8 }}>
+            {['uk', 'en', 'de', 'fr', 'es', 'it', 'pl', 'pt', 'nl', 'cs', 'sk', 'sv', 'da', 'fi', 'no', 'hu', 'ro', 'bg', 'el', 'hr', 'sr', 'sl', 'et', 'lv', 'lt', 'vi', 'th', 'id', 'ms', 'hi', 'he', 'fa', 'ar', 'sw', 'zh', 'ja', 'ko', 'ca', 'eu', 'gl', 'cy', 'af', 'is'].map((code) => {
+              const active = effectiveToLang === code;
+              return (
+                <TouchableOpacity
+                  key={code}
+                  style={[styles.sourceTab, { alignSelf: 'stretch' }, active && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success }]}
+                  onPress={() => { setTrainTargetLang(code); useSettingsStore.getState().setTargetLang(code); setLangPickerOpen(false); }}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                    <Text style={[styles.sourceTabText, { color: active ? theme.primaryText : theme.secondaryText }]}>
+                      {code.toUpperCase()}
+                    </Text>
+                    {active && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </ModalSheet>
       <SupportAuthorModal
         visible={supportOpen}
         onSupport={onSupportConfirm}
