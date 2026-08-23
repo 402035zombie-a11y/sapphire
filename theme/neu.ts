@@ -315,11 +315,19 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
     width: size,
     height: size,
     borderRadius: size / 2,
-    backgroundColor: filled ? t.primary : t.neu.base,
-    backgroundImage: filled
-      ? `linear-gradient(180deg, ${shade(t.primary, 0.25)} 0%, ${t.primary} 55%, ${shade(t.primary, -0.28)} 100%)`
-      : metalBg(t),
-    backgroundClip: 'padding-box',
+    // Android: backgroundImage не рендериться → elevation малює КВАДРАТНУ тінь.
+    // Суцільний фон + shadow* дає круглу тінь і преміальний вигляд.
+    ...(Platform.OS === 'web'
+      ? {
+          backgroundColor: filled ? t.primary : t.neu.base,
+          backgroundImage: filled
+            ? `linear-gradient(180deg, ${shade(t.primary, 0.25)} 0%, ${t.primary} 55%, ${shade(t.primary, -0.28)} 100%)`
+            : metalBg(t),
+          backgroundClip: 'padding-box',
+        }
+      : {
+          backgroundColor: filled ? t.primary : t.neu.base,
+        }),
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'box-shadow 160ms ease, transform 160ms ease',

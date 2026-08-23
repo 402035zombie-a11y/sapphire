@@ -22,7 +22,7 @@ export interface TranslateResult {
   source: 'lingva' | 'offline-dict' | 'none';
 }
 
-const LINGVA_BASE = (process.env.LINGVA_BASE_URL ?? '').replace(/\/$/, '');
+const LINGVA_BASE = (process.env.EXPO_PUBLIC_LINGVA_BASE_URL ?? process.env.LINGVA_BASE_URL ?? '').replace(/\/$/, '');
 
 export async function translate(
   text: string,
