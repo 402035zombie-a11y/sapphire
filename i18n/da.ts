@@ -253,4 +253,5 @@ export const daDict: Record<string, string> = {
   'With translation': 'Med oversættelse',
   'Original + translation under the line': 'Original + oversættelse under',
   'Fast word-by-word reading (RSVP)': 'Hurtig læsning ord for ord (RSVP)',
-  };
+    'Could not extract text from this FB2 file.': 'Kunne ikke udtrække tekst fra denne FB2-fil.',
+};
