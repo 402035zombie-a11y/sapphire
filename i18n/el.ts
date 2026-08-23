@@ -253,4 +253,10 @@ export const elDict: Record<string, string> = {
   'With translation': 'Με μετάφραση',
   'Original + translation under the line': 'Πρωτότυπο + μετάφραση από κάτω',
   'Fast word-by-word reading (RSVP)': 'Ταχεία ανάγνωση λέξη προς λέξη (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Κλασική ταχύ ανάγνωση',
+  'One word at a time in the center (RSVP)': 'Μία λέξη τη φορά στο κέντρο (RSVP)',
+  'Ticker line': 'Γραμμή κύλισης',
+  'Text scrolls along a line at the same speed': 'Το κείμενο κυλάει κατά μήκος μιας γραμμής με την ίδια ταχύτητα',
   };

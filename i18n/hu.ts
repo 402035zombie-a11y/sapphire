@@ -253,4 +253,10 @@ export const huDict: Record<string, string> = {
   'With translation': 'Fordítással',
   'Original + translation under the line': 'Eredeti + fordítás alatta',
   'Fast word-by-word reading (RSVP)': 'Gyors szóról szóra olvasás (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klasszikus gyorsolvasás',
+  'One word at a time in the center (RSVP)': 'Egyszerre egy szó a középen (RSVP)',
+  'Ticker line': 'Futó sor',
+  'Text scrolls along a line at the same speed': 'A szöveg azonos sebességgel görgetül egy vonal mentén',
   };

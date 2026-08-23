@@ -253,4 +253,10 @@ export const swDict: Record<string, string> = {
   'With translation': 'Pamoja na tafsiri',
   'Original + translation under the line': 'Asili + tafsiri chini',
   'Fast word-by-word reading (RSVP)': 'Kusoma kwa haraka neno kwa neno (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Kusoma kwa kasi ya kawaida',
+  'One word at a time in the center (RSVP)': 'Neno moja kwa wakati katikati (RSVP)',
+  'Ticker line': 'Mstari unaojiri',
+  'Text scrolls along a line at the same speed': 'Maandishi yanayosogeza kwenye mstari kwa kasi ile ile',
   };

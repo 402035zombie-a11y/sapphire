@@ -257,4 +257,10 @@ export const jaDict: Record<string, string> = {
   'With translation': '翻訳付き',
   'Original + translation under the line': '原文＋下に翻訳',
   'Fast word-by-word reading (RSVP)': '高速逐語読書 (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'クラシック高速読書',
+  'One word at a time in the center (RSVP)': '中央に一語ずつ表示 (RSVP)',
+  'Ticker line': 'ティッカーライン',
+  'Text scrolls along a line at the same speed': 'テキストが一定速度で行に沿ってスクロール',
   };

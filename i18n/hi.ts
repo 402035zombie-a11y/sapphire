@@ -253,4 +253,10 @@ export const hiDict: Record<string, string> = {
   'With translation': 'अनुवाद के साथ',
   'Original + translation under the line': 'मूल + अनुवाद नीचे',
   'Fast word-by-word reading (RSVP)': 'तेज़ शब्द-दर-शब्द पढ़ना (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'क्लासिक गति से पढ़ना',
+  'One word at a time in the center (RSVP)': 'केंद्र में एक बार में एक शब्द (RSVP)',
+  'Ticker line': 'टिकर लाइन',
+  'Text scrolls along a line at the same speed': 'पाठ एक रेखा के साथ उसी गति से स्क्रॉल होता है',
   };

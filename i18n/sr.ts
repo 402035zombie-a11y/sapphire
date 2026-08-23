@@ -253,4 +253,10 @@ export const srDict: Record<string, string> = {
   'With translation': 'С преводом',
   'Original + translation under the line': 'Оригинал + превод испод',
   'Fast word-by-word reading (RSVP)': 'Брзо читање реч по реч (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Класично брзо читање',
+  'One word at a time in the center (RSVP)': 'Једна реч у центру (RSVP)',
+  'Ticker line': 'Клизна линија',
+  'Text scrolls along a line at the same speed': 'Текст се помера дуж линије истом брзином',
   };

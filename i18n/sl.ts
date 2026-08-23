@@ -253,4 +253,10 @@ export const slDict: Record<string, string> = {
   'With translation': 'S prevodom',
   'Original + translation under the line': 'Izvirnik + prevod pod njim',
   'Fast word-by-word reading (RSVP)': 'Hitro branje beseda za besedo (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klasično hitro branje',
+  'One word at a time in the center (RSVP)': 'Ena beseda na sredini (RSVP)',
+  'Ticker line': 'Drsna vrstica',
+  'Text scrolls along a line at the same speed': 'Besedilo se premika po vrstici z isto hitrostjo',
   };

@@ -253,4 +253,10 @@ export const heDict: Record<string, string> = {
   'With translation': 'עם תרגום',
   'Original + translation under the line': 'מקור + תרגום מתחת לשורה',
   'Fast word-by-word reading (RSVP)': 'קריאה מהירה מילה במילה (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'קריאה מהירה קלאסית',
+  'One word at a time in the center (RSVP)': 'מילה אחת בכל פעם במרכז (RSVP)',
+  'Ticker line': 'שורת טיקר',
+  'Text scrolls along a line at the same speed': 'הטקסט גולש לאורך קו באותה מהירות',
   };

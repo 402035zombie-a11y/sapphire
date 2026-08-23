@@ -257,4 +257,10 @@ export const koDict: Record<string, string> = {
   'With translation': '번역 포함',
   'Original + translation under the line': '원문 + 아래 번역',
   'Fast word-by-word reading (RSVP)': '빠른 낱말별 읽기 (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': '클래식 속독',
+  'One word at a time in the center (RSVP)': '중앙에 한 단어씩 표시 (RSVP)',
+  'Ticker line': '틱커 라인',
+  'Text scrolls along a line at the same speed': '텍스트가 같은 속도로 선을 따라 스크롤',
   };

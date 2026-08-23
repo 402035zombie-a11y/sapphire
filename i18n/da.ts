@@ -254,4 +254,10 @@ export const daDict: Record<string, string> = {
   'Original + translation under the line': 'Original + oversættelse under',
   'Fast word-by-word reading (RSVP)': 'Hurtig læsning ord for ord (RSVP)',
     'Could not extract text from this FB2 file.': 'Kunne ikke udtrække tekst fra denne FB2-fil.',
-};
+
+  // Speed Reading variants
+  'Classic speed reading': 'Klassisk hurtiglæsning',
+  'One word at a time in the center (RSVP)': 'Ét ord ad gangen i midten (RSVP)',
+  'Ticker line': 'Rullende linje',
+  'Text scrolls along a line at the same speed': 'Teksten ruller langs en linje med samme hastighed',
+  };

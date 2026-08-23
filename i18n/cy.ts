@@ -253,4 +253,10 @@ export const cyDict: Record<string, string> = {
   'With translation': 'Gyd chyfieithiad',
   'Original + translation under the line': 'Gwreiddiol + cyfieithiad o dan',
   'Fast word-by-word reading (RSVP)': 'Darllen cyflym gair wrth air (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Darllen cyflym clasurol',
+  'One word at a time in the center (RSVP)': 'Un gair ar y tro yn y canol (RSVP)',
+  'Ticker line': 'Llinen ticwr',
+  'Text scrolls along a line at the same speed': 'Mae\'r testun yn sgrolio ar hyd llinell ar yr un cyflymder',
   };

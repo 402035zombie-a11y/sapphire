@@ -253,4 +253,10 @@ export const hrDict: Record<string, string> = {
   'With translation': 'S prijevodom',
   'Original + translation under the line': 'Izvorno + prijevod ispod',
   'Fast word-by-word reading (RSVP)': 'Brzo čitanje riječ po riječ (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klasično brzo čitanje',
+  'One word at a time in the center (RSVP)': 'Jedna riječ u sredini (RSVP)',
+  'Ticker line': 'Klizna linija',
+  'Text scrolls along a line at the same speed': 'Tekst se pomaka duž linije istom brzinom',
   };

@@ -257,4 +257,10 @@ export const trDict: Record<string, string> = {
   'With translation': 'Çeviri ile',
   'Original + translation under the line': 'Orijinal + altında çeviri',
   'Fast word-by-word reading (RSVP)': 'Hızlı kelime kelime okuma (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klasik hızlı okuma',
+  'One word at a time in the center (RSVP)': 'Ortada birer kelime (RSVP)',
+  'Ticker line': 'Kayan satır',
+  'Text scrolls along a line at the same speed': 'Metin aynı hızda bir çizgi boyunca kayar',
   };

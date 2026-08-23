@@ -253,4 +253,10 @@ export const ltDict: Record<string, string> = {
   'With translation': 'Su vertimu',
   'Original + translation under the line': 'Originalas + vertimas žemiau',
   'Fast word-by-word reading (RSVP)': 'Greitas skaitymas žodį po žodžio (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klasikinis greitasis skaitymas',
+  'One word at a time in the center (RSVP)': 'Po vieną žodį centre (RSVP)',
+  'Ticker line': 'Slenkanti eilutė',
+  'Text scrolls along a line at the same speed': 'Tekstas slenka palei eilutę tuo pačiu greičiu',
   };

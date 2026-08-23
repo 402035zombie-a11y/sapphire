@@ -253,4 +253,10 @@ export const esDict: Record<string, string> = {
   'With translation': 'Con traducción',
   'Original + translation under the line': 'Original + traducción debajo',
   'Fast word-by-word reading (RSVP)': 'Lectura rápida palabra por palabra (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Lectura rápida clásica',
+  'One word at a time in the center (RSVP)': 'Una palabra a la vez en el centro (RSVP)',
+  'Ticker line': 'Línea ticker',
+  'Text scrolls along a line at the same speed': 'El texto se desplaza a lo largo de una línea a la misma velocidad',
   };

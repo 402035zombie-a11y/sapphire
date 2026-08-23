@@ -253,4 +253,10 @@ export const arDict: Record<string, string> = {
   'With translation': 'مع الترجمة',
   'Original + translation under the line': 'الأصلي + الترجمة أسفله',
   'Fast word-by-word reading (RSVP)': 'قراءة سريعة كلمة بكلمة (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'القراءة السريعة الكلاسيكية',
+  'One word at a time in the center (RSVP)': 'كلمة واحدة في كل مرة في الوسط (RSVP)',
+  'Ticker line': 'خط متحرك',
+  'Text scrolls along a line at the same speed': 'ينزلق النص على طول خط بنفس السرعة',
   };

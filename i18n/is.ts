@@ -253,4 +253,10 @@ export const isDict: Record<string, string> = {
   'With translation': 'Með þýðingu',
   'Original + translation under the line': 'Frumtexti + þýðing fyrir neðan',
   'Fast word-by-word reading (RSVP)': 'Hraðlestur orð fyrir orð (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klassísk hraðlestur',
+  'One word at a time in the center (RSVP)': 'Eitt orð í einu í miðjunni (RSVP)',
+  'Ticker line': 'Síðustu lína',
+  'Text scrolls along a line at the same speed': 'Textinn skrunar eftir línu á sömu hraða',
   };

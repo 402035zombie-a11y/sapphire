@@ -253,4 +253,10 @@ export const svDict: Record<string, string> = {
   'With translation': 'Med översättning',
   'Original + translation under the line': 'Original + översättning under',
   'Fast word-by-word reading (RSVP)': 'Snabb läsning ord för ord (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klassisk snabbläsning',
+  'One word at a time in the center (RSVP)': 'Ett ord i taget i mitten (RSVP)',
+  'Ticker line': 'Rullande rad',
+  'Text scrolls along a line at the same speed': 'Texten rullar längs en linje med samma hastighet',
   };

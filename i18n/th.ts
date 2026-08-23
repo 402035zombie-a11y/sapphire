@@ -257,4 +257,10 @@ export const thDict: Record<string, string> = {
   'With translation': 'พร้อมคำแปล',
   'Original + translation under the line': 'ต้นฉบับ + คำแปลด้านล่าง',
   'Fast word-by-word reading (RSVP)': 'การอ่านเร็วทีละคำ (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'การอ่านเร็วแบบคลาสสิก',
+  'One word at a time in the center (RSVP)': 'ทีละคำตรงกลาง (RSVP)',
+  'Ticker line': 'เส้นเลื่อน',
+  'Text scrolls along a line at the same speed': 'ข้อความเลื่อนตามเส้นด้วยความเร็วเท่ากัน',
   };

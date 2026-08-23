@@ -253,4 +253,10 @@ export const faDict: Record<string, string> = {
   'With translation': 'با ترجمه',
   'Original + translation under the line': 'Original + translation under the line',
   'Fast word-by-word reading (RSVP)': 'Fast word-by-word reading (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'سرعت خواندن کلاسیک',
+  'One word at a time in the center (RSVP)': 'یک کلمه در هر بار در مرکز (RSVP)',
+  'Ticker line': 'خط متحرک',
+  'Text scrolls along a line at the same speed': 'متن با همان سرعت در طول یک خط اسکرول می‌شود',
   };

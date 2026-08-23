@@ -253,4 +253,10 @@ export const noDict: Record<string, string> = {
   'With translation': 'Med oversettelse',
   'Original + translation under the line': 'Original + oversettelse under',
   'Fast word-by-word reading (RSVP)': 'Hurtiglesning ord for ord (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klassisk hurtiglesning',
+  'One word at a time in the center (RSVP)': 'Ett ord om gangen i midten (RSVP)',
+  'Ticker line': 'Rullende linje',
+  'Text scrolls along a line at the same speed': 'Teksten ruller langs en linje med samme hastighet',
   };

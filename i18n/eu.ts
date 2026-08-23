@@ -253,4 +253,10 @@ export const euDict: Record<string, string> = {
   'With translation': 'Itzulpenearekin',
   'Original + translation under the line': 'Jatorrizkoa + itzulpena azpian',
   'Fast word-by-word reading (RSVP)': 'Hitz-hitzez irakurketa azkarra (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Irakurketa azkar klasikoa',
+  'One word at a time in the center (RSVP)': 'Hitz bat aldi berean erdian (RSVP)',
+  'Ticker line': 'Ticker lerroa',
+  'Text scrolls along a line at the same speed': 'Testuak lerro batean zehar mugitzen da abiadura berean',
   };

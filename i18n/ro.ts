@@ -253,4 +253,10 @@ export const roDict: Record<string, string> = {
   'With translation': 'Cu traducere',
   'Original + translation under the line': 'Original + traducerea sub el',
   'Fast word-by-word reading (RSVP)': 'Citire rapidă cuvânt cu cuvânt (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Lectură rapidă clasică',
+  'One word at a time in the center (RSVP)': 'Un cuvânt o dată în centru (RSVP)',
+  'Ticker line': 'Linie derulantă',
+  'Text scrolls along a line at the same speed': 'Textul se derulează de-a lungul unei linii cu aceeași viteză',
   };

@@ -253,4 +253,10 @@ export const idDict: Record<string, string> = {
   'With translation': 'Dengan terjemahan',
   'Original + translation under the line': 'Asli + terjemahan di bawahnya',
   'Fast word-by-word reading (RSVP)': 'Membaca cepat kata demi kata (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Membaca cepat klasik',
+  'One word at a time in the center (RSVP)': 'Satu kata sekaligus di tengah (RSVP)',
+  'Ticker line': 'Garis berjalan',
+  'Text scrolls along a line at the same speed': 'Teks bergulir di sepanjang garis dengan kecepatan yang sama',
   };

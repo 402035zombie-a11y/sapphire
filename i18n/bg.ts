@@ -253,4 +253,10 @@ export const bgDict: Record<string, string> = {
   'With translation': 'С превод',
   'Original + translation under the line': 'Оригинал + превод под него',
   'Fast word-by-word reading (RSVP)': 'Бързо четене дума по дума (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Класическо бързо четене',
+  'One word at a time in the center (RSVP)': 'Една дума в центъра (RSVP)',
+  'Ticker line': 'Лента за движение',
+  'Text scrolls along a line at the same speed': 'Текстът се превърта по линия със същата скорост',
   };

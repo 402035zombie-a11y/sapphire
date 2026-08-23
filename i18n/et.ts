@@ -253,4 +253,10 @@ export const etDict: Record<string, string> = {
   'With translation': 'Koos tõlkega',
   'Original + translation under the line': 'Originaal + tõlge all',
   'Fast word-by-word reading (RSVP)': 'Kiire sõna-sõnalt lugemine (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klassikaline kiirlugemine',
+  'One word at a time in the center (RSVP)': 'Üks sõna korraga keskel (RSVP)',
+  'Ticker line': 'Keriv rida',
+  'Text scrolls along a line at the same speed': 'Tekst kerib mööda joont sama kiirusega',
   };

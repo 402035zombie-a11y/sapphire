@@ -253,4 +253,10 @@ export const skDict: Record<string, string> = {
   'With translation': 'S prekladom',
   'Original + translation under the line': 'Originál + preklad pod riadkom',
   'Fast word-by-word reading (RSVP)': 'Rýchle čítanie slovo po slove (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klasické rýchle čítanie',
+  'One word at a time in the center (RSVP)': 'Jedno slovo v strede (RSVP)',
+  'Ticker line': 'Bežiaci pás',
+  'Text scrolls along a line at the same speed': 'Text sa posúva po čiare rovnakou rýchlosťou',
   };

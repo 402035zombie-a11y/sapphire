@@ -253,4 +253,10 @@ export const itDict: Record<string, string> = {
   'With translation': 'Con traduzione',
   'Original + translation under the line': 'Originale + traduzione sotto',
   'Fast word-by-word reading (RSVP)': 'Lettura veloce parola per parola (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Lettura veloce classica',
+  'One word at a time in the center (RSVP)': 'Una parola alla volta al centro (RSVP)',
+  'Ticker line': 'Linea ticker',
+  'Text scrolls along a line at the same speed': 'Il testo scorre lungo una linea alla stessa velocità',
   };

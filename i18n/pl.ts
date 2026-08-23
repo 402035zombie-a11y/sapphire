@@ -253,4 +253,10 @@ export const plDict: Record<string, string> = {
   'With translation': 'Z tłumaczeniem',
   'Original + translation under the line': 'Oryginał + tłumaczenie pod spodem',
   'Fast word-by-word reading (RSVP)': 'Szybkie czytanie słowo po słowie (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klasyczne szybkie czytanie',
+  'One word at a time in the center (RSVP)': 'Jedno słowo na raz na środku (RSVP)',
+  'Ticker line': 'Linia paska',
+  'Text scrolls along a line at the same speed': 'Tekst przewija się wzdłuż linii z tą samą prędkością',
   };

@@ -253,4 +253,10 @@ export const csDict: Record<string, string> = {
   'With translation': 'S překladem',
   'Original + translation under the line': 'Originál + překlad pod řádkem',
   'Fast word-by-word reading (RSVP)': 'Rychlé čtení slovo po slovu (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klasické rychlé čtení',
+  'One word at a time in the center (RSVP)': 'Jedno slovo v centru (RSVP)',
+  'Ticker line': 'Běžící pás',
+  'Text scrolls along a line at the same speed': 'Text se posouvá po čáře stejnou rychlostí',
   };

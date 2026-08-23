@@ -263,4 +263,10 @@ export const deDict: Record<string, string> = {
   'With translation': 'Mit Übersetzung',
   'Original + translation under the line': 'Original + Übersetzung darunter',
   'Fast word-by-word reading (RSVP)': 'Schnelles Wort-für-Wort-Lesen (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klassisches Schnelllesen',
+  'One word at a time in the center (RSVP)': 'Ein Wort nach dem anderen in der Mitte (RSVP)',
+  'Ticker line': 'Ticker-Zeile',
+  'Text scrolls along a line at the same speed': 'Text scrollt mit gleicher Geschwindigkeit entlang einer Linie',
   };

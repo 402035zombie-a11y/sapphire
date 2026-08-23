@@ -257,4 +257,10 @@ export const zhDict: Record<string, string> = {
   'With translation': '带翻译',
   'Original + translation under the line': '原文+翻译在下',
   'Fast word-by-word reading (RSVP)': '快速逐词阅读 (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': '经典快速阅读',
+  'One word at a time in the center (RSVP)': '一次一个单词居中显示 (RSVP)',
+  'Ticker line': '滚动行',
+  'Text scrolls along a line at the same speed': '文本以相同速度沿行滚动',
   };

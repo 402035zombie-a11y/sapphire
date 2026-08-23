@@ -253,4 +253,10 @@ export const fiDict: Record<string, string> = {
   'With translation': 'Käännöksellä',
   'Original + translation under the line': 'Alkuperäinen + käännös alla',
   'Fast word-by-word reading (RSVP)': 'Nopea sana sanalta lukeminen (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klassinen nopea lukeminen',
+  'One word at a time in the center (RSVP)': 'Yksi sana kerrallaan keskellä (RSVP)',
+  'Ticker line': 'Vierivä rivi',
+  'Text scrolls along a line at the same speed': 'Teksti vierii rivin pitkin samalla nopeudella',
   };

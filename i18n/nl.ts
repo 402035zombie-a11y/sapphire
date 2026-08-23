@@ -253,4 +253,10 @@ export const nlDict: Record<string, string> = {
   'With translation': 'Met vertaling',
   'Original + translation under the line': 'Origineel + vertaling eronder',
   'Fast word-by-word reading (RSVP)': 'Snel woord-voor-woord lezen (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klassiek snel lezen',
+  'One word at a time in the center (RSVP)': 'Eén woord per keer in het midden (RSVP)',
+  'Ticker line': 'Ticker-regel',
+  'Text scrolls along a line at the same speed': 'Tekst scrolt met dezelfde snelheid langs een regel',
   };

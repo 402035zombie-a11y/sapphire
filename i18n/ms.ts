@@ -253,4 +253,10 @@ export const msDict: Record<string, string> = {
   'With translation': 'Dengan terjemahan',
   'Original + translation under the line': 'Asal + terjemahan di bawah',
   'Fast word-by-word reading (RSVP)': 'Membaca pantas perkataan demi perkataan (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Membaca pantas klasik',
+  'One word at a time in the center (RSVP)': 'Satu perkataan pada satu masa di tengah (RSVP)',
+  'Ticker line': 'Baris ticker',
+  'Text scrolls along a line at the same speed': 'Teks menatalian sepanjang garis pada kelajuan yang sama',
   };

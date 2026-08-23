@@ -253,4 +253,10 @@ export const afDict: Record<string, string> = {
   'With translation': 'Met vertaling',
   'Original + translation under the line': 'Origineel + vertaling daaronder',
   'Fast word-by-word reading (RSVP)': 'Vinnige woord-vir-woord lees (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klassieke snel lees',
+  'One word at a time in the center (RSVP)': 'Een woord op n slag in die middel (RSVP)',
+  'Ticker line': 'Borrel lyn',
+  'Text scrolls along a line at the same speed': 'Teks skuif langs n lyn teen dieselfde spoed',
   };

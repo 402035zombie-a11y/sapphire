@@ -253,4 +253,10 @@ export const caDict: Record<string, string> = {
   'With translation': 'Amb traducció',
   'Original + translation under the line': 'Original + traducció a sota',
   'Fast word-by-word reading (RSVP)': 'Lectura ràpida paraula a paraula (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Lectura ràpida clàssica',
+  'One word at a time in the center (RSVP)': 'Una paraula al centre (RSVP)',
+  'Ticker line': 'Línia ticker',
+  'Text scrolls along a line at the same speed': 'El text es desplaça al llarg d\'una línia a la mateixa velocitat',
   };

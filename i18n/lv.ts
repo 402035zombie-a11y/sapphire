@@ -253,4 +253,10 @@ export const lvDict: Record<string, string> = {
   'With translation': 'Ar tulkojumu',
   'Original + translation under the line': 'Oriģināls + tulkojums zem tā',
   'Fast word-by-word reading (RSVP)': 'Ātra lasīšana vārds no vārda (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Klasiskā ātrlasīšana',
+  'One word at a time in the center (RSVP)': 'Viens vārds centrā (RSVP)',
+  'Ticker line': 'Ritoša līnija',
+  'Text scrolls along a line at the same speed': 'Teksts rit gar līniju ar to pašu ātrumu',
   };

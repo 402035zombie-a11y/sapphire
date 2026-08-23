@@ -253,4 +253,10 @@ export const glDict: Record<string, string> = {
   'With translation': 'Con tradución',
   'Original + translation under the line': 'Orixinal + tradución debaixo',
   'Fast word-by-word reading (RSVP)': 'Lectura rápida palabra por palabra (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Lectura rápida clásica',
+  'One word at a time in the center (RSVP)': 'Unha palabra á vez no centro (RSVP)',
+  'Ticker line': 'Liña ticker',
+  'Text scrolls along a line at the same speed': 'O texto desprázase ao longo dunha liña á mesma velocidade',
   };

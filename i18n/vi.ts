@@ -253,4 +253,10 @@ export const viDict: Record<string, string> = {
   'With translation': 'Có bản dịch',
   'Original + translation under the line': 'Bản gốc + bản dịch bên dưới',
   'Fast word-by-word reading (RSVP)': 'Đọc nhanh từng từ (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Đọc nhanh cổ điển',
+  'One word at a time in the center (RSVP)': 'Một từ mỗi lần ở giữa (RSVP)',
+  'Ticker line': 'Dòng cuộn',
+  'Text scrolls along a line at the same speed': 'Văn bản cuộn dọc theo một dòng với cùng tốc độ',
   };

@@ -254,4 +254,10 @@ export const frDict: Record<string, string> = {
   'With translation': 'Avec traduction',
   'Original + translation under the line': 'Original + traduction en dessous',
   'Fast word-by-word reading (RSVP)': 'Lecture rapide mot à mot (RSVP)',
+  
+  // Speed Reading variants
+  'Classic speed reading': 'Lecture rapide classique',
+  'One word at a time in the center (RSVP)': 'Un mot à la fois au centre (RSVP)',
+  'Ticker line': 'Ligne défilante',
+  'Text scrolls along a line at the same speed': 'Le texte défile le long d\'une ligne à vitesse constante',
   };
