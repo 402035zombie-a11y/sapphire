@@ -82,7 +82,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
   const debounceRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const setReaderDebounced = React.useCallback((patch: any) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => setReader(patch), 200);
+    debounceRef.current = setTimeout(() => setReader(patch), 500);
   }, [setReader]);
   const appTheme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
@@ -104,7 +104,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
             showsVerticalScrollIndicator={true}
           >
 
-          <NumberStepper label={t("Font size")} value={reader.fontSize} min={12} max={32} step={1} suffix=" px" onChange={(v) => setReader({ fontSize: v })} st={styles} a={a} />
+          <NumberStepper label={t("Font size")} value={reader.fontSize} min={12} max={32} step={1} suffix=" px" onChange={(v) => setReaderDebounced({ fontSize: v })} st={styles} a={a} />
           <NumberStepper label={t("Line height")} value={reader.lineHeight} min={1} max={2.2} step={0.1} onChange={(v) => setReaderDebounced({ lineHeight: v })} st={styles} a={a} />
           <NumberStepper label={t("Text side margins")} value={reader.margin} min={-64} max={64} step={2} suffix=" px" onChange={(v) => setReaderDebounced({ margin: v })} st={styles} a={a} />
           <NumberStepper label={t("Letter spacing")} value={reader.letterSpacing} min={0} max={6} step={0.5} suffix=" px" onChange={(v) => setReaderDebounced({ letterSpacing: v })} st={styles} a={a} />
@@ -135,7 +135,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
           </View>
 
           {/* Font thickness — жирность */}
-          <NumberStepper label={t("Font weight")} value={reader.fontWeight} min={300} max={800} step={100} onChange={(v) => setReader({ fontWeight: v })} st={styles} a={a} />
+          <NumberStepper label={t("Font weight")} value={reader.fontWeight} min={300} max={800} step={100} onChange={(v) => setReaderDebounced({ fontWeight: v })} st={styles} a={a} />
 
           {/* Text align — выравнивание: в режиме перевода (dual) не нужно (лейаут диктует выравнивание) */}
           {mode !== 'dual' && (
