@@ -197,7 +197,7 @@ export const cyDict: Record<string, string> = {
   'Importing dictionary:': 'Importing dictionary:',
   'Is this the right translation?': 'Is this the right translation?',
   'Letter spacing': 'Letter spacing',
-  'Library is empty.': 'Mae'r llyfrgell yn wag.',
+  'Library is empty.': 'Mae’r llyfrgell yn wag.',
   'Paragraph side padding': 'Paragraph side padding',
   'Paragraph spacing': 'Paragraph spacing',
   'Queued…': 'Queued…',
