@@ -248,9 +248,9 @@ export const faDict: Record<string, string> = {
     "If the ad doesn't load, try again or use donate": 'اگر تبلیغ بارگیری نشد، دوباره تلاش کنید یا کمک مالی کنید',
 
   // OpenModeModal + Speed Reading labels
-  'Normal': 'Normal',
+  'Normal': 'عادی',
   'Original text only': 'Original text only',
-  'With translation': 'With translation',
+  'With translation': 'با ترجمه',
   'Original + translation under the line': 'Original + translation under the line',
   'Fast word-by-word reading (RSVP)': 'Fast word-by-word reading (RSVP)',
   };
