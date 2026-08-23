@@ -15,7 +15,7 @@ export const zhDict: Record<string, string> = {
   'Library is empty. Upload your first book.': '书库为空。上传您的第一本书。',
   'Search library': '搜索书库',
   'Recent': '最近',
-  'A–Z': 'A–Z',
+  'A–Z': '字母排序',
   'Reading file…': '正在读取文件…',
   'Empty': '空',
   'Could not extract text from this file.': '无法从此文件提取文本。',
