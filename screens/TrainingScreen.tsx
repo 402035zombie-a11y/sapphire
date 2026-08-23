@@ -144,8 +144,16 @@ export default function TrainingScreen() {
 
   const [started, setStarted] = useState(false);
   const [mode, setMode] = useState<'quiz' | 'type' | 'tf' | 'cloze'>('quiz');
-  // Напрямок тренування: forward = en→uk (звичайний), reverse = uk→en (зворотні картки)
-  const [reverse, setReverse] = useState(false);
+  // Напрямок тренування — ОКРЕМО для кожного режиму:
+  // forward = слово → переклад, reverse = переклад → слово
+  const [directions, setDirections] = useState<Record<string, boolean>>({
+    quiz: false,
+    type: false,
+    tf: false,
+    cloze: false,
+  });
+  // Активний напрямок для поточного режиму (до старту — для quiz)
+  const reverse = directions[mode];
   const DAILY_GOAL = 10; // відповідей на день (daily goal)
   const [index, setIndex] = useState(0); // индекс уникального слова в очереди
   const [stats, setStats] = useState({ correct: 0, wrong: 0 });
@@ -268,6 +276,8 @@ export default function TrainingScreen() {
   // Зміна цільової мови прямо в тренуванні (для 'all' джерела)
   const [trainTargetLang, setTrainTargetLang] = useState<string | null>(null);
   const [langPickerOpen, setLangPickerOpen] = useState(false);
+  // Яка кнопка режиму має розгорнуту панель напрямку
+  const [directionPanelMode, setDirectionPanelMode] = useState<string | null>(null);
   const effectiveToLang = trainTargetLang ?? toLang;
 
   const [opts, setOpts] = useState<string[]>([]);
@@ -467,6 +477,36 @@ export default function TrainingScreen() {
     }
   }, [index, mode]);
 
+  // Міні-панель напрямку для конкретного режиму
+  const renderDirectionChips = (m: string) => {
+    if (directionPanelMode !== m) return null;
+    const isRev = directions[m];
+    return (
+      <View style={{ flexDirection: 'row', gap: 6, marginTop: 6, width: '100%' }}>
+        <TouchableOpacity
+          style={[styles.sourceTab, { flex: 1 }, metal(theme, 'raised', { radius: 999 }),
+            !isRev && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success }]}
+          onPress={() => setDirections((d) => ({ ...d, [m]: false }))}
+        >
+          <Text style={[styles.sourceTabText, { color: !isRev ? theme.primaryText : theme.secondaryText }]}>
+            {t("word → translation")}
+          </Text>
+          {!isRev && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.sourceTab, { flex: 1 }, metal(theme, 'raised', { radius: 999 }),
+            isRev && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success }]}
+          onPress={() => setDirections((d) => ({ ...d, [m]: true }))}
+        >
+          <Text style={[styles.sourceTabText, { color: isRev ? theme.primaryText : theme.secondaryText }]}>
+            {t("translation → word")}
+          </Text>
+          {isRev && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   const start = (m: 'quiz' | 'type' | 'tf' | 'cloze') => {
     const q = buildQueue();
     if (q.length === 0) {
@@ -569,88 +609,36 @@ export default function TrainingScreen() {
           </View>
         </View>
 
-        {/* Напрямок тренування: forward (en→uk) / reverse (uk→en) — компактний */}
-        <View style={[styles.sourceCard, metal(theme, 'raised', { radius: a.radius + 4 })]}>
-          <Text style={[styles.sourceLabel, { color: theme.secondaryText }]}>{t("Direction")}</Text>
-          <View style={styles.sourceTabs}>
-            <TouchableOpacity
-              style={[
-                styles.sourceTab,
-                { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
-                metal(theme, 'raised', { radius: 999 }),
-                !reverse && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success },
-              ]}
-              onPress={() => setReverse(false)}
-            >
-              <Text style={[styles.sourceTabText, { color: !reverse ? theme.primaryText : theme.secondaryText }]}>
-                {sourceBook ? `${effectiveLang(sourceBook.language).toUpperCase()} → ${(sourceBook.targetLang || 'uk').toUpperCase()}` : t("word → translation")}
-              </Text>
-              {!reverse && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.sourceTab,
-                { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
-                metal(theme, 'raised', { radius: 999 }),
-                reverse && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success },
-              ]}
-              onPress={() => setReverse(true)}
-            >
-              <Text style={[styles.sourceTabText, { color: reverse ? theme.primaryText : theme.secondaryText }]}>
-                {sourceBook ? `${(sourceBook.targetLang || 'uk').toUpperCase()} → ${effectiveLang(sourceBook.language).toUpperCase()}` : t("translation → word")}
-              </Text>
-              {reverse && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
-            </TouchableOpacity>
-          </View>
-          {/* Цільова мова перекладу (для 'all' джерела) — модалка зі списком мов */}
-          {!sourceBook && (
-            <TouchableOpacity
-              style={[styles.sourceTab, { alignSelf: 'flex-start', marginTop: 8, borderWidth: 1, borderColor: theme.border }]}
-              onPress={() => setLangPickerOpen(true)}
-            >
-              <Text style={[styles.sourceTabText, { color: theme.primaryText }]}>
-                {t('Translate to')}: {effectiveToLang.toUpperCase()}
-              </Text>
-              <Icon name="chevron-down" size={12} color={theme.secondaryText} />
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* Действия прижаты к контенту, а не разбросаны по низу экрана */}
-        <View style={styles.actions}>
-          <TouchableOpacity style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 })]} onPress={() => start('quiz')}>
-            <Text style={[styles.btnText, { color: theme.secondaryText }]}>{finished ? t("Again: multiple choice") : t("Multiple choice")}</Text>
-            <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Find the translation among 4 cards")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 })]}
-            onPress={() => start('type')}
-          >
-            <Text style={[styles.btnText, { color: theme.secondaryText }]}>
-              {finished ? t("Again: typing") : t("Type the translation")}
-            </Text>
-            <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Type the translation manually")}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.actions}>
-          <TouchableOpacity
-            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 })]}
-            onPress={() => start('tf')}
-          >
-            <Text style={[styles.btnText, { color: theme.secondaryText }]}>
-              {finished ? t("Again: true or false") : t("True or false")}
-            </Text>
-            <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Is this the right translation?")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 })]}
-            onPress={() => start('cloze')}
-          >
-            <Text style={[styles.btnText, { color: theme.secondaryText }]}>
-              {finished ? t("Again: fill the blank") : t("Fill the blank")}
-            </Text>
-            <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{t("Pick translation from sentence context")}</Text>
-          </TouchableOpacity>
+        {/* Режими тренувань — кожен з власним напрямком (⇄ відкриває вибір) */}
+        <View style={{ gap: a.gap }}>
+          {([
+            { mode: 'quiz' as const, label: finished ? t("Again: multiple choice") : t("Multiple choice"),
+              sub: t("Find the translation among 4 cards") },
+            { mode: 'type' as const, label: finished ? t("Again: typing") : t("Type the translation"),
+              sub: t("Type the translation manually") },
+            { mode: 'tf' as const, label: finished ? t("Again: true or false") : t("True or false"),
+              sub: t("Is this the right translation?") },
+            { mode: 'cloze' as const, label: finished ? t("Again: fill the blank") : t("Fill the blank"),
+              sub: t("Pick translation from sentence context") },
+          ] as const).map(({ mode: m, label, sub }) => (
+            <View key={m}>
+              <TouchableOpacity
+                style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 }), { width: '100%' }]}
+                onPress={() => start(m)}
+              >
+                <Text style={[styles.btnText, { color: theme.secondaryText }]}>{label}</Text>
+                <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{sub}</Text>
+                <TouchableOpacity
+                  style={{ position: 'absolute', right: 14, top: 0, bottom: 0, justifyContent: 'center' }}
+                  onPress={() => setDirectionPanelMode(directionPanelMode === m ? null : m)}
+                  hitSlop={8}
+                >
+                  <Text style={{ color: directions[m] ? theme.primary : theme.secondaryText, fontSize: a.fs(16), fontFamily: 'bold' }}>⇄</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+              {renderDirectionChips(m)}
+            </View>
+          ))}
         </View>
 
         {!routeBookId && (
