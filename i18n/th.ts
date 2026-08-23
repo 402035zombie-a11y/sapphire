@@ -193,7 +193,7 @@ export const thDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'ทิศทาง',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -218,7 +218,7 @@ export const thDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'เรียงลำดับ',
-  'Sort by': 'Sort by',
+  'Sort by': 'เรียงตาม',
   'Hardest first': 'ยากที่สุดก่อน',
   'Due': 'ครบกำหนด',
   'Overdue': 'เกินกำหนด',
@@ -245,10 +245,10 @@ export const thDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'เติมช่องว่าง',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'ฉันรู้คำนี้',
     "If the ad doesn't load, try again or use donate": 'หากโฆษณาไม่โหลด ลองอีกครั้งหรือบริจาค',
 
   // OpenModeModal + Speed Reading labels

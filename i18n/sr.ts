@@ -189,7 +189,7 @@ export const srDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Смер',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const srDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Сортирај',
-  'Sort by': 'Sort by',
+  'Sort by': 'Сортирај по',
   'Hardest first': 'Најтеже прво',
   'Due': 'За понављање',
   'Overdue': 'Прострочене',
@@ -241,10 +241,10 @@ export const srDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Попуни празнину',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Знам је',
     "If the ad doesn't load, try again or use donate": 'Ако се оглас не учита, покушајте поново или донирајте',
 
   // OpenModeModal + Speed Reading labels

@@ -193,7 +193,7 @@ export const koDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': '방향',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -218,7 +218,7 @@ export const koDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': '정렬',
-  'Sort by': 'Sort by',
+  'Sort by': '정렬 기준',
   'Hardest first': '어려운 것 먼저',
   'Due': '복습',
   'Overdue': '지연됨',
@@ -245,10 +245,10 @@ export const koDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': '빈칸 채우기',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': '알아요',
     "If the ad doesn't load, try again or use donate": '광고가 로드되지 않으면 다시 시도하거나 기부해 주세요',
 
   // OpenModeModal + Speed Reading labels

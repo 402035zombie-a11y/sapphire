@@ -189,7 +189,7 @@ export const swDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Mwelekeo',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const swDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Panga',
-  'Sort by': 'Sort by',
+  'Sort by': 'Panga kwa',
   'Hardest first': 'Magumu kwanza',
   'Due': 'Inayopaswa',
   'Overdue': 'Zilizopita',
@@ -241,10 +241,10 @@ export const swDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Jaza pengo',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Naijua',
     "If the ad doesn't load, try again or use donate": 'Ikiwa tangazo halipaki, jaribu tena au changa',
 
   // OpenModeModal + Speed Reading labels

@@ -189,7 +189,7 @@ export const nlDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Richting',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const nlDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Sorteren',
-  'Sort by': 'Sort by',
+  'Sort by': 'Sorteren op',
   'Hardest first': 'Moeilijkste eerst',
   'Due': 'Vervallen',
   'Overdue': 'Achterstallig',
@@ -241,10 +241,10 @@ export const nlDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Vul de leegte',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Ik weet het',
     "If the ad doesn't load, try again or use donate": 'Als de advertentie niet laadt, probeer opnieuw of doneer',
 
   // OpenModeModal + Speed Reading labels

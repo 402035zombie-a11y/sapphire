@@ -189,7 +189,7 @@ export const plDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Kierunek',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',

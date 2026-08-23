@@ -189,7 +189,7 @@ export const cyDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Cyfeiriad',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const cyDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Trefnu',
-  'Sort by': 'Sort by',
+  'Sort by': 'Trefnu yn ôl',
   'Hardest first': 'Anoddaf gyntaf',
   'Due': 'Dyledus',
   'Overdue': 'HWYRAIG',
@@ -241,10 +241,10 @@ export const cyDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Llenwch y bwlch',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Rwyf yn gwybod',
     "If the ad doesn't load, try again or use donate": 'Os nad yw\'r hysbyseb yn llwytho, ceisiwch etchwaig neu roi rhodd',
 
   // OpenModeModal + Speed Reading labels

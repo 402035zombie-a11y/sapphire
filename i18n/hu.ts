@@ -189,7 +189,7 @@ export const huDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Irány',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const huDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Rendez',
-  'Sort by': 'Sort by',
+  'Sort by': 'Rendezés szempontja',
   'Hardest first': 'Legnehezebb először',
   'Due': 'Esetlejáró',
   'Overdue': 'Késedelmes',
@@ -241,10 +241,10 @@ export const huDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Töltsd ki a rést',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Tudom',
     "If the ad doesn't load, try again or use donate": 'Ha a hirdetés nem töltődik be, próbálja újra vagy adományozzon',
 
   // OpenModeModal + Speed Reading labels

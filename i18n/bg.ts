@@ -189,7 +189,7 @@ export const bgDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Посока',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const bgDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Сортирай',
-  'Sort by': 'Sort by',
+  'Sort by': 'Сортирай по',
   'Hardest first': 'Най-трудните първо',
   'Due': 'За повторение',
   'Overdue': 'Просрочени',
@@ -241,10 +241,10 @@ export const bgDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Попълни празното',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Знам я',
     "If the ad doesn't load, try again or use donate": 'Ако рекламата не се зареди, опитайте отново или дарете',
 
   // OpenModeModal + Speed Reading labels

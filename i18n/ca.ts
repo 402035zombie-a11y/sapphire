@@ -189,7 +189,7 @@ export const caDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Direcció',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const caDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Ordena',
-  'Sort by': 'Sort by',
+  'Sort by': 'Ordena per',
   'Hardest first': 'Els més difícils primer',
   'Due': 'Pendent',
   'Overdue': 'Endarrerides',
@@ -241,10 +241,10 @@ export const caDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Emplena el buit',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'La sé',
     "If the ad doesn't load, try again or use donate": 'Si l\'anunci no carrega, torneu-ho a provar o feu una donació',
 
   // OpenModeModal + Speed Reading labels

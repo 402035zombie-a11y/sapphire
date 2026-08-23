@@ -189,7 +189,7 @@ export const roDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Direcție',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const roDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Sortează',
-  'Sort by': 'Sort by',
+  'Sort by': 'Sortează după',
   'Hardest first': 'Cele mai grele primele',
   'Due': 'Scadente',
   'Overdue': 'Întârziate',
@@ -241,10 +241,10 @@ export const roDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Completează spațiul',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'O știu',
     "If the ad doesn't load, try again or use donate": 'Dacă reclama nu se încarcă, încercați din nou sau donați',
 
   // OpenModeModal + Speed Reading labels

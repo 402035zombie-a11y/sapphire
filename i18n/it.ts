@@ -189,7 +189,7 @@ export const itDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Direzione',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const itDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Ordina',
-  'Sort by': 'Sort by',
+  'Sort by': 'Ordina per',
   'Hardest first': 'I più difficili prima',
   'Due': 'In scadenza',
   'Overdue': 'In ritardo',
@@ -241,10 +241,10 @@ export const itDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Compila lo spazio',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'La so',
     "If the ad doesn't load, try again or use donate": 'Se l\'annuncio non si carica, riprova o dona',
 
   // OpenModeModal + Speed Reading labels

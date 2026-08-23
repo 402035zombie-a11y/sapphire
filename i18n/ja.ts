@@ -193,7 +193,7 @@ export const jaDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': '方向',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -218,7 +218,7 @@ export const jaDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': '並べ替え',
-  'Sort by': 'Sort by',
+  'Sort by': '並べ替え基準',
   'Hardest first': '難しい順',
   'Due': '復習',
   'Overdue': '期限切れ',
@@ -245,10 +245,10 @@ export const jaDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': '空欄を埋める',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': '知ってる',
     "If the ad doesn't load, try again or use donate": '広告が読み込まれない場合は、再試行するか寄付してください',
 
   // OpenModeModal + Speed Reading labels

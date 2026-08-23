@@ -189,7 +189,7 @@ export const lvDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Virziens',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const lvDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Kārtot',
-  'Sort by': 'Sort by',
+  'Sort by': 'Kārtot pēc',
   'Hardest first': 'Grūtākie vispirms',
   'Due': 'Termiņš',
   'Overdue': 'Nokavētie',
@@ -241,10 +241,10 @@ export const lvDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Aizpildi atstarpi',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Es zinu',
     "If the ad doesn't load, try again or use donate": 'Ja reklāma netiek ielādēta, mēģiniet vēlreiz vai ziedojet',
 
   // OpenModeModal + Speed Reading labels

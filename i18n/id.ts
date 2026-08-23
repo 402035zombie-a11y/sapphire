@@ -189,7 +189,7 @@ export const idDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Arah',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const idDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Urutkan',
-  'Sort by': 'Sort by',
+  'Sort by': 'Urutkan berdasarkan',
   'Hardest first': 'Tersulit duluan',
   'Due': 'Jatuh tempo',
   'Overdue': 'Terlambat',
@@ -241,10 +241,10 @@ export const idDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Isi bagian kosong',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Saya tahu',
     "If the ad doesn't load, try again or use donate": 'Jika iklan tidak dimuat, coba lagi atau berdonasi',
 
   // OpenModeModal + Speed Reading labels

@@ -189,7 +189,7 @@ export const csDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Směr',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const csDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Řadit',
-  'Sort by': 'Sort by',
+  'Sort by': 'Řadit podle',
   'Hardest first': 'Nejtěžší první',
   'Due': 'K opakování',
   'Overdue': 'Zpožděné',
@@ -241,10 +241,10 @@ export const csDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Vyplň mezeru',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Znám to',
     "If the ad doesn't load, try again or use donate": 'Pokud se reklama nenačte, zkuste to znovu nebo přispějte',
 
   // OpenModeModal + Speed Reading labels

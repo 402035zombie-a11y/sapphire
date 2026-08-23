@@ -189,7 +189,7 @@ export const hrDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'Smjer',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const hrDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Sortiraj',
-  'Sort by': 'Sort by',
+  'Sort by': 'Sortiraj po',
   'Hardest first': 'Najteže prvo',
   'Due': 'Za ponavljanje',
   'Overdue': 'Zakašnjele',
@@ -241,10 +241,10 @@ export const hrDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'Ispuni prazan',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'Znam je',
     "If the ad doesn't load, try again or use donate": 'Ako se oglas ne učita, pokušajte ponovno ili donirajte',
 
   // OpenModeModal + Speed Reading labels

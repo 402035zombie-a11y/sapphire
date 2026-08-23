@@ -189,7 +189,7 @@ export const heDict: Record<string, string> = {
   'Add word': 'Add word',
   'Again: true or false': 'Again: true or false',
   'Book queued for processing…': 'Book queued for processing…',
-  'Direction': 'Direction',
+  'Direction': 'כיוון',
   'Export dictionary': 'Export dictionary',
   'Export error': 'Export error',
   'False': 'False',
@@ -214,7 +214,7 @@ export const heDict: Record<string, string> = {
   
   // FSRS + Anki + Direction + Cloze
   'Sort': 'מיין',
-  'Sort by': 'Sort by',
+  'Sort by': 'מיין לפי',
   'Hardest first': 'הקשים ביותר קודם',
   'Due': 'לחזרה',
   'Overdue': 'באיחור',
@@ -241,10 +241,10 @@ export const heDict: Record<string, string> = {
   'Search words': 'Search words',
   'Export dictionary (JSON)': 'Export dictionary (JSON)',
   'Delete all words': 'Delete all words',
-  'Fill the blank': 'Fill the blank',
+  'Fill the blank': 'מלא את הרווח',
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
-  'I know it': 'I know it',
+  'I know it': 'אני יודע את זה',
     "If the ad doesn't load, try again or use donate": 'אם המודעה לא נטענת, נסו שוב או תרמו',
 
   // OpenModeModal + Speed Reading labels
