@@ -277,7 +277,6 @@ export default function TrainingScreen() {
   const [trainTargetLang, setTrainTargetLang] = useState<string | null>(null);
   const [langPickerOpen, setLangPickerOpen] = useState(false);
   // Яка кнопка режиму має розгорнуту панель напрямку
-  const [directionPanelMode, setDirectionPanelMode] = useState<string | null>(null);
   const effectiveToLang = trainTargetLang ?? toLang;
 
   const [opts, setOpts] = useState<string[]>([]);
@@ -477,35 +476,7 @@ export default function TrainingScreen() {
     }
   }, [index, mode]);
 
-  // Міні-панель напрямку для конкретного режиму
-  const renderDirectionChips = (m: string) => {
-    if (directionPanelMode !== m) return null;
-    const isRev = directions[m];
-    return (
-      <View style={{ flexDirection: 'row', gap: 6, marginTop: 6, width: '100%' }}>
-        <TouchableOpacity
-          style={[styles.sourceTab, { flex: 1 }, metal(theme, 'raised', { radius: 999 }),
-            !isRev && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success }]}
-          onPress={() => setDirections((d) => ({ ...d, [m]: false }))}
-        >
-          <Text style={[styles.sourceTabText, { color: !isRev ? theme.primaryText : theme.secondaryText }]}>
-            {t("word → translation")}
-          </Text>
-          {!isRev && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.sourceTab, { flex: 1 }, metal(theme, 'raised', { radius: 999 }),
-            isRev && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success }]}
-          onPress={() => setDirections((d) => ({ ...d, [m]: true }))}
-        >
-          <Text style={[styles.sourceTabText, { color: isRev ? theme.primaryText : theme.secondaryText }]}>
-            {t("translation → word")}
-          </Text>
-          {isRev && <Text style={{ color: theme.success, fontFamily: 'bold' }}>✓</Text>}
-        </TouchableOpacity>
-      </View>
-    );
-  };
+
 
   const start = (m: 'quiz' | 'type' | 'tf' | 'cloze') => {
     const q = buildQueue();
@@ -609,7 +580,7 @@ export default function TrainingScreen() {
           </View>
         </View>
 
-        {/* Режими тренувань — кожен з власним напрямком (⇄ відкриває вибір) */}
+        {/* Режими тренувань */}
         <View style={{ gap: a.gap }}>
           {([
             { mode: 'quiz' as const, label: finished ? t("Again: multiple choice") : t("Multiple choice"),
@@ -621,23 +592,14 @@ export default function TrainingScreen() {
             { mode: 'cloze' as const, label: finished ? t("Again: fill the blank") : t("Fill the blank"),
               sub: t("Pick translation from sentence context") },
           ] as const).map(({ mode: m, label, sub }) => (
-            <View key={m}>
-              <TouchableOpacity
-                style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 }), { width: '100%' }]}
-                onPress={() => start(m)}
-              >
-                <Text style={[styles.btnText, { color: theme.secondaryText }]}>{label}</Text>
-                <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{sub}</Text>
-                <TouchableOpacity
-                  style={{ position: 'absolute', right: 14, top: 0, bottom: 0, justifyContent: 'center' }}
-                  onPress={() => setDirectionPanelMode(directionPanelMode === m ? null : m)}
-                  hitSlop={8}
-                >
-                  <Text style={{ color: directions[m] ? theme.primary : theme.secondaryText, fontSize: a.fs(16), fontFamily: 'bold' }}>⇄</Text>
-                </TouchableOpacity>
-              </TouchableOpacity>
-              {renderDirectionChips(m)}
-            </View>
+            <TouchableOpacity
+              key={m}
+              style={[styles.btn, metal(theme, 'inset', { radius: a.radius + 2 }), { width: '100%' }]}
+              onPress={() => start(m)}
+            >
+              <Text style={[styles.btnText, { color: theme.secondaryText }]}>{label}</Text>
+              <Text style={[styles.btnSub, { color: theme.secondaryText }]}>{sub}</Text>
+            </TouchableOpacity>
           ))}
         </View>
 
@@ -736,7 +698,18 @@ export default function TrainingScreen() {
       <View style={styles.streakRow}>
         <Text style={[styles.streakLabel, { color: theme.secondaryText }]}>{t("Progress of word")}</Text>
         <View style={styles.dots}>{dots}</View>
-        <Text style={[styles.streakNum, { color: theme.primary }]}>{wordStreak}/{TARGET_STREAK}</Text>
+        {/* Напрямок: слово→переклад / переклад→слово — тап перемикає */}
+        <TouchableOpacity
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4,
+                   borderRadius: 999, borderWidth: 1, borderColor: theme.border }}
+          onPress={() => setDirections((d) => ({ ...d, [mode]: !d[mode] }))}
+          hitSlop={6}
+        >
+          <Text style={{ color: theme.primary, fontSize: a.fs(13), fontFamily: 'bold' }}>⇄</Text>
+          <Text style={{ color: theme.secondaryText, fontSize: a.fs(11) }}>
+            {directions[mode] ? t("translation → word") : t("word → translation")}
+          </Text>
+        </TouchableOpacity>
       </View>
       <Text style={[styles.counter, { color: theme.secondaryText, marginTop: 6 }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>
 
