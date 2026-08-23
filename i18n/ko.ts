@@ -187,6 +187,35 @@ export const koDict: Record<string, string> = {
   'OPF path not found in container.xml': 'container.xml에서 OPF 경로를 찾을 수 없음',
   'OPF not found in archive: {path}': '아카이브에서 OPF를 찾을 수 없음: {path}',
 
+
+  // FSRS + Anki + Direction + Cloze + Filters
+  'Add': 'Add',
+  'Add word': 'Add word',
+  'Again: true or false': 'Again: true or false',
+  'Book queued for processing…': 'Book queued for processing…',
+  'Direction': 'Direction',
+  'Export dictionary': 'Export dictionary',
+  'Export error': 'Export error',
+  'False': 'False',
+  'Frequency': 'Frequency',
+  'Importing dictionary:': 'Importing dictionary:',
+  'Is this the right translation?': 'Is this the right translation?',
+  'Letter spacing': 'Letter spacing',
+  'Library is empty.': 'Library is empty.',
+  'Paragraph side padding': 'Paragraph side padding',
+  'Paragraph spacing': 'Paragraph spacing',
+  'Queued…': 'Queued…',
+  'Sharing not available on this device.': 'Sharing not available on this device.',
+  'Text side margins': 'Text side margins',
+  'Translation': 'Translation',
+  'True': 'True',
+  'True or false': 'True or false',
+  'Type': 'Type',
+  'Word': 'Word',
+  'Word type': 'Word type',
+  'Word:': 'Word:',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
+  
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Sort',
   'Sort by': 'Sort by',
@@ -221,4 +250,5 @@ export const koDict: Record<string, string> = {
   'Again: fill the blank': 'Again: fill the blank',
   'Pick translation from sentence context': 'Pick translation from sentence context',
   'I know it': 'I know it',
-  };
+    "If the ad doesn't load, try again or use donate": '광고가 로드되지 않으면 다시 시도하거나 기부해 주세요',
+};

@@ -184,6 +184,34 @@ export const esDict: Record<string, string> = {
   'OPF path not found in container.xml': 'Ruta OPF no encontrada en container.xml',
   'OPF not found in archive: {path}': 'OPF no encontrado en el archivo: {path}',
 
+
+  // FSRS + Anki + Direction + Cloze + Filters
+  'Add': 'Añadir',
+  'Add word': 'Añadir palabra',
+  'Again: true or false': 'Otra vez: verdadero o falso',
+  'Book queued for processing…': 'Libro en cola para procesar…',
+  'Direction': 'Dirección',
+  'Export dictionary': 'Exportar diccionario',
+  'Export error': 'Error de exportación',
+  'False': 'Falso',
+  'Frequency': 'Frecuencia',
+  'Importing dictionary:': 'Importando diccionario:',
+  'Is this the right translation?': '¿Es la traducción correcta?',
+  'Letter spacing': 'Espaciado de letras',
+  'Library is empty.': 'La biblioteca está vacía.',
+  'Paragraph side padding': 'Margen lateral del párrafo',
+  'Paragraph spacing': 'Espaciado entre párrafos',
+  'Queued…': 'En cola…',
+  'Sharing not available on this device.': 'Compartir no disponible en este dispositivo.',
+  'Text side margins': 'Márgenes laterales del texto',
+  'Translation': 'Traducción',
+  'True': 'Verdadero',
+  'True or false': 'Verdadero o falso',
+  'Type': 'Tipo',
+  'Word': 'Palabra',
+  'Word type': 'Tipo de palabra',
+  'Word:': 'Palabra:',
+  
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Ordenar',
   'Sort by': 'Ordenar por',
@@ -218,4 +246,5 @@ export const esDict: Record<string, string> = {
   'Again: fill the blank': 'Otra vez: completar',
   'Pick translation from sentence context': 'Elige la traducción del contexto',
   'I know it': 'Ya lo sé',
-  };
+    "If the ad doesn't load, try again or use donate": 'Si el anuncio no carga, inténtalo de nuevo o dona',
+};

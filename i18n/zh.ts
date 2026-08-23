@@ -187,6 +187,35 @@ export const zhDict: Record<string, string> = {
   'OPF path not found in container.xml': '在 container.xml 中未找到 OPF 路径',
   'OPF not found in archive: {path}': '在压缩包中未找到 OPF：{path}',
 
+
+  // FSRS + Anki + Direction + Cloze + Filters
+  'Add': '添加',
+  'Add word': '添加单词',
+  'Again: true or false': '再来：真或假',
+  'Book queued for processing…': '书籍已加入处理队列…',
+  'Direction': '方向',
+  'Export dictionary': '导出词典',
+  'Export error': '导出错误',
+  'False': '错',
+  'Frequency': '频率',
+  'Importing dictionary:': '正在导入词典：',
+  'Is this the right translation?': '这是正确的翻译吗？',
+  'Letter spacing': '字间距',
+  'Library is empty.': '书库为空。',
+  'Paragraph side padding': '段落侧边距',
+  'Paragraph spacing': '段落间距',
+  'Queued…': '排队中…',
+  'Sharing not available on this device.': '此设备不支持分享。',
+  'Text side margins': '文本边距',
+  'Translation': '翻译',
+  'True': '对',
+  'True or false': '真或假',
+  'Type': '类型',
+  'Word': '单词',
+  'Word type': '词性',
+  'Word:': '单词：',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': '阅读永远免费——请支持我们。每一份贡献都很重要。',
+  
   // FSRS + Anki + Direction + Cloze
   'Sort': '排序',
   'Sort by': '排序方式',
@@ -221,4 +250,5 @@ export const zhDict: Record<string, string> = {
   'Again: fill the blank': '再来：填空',
   'Pick translation from sentence context': '从句子语境中选择翻译',
   'I know it': '我知道了',
-  };
+    "If the ad doesn't load, try again or use donate": '如果广告无法加载，请重试或使用捐赠',
+};

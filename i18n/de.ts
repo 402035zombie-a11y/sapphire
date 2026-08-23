@@ -194,6 +194,34 @@ export const deDict: Record<string, string> = {
   'OPF path not found in container.xml': 'OPF-Pfad in container.xml nicht gefunden',
   'OPF not found in archive: {path}': 'OPF im Archiv nicht gefunden: {path}',
 
+
+  // FSRS + Anki + Direction + Cloze + Filters
+  'Add': 'Hinzufügen',
+  'Add word': 'Wort hinzufügen',
+  'Again: true or false': 'Nochmal: Wahr oder falsch',
+  'Book queued for processing…': 'Buch zur Verarbeitung eingereiht…',
+  'Direction': 'Richtung',
+  'Export dictionary': 'Wörterbuch exportieren',
+  'Export error': 'Exportfehler',
+  'False': 'Falsch',
+  'Frequency': 'Häufigkeit',
+  'Importing dictionary:': 'Wörterbuch wird importiert:',
+  'Is this the right translation?': 'Ist das die richtige Übersetzung?',
+  'Letter spacing': 'Buchstabenabstand',
+  'Library is empty.': 'Bibliothek ist leer.',
+  'Paragraph side padding': 'Absatz-Seitenabstand',
+  'Paragraph spacing': 'Absatzabstand',
+  'Queued…': 'In der Warteschlange…',
+  'Sharing not available on this device.': 'Teilen auf diesem Gerät nicht verfügbar.',
+  'Text side margins': 'Text-Ränder',
+  'Translation': 'Übersetzung',
+  'True': 'Wahr',
+  'True or false': 'Wahr oder falsch',
+  'Type': 'Typ',
+  'Word': 'Wort',
+  'Word type': 'Worttyp',
+  'Word:': 'Wort:',
+  
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Sortieren',
   'Sort by': 'Sortieren nach',
@@ -228,4 +256,5 @@ export const deDict: Record<string, string> = {
   'Again: fill the blank': 'Nochmal: Lücke füllen',
   'Pick translation from sentence context': 'Übersetzung aus dem Satzkontext wählen',
   'I know it': 'Ich weiß es',
-  };
+    "If the ad doesn't load, try again or use donate": 'Wenn die Werbung nicht lädt, versuche es erneut oder spende',
+};

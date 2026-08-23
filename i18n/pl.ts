@@ -183,6 +183,35 @@ export const plDict: Record<string, string> = {
   'OPF path not found in container.xml': 'Ścieżka OPF nie znaleziona w container.xml',
   'OPF not found in archive: {path}': 'OPF nie znaleziono w archiwum: {path}',
 
+
+  // FSRS + Anki + Direction + Cloze + Filters
+  'Add': 'Add',
+  'Add word': 'Add word',
+  'Again: true or false': 'Again: true or false',
+  'Book queued for processing…': 'Book queued for processing…',
+  'Direction': 'Direction',
+  'Export dictionary': 'Export dictionary',
+  'Export error': 'Export error',
+  'False': 'False',
+  'Frequency': 'Frequency',
+  'Importing dictionary:': 'Importing dictionary:',
+  'Is this the right translation?': 'Is this the right translation?',
+  'Letter spacing': 'Letter spacing',
+  'Library is empty.': 'Library is empty.',
+  'Paragraph side padding': 'Paragraph side padding',
+  'Paragraph spacing': 'Paragraph spacing',
+  'Queued…': 'Queued…',
+  'Sharing not available on this device.': 'Sharing not available on this device.',
+  'Text side margins': 'Text side margins',
+  'Translation': 'Translation',
+  'True': 'True',
+  'True or false': 'True or false',
+  'Type': 'Type',
+  'Word': 'Word',
+  'Word type': 'Word type',
+  'Word:': 'Word:',
+  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.',
+  
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Sortuj',
   'Sort by': 'Sortuj według',
@@ -217,4 +246,5 @@ export const plDict: Record<string, string> = {
   'Again: fill the blank': 'Znowu: wypełnij lukę',
   'Pick translation from sentence context': 'Wybierz tłumaczenie z kontekstu zdania',
   'I know it': 'Wiem to',
-  };
+    "If the ad doesn't load, try again or use donate": 'Jeśli reklama się nie załaduje, spróbuj ponownie lub przekaż darowiznę',
+};

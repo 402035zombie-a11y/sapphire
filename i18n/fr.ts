@@ -185,6 +185,34 @@ export const frDict: Record<string, string> = {
   'OPF path not found in container.xml': 'Chemin OPF introuvable dans container.xml',
   'OPF not found in archive: {path}': 'OPF introuvable dans l\'archive : {path}',
 
+
+  // FSRS + Anki + Direction + Cloze + Filters
+  'Add': 'Ajouter',
+  'Add word': 'Ajouter un mot',
+  'Again: true or false': 'Encore : vrai ou faux',
+  'Book queued for processing…': 'Livre en file d\'attente…',
+  'Direction': 'Sens',
+  'Export dictionary': 'Exporter le dictionnaire',
+  'Export error': 'Erreur d\'exportation',
+  'False': 'Faux',
+  'Frequency': 'Fréquence',
+  'Importing dictionary:': 'Importation du dictionnaire :',
+  'Is this the right translation?': 'Est-ce la bonne traduction ?',
+  'Letter spacing': 'Espacement des lettres',
+  'Library is empty.': 'La bibliothèque est vide.',
+  'Paragraph side padding': 'Marge latérale des paragraphes',
+  'Paragraph spacing': 'Espacement des paragraphes',
+  'Queued…': 'En attente…',
+  'Sharing not available on this device.': 'Partage non disponible sur cet appareil.',
+  'Text side margins': 'Marges du texte',
+  'Translation': 'Traduction',
+  'True': 'Vrai',
+  'True or false': 'Vrai ou faux',
+  'Type': 'Type',
+  'Word': 'Mot',
+  'Word type': 'Type de mot',
+  'Word:': 'Mot :',
+  
   // FSRS + Anki + Direction + Cloze
   'Sort': 'Trier',
   'Sort by': 'Trier par',
@@ -219,4 +247,5 @@ export const frDict: Record<string, string> = {
   'Again: fill the blank': 'Encore : compléter',
   'Pick translation from sentence context': 'Choisissez la traduction dans le contexte',
   'I know it': 'Je le sais',
-  };
+    "If the ad doesn't load, try again or use donate": 'Si la pub ne se charge pas, réessayez ou faites un don',
+};
