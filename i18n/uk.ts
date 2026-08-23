@@ -218,7 +218,6 @@ export const ukDict: Record<string, string> = {
   // Open mode modal
   'How do you want to open the book?': 'Як відкрити книгу?',
   // Support
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': 'Читання безкоштовне і завжди буде таким — це плата за безкоштовний застосунок. Підтримайте проєкт будь-яким зручним способом.',
   'Watch an ad (30s)': 'Переглянути рекламу (30с)',
   'Buy a subscription / Donate': 'Купити підписку / Задонатити',
   'Thanks, not now': 'Дякую, не зараз',

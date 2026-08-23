@@ -146,7 +146,6 @@ export const zhDict: Record<string, string> = {
   'end . ! ?': '结束 . ! ?',
   'Start over?': '重新开始？',
   'How do you want to open the book?': '您想如何打开这本书？',
-  'Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.': '阅读免费且永远免费 — 这是免费应用的价格。请以任何您喜欢的方式支持本项目。',
   'Watch an ad (30s)': '观看广告 (30秒)',
   'Buy a subscription / Donate': '购买订阅 / 捐赠',
   'Thanks, not now': '谢谢，现在不用',
