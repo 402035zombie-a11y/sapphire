@@ -7,7 +7,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from './Icon';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal, neuPrimary, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import { FONTS } from '../theme/constants';
 
 type RouteName = 'Library' | 'Dictionary' | 'Training';
@@ -53,15 +53,9 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
           paddingVertical: a.tiny ? 6 : 8,
           paddingHorizontal: a.tiny ? 6 : 10,
           borderRadius: Math.round(a.radius * 1.6),
-          ...metal(theme, 'raised', { radius: Math.round(a.radius * 1.6) }),
-          // Таб-бар = найбільший контейнер: компенсуємо нелінійну шкалу (size^0.75)
-          // сильнішим власним світінням, щоб док зберіг об'єм (юзер: "хай залишається випуклим")
-          ...(theme.flat
-            ? {}
-            : {
-                boxShadow: `8px -8px 24px rgba(0,0,0,0.45), -4px 4px 14px ${(theme.neu.soft || 'rgba(0,0,0,0.2)')}`,
-                elevation: 8,
-              }),
+          // N1 ревізія: док = контейнер сцени → СЛАБКИЙ raised (depth 0.55).
+          // Елементи всередині завжди глибші за контейнер, інакше об'єм не читається.
+          ...metal(theme, 'raised', { radius: Math.round(a.radius * 1.6), strength: 0.55 }),
         }}
       >
       {state.routes.map((route: any, index: number) => {
@@ -86,15 +80,11 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
               paddingVertical: a.tiny ? 6 : 9,
               paddingHorizontal: showLabel ? (a.tiny ? 10 : 14) : a.tiny ? 8 : 11,
               borderRadius: a.radius,
+              // N1 ревізія: активний = INSET+ штамп (вдавлена лунка + внутрішній купол),
+              // неактивний = INSET− легка лунка. Рівень глибини елемента > контейнера.
               ...(focused
-                ? neuPrimary(theme, a.radius)
-                : metal(theme, 'inset', { radius: a.radius })),
-              // Neo: легка зовнішня неоморфічна тінь 3px; FLAT — без тіней
-              ...(theme.flat ? {} : {
-                boxShadow: focused
-                  ? '2px 3px 6px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.25)'
-                  : '2px 3px 6px rgba(0,0,0,0.28), inset 0 1px 1px rgba(255,255,255,0.18)',
-              }),
+                ? metal(theme, 'tabStampActive', { radius: a.radius })
+                : metal(theme, 'tabStamp', { radius: a.radius })),
             }}
           >
             <Icon

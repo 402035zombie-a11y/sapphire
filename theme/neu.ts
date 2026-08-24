@@ -413,6 +413,8 @@ interface MetalOpts {
   active?: boolean;
   pressed?: boolean;
   textColor?: string;
+  /** Рівень глибини (ієрархія сцени): контейнер < елемент. 0.5 = м'який контейнер, 1 = звичайний, >1 = акцент. */
+  strength?: number;
 }
 export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): any {
   const radius = opts.radius ?? 14;
@@ -477,9 +479,9 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
       if (opts.size == null) return neuPrimary(t, radius);
       return neuMetalCircle(t, opts.size, true);
     case 'raised':
-      return neuMetalRaised(t, radius);
+      return neuMetalRaised(t, radius, opts.strength ?? 1);
     case 'inset':
-      return neuMetalInset(t, radius);
+      return neuMetalInset(t, radius, opts.strength ?? 1);
     case 'tab':
       return metalTab(t, radius, false);
     case 'tabActive':
