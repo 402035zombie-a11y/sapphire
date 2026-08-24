@@ -82,7 +82,9 @@ export default function ModalSheet({
             maxHeight: mh,
             padding: a.pad,
             backgroundColor: theme.surface ?? theme.neu.base,
-            overflow: allowNested ? 'visible' : 'hidden',
+            // Юзер (24.08): overflow:hidden обрізав зовнішні тіні кнопок всередині
+            // модалки. 'visible' скрізь — тіні живуть; контент тримається layout'ом.
+            overflow: 'visible',
             display: 'flex',
             flexDirection: 'column',
             alignSelf: isSheet ? (a.landscape ? 'flex-end' : 'center') : 'center',
