@@ -390,6 +390,7 @@ export function neuMetalCircleInset(t: ThemePalette, size: number): any {
     boxShadow: [
       // Юзер (24.08): зовнішні тіні X-кнопок слабо виражені → повний ox + elevation 3
       `${Math.max(2, Math.round(ox))}px ${Math.max(2, Math.round(ox))}px ${Math.round(ox * 2)}px ${specDark(t)}`,
+      `${-Math.max(2, Math.round(ox * 0.7))}px ${-Math.max(2, Math.round(ox * 0.7))}px ${Math.round(ox * 1.5)}px ${spec(t)}`,
       `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
       `inset 0 1px 0 0 ${rim(t)}`,

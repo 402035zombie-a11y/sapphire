@@ -627,7 +627,7 @@ export default function TrainingScreen() {
               <TouchableOpacity
                 style={[
                   styles.sourceTab,
-                  metal(theme, source === 'all' ? 'primary' : 'raised', { radius: 999, strength: source === 'all' ? 1.15 : 0.45 }),
+                  metal(theme, source === 'all' ? 'primary' : 'inset', { radius: 999, strength: source === 'all' ? 1.15 : 1 }),
                 ]}
                 onPress={() => setSource('all')}
               >
@@ -640,7 +640,7 @@ export default function TrainingScreen() {
                   key={b.id}
                   style={[
                     styles.sourceTab,
-                    metal(theme, source === b.id ? 'primary' : 'raised', { radius: 999, strength: source === b.id ? 1.15 : 0.45 }),
+                    metal(theme, source === b.id ? 'primary' : 'inset', { radius: 999, strength: source === b.id ? 1.15 : 1 }),
                   ]}
                   onPress={() => setSource(b.id)}
                 >

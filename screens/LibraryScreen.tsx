@@ -415,8 +415,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
             style={[
               styles.importBtn,
               metal(theme, 'inset', { radius: a.radius }),
-              { borderWidth: 1 },
-              importing && { backgroundColor: theme.success, borderColor: theme.success, opacity: 0.9 },
+              importing && { backgroundColor: theme.success, opacity: 0.9 },
             ]}
             onPress={importBookDict}
             disabled={importing}
