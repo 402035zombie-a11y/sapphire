@@ -22,6 +22,7 @@ import { useDictionaryStore } from '../store/dictionaryStore';
 import { DictionaryEntry } from '../store/dictionaryStore';
 import { useTrainingStore } from '../store/trainingStore';
 import { useLibraryStore } from '../store/libraryStore';
+import * as dictDb from '../services/dictDb';
 import QuizCard, { QuizItem } from '../components/QuizCard';
 import { splitTranslations, matchAnyTranslation } from '../utils/translations';
 import Icon from '../components/Icon';
@@ -302,35 +303,28 @@ export default function TrainingScreen() {
     const correctVal = reverse ? (current.surfaceForm || current.word) : current.translation;
     const currentTransVariants = new Set(splitTranslations(current.translation).map((s) => s.toLowerCase()));
 
-    // Беремо всіх можливих кандидатів (виключаючи поточне слово та його переклади)
-    const validPool = (entries.length >= 4 ? entries : pool).filter((e: DictionaryEntry) => {
-      if (`${e.word}|${e.lang}` === `${current.word}|${current.lang}`) return false;
-      if (reverse) {
-        const v = (e.surfaceForm || e.word);
-        return v && v.trim() && v.toLowerCase() !== correctVal.toLowerCase();
-      }
-      const otherVariants = splitTranslations(e.translation);
-      return otherVariants.some((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase()));
-    });
+    // Запитуємо випадкові дистрактори безпосередньо з SQLite БД (ORDER BY RANDOM())
+    const dbDistractors = reverse
+      ? dictDb.getRandomWords(current.word, current.lang, 30)
+      : dictDb.getRandomTranslations(current.word, current.lang, 30);
 
-    // Збираємо унікальні значення дистракторів (множину, щоб не дублювалися)
     const distractorCandidatesSet = new Set<string>();
-    for (const e of shuffle(validPool)) {
+    for (const d of dbDistractors) {
       if (reverse) {
-        const val = (e.surfaceForm || e.word).trim();
+        const val = d.trim();
         if (val && val.toLowerCase() !== correctVal.toLowerCase()) {
           distractorCandidatesSet.add(val);
         }
       } else {
-        const otherVariants = splitTranslations(e.translation);
+        const otherVariants = splitTranslations(d);
         for (const ov of otherVariants) {
           const val = ov.trim();
-          if (val && !currentTransVariants.has(val.toLowerCase())) {
+          if (val && !currentTransVariants.has(val.toLowerCase()) && val.toLowerCase() !== correctVal.toLowerCase()) {
             distractorCandidatesSet.add(val);
           }
         }
       }
-      if (distractorCandidatesSet.size >= 15) break;
+      if (distractorCandidatesSet.size >= 10) break;
     }
 
     const distractors = shuffle(Array.from(distractorCandidatesSet)).slice(0, 3);
@@ -352,7 +346,7 @@ export default function TrainingScreen() {
       fromLang: sourceBook ? fromLang : current.lang,
       toLang: effectiveToLang,
     };
-  }, [current, reverse, index, entries, pool, sourceBook, fromLang, toLang, effectiveToLang]);
+  }, [current, reverse, index, sourceBook, fromLang, toLang, effectiveToLang]);
 
   const onAnswer = useCallback(
     (correct: boolean, opts?: { grade?: 2 | 3 | 4 }) => {

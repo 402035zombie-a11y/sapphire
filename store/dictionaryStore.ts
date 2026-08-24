@@ -72,19 +72,19 @@ export const useDictionaryStore = persist<DictionaryState>(
           id: String(res.id),
           createdAt: Date.now(),
         };
-        // підгружаємо переклад, якщо пустий (fire-and-forget) — щоб тренування бачило слово
-        if (!newEntry.translation || !newEntry.translation.trim()) {
-          const from = newEntry.lang || 'en';
-          const to = targetLang || 'uk';
-          translateCached(newEntry.word, from, to)
-            .then((r) => {
-              if (r?.text) {
-                dictDb.updateTranslation(res.id, { translation: r.text });
-                get().reload();
-              }
-            })
-            .catch(() => {});
-        }
+      // підгружаємо переклад, якщо пустий (fire-and-forget) — щоб тренування бачило слово
+      if (!newEntry.translation || !newEntry.translation.trim()) {
+        const from = newEntry.lang || 'en';
+        const to = targetLang || 'uk';
+        translateCached(newEntry.word, from, to)
+          .then((r) => {
+            if (r?.text && r.text.trim().toLowerCase() !== newEntry.word.trim().toLowerCase()) {
+              dictDb.updateTranslation(res.id, { translation: r.text });
+              get().reload();
+            }
+          })
+          .catch(() => {});
+      }
         return { entries: [newEntry, ...s.entries] };
       }),
     removeEntry: (id) =>

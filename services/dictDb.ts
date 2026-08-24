@@ -51,6 +51,30 @@ export function getAllEntries(): DictRow[] {
   return (db.getAllSync(`SELECT * FROM dict_entries ORDER BY created_at DESC`) as RowRaw[]).map(toRow);
 }
 
+export function getRandomTranslations(excludeWord: string, excludeLang: string, limit = 20): string[] {
+  const db = getBooksDb();
+  const w = excludeWord.trim().toLowerCase();
+  const rows = db.getAllSync(
+    `SELECT translation FROM dict_entries 
+     WHERE (word != ? OR lang != ?) AND translation IS NOT NULL AND translation != '' 
+     ORDER BY RANDOM() LIMIT ?`,
+    [w, excludeLang, limit]
+  ) as { translation: string }[];
+  return rows.map((r) => r.translation).filter(Boolean);
+}
+
+export function getRandomWords(excludeWord: string, excludeLang: string, limit = 20): string[] {
+  const db = getBooksDb();
+  const w = excludeWord.trim().toLowerCase();
+  const rows = db.getAllSync(
+    `SELECT COALESCE(surface_form, word) AS word FROM dict_entries 
+     WHERE (word != ? OR lang != ?) 
+     ORDER BY RANDOM() LIMIT ?`,
+    [w, excludeLang, limit]
+  ) as { word: string }[];
+  return rows.map((r) => r.word).filter(Boolean);
+}
+
 /** O(1)-перевірка існування (замість .some() по всьому масиву). */
 export function hasEntry(word: string, lang?: string): boolean {
   const w = word.trim().toLowerCase();

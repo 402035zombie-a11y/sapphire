@@ -487,7 +487,7 @@ const importAnkiApkg = async () => {
   // Lazy-переклад: запитуємо переклад ТІЛЬКИ коли юзер тапнув слово (не при імпорті).
   // Це усуває лаг при імпорті великої книги (раніше backfill гнав 1000+ мережевих запитів).
   const ensureTranslation = useCallback((e: DictionaryEntry) => {
-    if (e.translation && e.translation.trim()) return;
+    if (e.translation && e.translation.trim() && e.translation.trim().toLowerCase() !== e.word.trim().toLowerCase()) return;
     const from = e.lang || 'en';
     const book = e.bookId ? (books || []).find((b) => b.id === e.bookId) : null;
     const to = effectiveLang(book?.targetLang || useSettingsStore.getState().targetLang) || 'uk';
