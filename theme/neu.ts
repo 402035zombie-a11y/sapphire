@@ -283,9 +283,10 @@ export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): a
   const { soft: s, light: l } = t.neu;
   // specular-блик у верхнего края: вертикальный сдвиг МАЛЫЙ И ФИКСИРОВАННЫЙ,
   // чтобы на больших элементах блик НЕ сползал вниз под заголовок.
-  const ix = Math.max(2, Math.round(off * 0.35));
-  const iy = Math.max(1, Math.round(off * 0.12));
-  const iblur = Math.round(off * 1.4);
+  // Юзер (24.08): внутрішні тіні raised замалі — об'єм не читається. bevel x0.5/y0.35, blur x1.7
+  const ix = Math.max(3, Math.round(off * 0.5));
+  const iy = Math.max(2, Math.round(off * 0.35));
+  const iblur = Math.round(off * 1.7);
   // внешняя падающая тень — компактнее (объём читается)
   const oX = Math.round(x * OUTER_SHADOW);
   const oY = Math.round(y * OUTER_SHADOW);
