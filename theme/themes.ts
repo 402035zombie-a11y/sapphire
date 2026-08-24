@@ -94,8 +94,8 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
   night: {
     background: '#16171A',
     surface: '#1C1D21',
-    primary: '#8FA3B8', // світла сталь — холодний акцент, читається на графіті
-    onPrimary: '#101216', // темний текст/знак на світлій сталі (контраст)
+    primary: '#5C7288', // глибока сталь — приглушений акцент, не б'є в очі вночі
+    onPrimary: '#E8EDF2', // світлий текст на темно-сталевій заливці
     primaryText: '#E4E7EB', // холодний ivory, без теплих відтінків
     secondaryText: '#8B929B', // холодний сіро-блакитний, не брудний
     border: '#2A2C31',
@@ -106,15 +106,15 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     readerBg: '#16171A',
     readerText: '#DFE3E8',
     readerDim: '#6A6E75',
-    highlight: '#AFC2D6', // сталева підсвітка слова
+    highlight: '#7E93A8', // приглушена сталева підсвітка слова
     popupBg: '#1C1D21',
     popupBorder: '#2E3844',
     posColor: '#AFC2D6',
     bgTop: '#212229',
     bgBot: '#0C0D0F',
     neu: { base: '#1A1B1F', light: '#3A4450', dark: '#0B0C0E', shadowDark: 'rgba(0,0,0,0.55)', shadowLight: 'rgba(160,180,200,0.09)', soft: 'rgba(80,95,110,0.5)', hi: 'rgba(200,215,230,0.08)', glow: 'rgba(120,140,160,0.3)' },
-    // Ніч: глибші тіні з більшим розльотом — на темному графіті потрібен контраст
-    neuScale: { depth: 1.15, spread: 1.0 },
+    // Ніч: трохи глибші за день, але БЕЗ перебору (1.15 давало задвоєння з нелінійністю)
+    neuScale: { depth: 0.85, spread: 0.9 },
   },
   // ---- BLACKOUT: максимально чёрный фон для OLED (пиксели полностью выключаются) ----
   // Никакого белого: текст и кнопки — светло-серые. Неоморфизм на чёрном не виден,

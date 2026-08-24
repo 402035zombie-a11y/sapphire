@@ -317,9 +317,10 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
   const blur1 = Math.max(3, Math.round(off * 2.0 * sc.spread));
   const blur2 = Math.max(5, Math.round(off * 3.4 * sc.spread));
   const { soft: s, light: l } = t.neu;
-  const ix = Math.max(2, Math.round(off * 0.5));
-  const iy = Math.max(2, Math.round(off * 0.5));
-  const iblur = Math.round(off * 1.4);
+  // Inner bevel: ≥3px і 0.6*off — інакше внутрішній рельєф не читається (юзер-фідбек)
+  const ix = Math.max(3, Math.round(off * 0.6));
+  const iy = Math.max(3, Math.round(off * 0.6));
+  const iblur = Math.max(4, Math.round(off * 1.5));
   return {
     width: size,
     height: size,
@@ -351,39 +352,47 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
           // ВИПУКЛИЙ (raised) — зовнішня тінь через OUTER_SHADOW
           `${off}px ${off}px ${blur1}px ${specDark(t)}`,
           `${off * 1.6}px ${off * 1.6}px ${blur2}px ${specDark(t)}`,
-          `${-off}px ${-off}px ${blur1}px ${s}`,
-          `${-off * 1.6}px ${-off * 1.6}px ${blur2}px ${l}`,
+          // light-пара навпаки: менший офсет і блюр (на dark-темах великий світлий шар "душить" об'єм)
+          `${-Math.round(off * 0.7)}px ${-Math.round(off * 0.7)}px ${Math.round(blur1 * 0.8)}px ${s}`,
+          `${-Math.round(off * 1.1)}px ${-Math.round(off * 1.1)}px ${Math.round(blur2 * 0.7)}px ${l}`,
           `inset 0 1px 0 0 ${rim(t)}`,
           `inset 0 0 0 1px rgba(255,255,255,0.08)`,
           `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
           `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
         ].join(', '),
-    elevation: filled ? Math.max(6, Math.round(off * 1.6)) : Math.max(3, Math.round(off)),
+    elevation: filled ? Math.max(4, Math.round(off * 1.2)) : Math.max(2, Math.round(off * 0.8)),
   };
 }
 
 // ВДАВЛЕНИЙ circle (для кнопок видалення) — без зовнішніх тіней, тільки inset
+// ВДАВЛЕНИЙ circle (кнопки видалення/дій всередині карток): м'який внутрішній рельєф
+// + ЛЕГКИЙ зовнішній контур (раніше elevation=0 і жодних зовнішніх шарів → кнопка "плавала")
 export function neuMetalCircleInset(t: ThemePalette, size: number): any {
-  const off = Math.max(4, Math.round(size * 0.14));
-  const ix = Math.max(2, Math.round(off * 0.5));
-  const iy = Math.max(2, Math.round(off * 0.5));
-  const iblur = Math.round(off * 1.4);
+  const sc = t.neuScale ?? { depth: 1, spread: 1 };
+  const off = Math.max(3, Math.round(Math.pow(Math.max(size, 12), 0.72) * 0.5 * sc.depth));
+  const ix = Math.max(2, Math.round(off * 0.55));
+  const iy = Math.max(2, Math.round(off * 0.55));
+  const iblur = Math.max(3, Math.round(off * 1.5));
+  const ox = Math.max(2, Math.round(off * 0.35 * sc.spread));
   return {
     width: size,
     height: size,
     borderRadius: size / 2,
-    backgroundColor: t.neu.dark,
+    backgroundColor: t.neu.base,
     backgroundImage: metalBg(t),
     backgroundClip: 'padding-box',
     alignItems: 'center',
     justifyContent: 'center',
     boxShadow: [
+      // легка зовнішня пара — відриває кнопку від картки
+      `${ox}px ${ox}px ${Math.round(ox * 2)}px ${specDark(t)}`,
+      `${-ox}px ${-ox}px ${Math.round(ox * 2)}px ${spec(t)}`,
+      // внутрішній вдавлений рельєф
       `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
       `inset 0 1px 0 0 ${rim(t)}`,
-      `inset 0 0 0 1px rgba(0,0,0,0.12)`,
     ].join(', '),
-    elevation: 0,
+    elevation: 2,
   };
 }
 

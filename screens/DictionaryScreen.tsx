@@ -667,6 +667,12 @@ const importAnkiApkg = async () => {
       <ModalSheet visible={bookPickOpen} onClose={() => setBookPickOpen(false)}>
         <View style={styles.pickCard}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Select a book')}</Text>
+            {/* General dictionary ЗАВЖДИ перший пункт — вихід із книги назад у глобальний словник */}
+            <TouchableOpacity style={[styles.pickItem]} onPress={() => { setSource({ type: 'general' }); setBookPickOpen(false); }}>
+              <Text style={[styles.pickText, source?.type !== 'book' ? { color: theme.primary, fontFamily: FONTS.bold } : { color: theme.primaryText }]}>
+                {t('General dictionary')}
+              </Text>
+            </TouchableOpacity>
             <PickerList
               items={books.map((b) => ({
                 key: b.id,
@@ -731,7 +737,7 @@ const importAnkiApkg = async () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.fab, { backgroundColor: theme.surface }]}
-          onPress={() => { if (source?.type === 'book') setSource({ type: 'general' }); else if (books.length > 0) setBookPickOpen(true); else setSource({ type: 'general' }); }}
+          onPress={() => setBookPickOpen(true)}
           activeOpacity={0.85}
         >
           <Icon name="swap" size={a.dim(0.05, 22, 28)} color={theme.primaryText} />
@@ -761,7 +767,7 @@ const importAnkiApkg = async () => {
             {/* Змінити джерело (книга / весь словник) */}
             <TouchableOpacity
               style={[styles.pickItem]}
-              onPress={() => { setMenuOpen(false); if (source?.type === 'book') setSource({ type: 'general' }); else if (books.length > 0) setBookPickOpen(true); else setSource({ type: 'general' }); }}
+              onPress={() => { setMenuOpen(false); setBookPickOpen(true); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Change source')}</Text>
             </TouchableOpacity>

@@ -1,44 +1,47 @@
 # KANBAN — актуальні задачі (Sapphire)
 
-> Єдиний канбан. Старі: KANBAN_DETAILED.md (етапи 1-16 — виконані), KANBAN_USER_REQUESTS.md
-> (T1-T8 — виконані), TESTING_CHECKLIST.md (web-E2E — застаріло) — ВИДАЛЕНІ 2026-08-24.
-> Правила: верифікація ТІЛЬКИ на телефоні (web deprecated); ОДИН білд наприкінці етапу;
-> `npx tsc --noEmit` після кожної правки.
+> Єдиний канбан. Старі плани видалено 2026-08-24 (виконані/застарілі).
+> Правила: верифікація ТІЛЬКИ на телефоні; ОДИН білд наприкінці етапу;
+> `npx tsc --noEmit` після кожної правки; ПРИ ПЕРЕРИВАННІ — нову задачу в канбан,
+> поточну довершити.
 
-## 🔴 Пріоритет: міграція словника + FSRS у SQLite
+## 🔄 В РОБОТІ: неоморфізм — ревізія тіней (чекпоінт: тег `neu-before-per-theme`)
 
-**Тригер:** словник уже впирається в AsyncStorage/CursorWindow ліміт — у логах:
-`[createStore] rehydrate failed for key=persist:bookreader-dictionary: Row too big to fit into CursorWindow`.
+Виконано (коміт eb70748c + фікси):
+- [x] per-theme `neuScale {depth, spread}` у themes.ts — незалежна геометрія тіней на тему
+- [x] нелінійна шкала офсету (size^0.72-0.75) — малі кнопки без величезних гало
+- [x] night: сталева палітра, primary #5C7288 (темніший за 8FA3B8), depth 0.85
+- [x] day: бордер темніший (#CBB891), shadowDark щільніший — межі елементів читабельні
 
-- [ ] Схема v4: `dict_entries(word, lang, surface_form, book_id, freq, created_at)` +
-      `translations(entry_id, text, book_id)` + `fsrs_state(word, lang, stability, difficulty, due_at, ...)`.
-- [ ] dictionaryStore/trainingStore → читання/запис через БД; AsyncStorage лишається тільки для settings.
-- [ ] Чиста зміна сховища БЕЗ міграції старих JSON-даних (юзер підтвердив: тестові дані не потрібні).
+Залишилось (фідбек юзера від 2026-08-24, скрін з червоним колом):
+- [ ] **Кнопка видалення книги (X у картці)**: `circleInset` має elevation=0 і жодних зовнішніх тіней
+      у ДВОХ темах; кольори X у day занадто відрізняються від палітри → узгодити (danger-відтінок у тон)
+- [ ] **Хедер-кнопки бібліотеки (налаштування ⚙ / підтримка ❤)**: зовнішні тіні завеликі
+- [ ] **Night: світла тінь (light-шар) задуше об'єм** — зменшити alpha/офсет light-зовнішнього шару
+      у neuMetalCircle/neuMetalRaised для night (можливо через neuScale.lightCut або прямо в палітрі)
+- [ ] Внутрішні тіні деяких кнопок непомітні → inner bevel ix/iy ≥ 2px і контрастніший
 
-## Multi-переклади слів (обговорено з юзером, чекає на SQLite вище)
+## Multi-переклади слів (після стабілізації тіней)
 
 - [ ] При імпорті книги перекладати НЕ окремі слова, а перевикористати sentence_translations.
 - [ ] quiz/cloze: correct = будь-який translations[]; type: приймати будь-який.
-- [ ] TF: дистрактори тільки з інших слів (валідні альтернативи того ж слова — прибрати).
+- [ ] TF: дистрактори тільки з інших слів.
 - [ ] НЕ тягнути всі словникові значення — тільки вживання в книгах юзера.
-
-## Швидкість імпорту словника
-
-- [ ] Перевикористання sentence_translations замість ~250 послідовних translate-запитів.
 
 ## Публікація
 
-- [ ] EAS production build (WSL, див. DEV-GUIDE) → closed testing (≥14д, ≥20 тестувальників).
-- [ ] Стор-лістинг: скріни, опис (i18n), feature graphic є (docs/sapphire-feature-graphic.png).
+- [ ] Наступний Gradle/EAS білд підтягне: orientation "user" (повага до системного автообертання) — нативна зміна, hot reload її не віддає.
+- [ ] EAS production build (WSL) → closed testing (≥14д, ≥20 тестувальників).
+- [ ] Стор-лістинг: скріни, опис, feature graphic є (docs/sapphire-feature-graphic.png).
 
-## Виконані фікси (2026-08-24, коміти 2c535804..e833e16b)
+## Виконано 2026-08-24
 
-- [x] useSyncExternalStore + selector equality (стабільні посилання обов'язкові!)
-- [x] Переклади речень + текст книг → books.db v3; libraryStore = легкі desc
-- [x] importBook id-mismatch (parse-once був мертвим кодом); draft id детермінований
-- [x] Видалення книги чистить SQLite (deleteBookData)
-- [x] Словник importEntries O(n²)→O(n)
-- [x] Speed reading "немає слів": TXT-імпорт не писав глави в БД + fallback старих книг на JSON
-- [x] Cloze forward: правильна відповідь підсвічувалась червоною (порівняння з maskedWord)
-- [x] Квадратні тіні: безумовний elevation на градієнтних/прозорих фонах (neu.ts)
+- [x] SQLite v4: словник+FSRS у БД (dict_entries, fsrs_state); AsyncStorage = тільки settings
+- [x] Локальний Gradle debug APK (AdMob ID у манифесті, tools:replace, fullSensor→user)
+- [x] Dictionary: Change source / swap-FAB відкриває єдиний picker з General dictionary першим
+      (вихід із книги назад у global — раніше було фізично неможливо)
+- [x] Імпорт-кнопка: зелена + ✓ під час імпорту (баг: job шукався за makeBookId з Date.now — ключ не збігався)
+- [x] Save-кнопка: inset-стиль як Cancel + primary заливка (була таблетка 40px circle)
+- [x] Cloze forward: правильна відповідь була червона (порівняння з maskedWord)
+- [x] Speed reading "немає слів": TXT не писав глави в БД + fallback старих книг на JSON
 - [x] uk i18n: 'Блекаут' без пояснення
