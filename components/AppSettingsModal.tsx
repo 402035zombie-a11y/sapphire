@@ -80,12 +80,12 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
                   <TouchableOpacity
                     key={tm}
                     style={[
-                      { flex: 1, minWidth: 84, paddingVertical: a.tiny ? 9 : 12, borderRadius: a.radius, alignItems: 'center', borderWidth: 1, borderColor: theme.border, backgroundColor: theme.surface },
-                      active && { borderColor: theme.primary, backgroundColor: theme.selected },
+                      metal(theme, active ? 'primary' : 'inset', { radius: a.radius }),
+                      { flex: 1, minWidth: 84, paddingVertical: a.tiny ? 9 : 12, alignItems: 'center' },
                     ]}
                     onPress={() => setTheme(tm)}
                   >
-                    <Text style={{ fontSize: a.body, fontFamily: FONTS.bold, color: active ? theme.primary : theme.primaryText }}>{t(THEME_LABELS[tm])}</Text>
+                    <Text style={{ fontSize: a.body, fontFamily: FONTS.bold, color: active ? theme.onPrimary : theme.primaryText }}>{t(THEME_LABELS[tm])}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -93,7 +93,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
 
             <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8, marginTop: 4 }}>{t('App language')}</Text>
             <TouchableOpacity
-              style={[{ borderWidth: 1, borderColor: theme.border, backgroundColor: theme.surface, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: a.tiny ? 9 : 12, paddingHorizontal: 14, minHeight: a.hit, marginBottom: a.gap, borderRadius: a.radius }]}
+              style={[metal(theme, 'inset', { radius: a.radius }), { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: a.tiny ? 9 : 12, paddingHorizontal: 14, minHeight: a.hit, marginBottom: a.gap }]}
               onPress={() => setAppLangPicker(true)}
             >
               <Text style={{ fontSize: a.body, color: theme.primaryText }}>
@@ -104,7 +104,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
 
             <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8 }}>{t('Data')}</Text>
             <TouchableOpacity
-              style={[{ backgroundColor: theme.primary, borderRadius: a.radius, paddingVertical: a.tiny ? 10 : 14, alignItems: 'center', width: '100%' }]}
+              style={[metal(theme, 'primary', { radius: a.radius }), { paddingVertical: a.tiny ? 10 : 14, width: '100%' }]}
               onPress={exportData}
             >
               <Text style={{ color: theme.primaryText, fontSize: a.body, fontFamily: FONTS.bold }}>{t('Export backup (JSON)')}</Text>
