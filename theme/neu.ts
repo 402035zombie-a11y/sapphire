@@ -18,10 +18,9 @@ import { ThemePalette } from './themes';
 export type NeuStyle = any;
 
 // ГЛОБАЛЬНЫЙ КОЭФФИЦИЕНТ ВНЕШНЕЙ (падающей) ТЕНИ.
-// 1 = исходно (сильно размытая, большой разлёт). 0.55 = компактнее на пару px,
-// объём края (inset-тени) не трогаем → выпуклость читается, а не тонет в ореоле.
-// Меняется ОДНИМ числом для ВСЕХ элементов (все тени централизованы в metal()/neu*).
-const OUTER_SHADOW = 0; // всі зовнішні тіні прибрано (плоский дизайн, крім BottomTabBar)
+// 1 = исходно (сильно размытая, большой разлёт). Юзер (24.08): зовнішні тіні ПОВЕРНУТИ,
+// але маленькі — великі виглядали ореолом, нуль = плоско. 0.35 = компактний об'єм.
+const OUTER_SHADOW = 0.35;
 
 // затемнить/осветлить hex-цвет на долю amt (-1..1)
 function shade(hex: string, amt: number): string {
@@ -372,6 +371,7 @@ export function neuMetalCircleInset(t: ThemePalette, size: number): any {
   const ix = Math.max(2, Math.round(off * 0.55));
   const iy = Math.max(2, Math.round(off * 0.55));
   const iblur = Math.max(3, Math.round(off * 1.5));
+  // компактна зовнішня тінь (юзер: маленькі зовнішні тіні на всіх кнопках)
   const ox = Math.max(2, Math.round(off * 0.35 * sc.spread));
   return {
     width: size,
@@ -382,11 +382,9 @@ export function neuMetalCircleInset(t: ThemePalette, size: number): any {
     backgroundClip: 'padding-box',
     alignItems: 'center',
     justifyContent: 'center',
+    // Юзер (24.08): зовнішню пару лишити, але КОМПАКТНУ (була повнорозмірна → ореол).
     boxShadow: [
-      // легка зовнішня пара — відриває кнопку від картки
-      `${ox}px ${ox}px ${Math.round(ox * 2)}px ${specDark(t)}`,
-      `${-ox}px ${-ox}px ${Math.round(ox * 2)}px ${spec(t)}`,
-      // внутрішній вдавлений рельєф
+      `${Math.max(1, Math.round(ox * 0.5))}px ${Math.max(1, Math.round(ox * 0.5))}px ${Math.round(ox)}px ${specDark(t)}`,
       `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
       `inset 0 1px 0 0 ${rim(t)}`,
