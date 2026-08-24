@@ -329,7 +329,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   };
 
   // Прогрес імпорту поточної чернетки з фонової черги (не блокує UI).
-  const importJob = useWordImportStore((s) => (draft ? s.jobs[makeBookId(cleanTitle(draft.title))] : undefined));
+  const importJob = useWordImportStore((s) => (draft && draftBookId ? s.jobs[draftBookId] : undefined));
   const importing = importJob?.status === 'running' || importJob?.status === 'queued';
   const importProgress = importJob?.progress ?? 0;
   // Глобальний індикатор фонових імпортів: видно навіть коли модалка чернетки закрита.
@@ -438,8 +438,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
             <TouchableOpacity style={[styles.actionBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setDraft(null)}>
               <Text style={[styles.actionText, { color: theme.secondaryText }]}>{t('Cancel')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionBtn, metal(theme, 'primary'), { borderWidth: 0 }]} onPress={saveDraft}>
-              <Text style={[styles.saveText]}>{t('Save')}</Text>
+            <TouchableOpacity style={[styles.actionBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }, { backgroundColor: theme.primary }]} onPress={saveDraft}>
+              <Text style={[styles.saveText, { color: theme.onPrimary }]}>{t('Save')}</Text>
             </TouchableOpacity>
           </View>
           </View>
