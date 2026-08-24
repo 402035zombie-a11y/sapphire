@@ -622,12 +622,11 @@ export default function TrainingScreen() {
               <TouchableOpacity
                 style={[
                   styles.sourceTab,
-                  metal(theme, 'inset', { radius: 999 }),
-                  source === 'all' && { backgroundColor: theme.selected },
+                  metal(theme, source === 'all' ? 'primary' : 'inset', { radius: 999 }),
                 ]}
                 onPress={() => setSource('all')}
               >
-                <Text style={[styles.sourceTabText, { color: source === 'all' ? theme.primaryText : theme.primaryText }]}>
+                <Text style={[styles.sourceTabText, { color: source === 'all' ? theme.onPrimary : theme.primaryText }]}>
                   {t("Whole dictionary")}
                 </Text>
               </TouchableOpacity>
@@ -636,13 +635,12 @@ export default function TrainingScreen() {
                   key={b.id}
                   style={[
                     styles.sourceTab,
-                    metal(theme, 'inset', { radius: 999 }),
-                    source === b.id && { backgroundColor: theme.selected },
+                    metal(theme, source === b.id ? 'primary' : 'inset', { radius: 999 }),
                   ]}
                   onPress={() => setSource(b.id)}
                 >
                   <Text
-                   style={[styles.sourceTabText, { color: source === b.id ? theme.primaryText : theme.primaryText }]}
+                   style={[styles.sourceTabText, { color: source === b.id ? theme.onPrimary : theme.primaryText }]}
                    numberOfLines={1}
                     ellipsizeMode="middle"
                   >
