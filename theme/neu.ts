@@ -635,15 +635,9 @@ export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): an
     backgroundImage: metalBg(t),
     backgroundClip: 'padding-box',
     borderRadius: radius,
-    // Android fallback: inset-тіні через boxShadow не рендеряться — даємо м'яку
-    // зовнішню тінь через shadow*/elevation, щоб елемент не виглядав пласким
-    ...(Platform.OS === 'web' ? {} : {
-      shadowColor: specDark(t),
-      shadowOffset: { width: x, height: y },
-      shadowOpacity: 0.35,
-      shadowRadius: blur1,
-      elevation: Math.max(1, Math.round(off / 3)),
-    }),
+    // Android: boxShadow (включно з inset) рендериться на New Architecture
+    // (RN 0.81 InsetBoxShadowDrawable) — підтверджено рендером FSRS-крапок.
+    // Зовнішня elevation-тінь на лунці була фізично неправильною — прибрана.
     boxShadow: [
       `inset ${-x}px ${-y}px ${blur1}px ${specDark(t)}`,
       `inset ${x}px ${y}px ${blur1}px ${s}`,

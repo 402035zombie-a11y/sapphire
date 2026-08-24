@@ -30,7 +30,7 @@ import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import { useSupportStore } from '../store/supportStore';
 import { showSupportAd } from '../services/monetization';
-import { metal, neuShadowPad, shade } from '../theme/neu';
+import { metal, neuShadowPad, } from '../theme/neu';
 
 const TARGET_STREAK = 5;
 
@@ -715,17 +715,10 @@ export default function TrainingScreen() {
           // Юзер Q1: читабельна вдавлена лунка. На Android boxShadow не рендериться,
           // тож лунку будуємо напряму: темніша заливка (занурення) + грані бордерами
           // (dark зверху/зліва = тінь, light знизу/справа = блик).
-          style={{
-            flexDirection: 'row', alignItems: 'center', gap: 4,
-            paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
-            // Заливка лунки: base, затемнений на ~12% (занурення, не чорна яма)
-            backgroundColor: shade(theme.neu.base, -0.12),
-            // Тонкі м'які грані: dark зверху/зліва, light знизу/справа
-            borderTopWidth: 1, borderLeftWidth: 1,
-            borderTopColor: theme.neu.dark, borderLeftColor: theme.neu.dark,
-            borderBottomWidth: 1, borderRightWidth: 1,
-            borderBottomColor: theme.neu.light, borderRightColor: theme.neu.light,
-          }}
+          // Юзер Q1 v3: диспетчер працює (як на FSRS-крапках) — глибокий inset через strength
+          style={[metal(theme, 'inset', { radius: 999, strength: 1.6 }),
+                  { flexDirection: 'row', alignItems: 'center', gap: 4,
+                    paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999 }]}
           onPress={() => setDirections((d) => ({ ...d, [mode]: !d[mode] }))}
           hitSlop={6}
         >
