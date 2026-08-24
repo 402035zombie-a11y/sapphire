@@ -20,6 +20,18 @@ export interface NeuColors {
   glow: string; // мягкое свечение снизу (делает объём читаемым)
 }
 
+/**
+ * Незалежні налаштування геометрії тіней ДЛЯ КОЖНОЇ ТЕМИ.
+ * metal() множить базові офсети/блюри на ці коефіцієнти — зміна day
+ * ніколи не впливає на night і навпаки. Нова тема = свій NeuScale.
+ *   depth  — глибина (сила) тіней: більше = виразніший рельєф
+ *   spread — розліт тіні від елемента: менше = компактніші, "щільніші" тіні
+ */
+export interface NeuScale {
+  depth: number;
+  spread: number;
+}
+
 export interface ThemePalette {
   flat?: boolean; // FLAT-режим (blackout): без неоморфізму — текст+бордер кольору тексту
   // Приложение (табы, карточки, кнопки)
@@ -47,6 +59,8 @@ export interface ThemePalette {
   bgBot: string;
   // Неоморфические тени для текущей темы
   neu: NeuColors;
+  /** Геометрія тіней цієї теми (незалежна від інших тем). */
+  neuScale: NeuScale;
 }
 
 export const THEMES: Record<ThemeMode, ThemePalette> = {
@@ -56,9 +70,9 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     surface: '#EAD9BE',
     primary: '#C98A4B', // м'якший теплий карамельний акцент (гармоніює з паперовою палітрою)
     onPrimary: '#FBF4E4', // кремовий знак/текст ПОВЕРХ карамельної заливки
-    primaryText: '#4A3F2E', // основний текст на фоні (темно-коричневий, читається на бежі)
-    secondaryText: '#A08B66', // чистіший теплий сіро-коричневий (не брудний) для навігації/неактивних
-    border: '#D8C7A6',
+    primaryText: '#3F3526', // темніше за попереднє (#4A3F2E) — читабельність на світлому бежі
+    secondaryText: '#96805B', // трохи темніше — межі навігації не розмиваються
+    border: '#CBB891', // темніший бордер — обвід елементів видно чітко (було #D8C7A6, зливався)
     selected: '#DFCDAC',
     success: '#16A34A',
     danger: '#DC2626',
@@ -72,31 +86,35 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     posColor: '#B5742E',
     bgTop: '#F2E6CE',
     bgBot: '#E0CFA8',
-    neu: { base: '#EAD9BE', light: '#FBF1DC', dark: '#BCA982', shadowDark: 'rgba(158,139,103,0.55)', shadowLight: 'rgba(255,255,255,0.7)', soft: 'rgba(248,238,217,0.7)', hi: 'rgba(255,255,255,0.5)', glow: 'rgba(255,250,238,0.5)' },
+    neu: { base: '#EAD9BE', light: '#FCF3DF', dark: '#B5A179', shadowDark: 'rgba(150,130,95,0.6)', shadowLight: 'rgba(255,255,255,0.85)', soft: 'rgba(248,238,217,0.7)', hi: 'rgba(255,255,255,0.55)', glow: 'rgba(255,250,238,0.5)' },
+    // День: м'які, щільні тіні — на світлому бежі глибина читається і без розльоту
+    neuScale: { depth: 0.9, spread: 0.8 },
   },
-  // ---- НОЧЬ: розкішний onyx-графіт + золото (bagatstvo/roskish), ivory-текст ----
+  // ---- НОЧЬ: графіт + світло-сталевий акцент (холодна палітра, без "брудних" теплих сірих) ----
   night: {
     background: '#16171A',
     surface: '#1C1D21',
-    primary: '#34363C',
-    onPrimary: '#ECE7DB',
-    primaryText: '#ECE7DB',
-    secondaryText: '#9A958A',
-    border: '#2A2B30',
-    selected: '#232429',
+    primary: '#8FA3B8', // світла сталь — холодний акцент, читається на графіті
+    onPrimary: '#101216', // темний текст/знак на світлій сталі (контраст)
+    primaryText: '#E4E7EB', // холодний ivory, без теплих відтінків
+    secondaryText: '#8B929B', // холодний сіро-блакитний, не брудний
+    border: '#2A2C31',
+    selected: '#2E3844', // холодний підсвічений вибір
     success: '#22C55E',
     danger: '#EF4444',
     backdrop: 'rgba(0,0,0,0.6)',
     readerBg: '#16171A',
-    readerText: '#E4DFD2',
-    readerDim: '#6A6A70',
-    highlight: '#F2EEE6',
+    readerText: '#DFE3E8',
+    readerDim: '#6A6E75',
+    highlight: '#AFC2D6', // сталева підсвітка слова
     popupBg: '#1C1D21',
-    popupBorder: '#2A2B30',
-    posColor: '#F2EEE6',
+    popupBorder: '#2E3844',
+    posColor: '#AFC2D6',
     bgTop: '#212229',
     bgBot: '#0C0D0F',
-    neu: { base: '#1A1B1F', light: '#34353B', dark: '#0B0C0E', shadowDark: 'rgba(0,0,0,0.55)', shadowLight: 'rgba(255,240,200,0.06)', soft: 'rgba(90,88,80,0.5)', hi: 'rgba(255,245,220,0.06)', glow: 'rgba(150,140,100,0.35)' },
+    neu: { base: '#1A1B1F', light: '#3A4450', dark: '#0B0C0E', shadowDark: 'rgba(0,0,0,0.55)', shadowLight: 'rgba(160,180,200,0.09)', soft: 'rgba(80,95,110,0.5)', hi: 'rgba(200,215,230,0.08)', glow: 'rgba(120,140,160,0.3)' },
+    // Ніч: глибші тіні з більшим розльотом — на темному графіті потрібен контраст
+    neuScale: { depth: 1.15, spread: 1.0 },
   },
   // ---- BLACKOUT: максимально чёрный фон для OLED (пиксели полностью выключаются) ----
   // Никакого белого: текст и кнопки — светло-серые. Неоморфизм на чёрном не виден,
@@ -124,6 +142,8 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     bgTop: '#050505',
     bgBot: '#000000',
     neu: { base: '#1A1A1C', light: '#242427', dark: '#000000', shadowDark: 'rgba(0,0,0,0.9)', shadowLight: 'rgba(255,255,255,0.04)', soft: 'rgba(60,58,54,0.5)', hi: 'rgba(255,245,220,0.04)', glow: 'rgba(100,92,68,0.25)' },
+    // Blackout — FLAT (неоморфізм вимкнено), scale не використовується, але поле обов'язкове
+    neuScale: { depth: 1, spread: 1 },
   },
 };
 

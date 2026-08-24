@@ -272,11 +272,15 @@ export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): a
       borderColor: t.primaryText,
     };
   }
-  const off = Math.max(4, Math.round((radius * 0.18 + 4) * strength));
-  const x = Math.round(off * 0.92);
-  const y = off;
-  const blur1 = Math.round(off * 2.0);
-  const blur2 = Math.round(off * 4.0);
+  const sc = t.neuScale ?? { depth: 1, spread: 1 };
+  // Нелінійна шкала: офсет росте повільніше за розмір (size^0.75) —
+  // маленькі кнопки не тонуть у власних тінях, великі картки не "розповзаються".
+  const baseOff = Math.max(3, Math.round(Math.pow(radius, 0.75) * 1.9));
+  const off = Math.max(3, Math.round((baseOff * (0.18 * radius / Math.max(radius, 1)) + 4) * strength * sc.depth));
+  const x = Math.max(2, Math.round(off * 0.92 * sc.spread));
+  const y = Math.max(2, Math.round(off * sc.spread));
+  const blur1 = Math.max(3, Math.round(off * 2.0));
+  const blur2 = Math.max(5, Math.round(off * 4.0 * sc.spread));
   const { soft: s, light: l } = t.neu;
   // specular-блик у верхнего края: вертикальный сдвиг МАЛЫЙ И ФИКСИРОВАННЫЙ,
   // чтобы на больших элементах блик НЕ сползал вниз под заголовок.
@@ -306,9 +310,12 @@ export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): a
 }
 
 export function neuMetalCircle(t: ThemePalette, size: number, filled = false): any {
-  const off = Math.max(4, Math.round(size * 0.14));
-  const blur1 = Math.round(off * 2.0);
-  const blur2 = Math.round(off * 4.0);
+  const sc = t.neuScale ?? { depth: 1, spread: 1 };
+  // Нелінійно: мала кнопка (28px) має компактну тінь з видимим контуром,
+  // великий FAB (56px) — пропорційно глибшу, але не вдвічі більшу.
+  const off = Math.max(3, Math.round(Math.pow(size, 0.72) * 0.62 * sc.depth));
+  const blur1 = Math.max(3, Math.round(off * 2.0 * sc.spread));
+  const blur2 = Math.max(5, Math.round(off * 3.4 * sc.spread));
   const { soft: s, light: l } = t.neu;
   const ix = Math.max(2, Math.round(off * 0.5));
   const iy = Math.max(2, Math.round(off * 0.5));
@@ -489,7 +496,7 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
 // Применять к крестикам (✕), выбранным элементам и кнопкам-индикаторам.
 function metalStamp(t: ThemePalette, size: number): any {
   const r = size / 2;
-  const o = Math.max(2, Math.round(size * 0.14)); // глубина лунки
+  const o = Math.max(2, Math.round(Math.pow(Math.max(size, 12), 0.72) * 0.5 * (t.neuScale?.depth ?? 1))); // глубина лунки — нелінійна, per-theme
   return {
     width: size,
     height: size,
@@ -576,11 +583,13 @@ function metalTabStamp(t: ThemePalette, radius: number, active: boolean): any {
 
 // металлический inset (утопленный) — для полей ввода, контейнеров
 export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): any {
-  const off = Math.max(4, Math.round((radius * 0.42 + 5) * strength));
-  const x = Math.round(off * 0.9);
-  const y = off;
+  const sc = t.neuScale ?? { depth: 1, spread: 1 };
+  // Вдавлені елементи: помірніший офсет, глибокий блюр — читається "лунка"
+  const off = Math.max(3, Math.round(Math.pow(Math.max(radius, 6), 0.75) * 1.5 * strength * sc.depth));
+  const x = Math.max(2, Math.round(off * 0.9 * sc.spread));
+  const y = Math.max(2, Math.round(off * sc.spread));
   const blur1 = Math.round(off * 2.4);
-  const blur2 = Math.round(off * 4.5);
+  const blur2 = Math.round(off * 4.0);
   const { soft: s, light: l } = t.neu;
   return {
     backgroundColor: t.neu.base,
