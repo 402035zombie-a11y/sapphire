@@ -288,36 +288,32 @@ export default function TrainingScreen() {
   // Яка кнопка режиму має розгорнуту панель напрямку
   const effectiveToLang = trainTargetLang ?? toLang;
 
-  const [opts, setOpts] = useState<string[]>([]);
   const current = queue[index];
   // ---- True/False режим: слово + показаний переклад (можливо чужий) → ✓/✗ ----
   const [tfPair, setTfPair] = useState<{ shownTranslation: string; isTrue: boolean } | null>(null);
   const [tfAnswered, setTfAnswered] = useState<null | boolean>(null);
   // час показу слова — для авто-градації FSRS у type-режимі (швидко=Easy, повільно=Hard)
   const typeShownAt = useRef(Date.now());
-  // pool меняется при каждом ответе (progress), но перемешивать варианты
-  // повторно НЕЛЬЗЯ — иначе правильный ответ «прыгает» после клика.
-  // Читаем pool через ref, чтобы эффект не переподписывался на progress.
   const poolRef = useRef(pool);
   poolRef.current = pool;
-  useEffect(() => {
-    if (!current) { setOpts([]); return; }
-    // Reverse-режим: дистрактори — слова (surfaceForm), а не переклади
+
+  const quiz: QuizItem | null = useMemo(() => {
+    if (!current) return null;
     const correctVal = reverse ? (current.surfaceForm || current.word) : current.translation;
     const currentTransVariants = new Set(splitTranslations(current.translation).map((s) => s.toLowerCase()));
 
-    const candidatePool = poolRef.current.filter((e: DictionaryEntry) => {
+    // Беремо дистрактори з усього словника (entries) або pool, фільтруємо випадковим перемішуванням
+    const allCandidates = (pool.length >= 4 ? pool : entries).filter((e: DictionaryEntry) => {
       if (`${e.word}|${e.lang}` === `${current.word}|${current.lang}`) return false;
       if (reverse) {
         const v = (e.surfaceForm || e.word);
         return v && v.trim() && v !== correctVal;
       }
-      // Для forward: дистрактор не повинен збігатися з жодним із варіантів перекладу поточного слова
       const otherVariants = splitTranslations(e.translation);
       return otherVariants.some((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase()));
     });
 
-    const distractors = shuffle(candidatePool)
+    const distractors = shuffle(allCandidates)
       .slice(0, 3)
       .map((e: DictionaryEntry) => {
         if (reverse) return e.surfaceForm || e.word;
@@ -325,30 +321,25 @@ export default function TrainingScreen() {
         return otherVariants.find((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase())) ?? e.translation;
       });
 
-    setOpts(shuffle([correctVal, ...distractors]));
-  }, [index, current?.word, reverse]);
+    const currentOptions = shuffle([correctVal, ...distractors]);
 
-  const quiz: QuizItem | null = useMemo(() => {
-    if (queue.length === 0 || index >= queue.length || opts.length === 0) return null;
-    const c = queue[index];
-    // Reverse-режим: показуємо переклад, шукаємо слово (uk→en)
     if (reverse) {
       return {
-        word: c.translation,
-        correct: c.surfaceForm || c.word,
-        options: opts,
+        word: current.translation,
+        correct: current.surfaceForm || current.word,
+        options: currentOptions,
         fromLang: sourceBook ? toLang : 'en',
-        toLang: sourceBook ? fromLang : c.lang,
+        toLang: sourceBook ? fromLang : current.lang,
       };
     }
     return {
-      word: c.surfaceForm || c.word,
-      correct: c.translation,
-      options: opts,
-      fromLang: sourceBook ? fromLang : c.lang,
+      word: current.surfaceForm || current.word,
+      correct: current.translation,
+      options: currentOptions,
+      fromLang: sourceBook ? fromLang : current.lang,
       toLang: effectiveToLang,
     };
-  }, [queue, index, opts, sourceBook, fromLang, toLang, effectiveToLang, reverse]);
+  }, [current, reverse, index, pool, entries, sourceBook, fromLang, toLang, effectiveToLang]);
 
   const onAnswer = useCallback(
     (correct: boolean, opts?: { grade?: 2 | 3 | 4 }) => {
@@ -769,7 +760,7 @@ export default function TrainingScreen() {
       <Text style={[styles.counter, { color: theme.secondaryText, marginTop: 6 }]}>{t("Word {i} of {n}").replace(/\{i\}/g, String(index + 1)).replace(/\{n\}/g, String(queue.length))}</Text>
 
       {mode === 'quiz' && quiz && (
-        <QuizCard item={quiz} onAnswer={onAnswer} onNext={onNext} progress={currentProgress} resetKey={`${current.word}`} />
+        <QuizCard key={`${current.word}|${index}`} item={quiz} onAnswer={onAnswer} onNext={onNext} progress={currentProgress} resetKey={`${current.word}|${index}`} />
       )}
 
       {mode === 'type' && current && (
