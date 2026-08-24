@@ -638,7 +638,10 @@ export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): an
     // Android: boxShadow (включно з inset) рендериться на New Architecture
     // (RN 0.81 InsetBoxShadowDrawable) — підтверджено рендером FSRS-крапок.
     // Зовнішня elevation-тінь на лунці була фізично неправильною — прибрана.
+    // Android: суто inset-список НЕ рендериться (перша перевірена причина пласких
+    // лунок) — потрібен хоч один outset-шар, як у працюючому circleInset.
     boxShadow: [
+      `${Math.max(2, Math.round(x * 0.4))}px ${Math.max(2, Math.round(y * 0.4))}px ${blur1}px ${specDark(t)}`,
       `inset ${-x}px ${-y}px ${blur1}px ${specDark(t)}`,
       `inset ${x}px ${y}px ${blur1}px ${s}`,
       `inset ${-x * 1.6}px ${-y * 1.6}px ${blur2}px ${specDark(t)}`,
