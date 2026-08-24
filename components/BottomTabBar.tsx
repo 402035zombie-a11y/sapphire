@@ -80,11 +80,11 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
               paddingVertical: a.tiny ? 6 : 9,
               paddingHorizontal: showLabel ? (a.tiny ? 10 : 14) : a.tiny ? 8 : 11,
               borderRadius: a.radius,
-              // N1 ревізія: активний = INSET+ штамп (вдавлена лунка + внутрішній купол),
-              // неактивний = INSET− легка лунка. Рівень глибини елемента > контейнера.
+              // N1 ревізія v2 (юзер): активний таб = ВИПУКЛИЙ (raised + зовнішні тіні),
+              // неактивні = ВДАВЛЕНІ (inset-лунка). Контраст станів через протилежні тіні.
               ...(focused
-                ? metal(theme, 'tabStampActive', { radius: a.radius })
-                : metal(theme, 'tabStamp', { radius: a.radius })),
+                ? metal(theme, 'raised', { radius: a.radius, strength: 1 })
+                : metal(theme, 'inset', { radius: a.radius })),
             }}
           >
             <Icon
