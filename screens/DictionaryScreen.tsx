@@ -693,7 +693,7 @@ const importAnkiApkg = async () => {
         <View style={styles.searchPop}>
             <TextField
               radius={10}
-              style={[styles.searchInline, { borderWidth: 0, color: theme.primaryText }]}
+              style={[styles.searchInline, { color: theme.primaryText }]}
               placeholder={t('Search…')}
               placeholderTextColor={theme.secondaryText}
               value={query}
@@ -822,7 +822,7 @@ const importAnkiApkg = async () => {
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Add word')}</Text>
             <TextField
               radius={10}
-              style={[styles.searchInline, { borderWidth: 0, color: theme.primaryText, marginTop: 12 }]}
+              style={[styles.searchInline, { color: theme.primaryText, marginTop: 12 }]}
               placeholder={t('Word')}
               placeholderTextColor={theme.secondaryText}
               value={addWord}
@@ -831,14 +831,14 @@ const importAnkiApkg = async () => {
             />
             <TextField
               radius={10}
-              style={[styles.searchInline, { borderWidth: 0, color: theme.primaryText, marginTop: 10 }]}
+              style={[styles.searchInline, { color: theme.primaryText, marginTop: 10 }]}
               placeholder={t('Translation')}
               placeholderTextColor={theme.secondaryText}
               value={addTrans}
               onChangeText={setAddTrans}
             />
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
-              <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: theme.surface }]} onPress={() => setAddOpen(false)}>
+              <TouchableOpacity style={[styles.confirmBtn]} onPress={() => setAddOpen(false)}>
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -946,7 +946,9 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     headerActions: { flexDirection: 'row', gap: 8 },
     confirmBtn: { flex: 1, paddingVertical: Math.max(10, Math.round(13 * a.scale)), paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'inset', { radius: a.radius }) },
     iconBtn: { ...metal(theme, 'circle', { size: iconBtn }), width: iconBtn, height: iconBtn, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
-    searchInline: { width: '100%', minWidth: 200, height: iconBtn, ...metal(theme, 'inset', { radius: a.radius }), backgroundColor: theme.surface ?? theme.neu.base, paddingHorizontal: 12, fontSize: a.body, color: theme.primaryText },
+    // Юзер T9: без backgroundColor override — metal inset сам дає neu.base,
+    // surface-lighter фон давав брудний відтінок у day і ламав тіні
+    searchInline: { width: '100%', minWidth: 200, height: Math.round(iconBtn * 1.15), ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, fontSize: a.body, color: theme.primaryText },
     modalBackdrop: { flex: 1 },
     searchPop: { width: '100%', maxWidth: Math.min(a.width - 24, 520), borderRadius: a.radius, padding: 12 },
     pickCard: { width: '100%', maxWidth: m.maxWidth, maxHeight: m.maxHeight, borderRadius: a.radius, padding: m.padding },
