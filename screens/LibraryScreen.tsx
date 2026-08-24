@@ -412,12 +412,17 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.importBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }, importing && { opacity: 0.5 }]}
+            style={[
+              styles.importBtn,
+              metal(theme, 'inset', { radius: a.radius }),
+              { borderWidth: 1 },
+              importing && { backgroundColor: theme.success, borderColor: theme.success, opacity: 0.9 },
+            ]}
             onPress={importBookDict}
             disabled={importing}
           >
-            <Text style={[styles.importText, { color: theme.primary }]}>
-              {importing ? t('Importing dictionary…') : t('Import book dictionary (all words)')}
+            <Text style={[styles.importText, { color: importing ? '#FFFFFF' : theme.primary }]}>
+              {importing ? `✓ ${t('Importing dictionary…')}` : t('Import book dictionary (all words)')}
             </Text>
           </TouchableOpacity>
           {importing && (
