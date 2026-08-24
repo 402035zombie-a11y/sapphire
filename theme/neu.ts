@@ -23,7 +23,7 @@ export type NeuStyle = any;
 const OUTER_SHADOW = 0.35;
 
 // затемнить/осветлить hex-цвет на долю amt (-1..1)
-function shade(hex: string, amt: number): string {
+export function shade(hex: string, amt: number): string {
   const m = hex.replace('#', '');
   const n = parseInt(m.length === 3 ? m.split('').map((c) => c + c).join('') : m, 16);
   let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;

@@ -30,7 +30,7 @@ import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import { useSupportStore } from '../store/supportStore';
 import { showSupportAd } from '../services/monetization';
-import { metal, neuShadowPad } from '../theme/neu';
+import { metal, neuShadowPad, shade } from '../theme/neu';
 
 const TARGET_STREAK = 5;
 
@@ -114,7 +114,7 @@ export default function TrainingScreen() {
       flexShrink: 1,
     },
     sourceTabText: { fontSize: a.small_fs, fontFamily: 'bold' },
-    streakRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: a.gap, flexWrap: 'wrap' },
+    streakRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: a.gap, flexWrap: 'wrap', overflow: 'visible' },
     streakLabel: { fontSize: a.small_fs },
     dots: { flexDirection: 'row', gap: 6, flex: 1, flexWrap: 'wrap' },
     // Юзер M8: крапки з мінімальним об'ємом відповідно до розміру; active ≠ inactive
@@ -718,10 +718,13 @@ export default function TrainingScreen() {
           style={{
             flexDirection: 'row', alignItems: 'center', gap: 4,
             paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
-            backgroundColor: theme.neu.dark,
-            borderTopWidth: 2, borderLeftWidth: 2, borderColor: theme.neu.dark === '#0B0C0E' ? '#000000' : theme.neu.dark,
+            // Заливка лунки: base, затемнений на ~12% (занурення, не чорна яма)
+            backgroundColor: shade(theme.neu.base, -0.12),
+            // Тонкі м'які грані: dark зверху/зліва, light знизу/справа
+            borderTopWidth: 1, borderLeftWidth: 1,
+            borderTopColor: theme.neu.dark, borderLeftColor: theme.neu.dark,
+            borderBottomWidth: 1, borderRightWidth: 1,
             borderBottomColor: theme.neu.light, borderRightColor: theme.neu.light,
-            borderWidth: 1,
           }}
           onPress={() => setDirections((d) => ({ ...d, [mode]: !d[mode] }))}
           hitSlop={6}
