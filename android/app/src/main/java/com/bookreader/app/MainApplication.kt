@@ -1,4 +1,8 @@
+// Namespace проєкту = com.mike.wolfskin -> BuildConfig генерується там.
+// Без цього import файл не компілюється (стара структура пакетів до ребренду).
 package com.bookreader.app
+
+import com.mike.wolfskin.BuildConfig
 
 import android.app.Application
 import android.content.res.Configuration
