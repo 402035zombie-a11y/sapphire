@@ -622,30 +622,28 @@ function metalTabStamp(t: ThemePalette, radius: number, active: boolean): any {
 // металлический inset (утопленный) — для полей ввода, контейнеров
 export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): any {
   const sc = t.neuScale ?? { depth: 1, spread: 1 };
-  // Вдавлені елементи: помірніший офсет, глибокий блюр — читається "лунка"
-  // Юзер N13: inset має читатись як лунка — глибший офсет
-  const off = Math.max(4, Math.round(Math.pow(Math.max(radius, 6), 0.75) * 1.9 * strength * sc.depth));
-  const x = Math.max(2, Math.round(off * 0.9 * sc.spread));
-  const y = Math.max(2, Math.round(off * sc.spread));
-  const blur1 = Math.round(off * 2.4);
-  const blur2 = Math.round(off * 4.0);
+  const off = Math.max(3, Math.round(Math.pow(Math.max(radius, 8), 0.75) * 1.6 * strength * sc.depth));
+  const ix = Math.max(2, Math.round(off * 0.6));
+  const iy = Math.max(2, Math.round(off * 0.6));
+  const iblur = Math.max(3, Math.round(off * 1.6));
+  const ox = Math.max(2, Math.round(off * 0.4 * sc.spread));
   const { soft: s, light: l } = t.neu;
+
   return {
     backgroundColor: t.neu.base,
     backgroundImage: metalBg(t),
     backgroundClip: 'padding-box',
     borderRadius: radius,
-    // Android: boxShadow (включно з inset) рендериться на New Architecture
-    // (RN 0.81 InsetBoxShadowDrawable) — підтверджено рендером FSRS-крапок.
-    // Зовнішня elevation-тінь на лунці була фізично неправильною — прибрана.
-    // Android: суто inset-список НЕ рендериться (перша перевірена причина пласких
-    // лунок) — потрібен хоч один outset-шар, як у працюючому circleInset.
+    // Повноцінна неоморфічна лунка:
+    // 1) Зовнішня пара (темна право-низ + світла ліво-верх) для відриву контуру від поверхні
+    // 2) Внутрішня пара (темна ліво-верх + світла право-низ) для відчуття занурення
     boxShadow: [
-      `${Math.max(2, Math.round(x * 0.4))}px ${Math.max(2, Math.round(y * 0.4))}px ${blur1}px ${specDark(t)}`,
-      `inset ${-x}px ${-y}px ${blur1}px ${specDark(t)}`,
-      `inset ${x}px ${y}px ${blur1}px ${s}`,
-      `inset ${-x * 1.6}px ${-y * 1.6}px ${blur2}px ${specDark(t)}`,
-      `inset 0 -1px 0 0 ${rim(t)}`,
+      `${Math.max(2, Math.round(ox))}px ${Math.max(2, Math.round(ox))}px ${Math.round(ox * 2)}px ${specDark(t)}`,
+      `${-Math.max(2, Math.round(ox * 0.7))}px ${-Math.max(2, Math.round(ox * 0.7))}px ${Math.round(ox * 1.5)}px ${spec(t)}`,
+      `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
+      `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
+      `inset 0 1px 0 0 ${rim(t)}`,
     ].join(', '),
+    elevation: 2,
   };
 }
