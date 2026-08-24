@@ -112,7 +112,7 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     posColor: '#AFC2D6',
     bgTop: '#212229',
     bgBot: '#0C0D0F',
-    neu: { base: '#1A1B1F', light: '#3A4450', dark: '#0B0C0E', shadowDark: 'rgba(0,0,0,0.55)', shadowLight: 'rgba(160,180,200,0.09)', soft: 'rgba(80,95,110,0.5)', hi: 'rgba(200,215,230,0.08)', glow: 'rgba(120,140,160,0.3)' },
+    neu: { base: '#1A1B1F', light: '#3A4450', dark: '#0B0C0E', shadowDark: 'rgba(0,0,0,0.55)', shadowLight: 'rgba(160,180,200,0.22)', soft: 'rgba(80,95,110,0.5)', hi: 'rgba(200,215,230,0.16)', glow: 'rgba(120,140,160,0.3)' },
     // Ніч: трохи глибші за день, але БЕЗ перебору (1.15 давало задвоєння з нелінійністю)
     neuScale: { depth: 0.85, spread: 0.9 },
   },
