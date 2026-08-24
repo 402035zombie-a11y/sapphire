@@ -65,6 +65,9 @@ export function neuRaised(t: ThemePalette, radius: number, strength = 1): any {
     backgroundColor: t.neu.base,
     backgroundImage: extrude(t),
     backgroundClip: 'padding-box',
+    // Android: gradient-фон не рендериться → поверхня мертво пласка. Тонкий бордер
+    // light-кольором дає читабельну кромку (рендериться нативно).
+    ...(Platform.OS === 'web' ? {} : { borderWidth: 1, borderColor: t.neu.light }),
     borderRadius: radius,
     boxShadow: [
       `${oX}px ${oY}px ${oB1}px ${d}`, // тёмная падающая (ближняя)
@@ -108,7 +111,9 @@ export function neuInset(t: ThemePalette, radius: number, strength = 1): any {
       `inset ${-x * 1.6}px ${-y * 1.6}px ${blur2}px ${d}`,
       `${rx}px ${ry}px ${Math.round(off * 1.2)}px ${l}`, // внешний светлый rim (бортик)
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : { shadowColor: d, shadowOffset: { width: -x, height: -y }, shadowOpacity: 0.7, shadowRadius: blur1, elevation: 0 }),
+    // Юзер N16: поле вводу мало бути вдавленим — на Android inset-тіні не рендеряться,
+    // даємо темний бордер зверху/зліва (імітація грані лунки) через повний border.
+    ...(Platform.OS === 'web' ? {} : { borderWidth: 1, borderColor: t.neu.dark, shadowColor: d, shadowOpacity: 0.4, shadowRadius: 2, elevation: 1 }),
   };
 }
 
@@ -599,7 +604,8 @@ function metalTabStamp(t: ThemePalette, radius: number, active: boolean): any {
 export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): any {
   const sc = t.neuScale ?? { depth: 1, spread: 1 };
   // Вдавлені елементи: помірніший офсет, глибокий блюр — читається "лунка"
-  const off = Math.max(3, Math.round(Math.pow(Math.max(radius, 6), 0.75) * 1.5 * strength * sc.depth));
+  // Юзер N13: inset має читатись як лунка — глибший офсет
+  const off = Math.max(4, Math.round(Math.pow(Math.max(radius, 6), 0.75) * 1.9 * strength * sc.depth));
   const x = Math.max(2, Math.round(off * 0.9 * sc.spread));
   const y = Math.max(2, Math.round(off * sc.spread));
   const blur1 = Math.round(off * 2.4);

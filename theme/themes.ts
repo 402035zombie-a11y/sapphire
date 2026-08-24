@@ -68,7 +68,7 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
   day: {
     background: '#EAD9BE',
     surface: '#EAD9BE',
-    primary: '#C98A4B', // м'якший теплий карамельний акцент (гармоніює з паперовою палітрою)
+    primary: '#B0651F', // глибша карамель — чіткий контраст з кремовим onPrimary (юзер: тускла)
     onPrimary: '#FBF4E4', // кремовий знак/текст ПОВЕРХ карамельної заливки
     primaryText: '#3F3526', // темніше за попереднє (#4A3F2E) — читабельність на світлому бежі
     secondaryText: '#96805B', // трохи темніше — межі навігації не розмиваються

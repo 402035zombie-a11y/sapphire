@@ -85,7 +85,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
               // Неактивні = ВДАВЛЕНІ лунки. Контраст станів = протилежні тіні.
               ...(focused
                 ? metal(theme, 'primary', { radius: a.radius })
-                : metal(theme, 'inset', { radius: a.radius })),
+                : metal(theme, 'inset', { radius: a.radius, strength: 1.1 })),
             }}
           >
             <Icon

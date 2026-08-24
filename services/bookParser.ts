@@ -106,5 +106,8 @@ export async function parseBook(filePath: string): Promise<ParsedBook> {
     author: (raw.author as string) ?? '',
     format: fmt,
     chapters,
-  };
+    // M1: parseTxt повертає text без chapters — прокидаємо далі, щоб importBook
+    // міг побудувати главу. Раніше text губився тут → txt-книги мали 0 глав.
+    ...(chapters.length === 0 && typeof raw.text === 'string' ? { text: raw.text } : {}),
+  } as ParsedBook;
 }
