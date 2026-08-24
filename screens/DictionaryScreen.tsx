@@ -561,7 +561,7 @@ const importAnkiApkg = async () => {
             <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
           </TouchableOpacity>
           <View style={{ marginLeft: 'auto' }}>
-            <SupportButton size={a.icon(30)} iconSize={a.icon(15)} />
+            <SupportButton size={a.icon(30)} iconSize={a.icon(15)} compact />
           </View>
         </View>
       </Card>
