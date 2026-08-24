@@ -45,8 +45,22 @@ export async function importBook(
   forcedBookId?: string
 ): Promise<ImportResult> {
   onProgress?.(0.05);
-  const parsed: ParsedBook = await parseBook(filePath);
+  let parsed: ParsedBook = await parseBook(filePath);
   onProgress?.(0.7);
+
+  // M1 FIX (регресія perf-фази fcd91a22): JS parseTxt повертає {text,title} БЕЗ chapters,
+  // bookParser мапив це в 0 глав → txt-книги ніколи не потрапляли в books.db.chapters,
+  // а після спустошення store.paragraphs Reader ставав порожнім. Будуємо главу з text.
+  if (parsed.chapters.length === 0) {
+    const raw = parsed as unknown as Record<string, unknown>;
+    const text = (raw.text as string) ?? '';
+    if (text.trim()) {
+      parsed = {
+        ...parsed,
+        chapters: [{ idx: 0, title: parsed.title || 'Text', href: '0', contentHtml: text, charCount: text.length }],
+      };
+    }
+  }
 
   const db: SQLite.SQLiteDatabase = getBooksDb();
   // forcedBookId: LibraryScreen передає СВІЙ id (makeBookId) — інакше id в БД (hash шляху)
@@ -134,4 +148,25 @@ export function saveReadingProgress(bookId: string, chapterIdx: number, position
     [bookId]
   );
   useAppStore.getState().setProgress(bookId, chapterIdx, position);
+}
+
+/**
+ * M1 self-heal: книги, імпортовані ДО фіксу (txt → 0 глав у БД), реімпортуються
+ * з book.path одноразово. Викликається з ReaderScreen при порожніх chapters.
+ */
+export async function ensureBookChapters(bookId: string): Promise<ParsedChapter[]> {
+  const existing = getBookChapters(bookId);
+  if (existing.length > 0) return existing;
+  const db = getBooksDb();
+  const row = db.getFirstSync(
+    `SELECT path, format FROM books WHERE id = ?`,
+    [bookId]
+  ) as { path: string; format: string } | null;
+  if (!row?.path) return [];
+  try {
+    await importBook(row.path, row.format, undefined, bookId);
+  } catch {
+    return [];
+  }
+  return getBookChapters(bookId);
 }

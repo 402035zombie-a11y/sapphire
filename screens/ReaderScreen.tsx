@@ -50,7 +50,7 @@ import Marquee from '../components/Marquee';
 import IconButton from '../components/ui/IconButton';
 import AppSettingsModal from '../components/AppSettingsModal';
 import FontSettingsSheet from '../components/FontSettingsSheet';
-import { getBookChapters } from '../services/bookImport';
+import { getBookChapters, ensureBookChapters } from '../services/bookImport';
 import { translateBatch as translateBatchV2 } from '../services/translationServiceV2';
 import { buildChunks, nextChunkIndices, ChunkOptions } from '../services/readerChunker';
 import * as Speech from 'expo-speech';
@@ -88,6 +88,18 @@ export default function ReaderScreen({ route }: { route: any }) {
    */
   // Залежність [bookId], а не [book]: book змінюється при кожному updateSentenceTranslations
   // (нова reference) → memo перераховувався і читав БД заново на кожен переклад (PERF-4).
+  // M1 self-heal: якщо в БД немає глав (книги імпортовані до фіксу txt→chapters),
+  // реімпортуємо з book.path у фоні; dbVersion тригає перечитання memo.
+  const [dbVersion, setDbVersion] = React.useState(0);
+  React.useEffect(() => {
+    if (!bookId) return;
+    if (getBookChapters(bookId).length === 0 && !healingRef.current.has(bookId)) {
+      healingRef.current.add(bookId);
+      ensureBookChapters(bookId).then((chs) => { if (chs.length > 0) setDbVersion((v) => v + 1); });
+    }
+  }, [bookId]);
+  const healingRef = React.useRef<Set<string>>(new Set());
+
   const chapters = React.useMemo<BookParagraph[]>(() => {
     if (!bookId) return [];
     const dbChapters = getBookChapters(bookId);
@@ -106,7 +118,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       }
     }
     return out;
-  }, [bookId]);
+  }, [bookId, dbVersion]);
 
   // Структура речень (БЕЗ перекладу). Переклад дістаємо в renderItem з book.sentenceTranslations
   // за ключем item.index. НЕ залежимо від sentenceTranslations → не перераховуємо весь масив
