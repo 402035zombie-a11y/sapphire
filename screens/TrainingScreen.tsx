@@ -92,14 +92,14 @@ export default function TrainingScreen() {
       maxWidth: a.isTablet ? 720 : 560,
       alignSelf: 'center',
     },
-    heroCard: { ...metal(theme, 'raised', { radius: a.radius + 4 }), padding: a.tiny ? 12 : a.isTablet ? 22 : 16, gap: a.tiny ? 8 : 12 },
+    heroCard: { ...metal(theme, 'raised', { radius: a.radius + 4, strength: 0.6 }), padding: a.tiny ? 12 : a.isTablet ? 22 : 16, gap: a.tiny ? 8 : 12 },
     heroTop: { flexDirection: 'row', alignItems: 'baseline', gap: 10 },
     heroFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' },
     heroFooterText: { fontSize: a.small_fs },
     heroFooterValue: { fontSize: a.small_fs, fontFamily: 'bold' },
     progressTrack: { height: a.tiny ? 6 : 8, borderRadius: 4, overflow: 'hidden' },
     progressFill: { height: '100%', borderRadius: 4 },
-    sourceCard: { ...metal(theme, 'raised', { radius: a.radius + 4 }), padding: a.tiny ? 10 : a.isTablet ? 18 : 14, gap: a.tiny ? 6 : 10 },
+    sourceCard: { ...metal(theme, 'raised', { radius: a.radius + 4, strength: 0.6 }), padding: a.tiny ? 10 : a.isTablet ? 18 : 14, gap: a.tiny ? 6 : 10 },
     // На планшете/десктопе две CTA в ряд — заполняют ширину, нет пустоты сбоку.
     actions: { gap: a.tiny ? 8 : 10, flexDirection: 'row' },
     btnSub: { fontSize: a.tiny ? a.fs(11) : a.fs(12), color: theme.primaryText, marginTop: 2, textAlign: 'center' },
@@ -125,12 +125,12 @@ export default function TrainingScreen() {
     bigCount: { fontSize: a.fs(a.isTablet ? 60 : 44), fontFamily: 'bold', lineHeight: Math.round(a.fs(a.isTablet ? 60 : 44) * 1.05) },
     countLabel: { fontSize: a.small_fs, lineHeight: Math.round(a.small_fs * 1.25), flexShrink: 1 },
     result: { marginTop: 8, marginBottom: a.gap, fontSize: a.body },
-    finishBanner: { ...metal(theme, 'raised', { radius: a.radius + 4 }), alignItems: 'center', padding: a.pad, gap: 2, borderWidth: 0 },
+    finishBanner: { ...metal(theme, 'raised', { radius: a.radius + 4, strength: 0.6 }), alignItems: 'center', padding: a.pad, gap: 2, borderWidth: 0 },
     finishTitle: { fontSize: a.title, fontFamily: 'bold' },
     finishSub: { fontSize: a.body, marginTop: 4, marginBottom: 6 },
     btn: { flex: 1, borderRadius: a.radius + 2, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.tiny ? 10 : 16, alignItems: 'center', minHeight: a.tiny ? 56 : 64 },
     btnText: { color: theme.onPrimary, fontFamily: 'bold', fontSize: a.body },
-    typeCard: { ...metal(theme, 'raised', { radius: a.radius }), padding: a.pad, marginTop: 8 },
+    typeCard: { ...metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), padding: a.pad, marginTop: 8 },
     wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' },
     typeWord: { fontSize: a.fs(28), fontFamily: 'bold', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },
     speakBtn: { ...metal(theme, 'circle', { size: a.icon(34) }), alignItems: 'center', justifyContent: 'center', padding: 0 },
@@ -531,7 +531,7 @@ export default function TrainingScreen() {
           <SupportButton size={a.fab()} iconSize={Math.round(a.fab() * 0.5)} />
         </View>
         {finished && (
-          <View style={[styles.finishBanner, metal(theme, 'raised', { radius: a.radius + 4 }), { borderColor: theme.success }]}>
+          <View style={[styles.finishBanner, metal(theme, 'raised', { radius: a.radius + 4, strength: 0.6 }), { borderColor: theme.success }]}>
             <Text style={[styles.finishTitle, { color: theme.success }]}>{t("Keep it up! 🎉")}</Text>
             <Text style={[styles.finishSub, { color: theme.primaryText }]}>{t("All words from the book are learned!")}</Text>
             <Text style={[styles.finishStats, { color: theme.secondaryText }]}>
@@ -541,7 +541,7 @@ export default function TrainingScreen() {
         )}
 
         {/* Карточка прогресса: число, шкала и счётчик собраны в один блок */}
-        <View style={[styles.heroCard, metal(theme, 'raised', { radius: a.radius + 4 })]}>
+        <View style={[styles.heroCard, metal(theme, 'raised', { radius: a.radius + 4, strength: 0.6 })]}>
           <View style={styles.heroTop}>
             <Text style={[styles.bigCount, { color: theme.primary }]}>{entries.length}</Text>
             <Text style={[styles.countLabel, { color: theme.secondaryText }]}>{t("words")}{'\n'}{t("in dictionary")}</Text>
@@ -616,13 +616,13 @@ export default function TrainingScreen() {
         </View>
 
         {!routeBookId && (
-          <View style={[styles.sourceCard, metal(theme, 'raised', { radius: a.radius + 4 })]}>
+          <View style={[styles.sourceCard, metal(theme, 'raised', { radius: a.radius + 4, strength: 0.6 })]}>
             <Text style={[styles.sourceLabel, { color: theme.secondaryText }]}>{t("Train")}</Text>
             <View style={styles.sourceTabs}>
               <TouchableOpacity
                 style={[
                   styles.sourceTab,
-                  metal(theme, 'raised', { radius: 999 }),
+                  metal(theme, 'inset', { radius: 999 }),
                   source === 'all' && { backgroundColor: '#4A4A50' },
                 ]}
                 onPress={() => setSource('all')}
@@ -636,7 +636,7 @@ export default function TrainingScreen() {
                   key={b.id}
                   style={[
                     styles.sourceTab,
-                    metal(theme, 'raised', { radius: 999 }),
+                    metal(theme, 'inset', { radius: 999 }),
                     source === b.id && { backgroundColor: '#4A4A50' },
                   ]}
                   onPress={() => setSource(b.id)}
@@ -730,7 +730,7 @@ export default function TrainingScreen() {
       )}
 
       {mode === 'type' && current && (
-        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius })]}>
+        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
           <View style={styles.wordRow}>
             <Text style={styles.typeWord}>{reverse ? current.translation : (current.surfaceForm || current.word)}</Text>
             {!reverse && (
@@ -824,7 +824,7 @@ export default function TrainingScreen() {
       {mode === 'tf' && current && tfPair && (
         <>
         <View style={{ flexGrow: 1, justifyContent: 'center' }}>
-        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad }]}>
+        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { padding: a.pad }]}>
           <Text style={[styles.typeWord, { fontSize: a.fs(26) }]}>{reverse ? current.translation : (current.surfaceForm || current.word)}</Text>
           <Text style={{ color: theme.secondaryText, fontSize: a.small_fs, textAlign: 'center', marginTop: 4 }}>
             {reverse ? t('Word:') : t('Translation:')}
@@ -881,7 +881,7 @@ export default function TrainingScreen() {
       )}
 
       {mode === 'cloze' && current && cloze && (
-        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad, marginTop: 8 }]}>
+        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { padding: a.pad, marginTop: 8 }]}>
           <Text style={{ color: theme.secondaryText, fontSize: a.small_fs, textAlign: 'center', marginBottom: 10 }}>
             {t("Fill the blank")}
           </Text>
@@ -919,7 +919,7 @@ export default function TrainingScreen() {
       </ScrollView>
       {/* Модалка вибору цільової мови перекладу */}
       <ModalSheet visible={langPickerOpen} onClose={() => setLangPickerOpen(false)}>
-        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius }), { padding: a.pad }]}>
+        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { padding: a.pad }]}>
           <Text style={[styles.typeWord, { fontSize: a.h2, color: theme.primaryText }]}>{t('Translate to')}</Text>
           <ScrollView style={{ maxHeight: Math.round(a.height * 0.55) }} contentContainerStyle={{ paddingBottom: 8 }}>
             {['uk', 'en', 'de', 'fr', 'es', 'it', 'pl', 'pt', 'nl', 'cs', 'sk', 'sv', 'da', 'fi', 'no', 'hu', 'ro', 'bg', 'el', 'hr', 'sr', 'sl', 'et', 'lv', 'lt', 'vi', 'th', 'id', 'ms', 'hi', 'he', 'fa', 'ar', 'sw', 'zh', 'ja', 'ko', 'ca', 'eu', 'gl', 'cy', 'af', 'is'].map((code) => {
