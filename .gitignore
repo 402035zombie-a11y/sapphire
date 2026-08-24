@@ -51,3 +51,4 @@ apkpatch/dev_final/
 apkpatch/*.jar
 apkpatch/*.apk
 apkpatch/patched-signed.apk/
+dev-client.apk
