@@ -106,7 +106,7 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
                 {opt}
               </Text>
               <TouchableOpacity style={styles.speakSmall} onPress={() => speak(opt, item.toLang || 'en')} hitSlop={6}>
-                <Text style={styles.speakIconSmall}>🔊</Text>
+                <Text style={styles.speakIconSmall}>▶</Text>
               </TouchableOpacity>
             </TouchableOpacity>
           );
@@ -123,9 +123,9 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     card: { padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
     wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' },
     word: { fontSize: a.fs(26), fontFamily: 'System', fontWeight: '700', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },
-    speakBtn: { ...metal(theme, 'circle', { size: a.icon(34) }), padding: 0 },
+    speakBtn: { ...metal(theme, 'circle', { size: a.icon(34) }), padding: 0, alignItems: 'center', justifyContent: 'center' },
     speakIcon: { fontSize: a.fs(18), color: theme.primary },
-    speakSmall: { ...metal(theme, 'circle', { size: a.icon(30) }), padding: 0 },
+    speakSmall: { ...metal(theme, 'circle', { size: a.icon(30) }), padding: 0, alignItems: 'center', justifyContent: 'center' },
     speakIconSmall: { fontSize: a.fs(14) },
     boxBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     boxText: { color: theme.primary, fontFamily: 'System', fontWeight: '700', fontSize: a.fs(12) },

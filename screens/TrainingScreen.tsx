@@ -134,6 +134,8 @@ export default function TrainingScreen() {
     wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' },
     typeWord: { fontSize: a.fs(28), fontFamily: 'bold', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },
     speakBtn: { ...metal(theme, 'circle', { size: a.icon(34) }), alignItems: 'center', justifyContent: 'center', padding: 0 },
+    // Трикутник центрований: прибрати базовий зсув текстового глифа
+    speakIconCenter: { textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false },
     speakIcon: { fontSize: a.fs(18), color: theme.primaryText },
     typeHint: { fontSize: a.fs(14), textAlign: 'center', marginTop: 12, marginBottom: 8 },
     typeInput: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: a.tiny ? 8 : 12, fontSize: a.body },
@@ -733,7 +735,7 @@ export default function TrainingScreen() {
             <Text style={styles.typeWord}>{reverse ? current.translation : (current.surfaceForm || current.word)}</Text>
             {!reverse && (
               <TouchableOpacity style={styles.speakBtn} onPress={() => { if (current.word) Speech.speak(current.word, { language: current.lang || 'en', rate: 0.95 }); }} hitSlop={6}>
-                <Text style={styles.speakIcon}>▶</Text>
+                <Text style={[styles.speakIcon, styles.speakIconCenter]}>▶</Text>
               </TouchableOpacity>
             )}
           </View>
