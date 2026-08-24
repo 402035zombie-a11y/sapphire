@@ -41,7 +41,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
   const t = useT();
   // B10/HWUI: memoize metal()-стилі — НЕ перераховувати тіні при кожному render (скрол FlatList).
   // Залежність від [theme, a.radius, a.scale] — перерахунок тільки при зміні теми/розміру.
-  const raisedStyle = React.useMemo(() => metal(theme, 'raised', { radius: a.radius }), [theme, a.radius, a.scale]);
+  const raisedStyle = React.useMemo(() => metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), [theme, a.radius, a.scale]);
   const circleStyle = React.useMemo(
     () => metal(theme, 'circleInset', { size: a.dim(0.05, 28, 38) }),
     [theme, a.radius, a.scale],

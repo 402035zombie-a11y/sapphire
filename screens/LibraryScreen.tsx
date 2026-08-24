@@ -385,7 +385,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         <SupportButton size={a.fab()} iconSize={Math.round(a.fab()*0.5)} />
       </View>
       {loading && (
-        <View style={[styles.progressCard, metal(theme, 'raised', { radius: a.radius })]}>
+        <View style={[styles.progressCard, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
           <Text style={[styles.progressText, { color: theme.secondaryText }]}>{t('Reading file…')} {Math.round(progress * 100)}%</Text>
           <ProgressBar progress={progress} />
         </View>
@@ -462,7 +462,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       </ModalSheet>
 
       {activeJobs.length > 0 && (
-        <View style={[styles.progressCard, metal(theme, 'raised', { radius: a.radius })]}>
+        <View style={[styles.progressCard, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
           {activeJobs.map((j) => (
             <View key={j.bookId} style={{ marginBottom: 6 }}>
               <Text style={[styles.progressText, { color: theme.secondaryText }]} numberOfLines={1}>
