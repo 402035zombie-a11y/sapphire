@@ -856,7 +856,7 @@ export default function TrainingScreen() {
           }}
         >
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.success }, tfAnswered !== null && { opacity: 0.5 }]}
+              style={[styles.typeCheck, metal(theme, tfAnswered !== null ? 'inset' : 'raised', { radius: a.radius }), { borderWidth: 1, borderColor: theme.success }, tfAnswered !== null && { opacity: 0.5 }]}
               disabled={tfAnswered !== null}
               onPress={() => answerTf(true)}
             >
@@ -871,7 +871,7 @@ export default function TrainingScreen() {
               <Icon name="refresh" size={a.dim(0.026, 16, 22)} color={theme.primaryText} />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger }, tfAnswered !== null && { opacity: 0.5 }]}
+              style={[styles.typeCheck, metal(theme, tfAnswered !== null ? 'inset' : 'raised', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger }, tfAnswered !== null && { opacity: 0.5 }]}
               disabled={tfAnswered !== null}
               onPress={() => answerTf(false)}
             >
