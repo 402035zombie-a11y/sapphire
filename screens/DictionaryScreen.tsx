@@ -105,6 +105,14 @@ function WordCard({ item, theme, a, styles, progress, editing, setEditing, updat
   // B9/HWUI: memoize metal()-стилі бейджів — НЕ перераховувати тіні при скролі FlatList.
   const badgeStyle = React.useMemo(() => metal(theme, 'inset', { radius: 8 }), [theme]);
   const freqBadgeStyle = React.useMemo(() => metal(theme, 'inset', { radius: 8 }), [theme]);
+
+  // Автоматичний фоновий підвантажувач для слів без перекладу при їх рендері у видимості списку
+  React.useEffect(() => {
+    if (!item.translation || !item.translation.trim()) {
+      ensureTranslation(item);
+    }
+  }, [item.id, item.translation, ensureTranslation]);
+
   return (
     <Card radius={a.radius} style={styles.row}>
       <TouchableOpacity style={styles.speakInline} onPress={() => speakWord(item.word, item.lang)} hitSlop={6}>

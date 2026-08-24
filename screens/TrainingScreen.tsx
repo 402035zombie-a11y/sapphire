@@ -302,25 +302,38 @@ export default function TrainingScreen() {
     const correctVal = reverse ? (current.surfaceForm || current.word) : current.translation;
     const currentTransVariants = new Set(splitTranslations(current.translation).map((s) => s.toLowerCase()));
 
-    // Беремо дистрактори з усього словника (entries) або pool, фільтруємо випадковим перемішуванням
-    const allCandidates = (pool.length >= 4 ? pool : entries).filter((e: DictionaryEntry) => {
+    // Беремо всіх можливих кандидатів (виключаючи поточне слово та його переклади)
+    const validPool = (entries.length >= 4 ? entries : pool).filter((e: DictionaryEntry) => {
       if (`${e.word}|${e.lang}` === `${current.word}|${current.lang}`) return false;
       if (reverse) {
         const v = (e.surfaceForm || e.word);
-        return v && v.trim() && v !== correctVal;
+        return v && v.trim() && v.toLowerCase() !== correctVal.toLowerCase();
       }
       const otherVariants = splitTranslations(e.translation);
       return otherVariants.some((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase()));
     });
 
-    const distractors = shuffle(allCandidates)
-      .slice(0, 3)
-      .map((e: DictionaryEntry) => {
-        if (reverse) return e.surfaceForm || e.word;
+    // Збираємо унікальні значення дистракторів (множину, щоб не дублювалися)
+    const distractorCandidatesSet = new Set<string>();
+    for (const e of shuffle(validPool)) {
+      if (reverse) {
+        const val = (e.surfaceForm || e.word).trim();
+        if (val && val.toLowerCase() !== correctVal.toLowerCase()) {
+          distractorCandidatesSet.add(val);
+        }
+      } else {
         const otherVariants = splitTranslations(e.translation);
-        return otherVariants.find((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase())) ?? e.translation;
-      });
+        for (const ov of otherVariants) {
+          const val = ov.trim();
+          if (val && !currentTransVariants.has(val.toLowerCase())) {
+            distractorCandidatesSet.add(val);
+          }
+        }
+      }
+      if (distractorCandidatesSet.size >= 15) break;
+    }
 
+    const distractors = shuffle(Array.from(distractorCandidatesSet)).slice(0, 3);
     const currentOptions = shuffle([correctVal, ...distractors]);
 
     if (reverse) {
@@ -339,7 +352,7 @@ export default function TrainingScreen() {
       fromLang: sourceBook ? fromLang : current.lang,
       toLang: effectiveToLang,
     };
-  }, [current, reverse, index, pool, entries, sourceBook, fromLang, toLang, effectiveToLang]);
+  }, [current, reverse, index, entries, pool, sourceBook, fromLang, toLang, effectiveToLang]);
 
   const onAnswer = useCallback(
     (correct: boolean, opts?: { grade?: 2 | 3 | 4 }) => {
