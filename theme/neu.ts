@@ -349,14 +349,13 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
           `inset 0 -3px 6px rgba(0,0,0,0.35)`,
         ].join(', ')
       : [
-          // ВИПУКЛИЙ (raised) — зовнішня тінь через OUTER_SHADOW
+          // ВИПУКЛИЙ (raised) — зовнішня пара: dark вниз-право + light вгору-ліво,
+          // ОБИДВА з нормальним офсетом і великим блюром ("біла лінія" була від 0.7x стиснення)
           `${off}px ${off}px ${blur1}px ${specDark(t)}`,
-          `${off * 1.6}px ${off * 1.6}px ${blur2}px ${specDark(t)}`,
-          // light-пара навпаки: менший офсет і блюр (на dark-темах великий світлий шар "душить" об'єм)
-          `${-Math.round(off * 0.7)}px ${-Math.round(off * 0.7)}px ${Math.round(blur1 * 0.8)}px ${s}`,
-          `${-Math.round(off * 1.1)}px ${-Math.round(off * 1.1)}px ${Math.round(blur2 * 0.7)}px ${l}`,
+          `${off * 1.5}px ${off * 1.5}px ${blur2}px ${specDark(t)}`,
+          `${-Math.round(off * 0.85)}px ${-Math.round(off * 0.85)}px ${Math.max(4, Math.round(blur1 * 1.15))}px ${s}`,
+          `${-Math.round(off * 1.3)}px ${-Math.round(off * 1.3)}px ${Math.max(6, Math.round(blur2))}px ${l}`,
           `inset 0 1px 0 0 ${rim(t)}`,
-          `inset 0 0 0 1px rgba(255,255,255,0.08)`,
           `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
           `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
         ].join(', '),

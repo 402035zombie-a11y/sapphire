@@ -63,7 +63,7 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
   const stability = Math.round(progress?.stability ?? 0);
 
   return (
-    <View style={[styles.card, metal(theme, 'inset', { radius: a.radius })]}>
+    <View style={[styles.card, metal(theme, 'raised', { radius: a.radius })]}>
       <View style={styles.wordRow}>
         {stability > 0 && (
           <View style={[styles.boxBadge, metal(theme, 'inset', { radius: 8 })]}>
