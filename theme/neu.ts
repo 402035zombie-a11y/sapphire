@@ -459,7 +459,10 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
     case 'circleInset':
       return neuMetalCircleInset(t, opts.size ?? 40);
     case 'primary':
-      return neuMetalCircle(t, opts.size ?? 40, true);
+      // primary БЕЗ size = велика прямокутна кнопка (Check/Save), як у FLAT-гілці вище.
+      // neuMetalCircle тут давав "таблетку" (borderRadius=size/2, фіксовані 40x40).
+      if (opts.size == null) return neuPrimary(t, radius);
+      return neuMetalCircle(t, opts.size, true);
     case 'raised':
       return neuMetalRaised(t, radius);
     case 'inset':
