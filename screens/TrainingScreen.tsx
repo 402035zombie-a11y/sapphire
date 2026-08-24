@@ -23,6 +23,7 @@ import { DictionaryEntry } from '../store/dictionaryStore';
 import { useTrainingStore } from '../store/trainingStore';
 import { useLibraryStore } from '../store/libraryStore';
 import QuizCard, { QuizItem } from '../components/QuizCard';
+import { splitTranslations, matchAnyTranslation } from '../utils/translations';
 import Icon from '../components/Icon';
 import ModalSheet from '../components/ModalSheet';
 import SupportButton from '../components/SupportButton';
@@ -302,16 +303,27 @@ export default function TrainingScreen() {
   useEffect(() => {
     if (!current) { setOpts([]); return; }
     // Reverse-режим: дистрактори — слова (surfaceForm), а не переклади
-    const distractorField = reverse ? 'surfaceForm' : 'translation';
     const correctVal = reverse ? (current.surfaceForm || current.word) : current.translation;
+    const currentTransVariants = new Set(splitTranslations(current.translation).map((s) => s.toLowerCase()));
+
     const distractors = shuffle(
       poolRef.current
         .filter((e: DictionaryEntry) => {
-          const v = reverse ? (e.surfaceForm || e.word) : e.translation;
-          return v && v.trim() && v !== correctVal;
+          if (`${e.word}|${e.lang}` === `${current.word}|${current.lang}`) return false;
+          if (reverse) {
+            const v = (e.surfaceForm || e.word);
+            return v && v.trim() && v !== correctVal;
+          }
+          // Для forward: дистрактор не повинен збігатися з жодним із варіантів перекладу поточного слова
+          const otherVariants = splitTranslations(e.translation);
+          return otherVariants.some((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase()));
         })
         .slice(0, 3)
-        .map((e: DictionaryEntry) => (reverse ? (e.surfaceForm || e.word) : e.translation)),
+        .map((e: DictionaryEntry) => {
+          if (reverse) return e.surfaceForm || e.word;
+          const otherVariants = splitTranslations(e.translation);
+          return otherVariants.find((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase())) ?? e.translation;
+        }),
     );
     setOpts(shuffle([correctVal, ...distractors]));
   }, [index, current?.word, reverse]);
@@ -380,25 +392,34 @@ export default function TrainingScreen() {
   // Reverse-режим: показуємо переклад, пара = слово (uk→en)
   useEffect(() => {
     if (mode !== 'tf' || !current) { setTfPair(null); setTfAnswered(null); return; }
-    const prompt = reverse ? (current.translation) : (current.surfaceForm || current.word);
-    const answer = reverse ? (current.surfaceForm || current.word) : current.translation;
+    const currentVariants = splitTranslations(current.translation);
+    const answer = reverse ? (current.surfaceForm || current.word) : (currentVariants[0] || current.translation);
     const makeTrue = Math.random() < 0.5;
     if (makeTrue) {
-      setTfPair({ shownTranslation: answer, isTrue: true });
+      // Якщо true: обираємо випадковий валідний варіант перекладу слова
+      const chosen = reverse ? (current.surfaceForm || current.word) : (currentVariants[Math.floor(Math.random() * currentVariants.length)] || current.translation);
+      setTfPair({ shownTranslation: chosen, isTrue: true });
     } else {
+      const currentTransSet = new Set(currentVariants.map((s) => s.toLowerCase()));
       const others = poolRef.current.filter(
         (e: DictionaryEntry) => `${e.word}|${e.lang}` !== `${current.word}|${current.lang}`,
       );
       const answerVal = reverse ? (current.surfaceForm || current.word) : current.translation;
-      const othersVals = others.map((e: DictionaryEntry) => (reverse ? (e.surfaceForm || e.word) : e.translation)).filter(Boolean);
+      const othersVals = others
+        .map((e: DictionaryEntry) => {
+          if (reverse) return e.surfaceForm || e.word;
+          const otherVars = splitTranslations(e.translation);
+          return otherVars.find((ov) => !currentTransSet.has(ov.toLowerCase())) ?? '';
+        })
+        .filter(Boolean);
       const len = answerVal.length;
       const similar = othersVals.filter((v: string) => Math.abs(v.length - len) <= Math.max(6, len * 0.4));
       const pool2 = similar.length > 0 ? similar : othersVals;
       const fake = pool2[Math.floor(Math.random() * pool2.length)];
-      setTfPair({ shownTranslation: fake ?? answer, isTrue: false });
+      setTfPair({ shownTranslation: fake ?? (reverse ? 'word' : 'переклад'), isTrue: false });
     }
     setTfAnswered(null);
-  }, [mode, current]);
+  }, [mode, current, reverse]);
 
   const answerTf = useCallback(
     (userSaysTrue: boolean) => {
@@ -424,6 +445,7 @@ export default function TrainingScreen() {
     // контекст: речення, що містить слово (з DictionaryEntry.context)
     const entry = entryIndex.get(`${current.word}|${current.lang}`);
     const target = (current.surfaceForm || current.word).toLowerCase();
+    const currentTransVariants = new Set(splitTranslations(current.translation).map((s) => s.toLowerCase()));
     let sentence = '';
     if (entry?.context) {
       // беремо речення зі словом (перше, що містить surfaceForm або word)
@@ -435,8 +457,15 @@ export default function TrainingScreen() {
     if (!sentence || !sentence.toLowerCase().includes(target)) {
       // FALLBACK: немає контексту → показуємо звичайну картку слово→переклад (замість skip)
       const distractors = shuffle(
-        poolRef.current.filter((e: DictionaryEntry) => e.translation && e.translation.trim() && e.translation !== current.translation),
-      ).slice(0, 3).map((e: DictionaryEntry) => e.translation);
+        poolRef.current.filter((e: DictionaryEntry) => {
+          if (`${e.word}|${e.lang}` === `${current.word}|${current.lang}`) return false;
+          const otherVars = splitTranslations(e.translation);
+          return otherVars.some((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase()));
+        }),
+      ).slice(0, 3).map((e: DictionaryEntry) => {
+        const otherVars = splitTranslations(e.translation);
+        return otherVars.find((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase())) ?? e.translation;
+      });
       setCloze({ sentence: `${current.surfaceForm || current.word} → ______`, maskedWord: current.translation, options: shuffle([current.translation, ...distractors]) });
       setClozePicked(null); return;
     }
@@ -449,11 +478,16 @@ export default function TrainingScreen() {
 
     if (reverse) {
       // REVERSE: речення англ. з пропуском → варіанти УКРАЇНСЬКІ (переклади).
-      // Юзер вибирає переклад пропущеного слова.
       const distractors = shuffle(
-        poolRef.current.filter((e: DictionaryEntry) =>
-          e.translation && e.translation.trim() && e.translation !== current.translation),
-      ).slice(0, 3).map((e: DictionaryEntry) => e.translation);
+        poolRef.current.filter((e: DictionaryEntry) => {
+          if (`${e.word}|${e.lang}` === `${current.word}|${current.lang}`) return false;
+          const otherVars = splitTranslations(e.translation);
+          return otherVars.some((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase()));
+        }),
+      ).slice(0, 3).map((e: DictionaryEntry) => {
+        const otherVars = splitTranslations(e.translation);
+        return otherVars.find((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase())) ?? e.translation;
+      });
       setCloze({ sentence: masked, maskedWord: current.translation,
                  options: shuffle([current.translation, ...distractors]) });
       setClozePicked(null); return;
@@ -773,7 +807,9 @@ export default function TrainingScreen() {
             onSubmitEditing={() => {
               if (typeChecked) { onNext(); return; }
               const targetVal = reverse ? (current.surfaceForm || current.word) : current.translation;
-                const ok = normalize(typed) === normalize(targetVal);
+              const ok = reverse
+                ? normalize(typed) === normalize(targetVal)
+                : matchAnyTranslation(typed, current.translation);
               setTypeOk(ok);
               setTypeChecked(true);
               const elapsed = Date.now() - typeShownAt.current;
@@ -794,7 +830,9 @@ export default function TrainingScreen() {
                 if (typeChecked) { onNext(); return; }
                 if (!typed.trim()) return;
                 const targetVal = reverse ? (current.surfaceForm || current.word) : current.translation;
-                const ok = normalize(typed) === normalize(targetVal);
+                const ok = reverse
+                  ? normalize(typed) === normalize(targetVal)
+                  : matchAnyTranslation(typed, current.translation);
                 setTypeOk(ok);
                 setTypeChecked(true);
                 // FSRS авто-градація за швидкістю відповіді (набір руками = точний сигнал)

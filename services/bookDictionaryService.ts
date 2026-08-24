@@ -5,6 +5,7 @@ import { translate } from './translationService';
 import type { DictionaryEntry } from '../store/dictionaryStore';
 import { extractBookWords } from '../utils/bookWords';
 import { effectiveLang } from '../utils/lang';
+import { getAllBookSentenceTranslations } from './sentenceTranslationsDb';
 
 const CHUNK = 20;
 const PAUSE_MS = 150;
@@ -32,6 +33,14 @@ export async function buildBookDictionary(
   const from = effectiveLang(lang);
   const words = extractBookWords(paragraphs);
   if (words.length === 0) return [];
+
+  // Перевикористання збережених sentence_translations: якщо речення книги вже перекладені
+  const sentenceTrans = opts.bookId ? getAllBookSentenceTranslations(opts.bookId) : [];
+  const sentenceTransMap = new Map<number, string>();
+  sentenceTrans.forEach((st) => {
+    const num = Number(st.key);
+    if (!Number.isNaN(num)) sentenceTransMap.set(num, st.translation);
+  });
 
   const out: Omit<DictionaryEntry, 'id' | 'createdAt'>[] = [];
   for (let i = 0; i < words.length; i += CHUNK) {

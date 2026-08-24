@@ -4,12 +4,13 @@ import React, { useState, useEffect, memo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { metal } from '../theme/neu';
 import { TrainingProgress } from '../store/trainingStore';
 import * as Speech from 'expo-speech';
 import { useT } from '../i18n';
 import Icon from './Icon';
 import { FONTS } from '../theme/constants';
+import { matchAnyTranslation } from '../utils/translations';
 
 export interface QuizItem {
   word: string;
@@ -59,7 +60,7 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
     if (!opt || !opt.trim()) return;
     setPicked(opt);
     setAnswered(true);
-    const correct = opt === item.correct;
+    const correct = matchAnyTranslation(opt, item.correct) || opt === item.correct;
     onAnswer(correct); // записываем сразу
     setTimeout(() => onNext(), 1000);
   };
@@ -91,16 +92,16 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
       <View style={[styles.options, a.width >= 700 && { flexDirection: 'row', flexWrap: 'wrap' }]}>
         {item.options.map((opt, i) => {
           const isPicked = picked === opt;
-          const isCorrect = opt === item.correct;
+          const isCorrect = matchAnyTranslation(opt, item.correct) || opt === item.correct;
+          const showState = answered && (isPicked || isCorrect);
           return (
             <TouchableOpacity
               key={i}
               style={[
-                styles.option,
                 // Профіль 1: подвійно випуклі кнопки вибору відповіді
-                metal(theme, 'raised', { radius: a.radius, strength: 0.85 }),
-                answered && isCorrect && { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.success },
-                answered && isPicked && !isCorrect && { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.danger },
+                metal(theme, showState && isCorrect ? 'primary' : showState && isPicked ? 'inset' : 'raised', { radius: a.radius, strength: 0.85 }),
+                answered && isCorrect && { backgroundColor: theme.success },
+                answered && isPicked && !isCorrect && { backgroundColor: theme.danger },
                 a.width >= 700 && { flexBasis: '48%', flexGrow: 1 },
               ]}
               onPress={() => choose(opt)}

@@ -58,6 +58,16 @@ export function hasAnyTranslation(bookId: string, key: string): boolean {
   );
 }
 
+/** Отримати всі збережені переклади речень книги (для імпорту словника / тренувань). */
+export function getAllBookSentenceTranslations(bookId: string): { key: string; translation: string }[] {
+  const db: SQLite.SQLiteDatabase = getBooksDb();
+  const rows = db.getAllSync(
+    `SELECT skey AS key, translation FROM sentence_translations WHERE book_id = ? AND translation != ''`,
+    [bookId]
+  ) as { key: string; translation: string }[];
+  return rows;
+}
+
 /** Видалити всі переклади книги (зміна мови перекладу / видалення книги). */
 export function clearSentenceTranslations(bookId: string): void {
   getBooksDb().runSync(`DELETE FROM sentence_translations WHERE book_id = ?`, [bookId]);
