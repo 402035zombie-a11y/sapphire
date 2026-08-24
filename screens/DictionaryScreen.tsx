@@ -715,7 +715,7 @@ const importAnkiApkg = async () => {
               <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: theme.surface }]} onPress={() => setConfirmDelete(false)}>
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Cancel')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: theme.primary }]} onPress={confirmDeleteAction}>
+              <TouchableOpacity style={[styles.confirmBtn, metal(theme, 'primary', { radius: a.radius })]} onPress={confirmDeleteAction}>
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Delete')}</Text>
               </TouchableOpacity>
             </View>
@@ -871,7 +871,7 @@ const importAnkiApkg = async () => {
             return (
               <TouchableOpacity
                 key={o.id}
-                style={[styles.pickItem, active && { backgroundColor: theme.selected }]}
+                style={[styles.pickItem, metal(theme, active ? 'inset' : 'raised', { radius: a.radius, strength: 0.6 }), active && { backgroundColor: theme.selected }]}
                 onPress={() => { setSortBy(o.id); setSortPickerOpen(false); }}
               >
                 <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
@@ -891,7 +891,7 @@ const importAnkiApkg = async () => {
             return (
               <TouchableOpacity
                 key={o.id}
-                style={[styles.pickItem, active && { backgroundColor: theme.selected }]}
+                style={[styles.pickItem, metal(theme, active ? 'inset' : 'raised', { radius: a.radius, strength: 0.6 }), active && { backgroundColor: theme.selected }]}
                 onPress={() => { setLevelFilter(o.id); setLevelPickerOpen(false); }}
               >
                 <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
@@ -916,7 +916,7 @@ const importAnkiApkg = async () => {
             return (
               <TouchableOpacity
                 key={o.id}
-                style={[styles.pickItem, active && { backgroundColor: theme.selected }]}
+                style={[styles.pickItem, metal(theme, active ? 'inset' : 'raised', { radius: a.radius, strength: 0.6 }), active && { backgroundColor: theme.selected }]}
                 onPress={() => { setDueFilter(o.id); setDuePickerOpen(false); }}
               >
                 <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
@@ -951,7 +951,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     searchPop: { width: '100%', maxWidth: Math.min(a.width - 24, 520), borderRadius: a.radius, padding: 12 },
     pickCard: { width: '100%', maxWidth: m.maxWidth, maxHeight: m.maxHeight, borderRadius: a.radius, padding: m.padding },
     pickTitle: { fontSize: a.h2, fontFamily: FONTS.bold, color: theme.secondaryText, borderBottomWidth: 1, borderBottomColor: theme.border, paddingBottom: a.gap, marginBottom: a.gap },
-    pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, ...metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), marginBottom: a.tiny ? 8 : 12 },
+    pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, marginBottom: a.tiny ? 8 : 12 },
     pickText: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1 },
     pickHint: { fontSize: a.small_fs, marginTop: 8, fontStyle: 'italic' },
     // Юзер (24.08): counterRow = випуклий контейнер (має зовнішні тіні), відступ знизу
