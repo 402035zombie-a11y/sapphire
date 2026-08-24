@@ -347,8 +347,10 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
           // FAB (юзер-фідбек 24.08): компактна зовнішня пара з ПРАВИЛЬНОЮ геометрією
           // (раніше офсет множився на OUTER_SHADOW двічі → 1px змазана пляма)
           `${Math.max(2, Math.round(off * 0.5))}px ${Math.max(2, Math.round(off * 0.6))}px ${blur1}px ${specDark(t)}`,
-          `inset 0 2px 3px ${rim(t)}`,
-          `inset 0 -3px 6px ${specDark(t)}`,
+          // Юзер M2: внутрішні тіні FAB об'ємніші
+          `inset 0 3px 5px ${rim(t)}`,
+          `inset 0 -4px 8px ${specDark(t)}`,
+          `inset ${Math.max(2, Math.round(off*0.3))}px ${Math.max(2, Math.round(off*0.3))}px ${Math.round(off)}px rgba(0,0,0,0.18)`,
         ].join(', ')
       : [
           // ВИПУКЛИЙ (raised): КОМПАКТНА зовнішня пара (юзер: великі тіни ламають об'єм).

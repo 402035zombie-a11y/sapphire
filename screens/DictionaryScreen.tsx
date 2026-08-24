@@ -561,7 +561,7 @@ const importAnkiApkg = async () => {
             <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
           </TouchableOpacity>
           <View style={{ marginLeft: 'auto' }}>
-            <SupportButton size={a.icon(30)} iconSize={a.icon(15)} compact />
+            <SupportButton size={a.icon(30)} iconSize={a.icon(15)} />
           </View>
         </View>
       </Card>
@@ -958,13 +958,14 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     pickHint: { fontSize: a.small_fs, marginTop: 8, fontStyle: 'italic' },
     // Юзер (24.08): counterRow = випуклий контейнер (має зовнішні тіні), відступ знизу
     // щоб тіні не накладались на фільтр-блок; padding збільшено (inset-затемнення знімається raised)
-    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 4 : 6, flexWrap: 'wrap', paddingVertical: a.tiny ? 7 : 9, paddingHorizontal: a.tiny ? 10 : 12, marginBottom: a.tiny ? 10 : 14 },
+    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 4 : 6, flexWrap: 'wrap', paddingVertical: a.tiny ? 7 : 9, paddingHorizontal: a.tiny ? 10 : 12, marginBottom: a.tiny ? 5 : 7 },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
     filterBlock: { padding: a.tiny ? 5 : 7, borderRadius: a.radius, gap: a.tiny ? 5 : 7 },
     sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 2, flexWrap: 'wrap' },
-    sortTab: { paddingVertical: a.tiny ? 3 : 5, paddingHorizontal: a.tiny ? 7 : 10, ...metal(theme, 'inset', { radius: a.radius }) },
+    // Юзер M4: inset робив таби занадто темними → компактний raised
+    sortTab: { paddingVertical: a.tiny ? 3 : 5, paddingHorizontal: a.tiny ? 7 : 10, ...metal(theme, 'raised', { radius: a.radius, strength: 0.45 }) },
     sortTabText: { fontSize: a.fs(11), fontFamily: FONTS.bold },
     levelBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3 },
     levelTrigger: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.pad, borderRadius: a.radius },

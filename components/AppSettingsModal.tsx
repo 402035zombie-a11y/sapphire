@@ -104,7 +104,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
 
             <Text style={{ fontSize: a.fs(14), color: theme.secondaryText, marginBottom: 8 }}>{t('Data')}</Text>
             <TouchableOpacity
-              style={[metal(theme, 'primary', { radius: a.radius }), { paddingVertical: a.tiny ? 10 : 14, width: '100%' }]}
+              style={[metal(theme, 'primary', { radius: a.radius }), { paddingVertical: a.tiny ? 10 : 14, alignItems: 'center', justifyContent: 'center', width: '100%' }]}
               onPress={exportData}
             >
               <Text style={{ color: theme.primaryText, fontSize: a.body, fontFamily: FONTS.bold }}>{t('Export backup (JSON)')}</Text>

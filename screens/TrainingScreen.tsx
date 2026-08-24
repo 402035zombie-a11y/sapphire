@@ -117,7 +117,9 @@ export default function TrainingScreen() {
     streakRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: a.gap, flexWrap: 'wrap' },
     streakLabel: { fontSize: a.small_fs },
     dots: { flexDirection: 'row', gap: 6, flex: 1, flexWrap: 'wrap' },
-    dot: { width: a.icon(14), height: a.icon(14), borderRadius: a.icon(14) / 2 },
+    // Юзер M8: крапки з мінімальним об'ємом відповідно до розміру; active ≠ inactive
+    dotActive: { width: a.icon(14), height: a.icon(14), borderRadius: a.icon(14) / 2, ...metal(theme, 'circle', { size: a.icon(14) }), backgroundColor: theme.primary },
+    dotInactive: { width: a.icon(14), height: a.icon(14), borderRadius: a.icon(14) / 2, ...metal(theme, 'circleInset', { size: a.icon(14) }) },
     streakNum: { fontSize: a.body, fontFamily: 'bold', marginRight: a.fab() * 2 },
     accuracy: { fontSize: a.small_fs, textAlign: 'center', marginBottom: a.gap },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: a.pad },
@@ -625,7 +627,7 @@ export default function TrainingScreen() {
               <TouchableOpacity
                 style={[
                   styles.sourceTab,
-                  metal(theme, source === 'all' ? 'primary' : 'inset', { radius: 999 }),
+                  metal(theme, source === 'all' ? 'primary' : 'raised', { radius: 999, strength: source === 'all' ? 1.15 : 0.45 }),
                 ]}
                 onPress={() => setSource('all')}
               >
@@ -638,7 +640,7 @@ export default function TrainingScreen() {
                   key={b.id}
                   style={[
                     styles.sourceTab,
-                    metal(theme, source === b.id ? 'primary' : 'inset', { radius: 999 }),
+                    metal(theme, source === b.id ? 'primary' : 'raised', { radius: 999, strength: source === b.id ? 1.15 : 0.45 }),
                   ]}
                   onPress={() => setSource(b.id)}
                 >
@@ -681,10 +683,7 @@ export default function TrainingScreen() {
   const dots = [0, 1, 2, 3, 4].map((i) => (
     <View
       key={i}
-      style={[
-        styles.dot,
-        { backgroundColor: i < wordStreak ? theme.primary : theme.border },
-      ]}
+      style={i < wordStreak ? styles.dotActive : styles.dotInactive}
     />
   ));
 
@@ -713,8 +712,9 @@ export default function TrainingScreen() {
         <View style={styles.dots}>{dots}</View>
         {/* Напрямок: слово→переклад / переклад→слово — тап перемикає */}
         <TouchableOpacity
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4,
-                   borderRadius: 999, borderWidth: 1, borderColor: theme.border }}
+          // Юзер M7/M10: вдавлений ззовні і всередині (inset), без обводки
+          style={[metal(theme, 'inset', { radius: 999 }), { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 5,
+                   borderRadius: 999 }]}
           onPress={() => setDirections((d) => ({ ...d, [mode]: !d[mode] }))}
           hitSlop={6}
         >
@@ -779,7 +779,7 @@ export default function TrainingScreen() {
           />
           <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 12 }}>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, typeChecked ? 'inset' : 'raised', { radius: a.radius }), !typed.trim() && !typeChecked && { opacity: 0.45 }]}
+              style={[styles.typeCheck, metal(theme, typeChecked ? 'inset' : 'primary', { radius: a.radius }), !typed.trim() && !typeChecked && { opacity: 0.45 }]}
               disabled={!typed.trim()}
               onPress={() => {
                 // Другий тап по Check (після перевірки) = перейти до наступного слова
@@ -804,7 +804,7 @@ export default function TrainingScreen() {
             </TouchableOpacity>
             {/* Skip: кругла іконка рестарту */}
             <TouchableOpacity
-              style={[styles.skipBtn, metal(theme, 'circle', { size: a.icon(40) }), { alignSelf: 'center' }]}
+              style={[styles.skipBtn, metal(theme, 'circle', { size: a.icon(40), filled: true }), { alignSelf: 'center' }]}
               onPress={() => { if (!typeChecked) onNext(); }}
               hitSlop={8}
             >
@@ -812,7 +812,7 @@ export default function TrainingScreen() {
             </TouchableOpacity>
             {typeChecked && typeOk && (
               <TouchableOpacity
-                style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger }]}
+                style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius })]}
                 onPress={knowAndRemove}
               >
                 <Text style={[styles.btnText, { color: theme.danger }]}>✗ {t("I know it")}</Text>
@@ -906,11 +906,14 @@ export default function TrainingScreen() {
               return (
                 <TouchableOpacity
                   key={opt}
-                  style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: showState && isRight ? theme.success : showState && isPicked ? theme.danger : theme.border }]}
+                  // Юзер M10: без обводки; варіанти = випуклі, стан тінями+заливкою
+                  style={[styles.typeCheck, metal(theme,
+                    showState && isRight ? 'primary' : showState && isPicked ? 'inset' : 'raised',
+                    { radius: a.radius })]}
                   disabled={clozePicked !== null}
                   onPress={() => answerCloze(opt)}
                 >
-                  <Text style={[styles.btnText, { color: theme.primaryText }]}>{opt}</Text>
+                  <Text style={[styles.btnText, { color: showState && isRight ? theme.onPrimary : theme.primaryText }]}>{opt}</Text>
                 </TouchableOpacity>
               );
             })}
