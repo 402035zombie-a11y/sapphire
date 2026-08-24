@@ -313,7 +313,8 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
   const sc = t.neuScale ?? { depth: 1, spread: 1 };
   // Нелінійно: мала кнопка (28px) має компактну тінь з видимим контуром,
   // великий FAB (56px) — пропорційно глибшу, але не вдвічі більшу.
-  const off = Math.max(3, Math.round(Math.pow(size, 0.72) * 0.62 * sc.depth));
+  // Юзер (24.08): зовнішні тіні круглих кнопок завеликі — коеф 0.62->0.48
+  const off = Math.max(3, Math.round(Math.pow(size, 0.72) * 0.48 * sc.depth));
   const blur1 = Math.max(3, Math.round(off * 2.0 * sc.spread));
   const blur2 = Math.max(5, Math.round(off * 3.4 * sc.spread));
   const { soft: s, light: l } = t.neu;
@@ -350,12 +351,11 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
           `inset 0 -3px 6px ${specDark(t)}`,
         ].join(', ')
       : [
-          // ВИПУКЛИЙ (raised) — зовнішня пара: dark вниз-право + light вгору-ліво,
-          // ОБИДВА з нормальним офсетом і великим блюром ("біла лінія" була від 0.7x стиснення)
-          `${off}px ${off}px ${blur1}px ${specDark(t)}`,
-          `${off * 1.5}px ${off * 1.5}px ${blur2}px ${specDark(t)}`,
-          `${-Math.round(off * 0.85)}px ${-Math.round(off * 0.85)}px ${Math.max(4, Math.round(blur1 * 1.15))}px ${s}`,
-          `${-Math.round(off * 1.3)}px ${-Math.round(off * 1.3)}px ${Math.max(6, Math.round(blur2))}px ${l}`,
+          // ВИПУКЛИЙ (raised): КОМПАКТНА зовнішня пара (юзер: великі тіни ламають об'єм).
+          // Один dark-шар замість двох, light ближчий.
+          `${Math.max(2, Math.round(off * 0.55))}px ${Math.max(2, Math.round(off * 0.65))}px ${blur1}px ${specDark(t)}`,
+          `${-Math.round(off * 0.45)}px ${-Math.round(off * 0.45)}px ${Math.max(4, Math.round(blur1))}px ${s}`,
+          `${-Math.round(off * 0.8)}px ${-Math.round(off * 0.8)}px ${Math.max(6, Math.round(blur2))}px ${l}`,
           `inset 0 1px 0 0 ${rim(t)}`,
           `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
           `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
