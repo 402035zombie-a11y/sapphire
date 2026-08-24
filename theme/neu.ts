@@ -342,8 +342,9 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
     transition: 'box-shadow 160ms ease, transform 160ms ease',
     boxShadow: filled
       ? [
-          `${Math.round(off * 1.4 * OUTER_SHADOW)}px ${Math.round(off * 1.6 * OUTER_SHADOW)}px ${Math.round(blur2 * OUTER_SHADOW)}px rgba(0,0,0,0.55)`,
-          `${Math.round(off * OUTER_SHADOW)}px ${Math.round(off * OUTER_SHADOW)}px ${Math.round(blur1 * OUTER_SHADOW)}px rgba(0,0,0,0.45)`,
+          // FAB (юзер-фідбек 24.08): компактна зовнішня пара з ПРАВИЛЬНОЮ геометрією
+          // (раніше офсет множився на OUTER_SHADOW двічі → 1px змазана пляма)
+          `${Math.max(2, Math.round(off * 0.5))}px ${Math.max(2, Math.round(off * 0.6))}px ${blur1}px rgba(0,0,0,0.45)`,
           `inset 0 2px 3px rgba(255,255,255,0.45)`,
           `inset 0 -3px 6px rgba(0,0,0,0.35)`,
         ].join(', ')
