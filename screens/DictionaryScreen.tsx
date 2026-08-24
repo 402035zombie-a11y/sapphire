@@ -946,7 +946,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     headerActions: { flexDirection: 'row', gap: 8 },
     confirmBtn: { flex: 1, paddingVertical: Math.max(10, Math.round(13 * a.scale)), paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'inset', { radius: a.radius }) },
     iconBtn: { ...metal(theme, 'circle', { size: iconBtn }), width: iconBtn, height: iconBtn, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
-    searchInline: { width: '100%', minWidth: 200, height: iconBtn, ...metal(theme, 'inset', { radius: a.radius }), backgroundColor: theme.surface ?? theme.neu?.base ?? '#ffffff', paddingHorizontal: 12, fontSize: a.body, color: theme.primaryText },
+    searchInline: { width: '100%', minWidth: 200, height: iconBtn, ...metal(theme, 'inset', { radius: a.radius }), backgroundColor: theme.surface ?? theme.neu.base, paddingHorizontal: 12, fontSize: a.body, color: theme.primaryText },
     modalBackdrop: { flex: 1 },
     searchPop: { width: '100%', maxWidth: Math.min(a.width - 24, 520), borderRadius: a.radius, padding: 12 },
     pickCard: { width: '100%', maxWidth: m.maxWidth, maxHeight: m.maxHeight, borderRadius: a.radius, padding: m.padding },

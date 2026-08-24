@@ -132,8 +132,8 @@ export function neuPrimary(t: ThemePalette, radius: number): any {
     backgroundImage: `linear-gradient(145deg, ${t.primary} 0%, ${t.primary} 60%, ${t.primary})`,
     borderRadius: radius,
     boxShadow: [
-      `${Math.round(x * OUTER_SHADOW)}px ${Math.round(off * OUTER_SHADOW)}px ${Math.round(blur1 * OUTER_SHADOW)}px rgba(0,0,0,0.45)`,
-      `${Math.round(x * 1.6 * OUTER_SHADOW)}px ${Math.round(off * 1.6 * OUTER_SHADOW)}px ${Math.round(blur2 * OUTER_SHADOW)}px rgba(0,0,0,0.35)`,
+      `${Math.round(x * OUTER_SHADOW)}px ${Math.round(off * OUTER_SHADOW)}px ${Math.round(blur1 * OUTER_SHADOW)}px ${specDark(t)}`,
+      `${Math.round(x * 1.6 * OUTER_SHADOW)}px ${Math.round(off * 1.6 * OUTER_SHADOW)}px ${Math.round(blur2 * OUTER_SHADOW)}px ${specDark(t)}`,
       `inset 0 1px 2px ${rim(t)}`, // верхній блік (темозалежний, не хардкод)
       `inset 0 -2px 5px ${specDark(t)}`, // нижня внутрішня тінь
     ].join(', '),
@@ -344,9 +344,9 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
       ? [
           // FAB (юзер-фідбек 24.08): компактна зовнішня пара з ПРАВИЛЬНОЮ геометрією
           // (раніше офсет множився на OUTER_SHADOW двічі → 1px змазана пляма)
-          `${Math.max(2, Math.round(off * 0.5))}px ${Math.max(2, Math.round(off * 0.6))}px ${blur1}px rgba(0,0,0,0.45)`,
-          `inset 0 2px 3px rgba(255,255,255,0.45)`,
-          `inset 0 -3px 6px rgba(0,0,0,0.35)`,
+          `${Math.max(2, Math.round(off * 0.5))}px ${Math.max(2, Math.round(off * 0.6))}px ${blur1}px ${specDark(t)}`,
+          `inset 0 2px 3px ${rim(t)}`,
+          `inset 0 -3px 6px ${specDark(t)}`,
         ].join(', ')
       : [
           // ВИПУКЛИЙ (raised) — зовнішня пара: dark вниз-право + light вгору-ліво,
@@ -515,8 +515,8 @@ function metalStamp(t: ThemePalette, size: number): any {
     // купол: радиальный блик сверху-слева → тёмный снизу-справа (выпуклость)
     backgroundColor: t.neu.base,
     backgroundImage: [
-      'radial-gradient(80% 80% at 32% 28%, rgba(235,243,255,0.45) 0%, rgba(235,243,255,0) 55%)',
-      `linear-gradient(150deg, ${'#4A5360'} 0%, ${t.neu.base} 50%, ${'#14171C'} 100%)`,
+      `radial-gradient(80% 80% at 32% 28%, ${t.neu.hi} 0%, rgba(0,0,0,0) 55%)`,
+      `linear-gradient(150deg, ${t.neu.light} 0%, ${t.neu.base} 50%, ${t.neu.dark} 100%)`,
     ].join(', '),
     backgroundClip: 'padding-box',
     transition: 'box-shadow 160ms ease, transform 160ms ease',
@@ -525,8 +525,8 @@ function metalStamp(t: ThemePalette, size: number): any {
       `inset ${o}px ${o}px ${o * 2}px ${specDark(t)}`,
       `inset ${-o}px ${-o}px ${o * 2}px ${t.neu.soft}`,
       // ВНУТРЕННИЙ купол (выпуклый): светлая верхняя грань + тёмная нижняя
-      `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px rgba(255,255,255,0.22)`,
-      `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px rgba(0,0,0,0.3)`,
+      `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${rim(t)}`,
+      `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${specDark(t)}`,
       // холодный edge-rim
       `inset 0 0 0 1px ${rim(t)}`,
     ].join(', '),
@@ -581,8 +581,8 @@ function metalTabStamp(t: ThemePalette, radius: number, active: boolean): any {
       `inset ${o}px ${o}px ${o * 2}px ${specDark(t)}`,
       `inset ${-o}px ${-o}px ${o * 2}px ${s}`,
       // ВНУТРЕННИЙ купол (выпуклость): светлая верхняя грань + тёмная нижняя
-      `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px rgba(255,255,255,0.22)`,
-      `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px rgba(0,0,0,0.3)`,
+      `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${rim(t)}`,
+      `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${specDark(t)}`,
       // холодный edge-rim
       `inset 0 0 0 1px ${rim(t)}`,
     ].join(', '),

@@ -80,7 +80,7 @@ export default function TrainingScreen() {
     counterBadges: { flexDirection: 'row', gap: 6 },
     counter: { fontSize: a.small_fs },
     counterBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
-    counterBadgeText: { color: '#000000', fontFamily: 'bold', fontSize: a.small_fs },
+    counterBadgeText: { fontFamily: 'bold', fontSize: a.small_fs },
     restart: { fontSize: a.small_fs, fontFamily: 'bold' },
     // Стартовый экран: контент сверху, без «провала» пустоты в центре.
     startScroll: {
@@ -623,7 +623,7 @@ export default function TrainingScreen() {
                 style={[
                   styles.sourceTab,
                   metal(theme, 'inset', { radius: 999 }),
-                  source === 'all' && { backgroundColor: '#4A4A50' },
+                  source === 'all' && { backgroundColor: theme.selected },
                 ]}
                 onPress={() => setSource('all')}
               >
@@ -637,7 +637,7 @@ export default function TrainingScreen() {
                   style={[
                     styles.sourceTab,
                     metal(theme, 'inset', { radius: 999 }),
-                    source === b.id && { backgroundColor: '#4A4A50' },
+                    source === b.id && { backgroundColor: theme.selected },
                   ]}
                   onPress={() => setSource(b.id)}
                 >
@@ -698,10 +698,10 @@ export default function TrainingScreen() {
         <IconButton icon="arrow-back" onPress={() => { setStarted(false); setFinished(false); setIndex(0); }} variant="circle" size={a.fab()} hitSlop={8} />
         <View style={styles.counterBadges}>
           <View style={[styles.counterBadge, { backgroundColor: theme.success }]}>
-            <Text style={styles.counterBadgeText}>✓ {stats.correct}</Text>
+            <Text style={[styles.counterBadgeText, { color: "#FFFFFF" }]}>✓ {stats.correct}</Text>
           </View>
           <View style={[styles.counterBadge, { backgroundColor: theme.danger }]}>
-            <Text style={styles.counterBadgeText}>✗ {stats.wrong}</Text>
+            <Text style={[styles.counterBadgeText, { color: "#FFFFFF" }]}>✗ {stats.wrong}</Text>
           </View>
         </View>
         <SupportButton size={a.fab()} iconSize={Math.round(a.fab() * 0.5)} />
@@ -927,7 +927,7 @@ export default function TrainingScreen() {
               return (
                 <TouchableOpacity
                   key={code}
-                  style={[styles.sourceTab, { alignSelf: 'stretch' }, active && { backgroundColor: '#4A4A50', borderWidth: 1.5, borderColor: theme.success }]}
+                  style={[styles.sourceTab, { alignSelf: 'stretch' }, active && { backgroundColor: theme.selected, borderWidth: 1.5, borderColor: theme.success }]}
                   onPress={() => { setTrainTargetLang(code); useSettingsStore.getState().setTargetLang(code); setLangPickerOpen(false); }}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>

@@ -421,7 +421,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
             onPress={importBookDict}
             disabled={importing}
           >
-            <Text style={[styles.importText, { color: importing ? '#FFFFFF' : theme.primary }]}>
+            <Text style={[styles.importText, { color: importing ? theme.onPrimary : theme.primary }]}>
               {importing ? `✓ ${t('Importing dictionary…')}` : t('Import book dictionary (all words)')}
             </Text>
           </TouchableOpacity>
