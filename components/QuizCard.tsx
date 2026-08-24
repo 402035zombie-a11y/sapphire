@@ -6,7 +6,10 @@ import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import { TrainingProgress } from '../store/trainingStore';
+import * as Speech from 'expo-speech';
 import { useT } from '../i18n';
+import Icon from './Icon';
+import { FONTS } from '../theme/constants';
 
 export interface QuizItem {
   word: string;
@@ -25,11 +28,15 @@ interface Props {
 }
 
 const speak = (text: string, lang: string) => {
+  if (!text) return;
   if (Platform.OS === 'web' && 'speechSynthesis' in window) {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang || 'en';
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
+  } else {
+    Speech.stop();
+    Speech.speak(text, { language: lang || 'en', rate: 0.95 });
   }
 };
 
@@ -63,7 +70,7 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
   const stability = Math.round(progress?.stability ?? 0);
 
   return (
-    <View style={[styles.card, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
+    <View style={[styles.card, metal(theme, 'raised', { radius: a.radius + 4, strength: 0.85 }), { backgroundColor: theme.surface }]}>
       <View style={styles.wordRow}>
         {stability > 0 && (
           <View style={[styles.boxBadge, metal(theme, 'inset', { radius: 8 })]}>
@@ -71,8 +78,8 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
           </View>
         )}
         <Text style={styles.word}>{item.word}</Text>
-        <TouchableOpacity style={styles.speakBtn} onPress={() => speak(item.word, item.fromLang || 'en')} hitSlop={6}>
-          <Text style={styles.speakIcon}>▶</Text>
+        <TouchableOpacity style={[styles.speakBtn, metal(theme, 'speakBtn', { size: a.icon(32) })]} onPress={() => speak(item.word, item.fromLang || 'en')} hitSlop={6}>
+          <Icon name="play" size={a.icon(16)} color={theme.primaryText} />
         </TouchableOpacity>
       </View>
 
@@ -90,9 +97,10 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
               key={i}
               style={[
                 styles.option,
-                metal(theme, 'inset', { radius: a.radius }),
-                answered && isCorrect && { ...metal(theme, 'inset', { radius: a.radius }), backgroundColor: theme.success },
-                answered && isPicked && !isCorrect && { ...metal(theme, 'inset', { radius: a.radius }), backgroundColor: theme.danger },
+                // Профіль 1: подвійно випуклі кнопки вибору відповіді
+                metal(theme, 'raised', { radius: a.radius, strength: 0.85 }),
+                answered && isCorrect && { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.success },
+                answered && isPicked && !isCorrect && { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.danger },
                 a.width >= 700 && { flexBasis: '48%', flexGrow: 1 },
               ]}
               onPress={() => choose(opt)}
@@ -100,13 +108,13 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
               <Text
                 style={[
                   styles.optionText,
-                  (answered && (isCorrect || (isPicked && !isCorrect))) && { color: theme.primaryText },
+                  (answered && (isCorrect || (isPicked && !isCorrect))) ? { color: theme.onPrimary, fontFamily: FONTS.bold } : { color: theme.primaryText },
                 ]}
               >
                 {opt}
               </Text>
-              <TouchableOpacity style={styles.speakSmall} onPress={() => speak(opt, item.toLang || 'en')} hitSlop={6}>
-                <Text style={styles.speakIconSmall}>▶</Text>
+              <TouchableOpacity style={[styles.speakSmall, metal(theme, 'speakBtn', { size: a.icon(28) })]} onPress={() => speak(opt, item.toLang || 'en')} hitSlop={6}>
+                <Icon name="play" size={a.icon(13)} color={theme.primaryText} />
               </TouchableOpacity>
             </TouchableOpacity>
           );
@@ -123,10 +131,8 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     card: { padding: a.pad, width: '100%', maxWidth: a.contentMaxW, alignSelf: 'center' },
     wordRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' },
     word: { fontSize: a.fs(26), fontFamily: 'System', fontWeight: '700', color: theme.primaryText, textAlign: 'center', flexShrink: 1 },
-    speakBtn: { ...metal(theme, 'circle', { size: a.icon(34) }), padding: 0, alignItems: 'center', justifyContent: 'center' },
-    speakIcon: { fontSize: a.fs(18), color: theme.primaryText, textAlign: 'center', includeFontPadding: false },
-    speakSmall: { ...metal(theme, 'circle', { size: a.icon(30) }), padding: 0, alignItems: 'center', justifyContent: 'center' },
-    speakIconSmall: { fontSize: a.fs(14), color: theme.primaryText, textAlign: 'center', includeFontPadding: false },
+    speakBtn: { padding: 0, alignItems: 'center', justifyContent: 'center' },
+    speakSmall: { padding: 0, alignItems: 'center', justifyContent: 'center' },
     boxBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     boxText: { color: theme.primary, fontFamily: 'System', fontWeight: '700', fontSize: a.fs(12) },
     scoreLine: { textAlign: 'center', marginTop: 6, fontSize: a.fs(14), fontFamily: 'System', fontWeight: '700', minHeight: 20 },

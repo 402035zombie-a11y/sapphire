@@ -390,44 +390,50 @@ export default function SpeedReadingScreen() {
       </View>
 
       {variant === 'rsvp' && (
-        <View>
+        <View style={{ width: '92%', maxWidth: 320, alignSelf: 'center', marginTop: a.gap }}>
           <TouchableOpacity
-            style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
-            onPress={() => { const v = !microPauses; setMicroPauses(v); setReader({ microPauses: v }); }}
+            style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad, justifyContent: 'center' }]}
+            onPress={() => setMicroPauses((v) => !v)}
           >
             <View style={[styles.microDot, { backgroundColor: microPauses ? theme.success : theme.border }, !microPauses && { backgroundColor: theme.border }]} />
-            <Text style={[styles.microLabel, { color: theme.primaryText }]}>{t('Micro-pauses after punctuation')}</Text>
+            <Text style={[styles.microLabel, { color: theme.primaryText }]}>{t('Micro-pauses at punctuation')}</Text>
           </TouchableOpacity>
           {microPauses && (
-            <View>
+            <View style={{ width: '100%', marginTop: 6 }}>
               <View style={[styles.pauseRow, metal(theme, 'inset', { radius: a.radius })]}>
-                <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseCommaMs - 10); setPauseCommaMs(v); setReader({ pauseCommaMs: v }); }}>
-                  <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
-                </TouchableOpacity>
-                <Text style={[styles.pauseValue, { color: theme.primaryText }]}>{pauseCommaMs} {t('ms')}</Text>
-                <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.min(1000, pauseCommaMs + 10); setPauseCommaMs(v); setReader({ pauseCommaMs: v }); }}>
-                  <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>+</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseCommaMs - 10); setPauseCommaMs(v); setReader({ pauseCommaMs: v }); }}>
+                    <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={[styles.pauseValue, { color: theme.primaryText }]}>{pauseCommaMs} {t('ms')}</Text>
+                  <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.min(1000, pauseCommaMs + 10); setPauseCommaMs(v); setReader({ pauseCommaMs: v }); }}>
+                    <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>+</Text>
+                  </TouchableOpacity>
+                </View>
                 <Text style={[styles.pauseHint, { color: theme.secondaryText }]}>{t('comma , ; :')}</Text>
               </View>
               <View style={[styles.pauseRow, metal(theme, 'inset', { radius: a.radius })]}>
-                <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseSentMs - 10); setPauseSentMs(v); setReader({ pauseSentMs: v }); }}>
-                  <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
-                </TouchableOpacity>
-                <Text style={[styles.pauseValue, { color: theme.primaryText }]}>{pauseSentMs} {t('ms')}</Text>
-                <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.min(1000, pauseSentMs + 10); setPauseSentMs(v); setReader({ pauseSentMs: v }); }}>
-                  <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>+</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseSentMs - 10); setPauseSentMs(v); setReader({ pauseSentMs: v }); }}>
+                    <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={[styles.pauseValue, { color: theme.primaryText }]}>{pauseSentMs} {t('ms')}</Text>
+                  <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.min(1000, pauseSentMs + 10); setPauseSentMs(v); setReader({ pauseSentMs: v }); }}>
+                    <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>+</Text>
+                  </TouchableOpacity>
+                </View>
                 <Text style={[styles.pauseHint, { color: theme.secondaryText }]}>{t('end . ! ?')}</Text>
               </View>
               <View style={[styles.pauseRow, metal(theme, 'inset', { radius: a.radius })]}>
-                <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseBracketMs - 10); setPauseBracketMs(v); setReader({ pauseBracketMs: v }); }}>
-                  <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
-                </TouchableOpacity>
-                <Text style={[styles.pauseValue, { color: theme.primaryText }]}>{pauseBracketMs} {t('ms')}</Text>
-                <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.min(1000, pauseBracketMs + 10); setPauseBracketMs(v); setReader({ pauseBracketMs: v }); }}>
-                  <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>+</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseBracketMs - 10); setPauseBracketMs(v); setReader({ pauseBracketMs: v }); }}>
+                    <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={[styles.pauseValue, { color: theme.primaryText }]}>{pauseBracketMs} {t('ms')}</Text>
+                  <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.min(1000, pauseBracketMs + 10); setPauseBracketMs(v); setReader({ pauseBracketMs: v }); }}>
+                    <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>+</Text>
+                  </TouchableOpacity>
+                </View>
                 <Text style={[styles.pauseHint, { color: theme.secondaryText }]}>{t('brackets ( )')}</Text>
               </View>
             </View>
@@ -446,21 +452,21 @@ export default function SpeedReadingScreen() {
       )}
 
       {resetPrompt && (
-        <ModalSheet visible={resetPrompt} onClose={() => setResetPrompt(false)}>
+        <ModalSheet visible={resetPrompt} onClose={() => setResetPrompt(false)} role="raised">
           <View style={[styles.resetModal]}>
             <Text style={[styles.resetTitle, { color: theme.primaryText }]}>{t('Start over?')}</Text>
             <View style={styles.resetRow}>
               <TouchableOpacity
-                style={[styles.resetBtn, metal(theme, 'primary')]}
+                style={[styles.resetBtn, metal(theme, 'primary', { radius: a.radius })]}
                 onPress={() => { setResetPrompt(false); stopAll(); }}
               >
-                <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold }}>{t('Yes')}</Text>
+                <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold, fontSize: a.body }}>{t('Yes')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.resetBtn, metal(theme, 'inset')]}
+                style={[styles.resetBtn, metal(theme, 'inset', { radius: a.radius })]}
                 onPress={() => setResetPrompt(false)}
               >
-                <Text style={{ color: theme.primaryText, fontFamily: FONTS.bold }}>{t('No')}</Text>
+                <Text style={{ color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.body }}>{t('No')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -561,23 +567,22 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     pauseRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      gap: Math.round(Math.max(8, 14 * a.scale)),
+      justifyContent: 'space-between',
       width: '100%',
       marginTop: 10,
-      paddingVertical: a.tiny ? 6 : 10,
+      paddingVertical: a.tiny ? 6 : 8,
       paddingHorizontal: a.pad,
       borderRadius: a.radius,
-      flexWrap: 'wrap',
+      flexWrap: 'nowrap',
     },
-    pauseBtn: { ...metal(theme, 'circle', { size: pauseSz }), borderRadius: pauseSz / 2 },
-    pauseBtnText: { fontSize: a.fs(24), fontFamily: FONTS.bold },
-    pauseValue: { fontSize: a.title, fontFamily: FONTS.bold, minWidth: 54, textAlign: 'center' },
-    pauseHint: { fontSize: a.fs(12) },
+    pauseBtn: { ...metal(theme, 'circle', { size: pauseSz }), width: pauseSz, height: pauseSz, borderRadius: pauseSz / 2, alignItems: 'center', justifyContent: 'center' },
+    pauseBtnText: { fontSize: a.fs(22), fontFamily: FONTS.bold },
+    pauseValue: { fontSize: a.title, fontFamily: FONTS.bold, minWidth: 60, textAlign: 'center' },
+    pauseHint: { fontSize: a.fs(12), flex: 1, textAlign: 'right', marginLeft: 8 },
     resetBackdrop: { backgroundColor: theme.backdrop, alignItems: 'center', justifyContent: 'center', zIndex: 50 },
-    resetModal: { width: Math.min(320, a.contentMaxW - a.pad * 2), borderRadius: a.radius, padding: a.pad, alignItems: 'center' },
-    resetTitle: { fontSize: a.h2, fontFamily: FONTS.bold, marginBottom: a.gap },
-    resetRow: { flexDirection: 'row', gap: a.gap, width: '100%' },
+    resetModal: { width: '100%', maxWidth: Math.min(320, a.contentMaxW - a.pad * 2), borderRadius: a.radius, padding: a.pad, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' },
+    resetTitle: { fontSize: a.h2, fontFamily: FONTS.bold, marginBottom: a.gap, textAlign: 'center', alignSelf: 'center', width: '100%' },
+    resetRow: { flexDirection: 'row', gap: a.gap, width: '100%', justifyContent: 'center', alignItems: 'center' },
     resetBtn: { flex: 1, height: Math.round(Math.max(44, 52 * a.scale)), alignItems: 'center', justifyContent: 'center', paddingVertical: a.tiny ? 8 : 12, borderRadius: a.radius },
   });
 }

@@ -759,7 +759,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     langChip: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, ...metal(theme, 'inset', { radius: 12 }) },
     langChipText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     // Колонка текста ограничена по ширине на больших мониторах — иначе строки нечитаемо длинные.
-    list: { paddingVertical: 12, paddingBottom: 40, width: '100%', maxWidth: a.readerMaxW, alignSelf: 'center' },
+    list: { paddingVertical: 12, paddingBottom: 40, width: '100%', maxWidth: a.readerMaxW, alignSelf: 'center', overflow: 'visible' },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     footer: { marginVertical: a.gap },
     modalBackdrop: { flex: 1, backgroundColor: theme.backdrop, justifyContent: 'flex-start' },

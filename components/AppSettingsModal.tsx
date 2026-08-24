@@ -58,9 +58,10 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
   };
 
   return (
-    <ModalSheet visible={visible} onClose={onClose} allowNested>
-      <View style={{ width: '100%' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+    <>
+      <ModalSheet visible={visible} onClose={onClose}>
+        <View style={{ width: '100%' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <Text style={{ flex: 1, fontSize: a.h2, fontFamily: FONTS.bold, color: theme.primaryText }}>{t('App settings')}</Text>
           </View>
           <TouchableOpacity
@@ -107,16 +108,16 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
               style={[metal(theme, 'primary', { radius: a.radius }), { paddingVertical: a.tiny ? 10 : 14, alignItems: 'center', justifyContent: 'center', width: '100%' }]}
               onPress={exportData}
             >
-              <Text style={{ color: theme.primaryText, fontSize: a.body, fontFamily: FONTS.bold }}>{t('Export backup (JSON)')}</Text>
+              <Text style={{ color: theme.onPrimary, fontSize: a.body, fontFamily: FONTS.bold }}>{t('Export backup (JSON)')}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
+      </ModalSheet>
 
       <LanguagePicker
         visible={appLangPicker}
         value={appLang}
         allowAuto={false}
-        embedded
         options={[
           { code: 'auto', name: 'Auto', en: 'Auto' },
           { code: 'system', name: 'As in system', en: 'As in system' },
@@ -125,6 +126,6 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
         onSelect={(code) => setAppLang(code)}
         onClose={() => setAppLangPicker(false)}
       />
-    </ModalSheet>
+    </>
   );
 }

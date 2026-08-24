@@ -51,17 +51,30 @@ const speakWord = (text: string, lang: string) => {
 type SortMode = 'az' | 'date' | 'lang' | 'freq' | 'hard';
 
 // Список выбора в попапе (дедуплицирует 3× ScrollView maxHeight:a.height*0.6 в DictionaryScreen)
-function PickerList({ items, emptyHint, styles }: { items: { key: string; label: string; onPress: () => void }[]; emptyHint?: string; styles: any }) {
+function PickerList({ items, emptyHint, styles, activeKey }: { items: { key: string; label: string; onPress: () => void }[]; emptyHint?: string; styles: any; activeKey?: string }) {
   const theme = useTheme();
   const a = useAdaptive();
   if (items.length === 0 && emptyHint) return <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{emptyHint}</Text>;
   return (
-    <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
-      {items.map((it) => (
-        <TouchableOpacity key={it.key} style={[styles.pickItem]} onPress={it.onPress}>
-          <Text style={[styles.pickText, { color: theme.primaryText }]} numberOfLines={1}>{it.label}</Text>
-        </TouchableOpacity>
-      ))}
+    <ScrollView style={{ maxHeight: Math.round(a.height * 0.6), overflow: 'visible' }} contentContainerStyle={{ paddingBottom: 4, paddingHorizontal: 4 }}>
+      {items.map((it) => {
+        const active = activeKey === it.key;
+        return (
+          <TouchableOpacity
+            key={it.key}
+            style={[
+              styles.pickItem,
+              active
+                ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+            ]}
+            onPress={it.onPress}
+          >
+            <Text style={[styles.pickText, { color: active ? theme.onPrimary : theme.primaryText, fontFamily: active ? FONTS.bold : undefined }]} numberOfLines={1}>{it.label}</Text>
+            {active && <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold }}>✓</Text>}
+          </TouchableOpacity>
+        );
+      })}
     </ScrollView>
   );
 }
@@ -131,8 +144,8 @@ function WordCard({ item, theme, a, styles, progress, editing, setEditing, updat
           </TouchableOpacity>
         )}
       </View>
-      <TouchableOpacity style={styles.deleteBtn} onPress={() => removeEntry(item.id)} hitSlop={10}>
-        <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
+      <TouchableOpacity style={[styles.deleteBtn, metal(theme, 'deleteBtn', { size: a.dim(0.045, 26, 34) }), { padding: 0 }]} onPress={() => removeEntry(item.id)} hitSlop={10}>
+        <Icon name="close" size={a.dim(0.025, 14, 18)} color={theme.danger} />
       </TouchableOpacity>
     </Card>
   );
@@ -519,7 +532,7 @@ const importAnkiApkg = async () => {
 
   return (
     <Screen contentStyle={{ padding: a.pad }}>
-      <View style={[styles.counterRow, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
+      <View style={[styles.counterRow, metal(theme, 'raised', { radius: a.radius, strength: 0.85 })]}>
         <Text style={[styles.counterText, { color: theme.primaryText }]}>
           {t('Total words:')} <Text style={styles.counterNum}>{scopedEntries.length}</Text>
           {'  '}·{'  '}{t('Answers:')} <Text style={styles.counterNum}>{totalAnswers}</Text>
@@ -546,7 +559,7 @@ const importAnkiApkg = async () => {
             style={[styles.sortTab, levelFilter !== 'all' && { backgroundColor: theme.selected }]}
             onPress={() => setLevelPickerOpen(true)}
           >
-            <Text style={[styles.sortTabText, { color: levelFilter !== 'all' ? theme.primaryText : theme.secondaryText }]}>
+            <Text style={[styles.sortTabText, { color: theme.primaryText }]}>
               {t('Type')}: {levelOptions.find((o) => o.id === levelFilter)?.label ?? t('All')}
             </Text>
             <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
@@ -555,13 +568,13 @@ const importAnkiApkg = async () => {
             style={[styles.sortTab, dueFilter !== 'all' && { backgroundColor: theme.selected }]}
             onPress={() => setDuePickerOpen(true)}
           >
-            <Text style={[styles.sortTabText, { color: dueFilter !== 'all' ? theme.primaryText : theme.secondaryText }]}>
+            <Text style={[styles.sortTabText, { color: theme.primaryText }]}>
               {t('Due')}: {dueFilter === 'all' ? t('All') : dueFilter === 'overdue' ? t('Overdue') : dueFilter === 'today' ? t('Today') : t('This week')}
             </Text>
             <Icon name="chevron-down" size={a.fs(12)} color={theme.secondaryText} />
           </TouchableOpacity>
           <View style={{ marginLeft: 'auto' }}>
-            <SupportButton size={a.icon(30)} iconSize={a.icon(15)} />
+            <SupportButton size={a.icon(28)} iconSize={a.icon(14)} variant="stamp" />
           </View>
         </View>
       </Card>
@@ -614,8 +627,19 @@ const importAnkiApkg = async () => {
       <ModalSheet visible={source === null} onClose={() => setSource({ type: 'general' })}>
         <View style={styles.pickCard}>
         <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Which dictionary to open?')}</Text>
-            <TouchableOpacity style={[styles.pickItem]} onPress={() => setSource({ type: 'general' })}>
-              <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('General dictionary')}</Text>
+            <TouchableOpacity
+              style={[
+                styles.pickItem,
+                source?.type !== 'book'
+                  ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                  : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+              ]}
+              onPress={() => setSource({ type: 'general' })}
+            >
+              <Text style={[styles.pickText, source?.type !== 'book' ? { color: theme.onPrimary, fontFamily: FONTS.bold } : { color: theme.primaryText }]}>
+                {t('General dictionary')}
+              </Text>
+              {source?.type !== 'book' && <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold }}>✓</Text>}
             </TouchableOpacity>
             {bookSources.length > 0 ? (
               <PickerList
@@ -625,6 +649,7 @@ const importAnkiApkg = async () => {
                   onPress: () => setSource({ type: 'book', bookId: b.id }),
                 }))}
                 styles={styles}
+                activeKey={source?.type === 'book' ? (source as any).bookId : undefined}
               />
             ) : (
               <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{t('No books with saved words.')}</Text>
@@ -667,9 +692,17 @@ const importAnkiApkg = async () => {
       <ModalSheet visible={bookPickOpen} onClose={() => setBookPickOpen(false)}>
         <View style={styles.pickCard}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Select a book')}</Text>
-            {/* General dictionary ЗАВЖДИ перший пункт — вихід із книги назад у глобальний словник */}
-            <TouchableOpacity style={[styles.pickItem]} onPress={() => { setSource({ type: 'general' }); setBookPickOpen(false); }}>
-              <Text style={[styles.pickText, source?.type !== 'book' ? { color: theme.primary, fontFamily: FONTS.bold } : { color: theme.primaryText }]}>
+            {/* General dictionary: активна = ВИПУКЛА з акцентом (primary), неактивна = ВДАВЛЕНА (inset) */}
+            <TouchableOpacity
+              style={[
+                styles.pickItem,
+                source?.type !== 'book'
+                  ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                  : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+              ]}
+              onPress={() => { setSource({ type: 'general' }); setBookPickOpen(false); }}
+            >
+              <Text style={[styles.pickText, source?.type !== 'book' ? { color: theme.onPrimary, fontFamily: FONTS.bold } : { color: theme.primaryText }]}>
                 {t('General dictionary')}
               </Text>
             </TouchableOpacity>
@@ -681,6 +714,7 @@ const importAnkiApkg = async () => {
               }))}
               emptyHint={t('No books.')}
               styles={styles}
+              activeKey={source?.type === 'book' ? source.bookId : undefined}
             />
         </View>
       </ModalSheet>
@@ -722,10 +756,22 @@ const importAnkiApkg = async () => {
         </View>
       </ModalSheet>
 
-      {/* FAB-группа: плюсик (добавить слово) + swap (сменить источник) */}
-      <View style={[styles.fabGroup]}>
+      {/* FAB-группа: плюсик (добавить слово) + swap (сменить источник) + бургер */}
+      <View
+        style={[
+          styles.fabGroup,
+          metal(theme, 'raised', { radius: 14, strength: 0.8 }),
+          {
+            flexDirection: 'column',
+            padding: 6,
+            gap: 8,
+            bottom: Math.max(120, a.tabBarH + 58),
+            right: a.pad,
+          }
+        ]}
+      >
         <TouchableOpacity
-          style={[styles.fab, { backgroundColor: theme.primary }]}
+          style={[styles.fab, metal(theme, 'primary', { size: a.dim(0.06, 38, 46), radius: 10 }), { position: 'relative', bottom: 'auto', right: 'auto' }]}
           onPress={() => {
             setAddWord('');
             setAddTrans('');
@@ -733,22 +779,21 @@ const importAnkiApkg = async () => {
           }}
           activeOpacity={0.85}
         >
-          <Icon name="plus" size={a.dim(0.05, 22, 28)} color={theme.onPrimary} />
+          <Icon name="plus" size={a.dim(0.05, 20, 26)} color={theme.onPrimary} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.fab]}
+          style={[styles.fab, metal(theme, 'stamp', { size: a.dim(0.06, 38, 46), radius: 10 }), { position: 'relative', bottom: 'auto', right: 'auto' }]}
           onPress={() => setBookPickOpen(true)}
           activeOpacity={0.85}
         >
-          <Icon name="swap" size={a.dim(0.05, 22, 28)} color={theme.primaryText} />
+          <Icon name="swap" size={a.dim(0.05, 20, 26)} color={theme.primaryText} />
         </TouchableOpacity>
-        {/* Бургер-меню: усі функції словника в одній модалці (зі скролом) */}
         <TouchableOpacity
-          style={[styles.fab]}
+          style={[styles.fab, metal(theme, 'stamp', { size: a.dim(0.06, 38, 46), radius: 10 }), { position: 'relative', bottom: 'auto', right: 'auto' }]}
           onPress={() => setMenuOpen(true)}
           activeOpacity={0.85}
         >
-          <Icon name="menu" size={a.dim(0.05, 22, 28)} color={theme.primaryText} />
+          <Icon name="menu" size={a.dim(0.05, 20, 26)} color={theme.primaryText} />
         </TouchableOpacity>
       </View>
 
@@ -756,59 +801,59 @@ const importAnkiApkg = async () => {
       <ModalSheet visible={menuOpen} onClose={() => setMenuOpen(false)}>
         <View style={styles.pickCard}>
           <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Dictionary menu')}</Text>
-          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 8 }} keyboardShouldPersistTaps="handled">
+          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6), overflow: 'visible' }} contentContainerStyle={{ paddingBottom: 8, paddingHorizontal: 4 }} keyboardShouldPersistTaps="handled">
             {/* Пошук */}
             <TouchableOpacity
-              style={[styles.pickItem]}
+              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); setSearchOpen(true); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Search words')}</Text>
             </TouchableOpacity>
             {/* Змінити джерело (книга / весь словник) */}
             <TouchableOpacity
-              style={[styles.pickItem]}
+              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); setBookPickOpen(true); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Change source')}</Text>
             </TouchableOpacity>
             {/* Імпорт з книги */}
             <TouchableOpacity
-              style={[styles.pickItem]}
+              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); setBookPickOpen(true); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From book (extract words)')}</Text>
             </TouchableOpacity>
             {/* Імпорт JSON */}
             <TouchableOpacity
-              style={[styles.pickItem]}
+              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); importJsonFromPicker(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From system file (JSON)')}</Text>
             </TouchableOpacity>
             {/* Імпорт Anki */}
             <TouchableOpacity
-              style={[styles.pickItem]}
+              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); importAnkiApkg(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From Anki deck (.apkg)')}</Text>
             </TouchableOpacity>
             {/* Експорт JSON */}
             <TouchableOpacity
-              style={[styles.pickItem]}
+              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); exportAll(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Export dictionary (JSON)')}</Text>
             </TouchableOpacity>
             {/* Експорт Anki */}
             <TouchableOpacity
-              style={[styles.pickItem]}
+              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); exportAnki(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('To Anki deck (.apkg) — export')}</Text>
             </TouchableOpacity>
             {/* Очистити все */}
             <TouchableOpacity
-              style={[styles.pickItem]}
+              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); handleDeleteAll(); }}
             >
               <Text style={[styles.pickText, { color: theme.danger }]}>{t('Delete all words')}</Text>
@@ -821,7 +866,7 @@ const importAnkiApkg = async () => {
         <View style={styles.searchPop}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Add word')}</Text>
             <TextField
-              radius={10}
+              radius={a.radius}
               style={[styles.searchInline, { color: theme.primaryText, marginTop: 12 }]}
               placeholder={t('Word')}
               placeholderTextColor={theme.secondaryText}
@@ -830,7 +875,7 @@ const importAnkiApkg = async () => {
               autoFocus
             />
             <TextField
-              radius={10}
+              radius={a.radius}
               style={[styles.searchInline, { color: theme.primaryText, marginTop: 10 }]}
               placeholder={t('Translation')}
               placeholderTextColor={theme.secondaryText}
@@ -842,7 +887,7 @@ const importAnkiApkg = async () => {
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.confirmBtn, { backgroundColor: theme.primary }]}
+                style={[styles.confirmBtn, metal(theme, 'primary', { radius: a.radius })]}
                 onPress={() => {
                   const w = addWord.trim();
                   if (!w) return;
@@ -857,7 +902,7 @@ const importAnkiApkg = async () => {
                   setAddOpen(false);
                 }}
               >
-                <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Add')}</Text>
+                <Text style={[styles.sortTabText, { color: theme.onPrimary, fontFamily: FONTS.bold }]}>{t('Add')}</Text>
               </TouchableOpacity>
             </View>
         </View>
@@ -865,17 +910,22 @@ const importAnkiApkg = async () => {
       <ModalSheet visible={sortPickerOpen} onClose={() => setSortPickerOpen(false)}>
         <View style={styles.pickCard}>
           <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Sort by')}</Text>
-          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
+          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6), overflow: 'visible' }} contentContainerStyle={{ paddingBottom: 4, paddingHorizontal: 4 }}>
           {sortOptions.map((o) => {
             const active = sortBy === o.id;
             return (
               <TouchableOpacity
                 key={o.id}
-                style={[styles.pickItem, metal(theme, active ? 'inset' : 'raised', { radius: a.radius, strength: 0.6 }), active && { backgroundColor: theme.selected }]}
+                style={[
+                  styles.pickItem,
+                  active
+                    ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                    : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+                ]}
                 onPress={() => { setSortBy(o.id); setSortPickerOpen(false); }}
               >
-                <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
-                {active && <Text style={{ color: theme.primary }}>✓</Text>}
+                <Text style={[styles.pickText, { color: active ? theme.onPrimary : theme.primaryText }]}>{o.label}</Text>
+                {active && <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold }}>✓</Text>}
               </TouchableOpacity>
             );
           })}
@@ -885,17 +935,22 @@ const importAnkiApkg = async () => {
       <ModalSheet visible={levelPickerOpen} onClose={() => setLevelPickerOpen(false)}>
         <View style={styles.pickCard}>
           <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Word type')}</Text>
-          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
+          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6), overflow: 'visible' }} contentContainerStyle={{ paddingBottom: 4, paddingHorizontal: 4 }}>
           {levelOptions.map((o) => {
             const active = levelFilter === o.id;
             return (
               <TouchableOpacity
                 key={o.id}
-                style={[styles.pickItem, metal(theme, active ? 'inset' : 'raised', { radius: a.radius, strength: 0.6 }), active && { backgroundColor: theme.selected }]}
+                style={[
+                  styles.pickItem,
+                  active
+                    ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                    : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+                ]}
                 onPress={() => { setLevelFilter(o.id); setLevelPickerOpen(false); }}
               >
-                <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
-                {active && <Text style={{ color: theme.primary }}>✓</Text>}
+                <Text style={[styles.pickText, { color: active ? theme.onPrimary : theme.primaryText }]}>{o.label}</Text>
+                {active && <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold }}>✓</Text>}
               </TouchableOpacity>
             );
           })}
@@ -905,7 +960,7 @@ const importAnkiApkg = async () => {
       <ModalSheet visible={duePickerOpen} onClose={() => setDuePickerOpen(false)}>
         <View style={styles.pickCard}>
           <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Due')}</Text>
-          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6) }} contentContainerStyle={{ paddingBottom: 4 }}>
+          <ScrollView style={{ maxHeight: Math.round(a.height * 0.6), overflow: 'visible' }} contentContainerStyle={{ paddingBottom: 4, paddingHorizontal: 4 }}>
           {([
             { id: 'all', label: t('All') },
             { id: 'overdue', label: t('Overdue') },
@@ -916,11 +971,16 @@ const importAnkiApkg = async () => {
             return (
               <TouchableOpacity
                 key={o.id}
-                style={[styles.pickItem, metal(theme, active ? 'inset' : 'raised', { radius: a.radius, strength: 0.6 }), active && { backgroundColor: theme.selected }]}
+                style={[
+                  styles.pickItem,
+                  active
+                    ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                    : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+                ]}
                 onPress={() => { setDueFilter(o.id); setDuePickerOpen(false); }}
               >
-                <Text style={[styles.pickText, { color: active ? theme.primary : theme.primaryText }]}>{o.label}</Text>
-                {active && <Text style={{ color: theme.primary }}>✓</Text>}
+                <Text style={[styles.pickText, { color: active ? theme.onPrimary : theme.primaryText }]}>{o.label}</Text>
+                {active && <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold }}>✓</Text>}
               </TouchableOpacity>
             );
           })}
@@ -950,18 +1010,18 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     searchInline: { width: '100%', minWidth: 200, height: Math.round(iconBtn * 1.15), paddingHorizontal: 12, fontSize: a.body, color: theme.primaryText },
     modalBackdrop: { flex: 1 },
     searchPop: { width: '100%', maxWidth: Math.min(a.width - 24, 520), borderRadius: a.radius, padding: 12 },
-    pickCard: { width: '100%', maxWidth: m.maxWidth, maxHeight: m.maxHeight, borderRadius: a.radius, padding: m.padding },
+    pickCard: { width: '100%', maxWidth: m.maxWidth, maxHeight: m.maxHeight, borderRadius: a.radius, padding: m.padding, overflow: 'visible' },
     pickTitle: { fontSize: a.h2, fontFamily: FONTS.bold, color: theme.secondaryText, borderBottomWidth: 1, borderBottomColor: theme.border, paddingBottom: a.gap, marginBottom: a.gap },
-    pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, marginBottom: a.tiny ? 8 : 12 },
+    pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, marginBottom: a.tiny ? 8 : 12, marginHorizontal: 4 },
     pickText: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1 },
     pickHint: { fontSize: a.small_fs, marginTop: 8, fontStyle: 'italic' },
     // Юзер (24.08): counterRow = випуклий контейнер (має зовнішні тіні), відступ знизу
     // щоб тіні не накладались на фільтр-блок; padding збільшено (inset-затемнення знімається raised)
-    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 4 : 6, flexWrap: 'wrap', paddingVertical: a.tiny ? 7 : 9, paddingHorizontal: a.tiny ? 10 : 12, marginBottom: a.tiny ? 5 : 7 },
+    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 4 : 6, flexWrap: 'wrap', paddingVertical: a.tiny ? 8 : 10, paddingHorizontal: a.tiny ? 12 : 14, marginBottom: a.gap },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
-    filterBlock: { padding: a.tiny ? 5 : 7, borderRadius: a.radius, gap: a.tiny ? 5 : 7 },
+    filterBlock: { padding: a.tiny ? 5 : 7, borderRadius: a.radius, gap: a.tiny ? 5 : 7, marginBottom: a.gap },
     sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 2, flexWrap: 'wrap' },
     // Юзер M4: inset робив таби занадто темними → компактний raised
     sortTab: { paddingVertical: a.tiny ? 3 : 5, paddingHorizontal: a.tiny ? 7 : 10, ...metal(theme, 'raised', { radius: a.radius, strength: 0.45 }) },

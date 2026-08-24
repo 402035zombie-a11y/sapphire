@@ -41,9 +41,9 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
   const t = useT();
   // B10/HWUI: memoize metal()-стилі — НЕ перераховувати тіні при кожному render (скрол FlatList).
   // Залежність від [theme, a.radius, a.scale] — перерахунок тільки при зміні теми/розміру.
-  const raisedStyle = React.useMemo(() => metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), [theme, a.radius, a.scale]);
+  const raisedStyle = React.useMemo(() => metal(theme, 'raised', { radius: a.radius, strength: 0.9 }), [theme, a.radius, a.scale]);
   const circleStyle = React.useMemo(
-    () => metal(theme, 'circleInset', { size: a.dim(0.05, 28, 38) }),
+    () => metal(theme, 'circleInset', { size: a.dim(0.05, 30, 40) }),
     [theme, a.radius, a.scale],
   );
   return (
@@ -69,9 +69,9 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
         <TouchableOpacity
           onPress={(e: any) => { e?.stopPropagation?.(); onRemove(item.id); }}
           hitSlop={10}
-          style={[circleStyle, { padding: 0 }]}
+          style={[metal(theme, 'libraryDeleteBtn', { size: a.dim(0.05, 28, 36) }), { padding: 0 }]}
         >
-          <Icon name="close" size={a.dim(0.03, 16, 22)} color={theme.danger} />
+          <Icon name="close" size={a.dim(0.025, 14, 18)} color={theme.danger} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

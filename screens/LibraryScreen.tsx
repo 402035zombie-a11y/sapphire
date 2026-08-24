@@ -41,6 +41,7 @@ import ProgressBar from '../components/ProgressBar';
 import IconButton from '../components/ui/IconButton';
 import { neuShadowPad, screenBg, metal } from '../theme/neu';
 import OpenModeModal from '../components/OpenModeModal';
+import SpeedVariantModal from '../components/SpeedVariantModal';
 import AppSettingsModal from '../components/AppSettingsModal';
 import SupportButton from '../components/SupportButton';
 
@@ -101,12 +102,13 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const styles = useMemo(() => makeStyles(a, theme), [a, theme]);
-  // FAB «+» крупнее стандартных круглых кнопок хедера, чтобы тапалось уверенно.
-  const fabSize = Math.round(a.fab() * 1.9);
+  // FAB «+» оптимального розміру під палець.
+  const fabSize = Math.round(a.fab() * 1.35);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [targetPickerVisible, setTargetPickerVisible] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'title'>('recent');
   const [modeBookId, setModeBookId] = useState<string | null>(null);
+  const [speedVariantBookId, setSpeedVariantBookId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const flatListRef = useRef<ScrollView>(null);
   const defaultTarget = useSettingsStore((s) => s.targetLang);
@@ -348,15 +350,23 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
     setModeBookId(bookId);
   };
 
-  const handleModeSelect = (mode: 'read' | 'dual' | 'speed', variant?: 'rsvp' | 'ticker') => {
+  const handleModeSelect = (mode: 'read' | 'dual' | 'speed') => {
     const id = modeBookId;
     setModeBookId(null);
     if (!id) return;
     if (mode === 'speed') {
-      navigation.navigate('SpeedReading', { bookId: id, variant: variant ?? 'rsvp' });
+      // Відкриваємо окреме незалежне вікно вибору варіанта скорочитання
+      setSpeedVariantBookId(id);
       return;
     }
     navigation.navigate('Reader', { bookId: id, mode });
+  };
+
+  const handleSpeedVariantSelect = (variant: 'rsvp' | 'ticker') => {
+    const id = speedVariantBookId;
+    setSpeedVariantBookId(null);
+    if (!id) return;
+    navigation.navigate('SpeedReading', { bookId: id, variant });
   };
 
 
@@ -505,6 +515,12 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         title={modeBookId ? books.find((b) => b.id === modeBookId)?.title ?? '' : ''}
         onSelect={handleModeSelect}
         onClose={() => setModeBookId(null)}
+      />
+      <SpeedVariantModal
+        visible={speedVariantBookId !== null}
+        title={speedVariantBookId ? books.find((b) => b.id === speedVariantBookId)?.title ?? '' : ''}
+        onSelect={handleSpeedVariantSelect}
+        onClose={() => setSpeedVariantBookId(null)}
       />
       <AppSettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} />
       </View>

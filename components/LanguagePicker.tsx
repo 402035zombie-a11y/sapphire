@@ -27,7 +27,7 @@ interface Props {
   embedded?: boolean;
 }
 
-export default function LanguagePicker({ visible, value, onSelect, onClose, allowAuto = true, exclude, options, embedded = false }: Props) {
+export default function LanguagePicker({ visible, value, onSelect, onClose, allowAuto = true, exclude, options }: Props) {
   const [query, setQuery] = useState('');
   const theme = useTheme();
   const a = useAdaptive();
@@ -108,7 +108,6 @@ export default function LanguagePicker({ visible, value, onSelect, onClose, allo
     </View>
   );
 
-  if (embedded) return visible ? content : null;
   return (
     <ModalSheet visible={visible} onClose={onClose} maxHeight="92%">
       {content}

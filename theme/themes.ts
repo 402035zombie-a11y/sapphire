@@ -30,6 +30,8 @@ export interface NeuColors {
 export interface NeuScale {
   depth: number;
   spread: number;
+  /** Коефіцієнт обрізки/м'якості зовнішнього світлого ореолу (0..1) */
+  lightCut?: number;
 }
 
 export interface ThemePalette {
@@ -86,9 +88,9 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     posColor: '#B5742E',
     bgTop: '#F2E6CE',
     bgBot: '#E0CFA8',
-    neu: { base: '#EAD9BE', light: '#FCF3DF', dark: '#B5A179', shadowDark: 'rgba(150,130,95,0.6)', shadowLight: 'rgba(255,255,255,0.85)', soft: 'rgba(248,238,217,0.7)', hi: 'rgba(255,255,255,0.55)', glow: 'rgba(255,250,238,0.5)' },
+    neu: { base: '#EAD9BE', light: '#FCF3DF', dark: '#B5A179', shadowDark: 'rgba(150,130,95,0.6)', shadowLight: 'rgba(255,255,255,0.45)', soft: 'rgba(248,238,217,0.5)', hi: 'rgba(255,255,255,0.25)', glow: 'rgba(255,250,238,0.3)' },
     // День: м'які, щільні тіні — на світлому бежі глибина читається і без розльоту
-    neuScale: { depth: 0.9, spread: 0.8 },
+    neuScale: { depth: 0.9, spread: 0.8, lightCut: 1.0 },
   },
   // ---- НОЧЬ: графіт + світло-сталевий акцент (холодна палітра, без "брудних" теплих сірих) ----
   night: {
@@ -112,9 +114,9 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     posColor: '#AFC2D6',
     bgTop: '#212229',
     bgBot: '#0C0D0F',
-    neu: { base: '#1A1B1F', light: '#3A4450', dark: '#0B0C0E', shadowDark: 'rgba(0,0,0,0.55)', shadowLight: 'rgba(160,180,200,0.22)', soft: 'rgba(80,95,110,0.5)', hi: 'rgba(200,215,230,0.16)', glow: 'rgba(120,140,160,0.3)' },
-    // Ніч: трохи глибші за день, але БЕЗ перебору (1.15 давало задвоєння з нелінійністю)
-    neuScale: { depth: 0.85, spread: 0.9 },
+    neu: { base: '#1A1B1F', light: '#2D353F', dark: '#0B0C0E', shadowDark: 'rgba(0,0,0,0.65)', shadowLight: 'rgba(140,165,190,0.14)', soft: 'rgba(65,78,92,0.42)', hi: 'rgba(180,200,220,0.12)', glow: 'rgba(100,120,140,0.22)' },
+    // Ніч: трохи глибші за день, але БЕЗ перебору (lightCut знижує світловий ореол, щоб не душити об'єм)
+    neuScale: { depth: 0.85, spread: 0.85, lightCut: 0.65 },
   },
   // ---- BLACKOUT: максимально чёрный фон для OLED (пиксели полностью выключаются) ----
   // Никакого белого: текст и кнопки — светло-серые. Неоморфизм на чёрном не виден,

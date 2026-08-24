@@ -33,6 +33,7 @@ export default function ModalSheet({
   // dim фону позаду модалки (затемнення). FontSettingsSheet вимикає, щоб юзер бачив текст позаду.
   dimBackdrop = true,
   allowNested = false,
+  role = 'raised',
 }: {
   visible: boolean;
   onClose: () => void;
@@ -46,9 +47,8 @@ export default function ModalSheet({
   // чтобы пользователь видел изменения шрифта на заднем фоне в реальном времени.
   blurBackdrop?: boolean;
   dimBackdrop?: boolean;
-  // Дозволяє вкладені ModalSheet (напр. LanguagePicker всередині Settings) не
-  // обрізатися батьківським overflow:hidden. Вимикає overflow:hidden на панелі.
   allowNested?: boolean;
+  role?: 'raised' | 'inset' | 'convexConcave';
 }) {
   const theme = useTheme();
   const a = useAdaptive();
@@ -56,34 +56,26 @@ export default function ModalSheet({
   const mw = maxWidth ?? Math.min(480, a.contentMaxW - a.pad * 2);
   const mh = maxHeight ?? '88%';
   const isSheet = variant === 'sheet';
-  // НАТИВ: рендеримо оверлей через RN <Modal> — він малюється поверх ВСЬОГО застосунку
-  // (статус-бар, таб-бар, FAB). Absolute-View всередині Screen обрізає dim по межах Screen
-  // і прогинається під zIndex:200 таб-бара (юзер бачив незатемнені зони).
-  // WEB: RN-web <Modal> у навігаторі не рендериться (skill rn-web-modal-pitfalls) — лишаємо absolute.
   const overlay = (
     <View style={[{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }, { paddingVertical: a.pad, paddingHorizontal: a.pad }] as any}>
       {blurBackdrop && (
         <BlurView intensity={80} tint="dark" style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} />
       )}
-      {/* затемнення фону позаду модалки (dimBackdrop=false → прозоро, юзер бачить текст позаду, напр. FontSettingsSheet) */}
       {dimBackdrop && (
         <>
           <View style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, backgroundColor: theme.backdrop }} />
-          {/* T3: другий шар — сумарно вдвічі сильніше затемнення */}
           <View style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0, backgroundColor: theme.backdrop }} />
         </>
       )}
       {dismissable && <TouchableOpacity style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} activeOpacity={1} onPress={onClose} />}
       <View
         style={[
-          metal(theme, 'inset', { radius: a.radius }),
+          metal(theme, role, { radius: a.radius + 4, strength: 0.85 }),
           {
             width: '100%',
             maxHeight: mh,
             padding: a.pad,
             backgroundColor: theme.surface ?? theme.neu.base,
-            // Юзер (24.08): overflow:hidden обрізав зовнішні тіні кнопок всередині
-            // модалки. 'visible' скрізь — тіні живуть; контент тримається layout'ом.
             overflow: 'visible',
             display: 'flex',
             flexDirection: 'column',
@@ -91,8 +83,6 @@ export default function ModalSheet({
             marginBottom: isSheet ? 0 : undefined,
           },
           panelStyle,
-          // жёсткий потолок ширины ВСЕГДА после panelStyle,
-          // чтобы дочерний panelStyle не мог растянуть панель на весь экран
           { maxWidth: mw, pointerEvents: 'auto' as any },
         ]}
       >

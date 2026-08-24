@@ -89,7 +89,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
   if (!visible) return null;
 
   return (
-    <ModalSheet visible={visible} onClose={onClose} blurBackdrop={false} dimBackdrop={false} panelStyle={[styles.card, a.landscape && { paddingRight: 0 }]}>
+    <ModalSheet visible={visible} onClose={onClose} blurBackdrop={false} dimBackdrop={false} role="raised" panelStyle={[styles.card, a.landscape && { paddingRight: 0 }]}>
       <View style={{ width: '100%' }}>
         <TouchableOpacity
           onPress={onClose}
@@ -230,9 +230,7 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
       width: sheetWidth,
       maxWidth: Math.min(a.width - 16, 460),
       maxHeight: a.height * (a.landscape ? 0.94 : 0.88),
-      borderRadius: a.width < 480 ? a.radius : 0,
-      borderTopLeftRadius: a.radius + 2,
-      borderBottomLeftRadius: a.radius + 2,
+      borderRadius: a.radius + 4,
     },
     scrollContent: { padding: a.pad, paddingTop: a.fab() + a.pad * 1.5, gap: Math.max(8, Math.round(a.gap * 0.8)), paddingBottom: a.pad },
     stepperBlock: { gap: 4 },

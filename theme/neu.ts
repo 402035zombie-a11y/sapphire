@@ -435,7 +435,7 @@ export function metalText(t: ThemePalette, color?: string): any {
 // Роли: 'raised' | 'inset' | 'circle' | 'primary' | 'tab' | 'tabActive' | 'text'
 // Модификаторы: { size?, radius?, filled?, active?, pressed? }
 // Это даёт сплошную систему вместо разрозненных вызовов neuMetalRaised/neuMetalCircle/...
-type MetalRole = 'raised' | 'inset' | 'circle' | 'circleInset' | 'primary' | 'tab' | 'tabActive' | 'tabStamp' | 'tabStampActive' | 'stamp' | 'text';
+type MetalRole = 'raised' | 'inset' | 'circle' | 'circleInset' | 'primary' | 'tab' | 'tabActive' | 'tabStamp' | 'tabStampActive' | 'stamp' | 'speakBtn' | 'deleteBtn' | 'libraryDeleteBtn' | 'convexConcave' | 'text';
 interface MetalOpts {
   size?: number;
   radius?: number;
@@ -459,6 +459,9 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
     switch (role) {
       case 'circle':
       case 'circleInset':
+      case 'speakBtn':
+      case 'deleteBtn':
+      case 'libraryDeleteBtn':
       case 'primary':
       case 'stamp': {
         // primary БЕЗ size = велика прямокутна кнопка (Check/Save тощо), а не кружечок
@@ -522,11 +525,205 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
       return metalTabStamp(t, radius, true);
     case 'stamp':
       return metalStamp(t, opts.size ?? 36);
+    case 'speakBtn':
+      return neuSpeakBtn(t, opts.size ?? 32);
+    case 'deleteBtn':
+      return neuDeleteBtn(t, opts.size ?? 32);
+    case 'libraryDeleteBtn':
+      return neuLibraryDeleteBtn(t, opts.size ?? 32);
+    case 'convexConcave':
+      return neuConvexConcave(t, radius, opts.strength ?? 1);
     case 'text':
       return metalText(t, opts.textColor);
     default:
       return neuMetalRaised(t, radius);
   }
+}
+
+// ==================== СПЕЦІАЛІЗОВАНІ НЕЗАЛЕЖНІ КНОПКИ ТА ПРОФІЛІ ====================
+
+// ПРОФІЛЬ 2: ЗОВНІШНЬО ВИПУКЛА / ВНУТРІШНЬО ВДАВЛЕНА (convex outer + concave inner well)
+export function neuConvexConcave(t: ThemePalette, radius: number, strength = 1): any {
+  if ((t as any).flat) {
+    return {
+      backgroundColor: t.surface,
+      borderRadius: radius,
+      borderWidth: 1,
+      borderColor: t.primaryText,
+    };
+  }
+  const sc = t.neuScale ?? { depth: 1, spread: 1, lightCut: 1 };
+  const lightCut = sc.lightCut ?? 1;
+  const baseOff = Math.max(3, Math.round(Math.pow(radius, 0.75) * 1.9));
+  const off = Math.max(3, Math.round((baseOff * (0.18 * radius / Math.max(radius, 1)) + 4) * strength * sc.depth));
+  const x = Math.max(2, Math.round(off * 0.92 * sc.spread));
+  const y = Math.max(2, Math.round(off * sc.spread));
+  const blur1 = Math.max(3, Math.round(off * 2.0));
+  const blur2 = Math.max(5, Math.round(off * 3.8 * sc.spread));
+  const { soft: s, light: l } = t.neu;
+  const ix = Math.max(2, Math.round(off * 0.5));
+  const iy = Math.max(2, Math.round(off * 0.5));
+  const iblur = Math.max(3, Math.round(off * 1.6));
+  const oX = Math.round(x * OUTER_SHADOW);
+  const oY = Math.round(y * OUTER_SHADOW);
+  const oB1 = Math.round(blur1 * OUTER_SHADOW);
+  const oB2 = Math.round(blur2 * OUTER_SHADOW);
+
+  return {
+    backgroundColor: t.surface ?? t.neu.base,
+    backgroundImage: metalBg(t),
+    backgroundClip: 'padding-box',
+    borderRadius: radius,
+    boxShadow: [
+      `${Math.max(2, oX)}px ${Math.max(2, oY)}px ${Math.max(3, oB1)}px ${specDark(t)}`,
+      `${Math.max(3, Math.round(oX * 1.6))}px ${Math.max(3, Math.round(oY * 1.6))}px ${Math.max(5, oB2)}px ${specDark(t)}`,
+      `${-Math.max(1, Math.round(oX * 0.8 * lightCut))}px ${-Math.max(1, Math.round(oY * 0.8 * lightCut))}px ${Math.max(3, oB1)}px ${s}`,
+      `${-Math.max(2, Math.round(oX * 1.4 * lightCut))}px ${-Math.max(2, Math.round(oY * 1.4 * lightCut))}px ${Math.max(5, oB2)}px ${l}`,
+      `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
+      `inset ${-ix}px ${-iy}px ${iblur}px ${s}`,
+      `inset 0 1px 0 0 ${rim(t)}`,
+    ].join(', '),
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
+      shadowOpacity: 0.8,
+      shadowRadius: Math.max(4, oB1),
+      elevation: Math.max(3, Math.round(off * 1.0)),
+    }),
+  };
+}
+
+// 1. КНОПКА ВІДТВОРЕННЯ / ОЗВУЧУВАННЯ (speakBtn):
+// Повністю незалежна. Опукла кругла кнопка з м'якою зовнішньою парою тіней та внутрішнім куполом
+export function neuSpeakBtn(t: ThemePalette, size: number): any {
+  if ((t as any).flat) {
+    return {
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      backgroundColor: t.surface,
+      borderWidth: 1,
+      borderColor: t.primaryText,
+      alignItems: 'center',
+      justifyContent: 'center',
+    };
+  }
+  const sc = t.neuScale ?? { depth: 1, spread: 1, lightCut: 1 };
+  const lightCut = sc.lightCut ?? 1;
+  const off = Math.max(2, Math.round(Math.pow(size, 0.72) * 0.44 * sc.depth));
+  const blur1 = Math.max(2, Math.round(off * 1.8 * sc.spread));
+  const blur2 = Math.max(3, Math.round(off * 3.0 * sc.spread));
+  const ix = Math.max(2, Math.round(off * 0.5));
+  const iy = Math.max(2, Math.round(off * 0.5));
+  const iblur = Math.max(2, Math.round(off * 1.4));
+  return {
+    width: size,
+    height: size,
+    borderRadius: size / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: t.neu.base,
+    backgroundImage: metalBg(t),
+    backgroundClip: 'padding-box',
+    boxShadow: [
+      `${Math.max(1, Math.round(off * 0.5))}px ${Math.max(1, Math.round(off * 0.6))}px ${blur1}px ${specDark(t)}`,
+      `${-Math.max(1, Math.round(off * 0.4 * lightCut))}px ${-Math.max(1, Math.round(off * 0.4 * lightCut))}px ${Math.max(2, Math.round(blur1))}px ${t.neu.soft}`,
+      `${-Math.max(1, Math.round(off * 0.7 * lightCut))}px ${-Math.max(1, Math.round(off * 0.7 * lightCut))}px ${Math.max(3, Math.round(blur2))}px ${t.neu.light}`,
+      `inset 0 1px 0 0 ${rim(t)}`,
+      `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
+      `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
+    ].join(', '),
+    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
+  };
+}
+
+// 2. КНОПКА ВИДАЛЕННЯ У СЛОВНИКУ (deleteBtn):
+// Повністю незалежна. Чітка втиснута кругла лунка з виразною зовнішньою тінню + глибоке занурення
+export function neuDeleteBtn(t: ThemePalette, size: number): any {
+  if ((t as any).flat) {
+    return {
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      backgroundColor: t.surface,
+      borderWidth: 1,
+      borderColor: t.primaryText,
+      alignItems: 'center',
+      justifyContent: 'center',
+    };
+  }
+  const sc = t.neuScale ?? { depth: 1, spread: 1, lightCut: 1 };
+  const lightCut = sc.lightCut ?? 1;
+  const off = Math.max(3, Math.round(Math.pow(size, 0.72) * 0.46 * sc.depth));
+  const blur1 = Math.max(3, Math.round(off * 1.8 * sc.spread));
+  const blur2 = Math.max(4, Math.round(off * 3.0 * sc.spread));
+  const ix = Math.max(2, Math.round(off * 0.55));
+  const iy = Math.max(2, Math.round(off * 0.55));
+  const iblur = Math.max(2, Math.round(off * 1.5));
+  return {
+    width: size,
+    height: size,
+    borderRadius: size / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: t.neu.base,
+    backgroundImage: metalBg(t),
+    backgroundClip: 'padding-box',
+    boxShadow: [
+      `${Math.max(2, Math.round(off * 0.6))}px ${Math.max(2, Math.round(off * 0.7))}px ${blur1}px ${specDark(t)}`,
+      `${-Math.max(1, Math.round(off * 0.5 * lightCut))}px ${-Math.max(1, Math.round(off * 0.5 * lightCut))}px ${blur1}px ${t.neu.soft}`,
+      `${-Math.max(2, Math.round(off * 0.8 * lightCut))}px ${-Math.max(2, Math.round(off * 0.8 * lightCut))}px ${blur2}px ${t.neu.light}`,
+      `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
+      `inset ${Math.round(ix * 1.4)}px ${Math.round(iy * 1.4)}px ${Math.round(iblur * 1.6)}px ${specDark(t)}`,
+      `inset ${-Math.round(ix * lightCut)}px ${-Math.round(iy * lightCut)}px ${iblur}px ${t.neu.soft}`,
+      `inset 0 1px 0 0 ${rim(t)}`,
+    ].join(', '),
+    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
+  };
+}
+
+// 3. КНОПКА ВИДАЛЕННЯ У БІБЛІОТЕЦІ (libraryDeleteBtn):
+// Повністю незалежна. ВИПУКЛА кругла кнопка (raised profile) на картці книги
+export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
+  if ((t as any).flat) {
+    return {
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      backgroundColor: t.surface,
+      borderWidth: 1,
+      borderColor: t.primaryText,
+      alignItems: 'center',
+      justifyContent: 'center',
+    };
+  }
+  const sc = t.neuScale ?? { depth: 1, spread: 1, lightCut: 1 };
+  const lightCut = sc.lightCut ?? 1;
+  const off = Math.max(3, Math.round(Math.pow(size, 0.72) * 0.48 * sc.depth));
+  const blur1 = Math.max(3, Math.round(off * 1.8 * sc.spread));
+  const blur2 = Math.max(4, Math.round(off * 3.2 * sc.spread));
+  const ix = Math.max(2, Math.round(off * 0.5));
+  const iy = Math.max(2, Math.round(off * 0.5));
+  const iblur = Math.max(2, Math.round(off * 1.4));
+  return {
+    width: size,
+    height: size,
+    borderRadius: size / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: t.neu.base,
+    backgroundImage: metalBg(t),
+    backgroundClip: 'padding-box',
+    boxShadow: [
+      `${Math.max(2, Math.round(off * 0.6))}px ${Math.max(2, Math.round(off * 0.7))}px ${blur1}px ${specDark(t)}`,
+      `${-Math.max(1, Math.round(off * 0.45 * lightCut))}px ${-Math.max(1, Math.round(off * 0.45 * lightCut))}px ${blur1}px ${t.neu.soft}`,
+      `${-Math.max(2, Math.round(off * 0.8 * lightCut))}px ${-Math.max(2, Math.round(off * 0.8 * lightCut))}px ${blur2}px ${t.neu.light}`,
+      `inset 0 1px 0 0 ${rim(t)}`,
+      `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
+      `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
+    ].join(', '),
+    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
+  };
 }
 
 // ШТАМПОВАННЫЙ МЕТАЛЛ: внешне ВДАВЛЕННАЯ «лунка» (inset well) + внутренне ВЫПУКЛЫЙ купол (convex dome).

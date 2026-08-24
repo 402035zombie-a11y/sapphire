@@ -41,10 +41,9 @@ export default function SupportAuthorModal({
       visible={visible}
       onClose={onDismiss}
       blurBackdrop={true}
+      role="raised"
       panelStyle={{
-        backgroundColor: theme.popupBg ?? theme.neu.base,
-        // maxHeight ограничивает панель, чтобы она НЕ растягивалась на весь экран
-        // (иначе ScrollView выпирает и панель "прилипает" к верху).
+        backgroundColor: theme.surface ?? theme.neu.base,
         maxHeight: m.maxHeight,
         padding: m.padding,
         alignItems: 'center',

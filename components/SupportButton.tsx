@@ -12,7 +12,15 @@ import SupportAuthorModal from './SupportAuthorModal';
 import { useSupportStore } from '../store/supportStore';
 import { useT } from '../i18n';
 
-export default function SupportButton({ size, iconSize, compact }: { size?: number; iconSize?: number; compact?: boolean }) {
+export default function SupportButton({
+  size,
+  iconSize,
+  variant = 'circle',
+}: {
+  size?: number;
+  iconSize?: number;
+  variant?: 'circle' | 'stamp' | 'inset';
+}) {
   const theme = useTheme();
   const t = useT();
   const a = useAdaptive();
@@ -23,9 +31,7 @@ export default function SupportButton({ size, iconSize, compact }: { size?: numb
   return (
     <>
       <TouchableOpacity
-        // compact (всередині щільних блоків): легка вдавлена лунка з мінімальними
-        // зовнішніми тінями — повний raised вилазить за межі батьківського блоку (юзер T7)
-        style={[metal(theme, compact ? 'circleInset' : 'circle', { size: btnSize }), { padding: 0 }]}
+        style={[metal(theme, variant, { size: btnSize }), { padding: 0 }]}
         onPress={() => setOpen(true)}
         hitSlop={8}
         accessibilityLabel={t("Support the author")}

@@ -88,7 +88,7 @@ const PATHS: Record<IconName, React.ReactNode> = {
     </>
   ),
   list: <Path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" strokeWidth="2" fill="none" />,
-  play: <Polygon points="9,5 21,12 9,19" fill="currentColor" />,
+  play: <Polygon points="8.5,5 19.5,12 8.5,19" fill="currentColor" />,
   copy: (
     <>
       <Rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -105,7 +105,7 @@ const PATHS: Record<IconName, React.ReactNode> = {
   exit: <Path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l4-4-4-4M14 12H3" fill="none" stroke="currentColor" strokeWidth="2" />,
   bolt: <Path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="currentColor" />,
   pause: <Path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" />,
-  heart: <Path d="M12 21s-7-4.5-9.5-9C.5 8 2.5 4 6 4c2 0 3.2 1.2 4 2.5C10.8 5.2 12 4 14 4c3.5 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z" stroke="currentColor" strokeWidth="2" fill="none" />,
+  heart: <Path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" strokeWidth="1.8" fill="none" />,
   'chevron-back': <Path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2" />,
   'chevron-forward-2': <Path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" />,
   refresh: (
