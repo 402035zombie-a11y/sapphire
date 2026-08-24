@@ -94,7 +94,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
         <TouchableOpacity
           onPress={onClose}
           hitSlop={10}
-          style={[metal(theme, 'stamp', { size: a.fab() }), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
+          style={[metal(theme, 'circle', { size: a.fab() }), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
         >
           <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
         </TouchableOpacity>
@@ -124,10 +124,10 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={f.id}
-                    style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
+                    style={[metal(theme, active ? 'primary' : 'inset', { radius: 8 }), styles.chip, active && { backgroundColor: theme.primary }]}
                     onPress={() => setReader({ fontFamily: f.id })}
                   >
-                    <Text style={[styles.chipText, { color: active ? theme.primaryText : theme.primaryText }]}>{t(f.label)}</Text>
+                    <Text style={[styles.chipText, { color: active ? theme.onPrimary : theme.primaryText }]}>{t(f.label)}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -151,10 +151,10 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={al.id}
-                    style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
+                    style={[metal(theme, active ? 'primary' : 'inset', { radius: 8 }), styles.chip, active && { backgroundColor: theme.primary }]}
                     onPress={() => setReader({ textAlign: al.id as any })}
                   >
-                    <Text style={[styles.chipText, { color: active ? theme.primaryText : theme.primaryText }]}>{t(al.label)}</Text>
+                    <Text style={[styles.chipText, { color: active ? theme.onPrimary : theme.primaryText }]}>{t(al.label)}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -200,10 +200,10 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={th.id}
-                    style={[styles.chip, active && { ...metal(theme, 'inset', { radius: 8 }), backgroundColor: theme.selected }]}
+                    style={[metal(theme, active ? 'primary' : 'inset', { radius: 8 }), styles.chip, active && { backgroundColor: theme.primary }]}
                     onPress={() => setTheme(th.id)}
                   >
-                    <Text style={[styles.chipText, { color: active ? theme.primaryText : theme.primaryText }]}>{t(th.label)}</Text>
+                    <Text style={[styles.chipText, { color: active ? theme.onPrimary : theme.primaryText }]}>{t(th.label)}</Text>
                   </TouchableOpacity>
                 );
               })}

@@ -164,7 +164,7 @@ function SentenceRow({
   return (
     <View style={[styles.row, isPlain && styles.rowPlain, pageMarginPx !== 0 ? { paddingHorizontal: pageMarginPx } : null, paragraphSpacing ? { marginBottom: paragraphSpacing } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
       {!isPlain && (showSpeak || (onTranslate && !translation && showTranslate)) && (
-        <View style={styles.controls}>
+        <View style={[styles.controls, { marginRight: 4, marginTop: 2 }]}>
           {/* ▶ озвучка */}
           {showSpeak && (
             <TouchableOpacity style={[metal(theme, 'circleInset', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onSpeak(original)} hitSlop={8}>

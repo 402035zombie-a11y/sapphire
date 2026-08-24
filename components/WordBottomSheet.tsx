@@ -139,7 +139,7 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
             <Text style={{ fontSize: a.fs(26), fontFamily: 'bold', color: theme.primaryText }}>{word}</Text>
             {phonetic ? <Text style={{ fontSize: a.body, color: theme.secondaryText }}> [{phonetic}]</Text> : null}
           </View>
-          <TouchableOpacity style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]} onPress={onClose} hitSlop={12}>
+          <TouchableOpacity style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]} onPress={onClose} hitSlop={12}>
             <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
           </TouchableOpacity>
         </View>
@@ -179,16 +179,16 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
       )}
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingVertical: a.tiny ? 4 : 8, gap: 8 }}>
-        <TouchableOpacity style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]} onPress={onSave}>
+        <TouchableOpacity style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]} onPress={onSave}>
           <Icon name="star" size={a.icon(22)} color={theme.primaryText} />
         </TouchableOpacity>
-        <View style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
+        <View style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}>
           <Icon name="language" size={a.icon(22)} color={theme.primaryText} />
         </View>
-        <TouchableOpacity style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
+        <TouchableOpacity style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}>
           <Icon name="volume" size={a.icon(22)} color={theme.primaryText} />
         </TouchableOpacity>
-        <TouchableOpacity style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
+        <TouchableOpacity style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}>
           <Icon name="copy" size={a.icon(22)} color={theme.primaryText} />
         </TouchableOpacity>
       </View>

@@ -66,7 +66,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
           <TouchableOpacity
             onPress={onClose}
             hitSlop={10}
-            style={[metal(theme, 'stamp', { size: a.fab() }), { position: 'absolute', top: m.padding, right: m.padding, zIndex: 20, padding: 0 }]}
+            style={[metal(theme, 'circle', { size: a.fab() }), { position: 'absolute', top: m.padding, right: m.padding, zIndex: 20, padding: 0 }]}
           >
             <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
           </TouchableOpacity>

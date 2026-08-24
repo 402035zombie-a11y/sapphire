@@ -60,7 +60,7 @@ export default function OpenModeModal({ visible, title, onSelect, onClose }: Pro
               {step === 'mode' ? t('How do you want to open the book?') : t('Choose a speed reading mode')}
             </Text>
           </View>
-          <TouchableOpacity onPress={onClose} hitSlop={10} style={[metal(theme, 'stamp', { size: a.fab() }), { padding: 0 }]}>
+          <TouchableOpacity onPress={onClose} hitSlop={10} style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}>
             <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
           </TouchableOpacity>
         </View>

@@ -113,7 +113,15 @@ export function neuInset(t: ThemePalette, radius: number, strength = 1): any {
     ].join(', '),
     // Юзер N16: поле вводу мало бути вдавленим — на Android inset-тіні не рендеряться,
     // даємо темний бордер зверху/зліва (імітація грані лунки) через повний border.
-    ...(Platform.OS === 'web' ? {} : { borderWidth: 1, borderColor: t.neu.dark, shadowColor: d, shadowOpacity: 0.4, shadowRadius: 2, elevation: 1 }),
+    // Юзер P10 (24.08): вдавленість на Android = dark-border + світла нижня кромка.
+    ...(Platform.OS === 'web' ? {} : {
+      borderTopWidth: 2,
+      borderLeftWidth: 2,
+      borderColor: t.neu.dark,
+      borderBottomColor: t.neu.light,
+      borderRightColor: t.neu.light,
+      elevation: 0,
+    }),
   };
 }
 
@@ -289,9 +297,10 @@ export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): a
   // specular-блик у верхнего края: вертикальный сдвиг МАЛЫЙ И ФИКСИРОВАННЫЙ,
   // чтобы на больших элементах блик НЕ сползал вниз под заголовок.
   // Юзер (24.08): внутрішні тіні raised замалі — об'єм не читається. bevel x0.5/y0.35, blur x1.7
-  const ix = Math.max(3, Math.round(off * 0.5));
-  const iy = Math.max(2, Math.round(off * 0.35));
-  const iblur = Math.round(off * 1.7);
+  // Юзер P5: внутрішні тіні +20%
+  const ix = Math.max(4, Math.round(off * 0.6));
+  const iy = Math.max(3, Math.round(off * 0.42));
+  const iblur = Math.round(off * 2.0);
   // внешняя падающая тень — компактнее (объём читается)
   const oX = Math.round(x * OUTER_SHADOW);
   const oY = Math.round(y * OUTER_SHADOW);
@@ -310,7 +319,17 @@ export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): a
       `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`, // объёмный specular сверху-слева (мягко, не полоса)
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`, // тёмная грань снизу-справа
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : { shadowColor: specDark(t), shadowOffset: { width: -oX, height: -oY }, shadowOpacity: 0.5, shadowRadius: oB1, elevation: Math.max(3, Math.round(off)) }),
+    // Юзер P4 (24.08): на Android boxShadow НЕ рендериться → єдиний об'єм дають
+    // shadow*/elevation + border-кромка. Підсилюємо до видимого рівня.
+    ...(Platform.OS === 'web' ? {} : {
+      borderWidth: 1,
+      borderColor: t.neu.light,
+      shadowColor: specDark(t),
+      shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
+      shadowOpacity: 0.9,
+      shadowRadius: Math.max(4, oB1),
+      elevation: Math.max(4, Math.round(off * 1.2)),
+    }),
   };
 }
 
