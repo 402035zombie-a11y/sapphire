@@ -306,25 +306,25 @@ export default function TrainingScreen() {
     const correctVal = reverse ? (current.surfaceForm || current.word) : current.translation;
     const currentTransVariants = new Set(splitTranslations(current.translation).map((s) => s.toLowerCase()));
 
-    const distractors = shuffle(
-      poolRef.current
-        .filter((e: DictionaryEntry) => {
-          if (`${e.word}|${e.lang}` === `${current.word}|${current.lang}`) return false;
-          if (reverse) {
-            const v = (e.surfaceForm || e.word);
-            return v && v.trim() && v !== correctVal;
-          }
-          // Для forward: дистрактор не повинен збігатися з жодним із варіантів перекладу поточного слова
-          const otherVariants = splitTranslations(e.translation);
-          return otherVariants.some((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase()));
-        })
-        .slice(0, 3)
-        .map((e: DictionaryEntry) => {
-          if (reverse) return e.surfaceForm || e.word;
-          const otherVariants = splitTranslations(e.translation);
-          return otherVariants.find((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase())) ?? e.translation;
-        }),
-    );
+    const candidatePool = poolRef.current.filter((e: DictionaryEntry) => {
+      if (`${e.word}|${e.lang}` === `${current.word}|${current.lang}`) return false;
+      if (reverse) {
+        const v = (e.surfaceForm || e.word);
+        return v && v.trim() && v !== correctVal;
+      }
+      // Для forward: дистрактор не повинен збігатися з жодним із варіантів перекладу поточного слова
+      const otherVariants = splitTranslations(e.translation);
+      return otherVariants.some((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase()));
+    });
+
+    const distractors = shuffle(candidatePool)
+      .slice(0, 3)
+      .map((e: DictionaryEntry) => {
+        if (reverse) return e.surfaceForm || e.word;
+        const otherVariants = splitTranslations(e.translation);
+        return otherVariants.find((ov) => ov.trim() && !currentTransVariants.has(ov.toLowerCase())) ?? e.translation;
+      });
+
     setOpts(shuffle([correctVal, ...distractors]));
   }, [index, current?.word, reverse]);
 
