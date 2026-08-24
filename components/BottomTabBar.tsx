@@ -80,10 +80,11 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
               paddingVertical: a.tiny ? 6 : 9,
               paddingHorizontal: showLabel ? (a.tiny ? 10 : 14) : a.tiny ? 8 : 11,
               borderRadius: a.radius,
-              // N1 ревізія v2 (юзер): активний таб = ВИПУКЛИЙ (raised + зовнішні тіні),
-              // неактивні = ВДАВЛЕНІ (inset-лунка). Контраст станів через протилежні тіні.
+              // N1 v3 (юзер): активний = ВИПУКЛИЙ + заливка primary (кремовий текст
+              // читабельний саме на синій заливці; на бежевому raised він зникає вдень).
+              // Неактивні = ВДАВЛЕНІ лунки. Контраст станів = протилежні тіні.
               ...(focused
-                ? metal(theme, 'raised', { radius: a.radius, strength: 1 })
+                ? metal(theme, 'primary', { radius: a.radius })
                 : metal(theme, 'inset', { radius: a.radius })),
             }}
           >
