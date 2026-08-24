@@ -20,7 +20,7 @@ export default function Card({
   const theme = useTheme();
   return (
     <View
-      style={[metal(theme, 'raised', { radius: radius ?? 14 }), style]}
+      style={[metal(theme, 'raised', { radius: radius ?? 14, strength: 0.6 }), style]}
       onStartShouldSetResponder={onStartShouldSetResponder}
     >
       {children}

@@ -607,7 +607,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   );
 
   const header = (
-    <View style={[styles.header, metal(theme, 'raised', { radius: a.radius })]}>
+    <View style={[styles.header, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
       <View style={[styles.headerRow, { paddingLeft: a.pad, paddingRight: a.pad, paddingTop: a.small ? 4 : 6, paddingBottom: a.small ? 4 : 6, maxHeight: a.small ? 56 : 68 }]}>
         <IconButton icon="arrow-back" onPress={() => navigation.goBack()} variant="circle" size={a.fab()} hitSlop={8} style={{ flexShrink: 0 }} />
         <View style={styles.titleGroup}>

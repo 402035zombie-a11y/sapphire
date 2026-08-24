@@ -70,7 +70,7 @@ export default function OpenModeModal({ visible, title, onSelect, onClose }: Pro
             <TouchableOpacity
               key={step === 'mode' ? (o as any).mode : (o as any).variant}
               style={[
-                metal(theme, 'raised', { radius: 12 }),
+                metal(theme, 'raised', { radius: 12, strength: 0.6 }),
                 {
                   flexDirection: 'row',
                   alignItems: 'center',

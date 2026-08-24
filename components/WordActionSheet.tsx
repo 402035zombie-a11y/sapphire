@@ -26,7 +26,7 @@ export default function WordActionSheet({ visible, word, sentence, onSpeakFromHe
   const a = useAdaptive();
 
   const itemStyle = [
-    metal(theme, 'raised', { radius: 12 }),
+    metal(theme, 'raised', { radius: 12, strength: 0.6 }),
     {
       flexDirection: 'row' as const,
       alignItems: 'center' as const,

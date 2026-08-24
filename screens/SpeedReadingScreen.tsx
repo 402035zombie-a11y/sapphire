@@ -325,7 +325,7 @@ export default function SpeedReadingScreen() {
       showsVerticalScrollIndicator={false}
     >
 
-      <View style={[styles.stage, metal(theme, 'raised', { radius: a.radius }), { paddingVertical: stagePad }]}>
+      <View style={[styles.stage, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { paddingVertical: stagePad }]}>
         {variant === 'ticker' ? (
           <View
             style={styles.tickerWrap}
@@ -392,7 +392,7 @@ export default function SpeedReadingScreen() {
       {variant === 'rsvp' && (
         <View>
           <TouchableOpacity
-            style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
+            style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
             onPress={() => { const v = !microPauses; setMicroPauses(v); setReader({ microPauses: v }); }}
           >
             <View style={[styles.microDot, { backgroundColor: microPauses ? theme.success : theme.border }, !microPauses && { borderWidth: 1.5, borderColor: theme.secondaryText }]} />
@@ -437,7 +437,7 @@ export default function SpeedReadingScreen() {
 
       {variant === 'ticker' && (
         <TouchableOpacity
-          style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
+          style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
           onPress={() => setTickerDir((d) => (d === 'rtl' ? 'ltr' : 'rtl'))}
         >
           <View style={[styles.microDot, { backgroundColor: tickerDir === 'rtl' ? theme.success : theme.border }, tickerDir !== 'rtl' && { borderWidth: 1.5, borderColor: theme.secondaryText }]} />
