@@ -712,9 +712,17 @@ export default function TrainingScreen() {
         <View style={styles.dots}>{dots}</View>
         {/* Напрямок: слово→переклад / переклад→слово — тап перемикає */}
         <TouchableOpacity
-          // Юзер M7/M10: вдавлений ззовні і всередині (inset), без обводки
-          style={[metal(theme, 'inset', { radius: 999 }), { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 5,
-                   borderRadius: 999 }]}
+          // Юзер Q1: читабельна вдавлена лунка. На Android boxShadow не рендериться,
+          // тож лунку будуємо напряму: темніша заливка (занурення) + грані бордерами
+          // (dark зверху/зліва = тінь, light знизу/справа = блик).
+          style={{
+            flexDirection: 'row', alignItems: 'center', gap: 4,
+            paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
+            backgroundColor: theme.neu.dark,
+            borderTopWidth: 2, borderLeftWidth: 2, borderColor: theme.neu.dark === '#0B0C0E' ? '#000000' : theme.neu.dark,
+            borderBottomColor: theme.neu.light, borderRightColor: theme.neu.light,
+            borderWidth: 1,
+          }}
           onPress={() => setDirections((d) => ({ ...d, [mode]: !d[mode] }))}
           hitSlop={6}
         >
