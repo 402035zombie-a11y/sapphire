@@ -54,8 +54,14 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
           paddingHorizontal: a.tiny ? 6 : 10,
           borderRadius: Math.round(a.radius * 1.6),
           ...metal(theme, 'raised', { radius: Math.round(a.radius * 1.6) }),
-          // Світіння з правого верхнього кута (єдине зовнішнє світло в додатку); FLAT — без тіні
-          ...(theme.flat ? {} : { boxShadow: '8px -8px 24px rgba(0,0,0,0.45)', elevation: 8 }),
+          // Таб-бар = найбільший контейнер: компенсуємо нелінійну шкалу (size^0.75)
+          // сильнішим власним світінням, щоб док зберіг об'єм (юзер: "хай залишається випуклим")
+          ...(theme.flat
+            ? {}
+            : {
+                boxShadow: `8px -8px 24px rgba(0,0,0,0.45), -4px 4px 14px ${(theme.neu.soft || 'rgba(0,0,0,0.2)')}`,
+                elevation: 8,
+              }),
         }}
       >
       {state.routes.map((route: any, index: number) => {
