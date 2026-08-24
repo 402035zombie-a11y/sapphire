@@ -712,7 +712,7 @@ const importAnkiApkg = async () => {
                 : t('The entire dictionary ({n} words) will be deleted. This action is irreversible.').replace(/\{n\}/g, String(scopedEntries.length))}
             </Text>
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
-              <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: theme.surface }]} onPress={() => setConfirmDelete(false)}>
+              <TouchableOpacity style={[styles.confirmBtn]} onPress={() => setConfirmDelete(false)}>
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.confirmBtn, metal(theme, 'primary', { radius: a.radius })]} onPress={confirmDeleteAction}>
@@ -736,7 +736,7 @@ const importAnkiApkg = async () => {
           <Icon name="plus" size={a.dim(0.05, 22, 28)} color={theme.onPrimary} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.fab, { backgroundColor: theme.surface }]}
+          style={[styles.fab]}
           onPress={() => setBookPickOpen(true)}
           activeOpacity={0.85}
         >
@@ -744,7 +744,7 @@ const importAnkiApkg = async () => {
         </TouchableOpacity>
         {/* Бургер-меню: усі функції словника в одній модалці (зі скролом) */}
         <TouchableOpacity
-          style={[styles.fab, { backgroundColor: theme.surface }]}
+          style={[styles.fab]}
           onPress={() => setMenuOpen(true)}
           activeOpacity={0.85}
         >
@@ -982,7 +982,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     list: { paddingTop: a.headerH + a.insetTop + a.pad + 20, paddingBottom: a.tabBarH + a.pad + a.dim(0.06, 46, 56) + a.gap, gap: a.gap, justifyContent: 'flex-start' },
     empty: { textAlign: 'center', fontSize: a.body },
     row: {
-      backgroundColor: theme.surface,
+      ...metal(theme, 'raised', { radius: a.radius, strength: 0.45 }),
       flexDirection: 'row',
       alignItems: 'flex-start',
       borderRadius: a.radius,
