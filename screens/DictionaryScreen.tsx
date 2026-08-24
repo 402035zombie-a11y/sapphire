@@ -519,7 +519,7 @@ const importAnkiApkg = async () => {
 
   return (
     <Screen contentStyle={{ padding: a.pad }}>
-      <View style={[styles.counterRow, metal(theme, 'inset', { radius: a.radius })]}>
+      <View style={[styles.counterRow, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
         <Text style={[styles.counterText, { color: theme.primaryText }]}>
           {t('Total words:')} <Text style={styles.counterNum}>{scopedEntries.length}</Text>
           {'  '}·{'  '}{t('Answers:')} <Text style={styles.counterNum}>{totalAnswers}</Text>
@@ -954,7 +954,9 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     pickItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.pad, borderRadius: a.radius, ...metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), marginBottom: a.tiny ? 8 : 12 },
     pickText: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1 },
     pickHint: { fontSize: a.small_fs, marginTop: 8, fontStyle: 'italic' },
-    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 4 : 6, flexWrap: 'wrap', paddingVertical: a.tiny ? 2 : 3, paddingHorizontal: a.tiny ? 8 : 10, marginBottom: 0 },
+    // Юзер (24.08): counterRow = випуклий контейнер (має зовнішні тіні), відступ знизу
+    // щоб тіні не накладались на фільтр-блок; padding збільшено (inset-затемнення знімається raised)
+    counterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: a.tiny ? 4 : 6, flexWrap: 'wrap', paddingVertical: a.tiny ? 7 : 9, paddingHorizontal: a.tiny ? 10 : 12, marginBottom: a.tiny ? 10 : 14 },
     counterText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     counterNum: { fontSize: a.body },
     // Единый объёмный блок: сегменты статуса/уровня слиты внутрь, плоские (тень только у родителя filterBlock)
