@@ -138,7 +138,8 @@ export default function TrainingScreen() {
     speakIconCenter: { textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false },
     speakIcon: { fontSize: a.fs(18), color: theme.primaryText },
     typeHint: { fontSize: a.fs(14), textAlign: 'center', marginTop: 12, marginBottom: 8 },
-    typeInput: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: a.tiny ? 8 : 12, fontSize: a.body },
+    // Юзер T12: поле вводу = вдавлене (inset тіні з neuInset у TextField), без власного бордеру
+    typeInput: { borderRadius: 10, paddingHorizontal: 14, paddingVertical: a.tiny ? 8 : 12, fontSize: a.body },
     typeCheck: { borderRadius: a.radius, paddingVertical: a.tiny ? 17 : 21, alignItems: 'center', justifyContent: 'center', flex: 1 },
     skipBtn: { width: Math.round(Math.max(36, 44 * a.scale)), height: Math.round(Math.max(36, 44 * a.scale)), borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
     typeCorrect: { fontSize: a.small_fs, textAlign: 'center', marginTop: 10, fontStyle: 'italic' },
@@ -753,7 +754,7 @@ export default function TrainingScreen() {
           <TextField
             ref={typeInputRef}
             radius={10}
-            style={[styles.typeInput, { borderColor: theme.border, color: theme.primaryText }]}
+            style={[styles.typeInput, { color: theme.primaryText }]}
             value={typed}
             autoFocus
             editable={!typeChecked}
@@ -778,7 +779,7 @@ export default function TrainingScreen() {
           />
           <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 12 }}>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 1, borderColor: theme.border }, !typed.trim() && !typeChecked && { opacity: 0.45 }]}
+              style={[styles.typeCheck, metal(theme, typeChecked ? 'inset' : 'raised', { radius: a.radius }), !typed.trim() && !typeChecked && { opacity: 0.45 }]}
               disabled={!typed.trim()}
               onPress={() => {
                 // Другий тап по Check (після перевірки) = перейти до наступного слова
