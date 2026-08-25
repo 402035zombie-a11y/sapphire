@@ -603,7 +603,7 @@ export default function ReaderScreen({ route }: { route: any }) {
       data={sentences}
       keyExtractor={(p) => `${p.paragraphIndex}-${p.sentenceIndex}`}
       numColumns={1}
-      contentContainerStyle={[styles.list, { backgroundColor: theme.readerBg, paddingHorizontal: reader.margin }]}
+      contentContainerStyle={[styles.list, { backgroundColor: theme.readerBg, paddingHorizontal: reader.margin, overflow: 'visible' }]}
       onScrollBeginDrag={onScrollBeginDrag}
       onMomentumScrollEnd={onMomentumScrollEnd}
       initialNumToRender={BATCH}
@@ -688,7 +688,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   const content = list;
 
   return (
-    <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, paddingHorizontal: a.pad, paddingBottom: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>
+    <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, paddingHorizontal: 0, paddingBottom: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>
       {header}
       {content}
       {searchModal}

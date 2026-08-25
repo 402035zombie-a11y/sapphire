@@ -214,8 +214,8 @@ function SentenceRow({
 export default memo(SentenceRow);
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 10, borderBottomWidth: 0.5, width: '100%', alignSelf: 'center', overflow: 'visible' },
-  rowPlain: { paddingVertical: 0, borderBottomWidth: 0 },
+  row: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 10, paddingHorizontal: 4, borderBottomWidth: 0.5, width: '100%', alignSelf: 'center', overflow: 'visible' },
+  rowPlain: { paddingVertical: 0, paddingHorizontal: 0, borderBottomWidth: 0 },
   controls: { flexDirection: 'row', alignItems: 'center', gap: 6, marginRight: 8, marginTop: 2, padding: 6, overflow: 'visible' },
   playBtn: { paddingTop: 4, paddingRight: 8, width: 28 },
   playIcon: { fontSize: 13 },
