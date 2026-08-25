@@ -41,6 +41,7 @@ import { showSupportAd } from '../services/monetization';
 import { openDonatePage } from '../services/donate';
 import { translationErrorMessage } from '../services/translationService';
 import SupportAuthorModal from '../components/SupportAuthorModal';
+import TranslationLimitsModal from '../components/TranslationLimitsModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import SentenceRow from '../components/SentenceRow';
 import WordBottomSheet from '../components/WordBottomSheet';
@@ -197,6 +198,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [action, setAction] = useState<{ word: string; sentence: string } | null>(null);
   const [translateError, setTranslateError] = useState<string | null>(null);
+  const [limitsOpen, setLimitsOpen] = useState(false);
 
   const addToDictionary = useCallback(
     (word: string, sentence: string) => {
@@ -312,7 +314,10 @@ export default function ReaderScreen({ route }: { route: any }) {
             } catch (e) {
               // Rate-limit/timeout/empty → показуємо стан у рядку, а не мовчки.
               const kind = (e as any)?.kind;
-              if (kind === 'rate-limit' || kind === 'forbidden' || kind === 'timeout') {
+              if ((e as any)?.providers || kind === 'rate-limit') {
+                // Усі провайдери вичерпані → модалка з розкладом поновлення.
+                setLimitsOpen(true);
+              } else if (kind === 'forbidden' || kind === 'timeout') {
                 setTranslateError(translationErrorMessage(e));
               }
               return null;
@@ -705,6 +710,14 @@ export default function ReaderScreen({ route }: { route: any }) {
         </TouchableOpacity>
       )}
       {content}
+      <TranslationLimitsModal
+        visible={limitsOpen}
+        onRetry={() => {
+          setLimitsOpen(false);
+          translateBatch(0, 20); // спроба знову — провайдери з cooldown пропустяться автоматично
+        }}
+        onClose={() => setLimitsOpen(false)}
+      />
       {searchModal}
       {selected && (
         <WordBottomSheet

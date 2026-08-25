@@ -83,7 +83,10 @@ async function viaGoogleGtx(text: string, from: LangCode, to: LangCode): Promise
 
 export async function translate(text: string, from: LangCode, to: LangCode): Promise<TranslateResult> {
   if (!text.trim()) return { text: '' };
-  return viaGoogleGtx(text, from, to);
+  // FAILOVER: ланцюг безкоштовних провайдерів з трекінгом лімітів (google → lingva → mymemory → libre).
+  const { translateWithFailover } = await import('./translationProviders');
+  const r = await translateWithFailover(text, from, to);
+  return { text: r.text, detectedSourceLang: r.detectedSourceLang };
 }
 
 const CACHE_LIMIT = 2000;
