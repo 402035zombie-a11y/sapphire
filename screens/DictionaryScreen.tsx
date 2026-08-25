@@ -66,7 +66,7 @@ function PickerList({ items, emptyHint, styles, activeKey }: { items: { key: str
               styles.pickItem,
               active
                 ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                : metal(theme, 'raised', { radius: a.radius, strength: 0.85 })
+                : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
             ]}
             onPress={it.onPress}
           >
@@ -640,7 +640,7 @@ const importAnkiApkg = async () => {
                 styles.pickItem,
                 source?.type !== 'book'
                   ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                  : metal(theme, 'raised', { radius: a.radius, strength: 0.85 })
+                  : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
               ]}
               onPress={() => setSource({ type: 'general' })}
             >
@@ -656,8 +656,8 @@ const importAnkiApkg = async () => {
                   label: t('Dictionary for “{title}”').replace(/\{title\}/g, b.title),
                   onPress: () => setSource({ type: 'book', bookId: b.id }),
                 }))}
-                activeKey={source?.type === 'book' ? source.bookId : undefined}
                 styles={styles}
+                activeKey={source?.type === 'book' ? (source as any).bookId : undefined}
               />
             ) : (
               <Text style={[styles.pickHint, { color: theme.secondaryText }]}>{t('No books with saved words.')}</Text>
@@ -670,25 +670,25 @@ const importAnkiApkg = async () => {
         <View style={styles.pickCard}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Import / Export (Anki)')}</Text>
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.85 })]}
+              style={[styles.pickItem]}
               onPress={() => { setImportOpen(false); setBookPickOpen(true); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From book (extract words)')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.85 })]}
+              style={[styles.pickItem]}
               onPress={() => { setImportOpen(false); importJsonFromPicker(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From system file (JSON)')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.85 })]}
+              style={[styles.pickItem]}
               onPress={importAnkiApkg}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From Anki deck (.apkg)')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.85 })]}
+              style={[styles.pickItem]}
               onPress={() => { setImportOpen(false); exportAnki(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('To Anki deck (.apkg) — export')}</Text>
@@ -700,13 +700,13 @@ const importAnkiApkg = async () => {
       <ModalSheet visible={bookPickOpen} onClose={() => setBookPickOpen(false)}>
         <View style={styles.pickCard}>
             <Text style={[styles.pickTitle, { color: theme.primaryText }]}>{t('Select a book')}</Text>
-            {/* General dictionary: активна = ВИПУКЛА з акцентом (primary), неактивна = ВИПУКЛА (raised) */}
+            {/* General dictionary: активна = ВИПУКЛА з акцентом (primary), неактивна = ВДАВЛЕНА (inset) */}
             <TouchableOpacity
               style={[
                 styles.pickItem,
                 source?.type !== 'book'
                   ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                  : metal(theme, 'raised', { radius: a.radius, strength: 0.85 })
+                  : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
               ]}
               onPress={() => { setSource({ type: 'general' }); setBookPickOpen(false); }}
             >

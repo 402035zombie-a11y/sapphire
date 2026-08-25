@@ -125,7 +125,7 @@ export function neuInset(t: ThemePalette, radius: number, strength = 1): any {
   };
 }
 
-// акцентная кнопка (primary): заливка primary + мягкий объём + верхний блик + внутрішній купол
+// акцентная кнопка (primary): заливка primary + мягкий объём + верхний блик
 export function neuPrimary(t: ThemePalette, radius: number): any {
   // FLAT: заливка primary + бордер кольору onPrimary, без тіней
   if ((t as any).flat) {
@@ -136,45 +136,22 @@ export function neuPrimary(t: ThemePalette, radius: number): any {
       borderColor: t.onPrimary,
     };
   }
-  const sc = t.neuScale ?? { depth: 1, spread: 1, lightCut: 1 };
-  const lightCut = sc.lightCut ?? 1;
-  const off = Math.max(3, Math.round(Math.pow(radius, 0.75) * 1.6 * sc.depth));
-  const blur1 = Math.max(3, Math.round(off * 2.0));
-  const blur2 = Math.max(5, Math.round(off * 3.8 * sc.spread));
-  const x = Math.max(2, Math.round(off * 0.9 * sc.spread));
-  const y = Math.max(2, Math.round(off * sc.spread));
-  const oX = Math.round(x * OUTER_SHADOW);
-  const oY = Math.round(y * OUTER_SHADOW);
-  const oB1 = Math.round(blur1 * OUTER_SHADOW);
-  const oB2 = Math.round(blur2 * OUTER_SHADOW);
-  const ix = Math.max(3, Math.round(off * 0.55));
-  const iy = Math.max(2, Math.round(off * 0.4));
-  const iblur = Math.max(3, Math.round(off * 1.8));
-
+  const off = Math.max(3, Math.round(radius * 0.22 + 3));
+  const blur1 = Math.round(off * 2.2);
+  const blur2 = Math.round(off * 4.0);
+  const x = Math.round(off * 0.9);
   return {
     backgroundColor: t.primary,
-    backgroundImage: `linear-gradient(145deg, ${shade(t.primary, 0.2)} 0%, ${t.primary} 55%, ${shade(t.primary, -0.25)} 100%)`,
-    backgroundClip: 'padding-box',
+    backgroundImage: `linear-gradient(145deg, ${t.primary} 0%, ${t.primary} 60%, ${t.primary})`,
     borderRadius: radius,
     boxShadow: [
-      `${Math.max(2, oX)}px ${Math.max(2, oY)}px ${Math.max(3, oB1)}px ${specDark(t)}`,
-      `${Math.max(3, Math.round(oX * 1.6))}px ${Math.max(3, Math.round(oY * 1.6))}px ${Math.max(5, oB2)}px ${specDark(t)}`,
-      `${-Math.max(1, Math.round(oX * 0.8 * lightCut))}px ${-Math.max(1, Math.round(oY * 0.8 * lightCut))}px ${Math.max(3, oB1)}px ${t.neu.soft}`,
-      `${-Math.max(2, Math.round(oX * 1.4 * lightCut))}px ${-Math.max(2, Math.round(oY * 1.4 * lightCut))}px ${Math.max(5, oB2)}px ${t.neu.light}`,
-      `inset 0 1.5px 0 0 ${rim(t)}`,
-      `inset 0 1px 3px 0 rgba(255,255,255,0.45)`,
-      `inset ${ix}px ${iy}px ${iblur}px rgba(255,255,255,0.35)`,
-      `inset ${-ix}px ${-iy}px ${iblur}px rgba(0,0,0,0.45)`,
+      `${Math.round(x * OUTER_SHADOW)}px ${Math.round(off * OUTER_SHADOW)}px ${Math.round(blur1 * OUTER_SHADOW)}px ${specDark(t)}`,
+      `${Math.round(x * 1.6 * OUTER_SHADOW)}px ${Math.round(off * 1.6 * OUTER_SHADOW)}px ${Math.round(blur2 * OUTER_SHADOW)}px ${specDark(t)}`,
+      `inset 0 1px 2px ${rim(t)}`, // верхній блік (темозалежний, не хардкод)
+      `inset 0 -2px 5px ${specDark(t)}`, // нижня внутрішня тінь
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : {
-      borderWidth: 1,
-      borderColor: rim(t),
-      shadowColor: specDark(t),
-      shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
-      shadowOpacity: 0.9,
-      shadowRadius: Math.max(4, oB1),
-      elevation: Math.max(4, Math.round(off * 1.2)),
-    }),
+    // Android: суцільний фон t.primary є → elevation безпечний
+    ...(Platform.OS === 'web' ? {} : { elevation: Math.max(3, Math.round(off)) }),
   };
 }
 
