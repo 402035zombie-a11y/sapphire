@@ -124,10 +124,10 @@ function SentenceRow({
     fontFamily: fontFamilyValue,
     fontWeight: fontWeight as any,
     textAlign: textAlignValue as any,
-    letterSpacing: letterSpacing || undefined,
     ...(hyphenation ? { hyphenationFactor: 1, wordBreak: 'break-word' } as any : null),
   };
   const base = [baseText, { color: theme.primaryText }];
+  const paragraphStyle = [styles.paragraph, base, { fontSize: fs, lineHeight: lh, letterSpacing: letterSpacing || undefined }];
   const q = (query ?? '').trim().toLowerCase();
   // токенизируем только когда меняется исходник (иначе пересоздание массива на каждый рендер)
   const tokens = useMemo(() => tokenize(original), [original]);
@@ -136,13 +136,12 @@ function SentenceRow({
     const isWord = isWordToken(tok);
     const lower = tok.toLowerCase();
     const hit = q.length > 0 && lower.includes(q);
-    const base = [baseText, { color: theme.primaryText }];
 
     if (hit) {
       return (
         <Text
           key={i}
-          style={[...base, styles.word, { backgroundColor: theme.highlight, color: theme.readerText }]}
+          style={[styles.word, { backgroundColor: theme.highlight, color: theme.readerText }]}
           onPress={() => onWordPress(tok, original)}
         >
           {tok}{' '}
@@ -153,7 +152,7 @@ function SentenceRow({
       return (
         <Text
           key={i}
-          style={[...base, styles.tapWord]}
+          style={styles.tapWord}
           onPress={() => onWordPress(tok, original)}
         >
           {tok}{' '}
@@ -161,7 +160,7 @@ function SentenceRow({
       );
     }
     // пунктуація / пробіли — звичайний текст
-    return <Text key={i} style={base}>{tok}{' '}</Text>;
+    return <Text key={i}>{tok}{' '}</Text>;
   };
 
   const isPlain = mode === 'read';
@@ -188,18 +187,18 @@ function SentenceRow({
       <View style={styles.body}>
         {isPlain ? (
           // Звичайний режим читання: рендеримо оригінал ОДНИМ Text (без токенізації → пробіли коректні)
-          <Text style={[styles.paragraph, base, { fontSize: fs, lineHeight: lh }]}>
+          <Text style={paragraphStyle}>
             {original}
           </Text>
         ) : (
           // dual/speed режим: токенізуємо для клікабельності слів → onWordPress
-          <Text style={[styles.paragraph, base, { fontSize: fs, lineHeight: lh }]}>
+          <Text style={paragraphStyle}>
             {tokens.map((tok, i) => renderToken(tok, i))}
           </Text>
         )}
 
         {(!isPlain && translation) || open ? (
-          <Text style={[styles.translation, { color: theme.secondaryText, fontSize: fs - 2, lineHeight: lh - 2 }]}>
+          <Text style={[styles.translation, { color: theme.secondaryText, fontSize: fs - 2, lineHeight: lh - 2, letterSpacing: letterSpacing || undefined }]}>
             {translation}
           </Text>
         ) : null}
