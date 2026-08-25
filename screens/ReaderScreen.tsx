@@ -707,9 +707,9 @@ export default function ReaderScreen({ route }: { route: any }) {
           visible={!!action}
           word={action.word}
           sentence={action.sentence}
-          onSpeakFromHere={(s) => speak(s)}
-          onAddToDictionary={(w, s) => addToDictionary(w, s)}
-          onCopyWord={(w) => Clipboard.setString(w)}
+          lang={langForSheet}
+          targetLang={book?.targetLang ?? settingsTarget}
+          bookId={book?.id ?? bookId}
           onClose={() => setAction(null)}
         />
       )}
