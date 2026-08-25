@@ -186,15 +186,10 @@ function SentenceRow({
           <Text style={[styles.paragraph, base, { fontSize: fs, lineHeight: lh }]}>
             {original}
           </Text>
-        ) : q.length > 0 ? (
-          // Режим з перекладом + активний пошук: підсвічуємо збіги, але рендеримо ОДНИМ Text (без токенізації)
-          <Text style={[styles.paragraph, base, { fontSize: fs, lineHeight: lh }]}>
-            {highlightMatches(original, q, theme)}
-          </Text>
         ) : (
-          // Режим з перекладом (без пошуку): оригінал ОДНИМ Text (пробіли коректні, клікабельність слів вимкнена)
+          // dual/speed режим: токенізуємо для клікабельності слів → onWordPress
           <Text style={[styles.paragraph, base, { fontSize: fs, lineHeight: lh }]}>
-            {original}
+            {tokens.map((tok, i) => renderToken(tok, i))}
           </Text>
         )}
 
