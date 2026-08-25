@@ -664,7 +664,7 @@ export default function TrainingScreen() {
                   styles.sourceTab,
                   source === 'all'
                     ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                    : metal(theme, 'convexConcave', { radius: a.radius, strength: 0.85 })
+                    : metal(theme, 'inset', { radius: a.radius, strength: 0.95 })
                 ]}
                 onPress={() => setSource('all')}
               >
@@ -679,7 +679,7 @@ export default function TrainingScreen() {
                     styles.sourceTab,
                     source === b.id
                       ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                      : metal(theme, 'convexConcave', { radius: a.radius, strength: 0.85 })
+                      : metal(theme, 'inset', { radius: a.radius, strength: 0.95 })
                   ]}
                   onPress={() => setSource(b.id)}
                 >
@@ -750,15 +750,15 @@ export default function TrainingScreen() {
       <View style={styles.streakRow}>
         <Text style={[styles.streakLabel, { color: theme.secondaryText }]}>{t("Progress of word")}</Text>
         <View style={styles.dots}>{dots}</View>
-        {/* Напрямок: слово→переклад / переклад→слово — Профіль 1 з делікатним мікро-об'ємом */}
+        {/* Напрямок: слово→переклад / переклад→слово — Профіль 3 (втиснуте ложе + опуклий купол stamp) */}
         <TouchableOpacity
-          style={[metal(theme, 'raised', { radius: 999, strength: 0.12 }),
-                  { flexDirection: 'row', alignItems: 'center', gap: 4,
-                    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999 }]}
+          style={[metal(theme, 'stamp', { size: 36 }),
+                  { flexDirection: 'row', alignItems: 'center', gap: 6,
+                    paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, width: 'auto', height: 'auto' }]}
           onPress={() => setDirections((d) => ({ ...d, [mode]: !d[mode] }))}
           hitSlop={6}
         >
-          <Text style={{ color: theme.primary, fontSize: a.fs(11), fontFamily: 'bold' }}>⇄</Text>
+          <Text style={{ color: theme.primary, fontSize: a.fs(12), fontFamily: 'bold' }}>⇄</Text>
           <Text style={{ color: theme.primaryText, fontSize: a.fs(11), fontFamily: FONTS.bold }}>
             {directions[mode] ? t("translation → word") : t("word → translation")}
           </Text>
