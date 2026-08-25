@@ -127,7 +127,7 @@ function SentenceRow({
     ...(hyphenation ? { hyphenationFactor: 1, wordBreak: 'break-word' } as any : null),
   };
   const base = [baseText, { color: theme.primaryText }];
-  const paragraphStyle = [styles.paragraph, base, { fontSize: fs, lineHeight: lh, letterSpacing: letterSpacing || undefined }];
+  const paragraphStyle = [styles.paragraph, base, { fontSize: fs, lineHeight: lh }];
   const q = (query ?? '').trim().toLowerCase();
   // токенизируем только когда меняется исходник (иначе пересоздание массива на каждый рендер)
   const tokens = useMemo(() => tokenize(original), [original]);
@@ -198,7 +198,7 @@ function SentenceRow({
         )}
 
         {(!isPlain && translation) || open ? (
-          <Text style={[styles.translation, { color: theme.secondaryText, fontSize: fs - 2, lineHeight: lh - 2, letterSpacing: letterSpacing || undefined }]}>
+          <Text style={[styles.translation, { color: theme.secondaryText, fontSize: fs - 2, lineHeight: lh - 2 }]}>
             {translation}
           </Text>
         ) : null}
