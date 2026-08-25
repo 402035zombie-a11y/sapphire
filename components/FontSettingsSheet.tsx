@@ -123,7 +123,12 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={f.id}
-                    style={[metal(theme, active ? 'primary' : 'inset', { radius: 8 }), styles.chip, active && { backgroundColor: theme.primary }]}
+                    style={[
+                      active
+                        ? { ...metal(theme, 'primary', { radius: 8 }), backgroundColor: theme.primary }
+                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
+                      styles.chip,
+                    ]}
                     onPress={() => setReader({ fontFamily: f.id })}
                   >
                     <Text style={[styles.chipText, { color: active ? theme.onPrimary : theme.primaryText }]}>{t(f.label)}</Text>
@@ -150,7 +155,12 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={al.id}
-                    style={[metal(theme, active ? 'primary' : 'inset', { radius: 8 }), styles.chip, active && { backgroundColor: theme.primary }]}
+                    style={[
+                      active
+                        ? { ...metal(theme, 'primary', { radius: 8 }), backgroundColor: theme.primary }
+                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
+                      styles.chip,
+                    ]}
                     onPress={() => setReader({ textAlign: al.id as any })}
                   >
                     <Text style={[styles.chipText, { color: active ? theme.onPrimary : theme.primaryText }]}>{t(al.label)}</Text>
@@ -199,7 +209,12 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                 return (
                   <TouchableOpacity
                     key={th.id}
-                    style={[metal(theme, active ? 'primary' : 'inset', { radius: 8 }), styles.chip, active && { backgroundColor: theme.primary }]}
+                    style={[
+                      active
+                        ? { ...metal(theme, 'primary', { radius: 8 }), backgroundColor: theme.primary }
+                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
+                      styles.chip,
+                    ]}
                     onPress={() => setTheme(th.id)}
                   >
                     <Text style={[styles.chipText, { color: active ? theme.onPrimary : theme.primaryText }]}>{t(th.label)}</Text>
