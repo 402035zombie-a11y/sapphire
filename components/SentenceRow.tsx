@@ -143,20 +143,28 @@ function SentenceRow({
 
     if (hit) {
       return (
-        <Text key={i} style={[styles.word, { backgroundColor: theme.highlight, color: theme.readerText }]}>
-          {tok}{'\u00A0'}
+        <Text
+          key={i}
+          style={[...base, styles.word, { backgroundColor: theme.highlight, color: theme.readerText }]}
+          onPress={() => onWordPress(tok, original)}
+        >
+          {tok}{' '}
         </Text>
       );
     }
     if (isWord) {
       return (
-        <TouchableOpacity key={i} onPress={() => onWordPress(tok, original)} hitSlop={2}>
-          <Text style={[...base, styles.tapWord]}>{tok}{'\u00A0'}</Text>
-        </TouchableOpacity>
+        <Text
+          key={i}
+          style={[...base, styles.tapWord]}
+          onPress={() => onWordPress(tok, original)}
+        >
+          {tok}{' '}
+        </Text>
       );
     }
-    // пунктуация / пробелы — обычный текст, не кликабельны
-    return <Text key={i} style={base}>{tok}{'\u00A0'}</Text>;
+    // пунктуація / пробіли — звичайний текст
+    return <Text key={i} style={base}>{tok}{' '}</Text>;
   };
 
   const isPlain = mode === 'read';
@@ -164,7 +172,7 @@ function SentenceRow({
   return (
     <View style={[styles.row, isPlain && styles.rowPlain, pageMarginPx !== 0 ? { paddingHorizontal: pageMarginPx } : null, paragraphSpacing ? { marginBottom: paragraphSpacing } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
       {!isPlain && (showSpeak || (onTranslate && !translation && showTranslate)) && (
-        <View style={[styles.controls, { marginRight: 4, marginTop: 2 }]}>
+        <View style={[styles.controls, { marginRight: 6, marginTop: 2, padding: 6, overflow: 'visible' }]}>
           {/* ▶ озвучка — Профіль 1: подвійно випукла кругла кнопка */}
           {showSpeak && (
             <TouchableOpacity style={[metal(theme, 'circle', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onSpeak(original)} hitSlop={8}>

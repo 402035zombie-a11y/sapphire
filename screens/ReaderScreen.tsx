@@ -42,6 +42,7 @@ import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import SentenceRow from '../components/SentenceRow';
 import WordBottomSheet from '../components/WordBottomSheet';
+import { Clipboard } from 'react-native';
 import WordActionSheet from '../components/WordActionSheet';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
@@ -708,6 +709,7 @@ export default function ReaderScreen({ route }: { route: any }) {
           sentence={action.sentence}
           onSpeakFromHere={(s) => speak(s)}
           onAddToDictionary={(w, s) => addToDictionary(w, s)}
+          onCopyWord={(w) => Clipboard.setString(w)}
           onClose={() => setAction(null)}
         />
       )}
