@@ -11,6 +11,12 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_ADMOB_APP_ID": "ca-app-pub-5113967448800652~8371247908",
+        "EXPO_PUBLIC_ADMOB_BANNER_ID": "ca-app-pub-5113967448800652/4712038644",
+        "EXPO_PUBLIC_ADMOB_REWARDED_ID": "ca-app-pub-5113967448800652/1663349260",
+        "EXPO_PUBLIC_LINGVA_BASE_URL": "https://lingva-translate-opal.vercel.app/api/v1"
       }
     },
     "production": {
