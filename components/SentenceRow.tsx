@@ -172,16 +172,16 @@ function SentenceRow({
   return (
     <View style={[styles.row, isPlain && styles.rowPlain, pageMarginPx !== 0 ? { paddingHorizontal: pageMarginPx } : null, paragraphSpacing ? { marginBottom: paragraphSpacing } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
       {!isPlain && (showSpeak || (onTranslate && !translation && showTranslate)) && (
-        <View style={[styles.controls, { marginRight: 6, marginTop: 2, padding: 6, overflow: 'visible' }]}>
-          {/* ▶ озвучка — Профіль 1: подвійно випукла кругла кнопка */}
+        <View style={styles.controls}>
+          {/* ▶ озвучка — Профіль 3: спеціалізована роль speakBtn */}
           {showSpeak && (
-            <TouchableOpacity style={[metal(theme, 'circle', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onSpeak(original)} hitSlop={8}>
+            <TouchableOpacity style={metal(theme, 'speakBtn', { size: a.icon(30) })} onPress={() => onSpeak(original)} hitSlop={8}>
               <Text style={[styles.playIcon, { color: theme.primaryText }]}>▶</Text>
             </TouchableOpacity>
           )}
-          {/* Перевести — Профіль 1: подвійно випукла кругла кнопка */}
+          {/* Перевести — Профіль 3: спеціалізована роль speakBtn */}
           {onTranslate && !translation && showTranslate && (
-            <TouchableOpacity style={[metal(theme, 'circle', { size: a.icon(30) }), { padding: 0 }]} onPress={() => onTranslate(index)} hitSlop={8}>
+            <TouchableOpacity style={metal(theme, 'speakBtn', { size: a.icon(30) })} onPress={() => onTranslate(index)} hitSlop={8}>
               <Text style={[styles.translateIcon, { color: theme.primaryText }]}>⇄</Text>
             </TouchableOpacity>
           )}
@@ -216,11 +216,11 @@ export default memo(SentenceRow);
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 10, borderBottomWidth: 0.5, width: '100%', alignSelf: 'center', overflow: 'visible' },
   rowPlain: { paddingVertical: 0, borderBottomWidth: 0 },
-  controls: { flexDirection: 'row', alignItems: 'center', marginRight: 12, paddingVertical: 4, paddingHorizontal: 4, overflow: 'visible' },
+  controls: { flexDirection: 'row', alignItems: 'center', gap: 6, marginRight: 8, marginTop: 2, padding: 6, overflow: 'visible' },
   playBtn: { paddingTop: 4, paddingRight: 8, width: 28 },
-  playIcon: { fontSize: 14 },
+  playIcon: { fontSize: 13 },
   translateBtn: { paddingTop: 2, paddingRight: 6, width: 22 },
-  translateIcon: { fontSize: 16 },
+  translateIcon: { fontSize: 15 },
   bmBtn: { paddingTop: 2, paddingRight: 6, width: 22 },
   body: { flex: 1, minWidth: 0 },
   paragraph: { flexShrink: 1 },
