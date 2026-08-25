@@ -76,7 +76,10 @@ export default function SupportAuthorModal({
         </TouchableOpacity>
         {onDonate && (
           <TouchableOpacity style={[metal(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onDonate}>
-            <Text style={btnText}>{t("Buy a subscription / Donate")}</Text>
+            <Text style={btnText}>{t("Donate via card / crypto")}</Text>
+            <Text style={{ color: theme.secondaryText, fontSize: a.fs(10), marginTop: 2 }}>
+              {t("Opens a secure external payment page")}
+            </Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity style={[metal(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onDismiss}>

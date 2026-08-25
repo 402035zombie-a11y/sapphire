@@ -849,6 +849,19 @@ export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): an
   const ox = Math.max(2, Math.round(off * 0.4 * sc.spread));
   const { soft: s, light: l } = t.neu;
 
+  // ANDROID/NATIVE: CSS `inset` boxShadow не рендериться → вдавлення імітуємо
+  // внутрішнім бордером (темний зверху-зліва неможливо по-сторонах, тому рівномірний
+  // темний бордер + трохи затемнений фон дають читабельну «лунку» без web-тіней).
+  if (Platform.OS !== 'web') {
+    return {
+      backgroundColor: t.neu.base,
+      borderRadius: radius,
+      borderWidth: Math.max(1, Math.round(ix * 0.5)),
+      borderColor: t.neu.shadowDark,
+      elevation: 0,
+    };
+  }
+
   return {
     backgroundColor: t.neu.base,
     backgroundImage: metalBg(t),

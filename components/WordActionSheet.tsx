@@ -10,7 +10,7 @@ import Icon from './Icon';
 import { metal } from '../theme/neu';
 import { useT } from '../i18n';
 import ModalSheet from './ModalSheet';
-import { translateCached } from '../services/translationService';
+import { translateCached, translationErrorMessage } from '../services/translationService';
 import { effectiveLang } from '../utils/lang';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
@@ -50,6 +50,7 @@ export default function WordActionSheet({ visible, word, sentence, lang = 'en', 
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [translationError, setTranslationError] = useState('');
 
   useEffect(() => {
     if (!word || !visible) return;
@@ -58,11 +59,15 @@ export default function WordActionSheet({ visible, word, sentence, lang = 'en', 
     setSaved(false);
     setCopied(false);
     setTranslation('');
+    setTranslationError('');
     const from = effectiveLang(lang);
 
     translateCached(word, from, targetLang)
       .then((r) => active && setTranslation(r.text))
-      .catch((e) => console.warn('[WordActionSheet] word translation failed', e))
+      .catch((e) => {
+        console.warn('[WordActionSheet] word translation failed', e);
+        if (active) setTranslationError(translationErrorMessage(e));
+      })
       .finally(() => active && setLoading(false));
 
     return () => {
@@ -142,6 +147,10 @@ export default function WordActionSheet({ visible, word, sentence, lang = 'en', 
             <Text style={{ fontSize: a.small_fs, marginBottom: 2, color: theme.secondaryText }}>{t("Translation:")}</Text>
             <Text style={{ fontSize: a.h2, fontFamily: FONTS.bold, color: theme.primary }}>{translation}</Text>
           </View>
+        ) : translationError ? (
+          <Text style={{ color: theme.danger ?? theme.primaryText, fontSize: a.small_fs, marginVertical: 8 }}>
+            {translationError}
+          </Text>
         ) : null}
 
         {/* Низ: кнопка збереження */}

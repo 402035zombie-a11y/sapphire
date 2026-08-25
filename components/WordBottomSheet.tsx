@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, Platform, Clipboard } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { translateCached } from '../services/translationService';
+import { translateCached, translationErrorMessage } from '../services/translationService';
 import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
 import { effectiveLang } from '../utils/lang';
@@ -48,6 +48,7 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [translationError, setTranslationError] = useState('');
 
   useEffect(() => {
     if (!word) return;
@@ -56,12 +57,16 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
     setSaved(false);
     setCopied(false);
     setTranslation('');
+    setTranslationError('');
     const from = effectiveLang(lang);
     
     // Переклад слова
     translateCached(word, from, targetLang)
       .then((r) => active && setTranslation(r.text))
-      .catch((e) => console.warn('[WordBottomSheet] word translation failed', e))
+      .catch((e) => {
+        console.warn('[WordBottomSheet] word translation failed', e);
+        if (active) setTranslationError(translationErrorMessage(e));
+      })
       .finally(() => active && setLoading(false));
 
     return () => {
@@ -146,6 +151,11 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
                 <Text style={{ fontSize: a.small_fs, marginBottom: 2, color: theme.secondaryText }}>{t("Translation:")}</Text>
                 <Text style={{ fontSize: a.h2, fontFamily: FONTS.bold, color: theme.primary }}>{translation}</Text>
               </View>
+            ) : null}
+            {!translation && translationError ? (
+              <Text style={{ color: theme.danger ?? theme.primaryText, fontSize: a.small_fs, marginBottom: 10 }}>
+                {translationError}
+              </Text>
             ) : null}
             {sentence ? (
               <View style={{ marginTop: 4 }}>

@@ -185,17 +185,9 @@ function SentenceRow({
       )}
 
       <View style={styles.body}>
-        {isPlain ? (
-          // Звичайний режим читання: рендеримо оригінал ОДНИМ Text (без токенізації → пробіли коректні)
-          <Text style={paragraphStyle}>
-            {original}
-          </Text>
-        ) : (
-          // dual/speed режим: токенізуємо для клікабельності слів → onWordPress
-          <Text style={paragraphStyle}>
-            {tokens.map((tok, i) => renderToken(tok, i))}
-          </Text>
-        )}
+        <Text style={paragraphStyle}>
+          {tokens.map((tok, i) => renderToken(tok, i))}
+        </Text>
 
         {(!isPlain && translation) || open ? (
           <Text style={[styles.translation, { color: theme.secondaryText, fontSize: fs - 2, lineHeight: lh - 2 }]}>

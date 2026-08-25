@@ -40,6 +40,7 @@ import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import { useSupportStore } from '../store/supportStore';
 import { showSupportAd } from '../services/monetization';
+import { openDonatePage } from '../services/donate';
 import { useSettingsStore } from '../store/settingsStore';
 import { useT } from '../i18n';
 
@@ -273,7 +274,7 @@ export default function DictionaryScreen() {
   };
   const onDonate = () => {
     setSupportOpen(false);
-    useSupportStore.getState().setDontShowSupport(true);
+    openDonatePage();
   };
 
   const importFromFile = (text: string) => {

@@ -52,3 +52,4 @@ apkpatch/*.jar
 apkpatch/*.apk
 apkpatch/patched-signed.apk/
 dev-client.apk
+Sapphire-preview.apk

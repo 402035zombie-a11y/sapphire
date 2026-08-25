@@ -1,55 +1,98 @@
 // services/translationService.ts
-// Слой перевода. Всегда используется бесплатный Google GTX (без API-ключа).
-// Выбор поставщика/ключа убран — перевод всегда бесплатный.
+// Безкоштовний Google GTX translation layer із явними помилками: rate-limit, timeout, empty response.
 
-export type LangCode = string; // ISO 639-1, напр. 'en', 'ru', 'de', 'fr', 'es', 'zh'
+export type LangCode = string;
+
+export type TranslationErrorKind = 'rate-limit' | 'forbidden' | 'timeout' | 'http' | 'empty' | 'network' | 'parse';
+
+export class TranslationError extends Error {
+  kind: TranslationErrorKind;
+  status?: number;
+
+  constructor(kind: TranslationErrorKind, message: string, status?: number) {
+    super(message);
+    this.name = 'TranslationError';
+    this.kind = kind;
+    this.status = status;
+  }
+}
 
 export interface TranslateResult {
   text: string;
   detectedSourceLang?: LangCode;
 }
 
-async function viaGoogleGtx(text: string, from: LangCode, to: LangCode): Promise<TranslateResult> {
-  // Бесплатный неофициальный endpoint Google Translate (client=gtx). Без ключа.
-  const url =
-    `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=${from}&tl=${to}&q=${encodeURIComponent(
-      text,
-    )}`;
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Google GTX translation failed: ${res.status}`);
-  }
-  const data = await res.json();
-  // data[0] — массив сегментов [translatedChunk, originalChunk, ...]
-  const translated = (data[0] as Array<[string]>)
-    .map((seg) => (seg && seg[0] ? seg[0] : ''))
-    .join('');
-  const detected = (data[2] as LangCode) ?? undefined;
-  return { text: translated, detectedSourceLang: detected };
+const TRANSLATE_TIMEOUT_MS = 12000;
+
+function errorKindFromStatus(status: number): TranslationErrorKind {
+  if (status === 429) return 'rate-limit';
+  if (status === 403) return 'forbidden';
+  return 'http';
 }
 
-/**
- * Переводит текст. Поддерживает 'auto' как исходный язык (автоопределение).
- * Всегда бесплатный Google GTX.
- */
-export async function translate(
-  text: string,
-  from: LangCode,
-  to: LangCode,
-): Promise<TranslateResult> {
+export function translationErrorMessage(error: unknown): string {
+  if (error instanceof TranslationError) {
+    if (error.kind === 'rate-limit') return 'Translation limit reached. Try later.';
+    if (error.kind === 'forbidden') return 'Translation service blocked this request. Try later.';
+    if (error.kind === 'timeout') return 'Translation timed out. Check connection and retry.';
+    if (error.kind === 'empty') return 'Translation returned empty result. Retry.';
+    return `Translation failed${error.status ? ` (${error.status})` : ''}.`;
+  }
+  return 'Translation failed. Check connection and retry.';
+}
+
+async function viaGoogleGtx(text: string, from: LangCode, to: LangCode): Promise<TranslateResult> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TRANSLATE_TIMEOUT_MS);
+  const url =
+    `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=${from}&tl=${to}&q=${encodeURIComponent(text)}`;
+
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) {
+      throw new TranslationError(errorKindFromStatus(res.status), `Google GTX translation failed: ${res.status}`, res.status);
+    }
+
+    let data: any;
+    try {
+      data = await res.json();
+    } catch (e) {
+      throw new TranslationError('parse', 'Could not parse translation response');
+    }
+
+    const translated = Array.isArray(data?.[0])
+      ? (data[0] as Array<[string]>).map((seg) => (seg && seg[0] ? seg[0] : '')).join('').trim()
+      : '';
+
+    if (!translated) {
+      throw new TranslationError('empty', 'Translation response was empty');
+    }
+
+    const detected = (data[2] as LangCode) ?? undefined;
+    return { text: translated, detectedSourceLang: detected };
+  } catch (e: any) {
+    if (e?.name === 'AbortError') {
+      throw new TranslationError('timeout', 'Translation request timed out');
+    }
+    if (e instanceof TranslationError) throw e;
+    throw new TranslationError('network', e?.message || 'Translation network failure');
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export async function translate(text: string, from: LangCode, to: LangCode): Promise<TranslateResult> {
   if (!text.trim()) return { text: '' };
   return viaGoogleGtx(text, from, to);
 }
 
-// Простая in-memory кэш-обёртка, чтобы не дёргать сеть на каждый клик по слову.
-// LRU с лимитом — иначе Map растёт бесконечно на больших книгах и течёт память.
 const CACHE_LIMIT = 2000;
 const cache = new Map<string, TranslateResult>();
+
 export async function translateCached(text: string, from: LangCode, to: LangCode): Promise<TranslateResult> {
   const key = `${from}|${to}|${text}`;
   const hit = cache.get(key);
   if (hit) {
-    // обновляем позицию в LRU (переносим в конец)
     cache.delete(key);
     cache.set(key, hit);
     return hit;
@@ -57,7 +100,6 @@ export async function translateCached(text: string, from: LangCode, to: LangCode
   const result = await translate(text, from, to);
   cache.set(key, result);
   if (cache.size > CACHE_LIMIT) {
-    // удаляем самый старый (первый в insert-order Map)
     const oldest = cache.keys().next().value;
     if (oldest !== undefined) cache.delete(oldest);
   }

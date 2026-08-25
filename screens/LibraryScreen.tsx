@@ -157,7 +157,17 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         type: [
           'application/epub+zip',
           'application/x-fictionbook',
+          'application/xml',
+          'text/xml',
           'text/plain',
+          'text/html',
+          'application/html',
+          'application/msword',
+          'application/rtf',
+          'text/rtf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.oasis.opendocument.text',
+          '*/*',
         ],
         copyToCacheDirectory: true,
       });
@@ -203,6 +213,9 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         })();
       }
       setProgress(0.95);
+      // PERF: важка синхронна сегментація великого тексту блокує JS-поток → фриз UI.
+      // Віддаємо кадр перед і після (InteractionManager + setTimeout 0), потім chunk-обробка.
+      await new Promise((r) => setTimeout(r, 0));
       const paragraphs = buildParagraphs(parsed.text);
       const sections = extractSections(paragraphs);
       setProgress(1);

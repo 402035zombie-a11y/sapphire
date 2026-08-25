@@ -32,6 +32,7 @@ import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import { useSupportStore } from '../store/supportStore';
 import { showSupportAd } from '../services/monetization';
+import { openDonatePage } from '../services/donate';
 import { metal, neuShadowPad } from '../theme/neu';
 import { FONTS } from '../theme/constants';
 
@@ -183,7 +184,7 @@ export default function TrainingScreen() {
   };
   const onDonate = () => {
     setSupportOpen(false);
-    useSupportStore.getState().setDontShowSupport(true);
+    openDonatePage();
   };
   const onSupportDismiss = () => {
     setSupportOpen(false);

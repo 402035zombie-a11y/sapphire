@@ -179,6 +179,11 @@ export async function parseEpub(
     if (text) paragraphs.push(text);
     // прогресс от 0.3 до 0.9 по мере чтения spine
     tick(0.3 + (0.6 * (i + 1)) / orderedHrefs.length);
+    // PERF: віддаємо кадр JS-потоку кожні кілька глав — UI (прогрес, кнопки)
+    // не фризить на великих книгах (50+ xhtml). Без цього JS-block триває секунди.
+    if ((i & 3) === 3) {
+      await new Promise((r) => setTimeout(r, 0));
+    }
   }
 
   // base64 + распакованный zip освобождаются после return (больше не referenced).

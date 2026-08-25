@@ -38,6 +38,8 @@ import { translateCached } from '../services/translationService';
 import { saveSentenceTranslations, getSentenceTranslations, clearSentenceTranslations } from '../services/sentenceTranslationsDb';
 import { stripHtmlToText } from '../services/bookText';
 import { showSupportAd } from '../services/monetization';
+import { openDonatePage } from '../services/donate';
+import { translationErrorMessage } from '../services/translationService';
 import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import SentenceRow from '../components/SentenceRow';
@@ -194,6 +196,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   const [paused, setPaused] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [action, setAction] = useState<{ word: string; sentence: string } | null>(null);
+  const [translateError, setTranslateError] = useState<string | null>(null);
 
   const addToDictionary = useCallback(
     (word: string, sentence: string) => {
@@ -306,7 +309,12 @@ export default function ReaderScreen({ route }: { route: any }) {
             try {
               const res = await translateCached(it.text, from, targetLang);
               return { key: it.key, translation: res.text } as { key: string; translation: string };
-            } catch {
+            } catch (e) {
+              // Rate-limit/timeout/empty → показуємо стан у рядку, а не мовчки.
+              const kind = (e as any)?.kind;
+              if (kind === 'rate-limit' || kind === 'forbidden' || kind === 'timeout') {
+                setTranslateError(translationErrorMessage(e));
+              }
               return null;
             }
           }),
@@ -467,14 +475,10 @@ export default function ReaderScreen({ route }: { route: any }) {
     useSupportStore.getState().incrementDismiss();
   };
 
-  // Донат/подписка: ставим флаг «больше не показывать» и запускаем платёж (mock в вебе).
+  // Донат/підтримка: відкриваємо ЗОВНІШНЮ платіжну сторінку (без Play Billing).
   const onDonate = () => {
     setSupportOpen(false);
-    useSupportStore.getState().setDontShowSupport(true);
-    if (Platform.OS === 'web') {
-      window.alert(t("Thank you for your support! (donation/subscription is a stub in the web version)"));
-    }
-    // TODO (натив): здесь requestPurchase() из react-native-iap / открытие платёжной ссылки.
+    openDonatePage();
   };
 
   useEffect(() => {
@@ -690,6 +694,16 @@ export default function ReaderScreen({ route }: { route: any }) {
   return (
     <Screen bg={false} contentStyle={{ backgroundColor: theme.readerBg, paddingHorizontal: 0, paddingBottom: a.pad, maxWidth: a.readerMaxW, alignSelf: 'center' }}>
       {header}
+      {translateError && (
+        <TouchableOpacity
+          onPress={() => setTranslateError(null)}
+          style={{ backgroundColor: theme.danger ?? '#B91C1C', paddingVertical: 6, paddingHorizontal: a.pad }}
+        >
+          <Text style={{ color: '#FFFFFF', fontSize: a.small_fs, textAlign: 'center' }}>
+            {translateError}  ✕
+          </Text>
+        </TouchableOpacity>
+      )}
       {content}
       {searchModal}
       {selected && (
