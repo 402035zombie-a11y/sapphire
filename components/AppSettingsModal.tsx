@@ -81,10 +81,10 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
                   <TouchableOpacity
                     key={tm}
                     style={[
-                      active
-                        ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                        : metal(theme, 'convexConcave', { radius: a.radius, strength: 0.85 }),
                       { flex: 1, minWidth: 84, paddingVertical: a.tiny ? 9 : 12, alignItems: 'center' },
+                      active
+                        ? metal(theme, 'primary', { radius: a.radius })
+                        : metal(theme, 'convexConcave', { radius: a.radius, strength: 0.85 }),
                     ]}
                     onPress={() => setTheme(tm)}
                   >

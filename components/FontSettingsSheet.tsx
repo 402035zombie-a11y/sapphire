@@ -124,10 +124,10 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                   <TouchableOpacity
                     key={f.id}
                     style={[
-                      active
-                        ? { ...metal(theme, 'primary', { radius: 8 }), backgroundColor: theme.primary }
-                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
                       styles.chip,
+                      active
+                        ? metal(theme, 'primary', { radius: 8 })
+                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
                     ]}
                     onPress={() => setReader({ fontFamily: f.id })}
                   >
@@ -156,10 +156,10 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                   <TouchableOpacity
                     key={al.id}
                     style={[
-                      active
-                        ? { ...metal(theme, 'primary', { radius: 8 }), backgroundColor: theme.primary }
-                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
                       styles.chip,
+                      active
+                        ? metal(theme, 'primary', { radius: 8 })
+                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
                     ]}
                     onPress={() => setReader({ textAlign: al.id as any })}
                   >
@@ -210,10 +210,10 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                   <TouchableOpacity
                     key={th.id}
                     style={[
-                      active
-                        ? { ...metal(theme, 'primary', { radius: 8 }), backgroundColor: theme.primary }
-                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
                       styles.chip,
+                      active
+                        ? metal(theme, 'primary', { radius: 8 })
+                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
                     ]}
                     onPress={() => setTheme(th.id)}
                   >
@@ -266,11 +266,9 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
     sectionLabel: { fontSize: a.fs(12), fontFamily: FONTS.bold },
     chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
     chip: {
-      ...metal(theme, 'raised', { radius: 8 }),
       paddingVertical: a.tiny ? 5 : 7,
       paddingHorizontal: a.tiny ? 9 : 12,
       borderRadius: 8,
-      borderWidth: 0,
     },
     chipText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
   });
