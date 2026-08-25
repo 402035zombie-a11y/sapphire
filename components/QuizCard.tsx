@@ -98,6 +98,7 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
             <TouchableOpacity
               key={i}
               style={[
+                styles.option,
                 // Профіль 1: подвійно випуклі кнопки вибору відповіді
                 metal(theme, showState && isCorrect ? 'primary' : showState && isPicked ? 'inset' : 'raised', { radius: a.radius, strength: 0.85 }),
                 answered && isCorrect && { backgroundColor: theme.success },
@@ -106,6 +107,7 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
               ]}
               onPress={() => choose(opt)}
             >
+              <View style={{ width: a.icon(28) }} />
               <Text
                 style={[
                   styles.optionText,
@@ -148,6 +150,6 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       justifyContent: 'space-between',
       minHeight: a.hit,
     },
-    optionText: { fontSize: a.body, color: theme.primaryText, textAlign: 'center' },
+    optionText: { fontSize: a.body, color: theme.primaryText, textAlign: 'center', flex: 1 },
   });
 }
