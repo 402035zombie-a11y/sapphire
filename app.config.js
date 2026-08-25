@@ -29,6 +29,6 @@ module.exports = {
   ],
   extra: {
     admob: { appId: ADMOB_APP_ID, bannerId: ADMOB_BANNER_ID, rewardedId: ADMOB_REWARDED_ID },
-    eas: { projectId: process.env.EAS_PROJECT_ID || "c6014b22-df9e-464c-903c-ffa9a5793249" },
+    eas: { projectId: process.env.EAS_PROJECT_ID || "59123992-8765-4762-87a4-9449c7384d79" },
   },
 };
