@@ -148,6 +148,6 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       justifyContent: 'space-between',
       minHeight: a.hit,
     },
-    optionText: { fontSize: a.body, color: theme.primaryText, textAlign: 'left', flex: 1 },
+    optionText: { fontSize: a.body, color: theme.primaryText, textAlign: 'center' },
   });
 }
