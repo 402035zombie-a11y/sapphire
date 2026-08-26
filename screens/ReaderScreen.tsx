@@ -268,25 +268,28 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   // Переклади речень тепер у books.db (SQLite), НЕ в libraryStore JSON.
   // Локальний кеш на сесію → renderItem читає з пам'яті, запис іде точково в БД.
+  // MULTILANG: при зміні цільової мови перечитуємо переклади саме цієї мови з БД
+  // (кожна мова має власний набір рядків у sentence_translations).
   const translationsRef = useRef<Record<string, string>>({});
   React.useEffect(() => {
     // при зміні книги: підтягнути вже перекладені речення одним запитом
     translationsRef.current = getSentenceTranslations(
       bookId,
       sentences.map((s) => String(s.index)),
+      targetLang,
     );
     setTranslationsVersion((v) => v + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookId, sentences.length]);
+  }, [bookId, sentences.length, targetLang]);
   const [translationsVersion, setTranslationsVersion] = useState(0);
 
   const persistTranslations = useCallback(
     (entries: { key: string; translation: string }[]) => {
       for (const e of entries) translationsRef.current[e.key] = e.translation;
-      saveSentenceTranslations(bookId, entries);
+      saveSentenceTranslations(bookId, entries, targetLang);
       setTranslationsVersion((v) => v + 1); // тригер ререндеру рядків з новим перекладом
     },
-    [bookId],
+    [bookId, targetLang],
   );
 
   const translateBatch = useCallback(
