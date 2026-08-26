@@ -31,7 +31,7 @@ export interface ProviderResult {
   provider: ProviderId;
 }
 
-export type ProviderId = 'google-gtx' | 'lingva' | 'mymemory' | 'libretranslate';
+export type ProviderId = 'google-gtx' | 'google-clients5' | 'lingva' | 'mymemory' | 'libretranslate';
 
 interface ProviderLimitInfo {
   /** Період вікна ліміту, мс */
@@ -67,6 +67,14 @@ const PROVIDERS: {
     label: 'Google Translate',
     limit: { windowMs: HOUR_MS, maxRequests: 300, maxCharsPerRequest: 5000 },
     fn: async (text, from, to) => gtx(text, from, to),
+  },
+  {
+    // Окремий endpoint Google Dictionary (Chrome extension): інша квота-відлунь,
+    // ніж translate.googleapis.com → фактично другий незалежний Google-канал.
+    id: 'google-clients5',
+    label: 'Google Dictionary',
+    limit: { windowMs: HOUR_MS, maxRequests: 300, maxCharsPerRequest: 5000 },
+    fn: async (text, from, to) => gtxClients5(text, from, to),
   },
   {
     id: 'lingva',
@@ -165,6 +173,30 @@ async function gtx(text: string, from: LangCode, to: LangCode) {
     : '';
   if (!out) throw new TranslationError('empty', 'gtx empty');
   return { text: out, detected: (data[2] as LangCode) ?? undefined };
+}
+
+// Другий незалежний Google-канал: endpoint Chrome Dictionary extension.
+// Відповідь: [["переклад","джерело-мова"]] або [["переклад"],...].
+async function gtxClients5(text: string, from: LangCode, to: LangCode) {
+  const url =
+    `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${from}&tl=${to}&q=${encodeURIComponent(text)}`;
+  const res = await fetchWithTimeout(url, {});
+  if (res.status === 429 || res.status === 403) throw new TranslationError('rate-limit', `c5 ${res.status}`);
+  if (!res.ok) throw new TranslationError('http', `c5 ${res.status}`, res.status);
+  const data = await res.json();
+  // Формат A: [["translated","src"]]; Формат B: [["seg1"],["seg2"]]
+  let out = '';
+  let detected: LangCode | undefined;
+  if (Array.isArray(data)) {
+    if (typeof data[0]?.[0] === 'string' && typeof data[0]?.[1] === 'string') {
+      out = data[0][0];
+      detected = data[0][1];
+    } else if (Array.isArray(data[0])) {
+      out = data.map((seg: any) => (Array.isArray(seg) && typeof seg[0] === 'string' ? seg[0] : '')).join('').trim();
+    }
+  }
+  if (!out) throw new TranslationError('empty', 'c5 empty');
+  return { text: out, detected };
 }
 
 async function lingva(text: string, from: LangCode, to: LangCode) {
