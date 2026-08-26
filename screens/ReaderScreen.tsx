@@ -42,6 +42,7 @@ import { openDonatePage } from '../services/donate';
 import { translationErrorMessage } from '../services/translationService';
 import SupportAuthorModal from '../components/SupportAuthorModal';
 import TranslationLimitsModal from '../components/TranslationLimitsModal';
+import ProviderToast from '../components/ProviderToast';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import SentenceRow from '../components/SentenceRow';
 import WordBottomSheet from '../components/WordBottomSheet';
@@ -710,6 +711,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         </TouchableOpacity>
       )}
       {content}
+      <ProviderToast />
       <TranslationLimitsModal
         visible={limitsOpen}
         onRetry={() => {

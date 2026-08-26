@@ -99,6 +99,32 @@ const PROVIDERS: {
 const LINGVA_BASE = (process.env.EXPO_PUBLIC_LINGVA_BASE_URL ?? '').replace(/\/$/, '');
 const LIBRE_BASE = 'https://libretranslate.com/translate';
 
+// ---------- події для UI (сповіщення про переключення/відновлення) ----------
+
+export type ProviderEvent =
+  | { type: 'switched'; fromLabel: string; toLabel: string; resetAtMs: number }
+  | { type: 'recovered'; label: string };
+
+const listeners = new Set<(e: ProviderEvent) => void>();
+
+/** Підписка на події перемикання/відновлення провайдерів (для тостів). */
+export function onProviderEvent(fn: (e: ProviderEvent) => void): () => void {
+  listeners.add(fn);
+  return () => {
+    listeners.delete(fn);
+  };
+}
+
+function emit(e: ProviderEvent) {
+  for (const fn of listeners) {
+    try {
+      fn(e);
+    } catch {
+      // UI-слухач не має валити переклад
+    }
+  }
+}
+
 // ---------- стан лімітів ----------
 const state = new Map<ProviderId, ProviderState>();
 
@@ -108,7 +134,16 @@ function getState(id: ProviderId, limit: ProviderLimitInfo): ProviderState {
     s = { id, label: '', cooldownUntil: 0, requestsThisWindow: 0, windowStartedAt: Date.now() };
     state.set(id, s);
   }
-  // вікно скинулось?
+  // Вікно скинулось → провайдер автоматично знову доступний.
+  // Одноразова подія 'recovered', щоб UI показав «ліміт поновлено».
+  if (s.cooldownUntil > 0 && Date.now() >= s.cooldownUntil) {
+    const p = PROVIDERS.find((x) => x.id === id);
+    emit({ type: 'recovered', label: p?.label ?? id });
+    s.cooldownUntil = 0;
+    s.reason = undefined;
+    s.requestsThisWindow = 0;
+    s.windowStartedAt = Date.now();
+  }
   if (Date.now() - s.windowStartedAt >= limit.windowMs) {
     s.requestsThisWindow = 0;
     s.windowStartedAt = Date.now();
@@ -260,6 +295,7 @@ export async function translateWithFailover(
   if (!text.trim()) throw new TranslationError('empty', 'empty input');
 
   const errors: string[] = [];
+  let fromLabel = '';
   for (const p of PROVIDERS) {
     const s = getState(p.id, p.limit);
 
@@ -279,11 +315,17 @@ export async function translateWithFailover(
 
     try {
       const r = await p.fn(payload, from, to);
+      // Сповіщення: якщо основний провайдер був у cooldown і ми дійшли сюди —
+      // це фактичне переключення на резервний канал.
+      if (fromLabel) {
+        emit({ type: 'switched', fromLabel, toLabel: p.label, resetAtMs: Date.now() });
+      }
       markSuccess(p.id);
       return { text: r.text, detectedSourceLang: r.detected, provider: p.id };
     } catch (e: any) {
       const kind = e instanceof TranslationError ? e.kind : 'network';
       if (kind === 'rate-limit' || kind === 'forbidden') {
+        if (!fromLabel) fromLabel = p.label;
         markRateLimited(p.id, p.limit, e.message);
       }
       errors.push(`${p.label}: ${e.message}`);
