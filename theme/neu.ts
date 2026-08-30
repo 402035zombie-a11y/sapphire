@@ -167,8 +167,6 @@ export function neuPrimary(t: ThemePalette, radius: number): any {
       `inset ${-ix}px ${-iy}px ${iblur}px rgba(0,0,0,0.45)`,
     ].join(', '),
     ...(Platform.OS === 'web' ? {} : {
-      borderWidth: 1,
-      borderColor: rim(t),
       shadowColor: specDark(t),
       shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
       shadowOpacity: 0.9,
@@ -343,10 +341,8 @@ export function surfaceRaised(t: ThemePalette, radius: number, strength = 1): an
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`, // тёмная грань снизу-справа
     ].join(', '),
     // Юзер P4 (24.08): на Android boxShadow НЕ рендериться → єдиний об'єм дають
-    // shadow*/elevation + border-кромка. Підсилюємо до видимого рівня.
+    // shadow*/elevation (без border — обводка виглядає як рамка, не потрібна).
     ...(Platform.OS === 'web' ? {} : {
-      borderWidth: 1,
-      borderColor: t.neu.light,
       shadowColor: specDark(t),
       shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
       shadowOpacity: 0.9,
@@ -658,9 +654,9 @@ export function neuSpeakBtn(t: ThemePalette, size: number): any {
   const ix = Math.max(2, Math.round(off * 0.5));
   const iy = Math.max(2, Math.round(off * 0.5));
   const iblur = Math.max(2, Math.round(off * 1.4));
-  // Android: випукла кнопка через світлий бордер top/left + темний bottom/right (boxShadow не рендериться)
+  // Android: випукла кнопка через м'яку зовнішню тінь (shadow*+elevation), БЕЗ border
+  // (border виглядає як різка лінія, а не розмита тінь).
   if (Platform.OS !== 'web') {
-    const bw = Math.max(1, Math.round(ix * 0.5));
     return {
       width: size,
       height: size,
@@ -668,13 +664,11 @@ export function neuSpeakBtn(t: ThemePalette, size: number): any {
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: t.neu.base,
-      borderWidth: bw,
-      borderColor: t.neu.light,
-      borderTopColor: t.neu.light,
-      borderLeftColor: t.neu.light,
-      borderBottomColor: t.neu.shadowDark,
-      borderRightColor: t.neu.shadowDark,
-      elevation: 2,
+      shadowColor: t.neu.shadowDark,
+      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.6)) },
+      shadowOpacity: 0.5,
+      shadowRadius: Math.max(4, blur1),
+      elevation: 3,
     };
   }
   return {
@@ -785,9 +779,8 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
   const ix = Math.max(2, Math.round(off * 0.5));
   const iy = Math.max(2, Math.round(off * 0.5));
   const iblur = Math.max(2, Math.round(off * 1.4));
-  // Android: випукла кнопка через світлий бордер top/left + темний bottom/right (boxShadow не рендериться)
+  // Android: випукла кнопка через м'яку зовнішню тінь (shadow*+elevation), БЕЗ border.
   if (Platform.OS !== 'web') {
-    const bw = Math.max(1, Math.round(ix * 0.5));
     return {
       width: size,
       height: size,
@@ -795,13 +788,11 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: t.neu.base,
-      borderWidth: bw,
-      borderColor: t.neu.light,
-      borderTopColor: t.neu.light,
-      borderLeftColor: t.neu.light,
-      borderBottomColor: t.neu.shadowDark,
-      borderRightColor: t.neu.shadowDark,
-      elevation: 2,
+      shadowColor: t.neu.shadowDark,
+      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.6)) },
+      shadowOpacity: 0.5,
+      shadowRadius: Math.max(4, blur1),
+      elevation: 3,
     };
   }
   return {
