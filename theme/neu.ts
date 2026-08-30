@@ -424,6 +424,25 @@ export function neuMetalCircleInset(t: ThemePalette, size: number): any {
   const iblur = Math.max(3, Math.round(off * 1.5));
   // компактна зовнішня тінь (юзер: маленькі зовнішні тіні на всіх кнопках)
   const ox = Math.max(2, Math.round(off * 0.35 * sc.spread));
+  // Android: вдавлений circle через кольоровий бордер (inset boxShadow + metalBg не рендеряться)
+  if (Platform.OS !== 'web') {
+    const bw = Math.max(1, Math.round(ix * 0.5));
+    return {
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.neu.base,
+      borderWidth: bw,
+      borderColor: t.neu.shadowDark,
+      borderTopColor: t.neu.shadowDark,
+      borderLeftColor: t.neu.shadowDark,
+      borderBottomColor: t.neu.light,
+      borderRightColor: t.neu.light,
+      elevation: 0,
+    };
+  }
   return {
     width: size,
     height: size,
@@ -639,6 +658,25 @@ export function neuSpeakBtn(t: ThemePalette, size: number): any {
   const ix = Math.max(2, Math.round(off * 0.5));
   const iy = Math.max(2, Math.round(off * 0.5));
   const iblur = Math.max(2, Math.round(off * 1.4));
+  // Android: випукла кнопка через світлий бордер top/left + темний bottom/right (boxShadow не рендериться)
+  if (Platform.OS !== 'web') {
+    const bw = Math.max(1, Math.round(ix * 0.5));
+    return {
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.neu.base,
+      borderWidth: bw,
+      borderColor: t.neu.light,
+      borderTopColor: t.neu.light,
+      borderLeftColor: t.neu.light,
+      borderBottomColor: t.neu.shadowDark,
+      borderRightColor: t.neu.shadowDark,
+      elevation: 2,
+    };
+  }
   return {
     width: size,
     height: size,
@@ -683,6 +721,25 @@ export function neuDeleteBtn(t: ThemePalette, size: number): any {
   const ix = Math.max(2, Math.round(off * 0.55));
   const iy = Math.max(2, Math.round(off * 0.55));
   const iblur = Math.max(2, Math.round(off * 1.5));
+  // Android: вдавлена лунка через темний бордер top/left + світлий bottom/right (elevation 0 = не випукла)
+  if (Platform.OS !== 'web') {
+    const bw = Math.max(1, Math.round(ix * 0.5));
+    return {
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.neu.base,
+      borderWidth: bw,
+      borderColor: t.neu.shadowDark,
+      borderTopColor: t.neu.shadowDark,
+      borderLeftColor: t.neu.shadowDark,
+      borderBottomColor: t.neu.light,
+      borderRightColor: t.neu.light,
+      elevation: 0,
+    };
+  }
   return {
     width: size,
     height: size,
@@ -728,6 +785,25 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
   const ix = Math.max(2, Math.round(off * 0.5));
   const iy = Math.max(2, Math.round(off * 0.5));
   const iblur = Math.max(2, Math.round(off * 1.4));
+  // Android: випукла кнопка через світлий бордер top/left + темний bottom/right (boxShadow не рендериться)
+  if (Platform.OS !== 'web') {
+    const bw = Math.max(1, Math.round(ix * 0.5));
+    return {
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.neu.base,
+      borderWidth: bw,
+      borderColor: t.neu.light,
+      borderTopColor: t.neu.light,
+      borderLeftColor: t.neu.light,
+      borderBottomColor: t.neu.shadowDark,
+      borderRightColor: t.neu.shadowDark,
+      elevation: 2,
+    };
+  }
   return {
     width: size,
     height: size,
@@ -755,6 +831,25 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
 function metalStamp(t: ThemePalette, size: number): any {
   const r = size / 2;
   const o = Math.max(2, Math.round(Math.pow(Math.max(size, 12), 0.72) * 0.5 * (t.neuScale?.depth ?? 1))); // глубина лунки — нелінійна, per-theme
+  // Android: штампована лунка через кольоровий бордер (inset boxShadow + gradient не рендеряться)
+  if (Platform.OS !== 'web') {
+    const bw = Math.max(1, Math.round(o * 0.6));
+    return {
+      width: size,
+      height: size,
+      borderRadius: r,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.neu.base,
+      borderWidth: bw,
+      borderColor: t.neu.shadowDark,
+      borderTopColor: t.neu.shadowDark,
+      borderLeftColor: t.neu.shadowDark,
+      borderBottomColor: t.neu.light,
+      borderRightColor: t.neu.light,
+      elevation: 0,
+    };
+  }
   return {
     width: size,
     height: size,
@@ -796,46 +891,71 @@ function metalTab(t: ThemePalette, radius: number, active: boolean): any {
     };
   }
   // активный: глубоко ВДАВЛЕННЫЙ металл (чёткий эффект нажатой кнопки)
-  const { soft: s } = t.neu;
+  const { soft: s, light: l, shadowDark: sd, hi: rim } = t.neu;
   const o = Math.max(5, Math.round(radius * 0.5)); // глубже, чем у неактивного
+  const bw = Math.max(1, Math.round(o * 0.6));
+  const insets: any = Platform.OS === 'web'
+    ? [
+        `inset ${o}px ${o}px ${o * 2.6}px ${sd}`,
+        `inset ${-o}px ${-o}px ${o * 2.2}px ${s}`,
+        `inset 0 1px 0 0 ${rim}`,
+      ].join(', ')
+    : {
+        borderWidth: bw,
+        borderColor: sd,
+        borderTopColor: sd,
+        borderLeftColor: sd,
+        borderBottomColor: l,
+        borderRightColor: l,
+        elevation: 0,
+      };
   return {
     borderRadius: radius,
     backgroundColor: t.neu.base,
-    backgroundImage: metalBg(t),
+    backgroundImage: Platform.OS === 'web' ? metalBg(t) : undefined,
     backgroundClip: 'padding-box',
     transition: 'box-shadow 160ms ease, background 160ms ease',
-    boxShadow: [
-      `inset ${o}px ${o}px ${o * 2.6}px ${specDark(t)}`, // глубокая тёмная грань (вдавленность)
-      `inset ${-o}px ${-o}px ${o * 2.2}px ${s}`, // светлая противоположная грань
-      `inset 0 1px 0 0 ${rim(t)}`,
-    ].join(', '),
+    ...(Platform.OS === 'web' ? { boxShadow: insets } : insets),
   };
 }
 
-// штампованный таб: ВНЕШНЕ вдавленная лунка + ВНУТРЕННЕ выпуклый купол (machined metal).
+// штампованный таб: ВНЕШНИЙ вдавленная лунка + ВНУТРЕННИЙ выпуклый купол (machined metal).
 function metalTabStamp(t: ThemePalette, radius: number, active: boolean): any {
   const o = Math.max(4, Math.round(radius * 0.4));
-  const { soft: s, light: l } = t.neu;
+  const { soft: s, light: l, shadowDark: sd, hi: rim } = t.neu;
   const ix = Math.max(2, Math.round(o * 0.5));
   const iy = Math.max(2, Math.round(o * 0.5));
   const iblur = Math.round(o * 1.4);
+  const bw = Math.max(1, Math.round(o * 0.6));
+  const isWeb = Platform.OS === 'web';
+  const insets: any = isWeb
+    ? [
+        // ВНЕШНЯЯ лунка (вдавленность): тёмная сверху-слева, светлая снизу-справа
+        `inset ${o}px ${o}px ${o * 2}px ${sd}`,
+        `inset ${-o}px ${-o}px ${o * 2}px ${s}`,
+        // ВНУТРЕННИЙ купол (выпуклость): светлая верхняя грань + тёмная нижняя
+        `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${rim}`,
+        `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${sd}`,
+        // холодный edge-rim
+        `inset 0 0 0 1px ${rim}`,
+      ].join(', ')
+    : {
+        borderWidth: bw,
+        borderColor: sd,
+        borderTopColor: sd,
+        borderLeftColor: sd,
+        borderBottomColor: l,
+        borderRightColor: l,
+        elevation: 0,
+      };
   return {
     borderRadius: radius,
     backgroundColor: t.neu.base,
-    backgroundImage: metalBg(t),
+    backgroundImage: isWeb ? metalBg(t) : undefined,
     backgroundClip: 'padding-box',
     transition: 'box-shadow 160ms ease, background 160ms ease',
-    boxShadow: [
-      // ВНЕШНЯЯ лунка (вдавленность): тёмная сверху-слева, светлая снизу-справа
-      `inset ${o}px ${o}px ${o * 2}px ${specDark(t)}`,
-      `inset ${-o}px ${-o}px ${o * 2}px ${s}`,
-      // ВНУТРЕННИЙ купол (выпуклость): светлая верхняя грань + тёмная нижняя
-      `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${rim(t)}`,
-      `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${specDark(t)}`,
-      // холодный edge-rim
-      `inset 0 0 0 1px ${rim(t)}`,
-    ].join(', '),
-    elevation: Math.max(3, Math.round(o)),
+    ...(isWeb ? { boxShadow: insets } : insets),
+    ...(isWeb ? { elevation: Math.max(3, Math.round(o)) } : {}),
   };
 }
 
@@ -849,15 +969,20 @@ export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): an
   const ox = Math.max(2, Math.round(off * 0.4 * sc.spread));
   const { soft: s, light: l } = t.neu;
 
-  // ANDROID/NATIVE: CSS `inset` boxShadow не рендериться → вдавлення імітуємо
-  // внутрішнім бордером (темний зверху-зліва неможливо по-сторонах, тому рівномірний
-  // темний бордер + трохи затемнений фон дають читабельну «лунку» без web-тіней).
+  // ANDROID/NATIVE: CSS `inset` boxShadow НЕ рендериться. Імітуємо вдавлення
+  // кольоровим бордером (темний зверху-зліва + світлий знизу-справа = грань лунки),
+  // без тіней — тільки бордер, як у neuInset. shadowRadius = ореол instead на Android.
   if (Platform.OS !== 'web') {
+    const bw = Math.max(1, Math.round(ix * 0.5));
     return {
       backgroundColor: t.neu.base,
       borderRadius: radius,
-      borderWidth: Math.max(1, Math.round(ix * 0.5)),
+      borderWidth: bw,
       borderColor: t.neu.shadowDark,
+      borderTopColor: t.neu.shadowDark,
+      borderLeftColor: t.neu.shadowDark,
+      borderBottomColor: t.neu.light,
+      borderRightColor: t.neu.light,
       elevation: 0,
     };
   }

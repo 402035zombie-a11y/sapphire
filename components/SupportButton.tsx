@@ -3,13 +3,14 @@
 // Открывает окно SupportAuthorModal с предложением посмотреть рекламу.
 // Премиума нет — приложение бесплатно навсегда, поддержка добровольная.
 import React from 'react';
-import { TouchableOpacity, Platform, Modal } from 'react-native';
+import { TouchableOpacity, Modal } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import Icon from './Icon';
 import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
 import SupportAuthorModal from './SupportAuthorModal';
 import { useSupportStore } from '../store/supportStore';
+import { openDonatePage } from '../services/donate';
 import { useT } from '../i18n';
 
 export default function SupportButton({
@@ -49,7 +50,7 @@ export default function SupportButton({
           onDonate={() => {
             setOpen(false);
             useSupportStore.getState().setDontShowSupport(true);
-            if (Platform.OS === 'web') window.alert(t("Thanks for your support! (donation/subscription is a stub in the web version)"));
+            openDonatePage();
           }}
           onDismiss={() => setOpen(false)}
         />

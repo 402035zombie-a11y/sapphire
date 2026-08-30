@@ -108,7 +108,11 @@ export default function ReaderScreen({ route }: { route: any }) {
   const chapters = React.useMemo<BookParagraph[]>(() => {
     if (!bookId) return [];
     const dbChapters = getBookChapters(bookId);
-    if (dbChapters.length === 0) return useLibraryStore.getState().books.find((b) => b.id === bookId)?.paragraphs ?? [];
+    if (dbChapters.length === 0) {
+      const storeBook = useLibraryStore.getState().books.find((b) => b.id === bookId);
+      if (storeBook?.paragraphs?.length) return storeBook.paragraphs;
+      return [];
+    }
     const out: BookParagraph[] = [];
     for (const ch of dbChapters) {
       // ВЕСЬ текст глави → чистий → splitIntoSegments (ріже на речення, не на <p>).
