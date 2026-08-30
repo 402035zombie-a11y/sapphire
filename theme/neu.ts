@@ -405,7 +405,13 @@ export function surfaceCircle(t: ThemePalette, size: number, filled = false): an
           `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
           `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
         ].join(', '),
-    elevation: filled ? Math.max(4, Math.round(off * 1.2)) : Math.max(2, Math.round(off * 0.8)),
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.5)) },
+      shadowOpacity: 0.55,
+      shadowRadius: Math.max(4, blur1),
+      elevation: filled ? Math.max(4, Math.round(off * 1.2)) : Math.max(5, Math.round(off)),
+    }),
   };
 }
 
@@ -438,7 +444,13 @@ export function surfaceCircleInset(t: ThemePalette, size: number): any {
       `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
       `inset 0 1px 3px 0 ${rim(t)}`,
     ].join(', '),
-    elevation: 3,
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 4,
+    }),
   };
 }
 
@@ -652,7 +664,13 @@ export function neuSpeakBtn(t: ThemePalette, size: number): any {
       `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.5)) },
+      shadowOpacity: 0.5,
+      shadowRadius: Math.max(4, blur1),
+      elevation: 4,
+    }),
   };
 }
 
@@ -697,7 +715,13 @@ export function neuDeleteBtn(t: ThemePalette, size: number): any {
       `inset ${-Math.round(ix * lightCut)}px ${-Math.round(iy * lightCut)}px ${iblur}px ${t.neu.soft}`,
       `inset 0 1px 3px 0 ${rim(t)}`,
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.5)) },
+      shadowOpacity: 0.5,
+      shadowRadius: Math.max(4, blur1),
+      elevation: 4,
+    }),
   };
 }
 
@@ -741,7 +765,13 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
       `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.5)) },
+      shadowOpacity: 0.5,
+      shadowRadius: Math.max(4, blur1),
+      elevation: 4,
+    }),
   };
 }
 
@@ -777,7 +807,13 @@ function surfaceStamp(t: ThemePalette, size: number): any {
     ].join(', '),
     // Android: elevation без суцільного фону малює КВАДРАТНУ тінь поверх скруглення
     // (backgroundImage-градієнти на Android не рендеряться) → вимикаємо.
-    ...(Platform.OS === 'web' ? {} : { elevation: 0 }),
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 5,
+    }),
   };
 }
 
@@ -860,6 +896,12 @@ export function surfaceInset(t: ThemePalette, radius: number, strength = 1): any
       `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
       `inset 0 1px 3px 0 ${rim(t)}`,
     ].join(', '),
-    elevation: 2,
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 3,
+    }),
   };
 }
