@@ -34,7 +34,7 @@ import { BookParagraph } from '../store/libraryStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useSupportStore } from '../store/supportStore';
 import { splitIntoSegments } from '../utils/sentenceSplitter';
-import { translateCached, translateMany } from '../services/translationService';
+import { translateMany } from '../services/translationService';
 import { saveSentenceTranslations, getSentenceTranslations, clearSentenceTranslations } from '../services/sentenceTranslationsDb';
 import { stripHtmlToText } from '../services/bookText';
 import { showSupportAd } from '../services/monetization';

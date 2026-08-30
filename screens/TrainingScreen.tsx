@@ -415,7 +415,7 @@ export default function TrainingScreen() {
       const similar = othersVals.filter((v: string) => Math.abs(v.length - len) <= Math.max(6, len * 0.4));
       const pool2 = similar.length > 0 ? similar : othersVals;
       const fake = pool2[Math.floor(Math.random() * pool2.length)];
-      setTfPair({ shownTranslation: fake ?? (reverse ? 'word' : 'переклад'), isTrue: false });
+      setTfPair({ shownTranslation: fake ?? (reverse ? 'word' : 'translation'), isTrue: false });
     }
     setTfAnswered(null);
   }, [mode, current, reverse]);
