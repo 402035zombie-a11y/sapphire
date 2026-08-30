@@ -136,13 +136,15 @@ function getState(id: ProviderId, limit: ProviderLimitInfo): ProviderState {
   }
   // Вікно скинулось → провайдер автоматично знову доступний.
   // Одноразова подія 'recovered', щоб UI показав «ліміт поновлено».
+  // setTimeout(0) — щоб emit не стріляв під час render (getProvidersStatus у модалці).
   if (s.cooldownUntil > 0 && Date.now() >= s.cooldownUntil) {
     const p = PROVIDERS.find((x) => x.id === id);
-    emit({ type: 'recovered', label: p?.label ?? id });
+    const label = p?.label ?? id;
     s.cooldownUntil = 0;
     s.reason = undefined;
     s.requestsThisWindow = 0;
     s.windowStartedAt = Date.now();
+    setTimeout(() => emit({ type: 'recovered', label }), 0);
   }
   if (Date.now() - s.windowStartedAt >= limit.windowMs) {
     s.requestsThisWindow = 0;

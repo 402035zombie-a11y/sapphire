@@ -7,7 +7,7 @@ import { TouchableOpacity, Modal } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import Icon from './Icon';
-import { surface, neuShadowPad, screenBg, surfaceText } from '../theme/neu';
+import { surface } from '../theme/neu';
 import SupportAuthorModal from './SupportAuthorModal';
 import { useSupportStore } from '../store/supportStore';
 import { openDonatePage } from '../services/donate';
