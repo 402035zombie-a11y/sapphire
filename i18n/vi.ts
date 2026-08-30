@@ -266,4 +266,9 @@ export const viDict: Record<string, string> = {
   'Serif': 'Có chân',
   'Sans-serif': 'Không chân',
   'Mono': 'Độ rộng cố định',
+  'Reading is free forever.': 'Đọc miễn phí mãi mãi.',
+  'Watch an ad': 'Xem quảng cáo',
+  'Donate': 'Quyên góp',
+  'Removes ads forever': 'Xóa quảng cáo vĩnh viễn',
+  'Not now': 'Không phải bây giờ',
 };

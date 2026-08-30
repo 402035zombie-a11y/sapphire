@@ -266,4 +266,9 @@ export const glDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sen serif',
   'Mono': 'Monoespazado',
+  'Reading is free forever.': 'A lectura é gratis para sempre.',
+  'Watch an ad': 'Mira un anuncio',
+  'Donate': 'Doar',
+  'Removes ads forever': 'Elimina os anuncios para sempre',
+  'Not now': 'Agora non',
 };

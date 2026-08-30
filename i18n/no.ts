@@ -266,4 +266,9 @@ export const noDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Uten serif',
   'Mono': 'Fast bredde',
+  'Reading is free forever.': 'Lesing er gratis for alltid.',
+  'Watch an ad': 'Se en annonse',
+  'Donate': 'Doner',
+  'Removes ads forever': 'Fjerner annonser for alltid',
+  'Not now': 'Ikke nå',
 };

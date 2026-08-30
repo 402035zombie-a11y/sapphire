@@ -266,4 +266,9 @@ export const roDict: Record<string, string> = {
   'Serif': 'Cu serife',
   'Sans-serif': 'Fără serife',
   'Mono': 'Lățime fixă',
+  'Reading is free forever.': 'Cititul este gratuit pentru totdeauna.',
+  'Watch an ad': 'Vezi o reclamă',
+  'Donate': 'Donează',
+  'Removes ads forever': 'Elimină reclamele pentru totdeauna',
+  'Not now': 'Nu acum',
 };

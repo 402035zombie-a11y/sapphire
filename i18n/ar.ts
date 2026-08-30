@@ -266,4 +266,9 @@ export const arDict: Record<string, string> = {
   'Serif': 'مذيّل',
   'Sans-serif': 'بدون مذيّل',
   'Mono': 'أحادي المسافة',
+  'Reading is free forever.': 'القراءة مجانية إلى الأبد.',
+  'Watch an ad': 'شاهد إعلانًا',
+  'Donate': 'تبرع',
+  'Removes ads forever': 'يزيل الإعلانات إلى الأبد',
+  'Not now': 'ليس الآن',
 };

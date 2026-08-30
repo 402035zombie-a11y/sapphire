@@ -266,4 +266,9 @@ export const skDict: Record<string, string> = {
   'Serif': 'Pätkové',
   'Sans-serif': 'Bezpätkové',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Čítanie je navždy zadarmo.',
+  'Watch an ad': 'Pozrieť reklamu',
+  'Donate': 'Prispieť',
+  'Removes ads forever': 'Navždy odstráni reklamy',
+  'Not now': 'Teraz nie',
 };

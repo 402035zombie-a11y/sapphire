@@ -266,4 +266,9 @@ export const plDict: Record<string, string> = {
   'Serif': 'Szeryfowy',
   'Sans-serif': 'Bezszeryfowy',
   'Mono': 'Stała szerokość',
+  'Reading is free forever.': 'Czytanie jest darmowe na zawsze.',
+  'Watch an ad': 'Obejrzyj reklamę',
+  'Donate': 'Wesprzyj',
+  'Removes ads forever': 'Usuwa reklamy na zawsze',
+  'Not now': 'Nie teraz',
 };

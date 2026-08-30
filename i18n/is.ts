@@ -266,4 +266,9 @@ export const isDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Berbókstafur',
   'Mono': 'Jafnbreitt',
+  'Reading is free forever.': 'Lestur er ókeypis að eilífu.',
+  'Watch an ad': 'Horfa á auglýsingu',
+  'Donate': 'Styrkja',
+  'Removes ads forever': 'Fjarlægir auglýsingar að eilífu',
+  'Not now': 'Ekki núna',
 };

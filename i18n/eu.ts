@@ -266,4 +266,9 @@ export const euDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Serifik',
   'Mono': 'Monospace',
+  'Reading is free forever.': 'Irakurketa betiko doakoa da.',
+  'Watch an ad': 'Ikusi iragarki bat',
+  'Donate': 'Eman dohaintza',
+  'Removes ads forever': 'Iragarkiak betiko kentzen ditu',
+  'Not now': 'Orain ez',
 };

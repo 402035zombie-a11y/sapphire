@@ -266,4 +266,9 @@ export const lvDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Bez serifiem',
   'Mono': 'Vienplatums',
+  'Reading is free forever.': 'Lasīšana ir bezmaksas uz visiem laikiem.',
+  'Watch an ad': 'Skatīties reklāmu',
+  'Donate': 'Ziedot',
+  'Removes ads forever': 'Uz visiem laikiem noņem reklāmas',
+  'Not now': 'Ne tagad',
 };

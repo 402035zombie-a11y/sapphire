@@ -266,4 +266,9 @@ export const hrDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Bez serifа',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Čitanje je zauvijek besplatno.',
+  'Watch an ad': 'Pogledaj oglas',
+  'Donate': 'Doniraj',
+  'Removes ads forever': 'Zauvijek uklanja oglase',
+  'Not now': 'Ne sada',
 };

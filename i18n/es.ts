@@ -266,4 +266,9 @@ export const esDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sans-serif',
   'Mono': 'Monospace',
+  'Reading is free forever.': 'La lectura es gratis para siempre.',
+  'Watch an ad': 'Ver un anuncio',
+  'Donate': 'Donar',
+  'Removes ads forever': 'Elimina los anuncios para siempre',
+  'Not now': 'Ahora no',
 };

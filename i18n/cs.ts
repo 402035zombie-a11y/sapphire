@@ -266,4 +266,9 @@ export const csDict: Record<string, string> = {
   'Serif': 'Patkové',
   'Sans-serif': 'Bezpatkové',
   'Mono': 'Monospace',
+  'Reading is free forever.': 'Čtení je zdarma navždy.',
+  'Watch an ad': 'Přehrát reklamu',
+  'Donate': 'Přispět',
+  'Removes ads forever': 'Odstraní reklamy navždy',
+  'Not now': 'Teď ne',
 };

@@ -266,4 +266,9 @@ export const etDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Serifta',
   'Mono': 'Fikseeritud',
+  'Reading is free forever.': 'Lugemine on igavesti tasuta.',
+  'Watch an ad': 'Vaata reklaami',
+  'Donate': 'Anneta',
+  'Removes ads forever': 'Eemaldab reklaamid igaveseks',
+  'Not now': 'Mitte praegu',
 };

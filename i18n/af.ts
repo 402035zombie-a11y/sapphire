@@ -266,4 +266,9 @@ export const afDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sans-serif',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Lees is vir ewig gratis.',
+  'Watch an ad': 'Kyk \'n advertensie',
+  'Donate': 'Skenk',
+  'Removes ads forever': 'Verwyder advertensies vir altyd',
+  'Not now': 'Nie nou nie',
 };

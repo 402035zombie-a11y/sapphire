@@ -266,4 +266,9 @@ export const srDict: Record<string, string> = {
   'Serif': 'Серифни',
   'Sans-serif': 'Без серифних',
   'Mono': 'Једнака ширина',
+  'Reading is free forever.': 'Čitanje je besplatno zauvek.',
+  'Watch an ad': 'Pogledaj reklamu',
+  'Donate': 'Doniraj',
+  'Removes ads forever': 'Zauvek uklanja reklame',
+  'Not now': 'Ne sada',
 };

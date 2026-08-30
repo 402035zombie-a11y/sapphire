@@ -270,4 +270,9 @@ export const koDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': '산세리프',
   'Mono': '고정폭',
+  'Reading is free forever.': '읽기는 영원히 무료입니다.',
+  'Watch an ad': '광고 보기',
+  'Donate': '기부',
+  'Removes ads forever': '광고를 영원히 제거',
+  'Not now': '나중에',
 };

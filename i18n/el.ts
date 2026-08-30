@@ -266,4 +266,9 @@ export const elDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Χωρίς serif',
   'Mono': 'Μονοδιάστατο',
+  'Reading is free forever.': 'Η ανάγνωση είναι δωρεάν για πάντα.',
+  'Watch an ad': 'Δες μια διαφήμιση',
+  'Donate': 'Δωρεά',
+  'Removes ads forever': 'Αφαιρεί τις διαφημίσεις για πάντα',
+  'Not now': 'Όχι τώρα',
 };

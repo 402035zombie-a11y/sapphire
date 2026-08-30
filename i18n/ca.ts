@@ -266,4 +266,9 @@ export const caDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sense serif',
   'Mono': 'Mono',
+  'Reading is free forever.': 'La lectura és gratis per sempre.',
+  'Watch an ad': 'Mira un anunci',
+  'Donate': 'Dona',
+  'Removes ads forever': 'Elimina els anuncis per sempre',
+  'Not now': 'Ara no',
 };

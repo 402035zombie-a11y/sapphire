@@ -266,4 +266,9 @@ export const ltDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Be serifų',
   'Mono': 'Lygiaplotis',
+  'Reading is free forever.': 'Skaitymas nemokamas amžinai.',
+  'Watch an ad': 'Žiūrėti reklamą',
+  'Donate': 'Paaukoti',
+  'Removes ads forever': 'Pašalina skelbimus visam laikui',
+  'Not now': 'Ne dabar',
 };

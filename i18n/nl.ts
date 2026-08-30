@@ -266,4 +266,9 @@ export const nlDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Schreefloos',
   'Mono': 'Monospace',
+  'Reading is free forever.': 'Lezen is voor altijd gratis.',
+  'Watch an ad': 'Bekijk een advertentie',
+  'Donate': 'Doneer',
+  'Removes ads forever': 'Verwijdert advertenties voor altijd',
+  'Not now': 'Niet nu',
 };

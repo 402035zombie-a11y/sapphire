@@ -275,4 +275,9 @@ export const ukDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sans-serif',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Читання безкоштовне назавжди.',
+  'Watch an ad': 'Переглянути рекламу',
+  'Donate': 'Пожертвувати',
+  'Removes ads forever': 'Прибирає рекламу назавжди',
+  'Not now': 'Не зараз',
 };

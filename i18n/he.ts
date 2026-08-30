@@ -266,4 +266,9 @@ export const heDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sans-serif',
   'Mono': 'רווח אחיד',
+  'Reading is free forever.': 'הקריאה חינם לנצח.',
+  'Watch an ad': 'צפה בפרסומת',
+  'Donate': 'תרומה',
+  'Removes ads forever': 'מסיר פרסומות לנצח',
+  'Not now': 'לא עכשיו',
 };

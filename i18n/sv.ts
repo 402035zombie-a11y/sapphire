@@ -266,4 +266,9 @@ export const svDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Barock',
   'Mono': 'Fast bredd',
+  'Reading is free forever.': 'Läsning är gratis för alltid.',
+  'Watch an ad': 'Se en annons',
+  'Donate': 'Donera',
+  'Removes ads forever': 'Tar bort annonser för alltid',
+  'Not now': 'Inte nu',
 };

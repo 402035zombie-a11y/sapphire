@@ -270,4 +270,9 @@ export const zhDict: Record<string, string> = {
   'Serif': '衬线体',
   'Sans-serif': '无衬线体',
   'Mono': '等宽字体',
+  'Reading is free forever.': '阅读永远免费。',
+  'Watch an ad': '观看广告',
+  'Donate': '捐赠',
+  'Removes ads forever': '永久移除广告',
+  'Not now': '现在不要',
 };

@@ -270,4 +270,9 @@ export const jaDict: Record<string, string> = {
   'Serif': 'セリフ体',
   'Sans-serif': 'サンセリフ',
   'Mono': '等幅',
+  'Reading is free forever.': '読書はいつまでも無料です。',
+  'Watch an ad': '広告を見る',
+  'Donate': '寄付',
+  'Removes ads forever': '広告を完全に削除',
+  'Not now': 'あとで',
 };

@@ -266,4 +266,9 @@ export const idDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Tanpa serif',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Membaca gratis selamanya.',
+  'Watch an ad': 'Tonton iklan',
+  'Donate': 'Donasi',
+  'Removes ads forever': 'Menghapus iklan selamanya',
+  'Not now': 'Nanti saja',
 };

@@ -266,4 +266,9 @@ export const slDict: Record<string, string> = {
   'Serif': 'Serifni',
   'Sans-serif': 'Brez serifov',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Branje je za vedno brezplačno.',
+  'Watch an ad': 'Oglej si oglas',
+  'Donate': 'Doniraj',
+  'Removes ads forever': 'Za vedno odstrani oglase',
+  'Not now': 'Ne zdaj',
 };

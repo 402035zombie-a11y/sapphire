@@ -270,4 +270,9 @@ export const thDict: Record<string, string> = {
   'Serif': 'เซริฟ',
   'Sans-serif': 'ไม่มีเชิง',
   'Mono': 'ความกว้างคงที่',
+  'Reading is free forever.': 'อ่านฟรีตลอดไป',
+  'Watch an ad': 'ดูโฆษณา',
+  'Donate': 'บริจาค',
+  'Removes ads forever': 'ลบโฆษณาอย่างถาวร',
+  'Not now': 'ไม่ใช่ตอนนี้',
 };

@@ -267,4 +267,9 @@ export const frDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sans-serif',
   'Mono': 'Monospace',
+  'Reading is free forever.': 'La lecture est gratuite pour toujours.',
+  'Watch an ad': 'Regarder une pub',
+  'Donate': 'Faire un don',
+  'Removes ads forever': 'Supprime les publicités pour toujours',
+  'Not now': 'Pas maintenant',
 };

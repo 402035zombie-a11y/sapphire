@@ -266,4 +266,9 @@ export const huDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Verdali',
   'Mono': 'Írógép',
+  'Reading is free forever.': 'Az olvasás örökre ingyenes.',
+  'Watch an ad': 'Reklám megtekintése',
+  'Donate': 'Adományozás',
+  'Removes ads forever': 'Örökre eltávolítja a hirdetéseket',
+  'Not now': 'Most nem',
 };

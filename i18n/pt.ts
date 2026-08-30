@@ -270,4 +270,9 @@ export const ptDict: Record<string, string> = {
   'Serif': 'Serifada',
   'Sans-serif': 'Sem serifa',
   'Mono': 'Monoespaçado',
+  'Reading is free forever.': 'A leitura é grátis para sempre.',
+  'Watch an ad': 'Ver um anúncio',
+  'Donate': 'Doar',
+  'Removes ads forever': 'Remove os anúncios para sempre',
+  'Not now': 'Agora não',
 };

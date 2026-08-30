@@ -266,4 +266,9 @@ export const cyDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Di-serif',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Mae darllen yn rhad ac am ddim am byth.',
+  'Watch an ad': 'Gwyliwch hysbyseb',
+  'Donate': 'Cyfrannu',
+  'Removes ads forever': 'Yn dileu hysbysebion am byth',
+  'Not now': 'Dim nawr',
 };

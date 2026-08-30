@@ -266,4 +266,9 @@ export const msDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Tanpa serifa',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Membaca percuma selamanya.',
+  'Watch an ad': 'Tonton iklan',
+  'Donate': 'Derma',
+  'Removes ads forever': 'Mengalih keluar iklan selama-lamanya',
+  'Not now': 'Bukan sekarang',
 };

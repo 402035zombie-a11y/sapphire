@@ -266,4 +266,9 @@ export const hiDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'सैंस-सेरिफ',
   'Mono': 'मोनोस्पेस',
+  'Reading is free forever.': 'पढ़ना हमेशा के लिए मुफ़्त है।',
+  'Watch an ad': 'विज्ञापन देखें',
+  'Donate': 'दान करें',
+  'Removes ads forever': 'विज्ञापन हमेशा के लिए हटाता है',
+  'Not now': 'अभी नहीं',
 };

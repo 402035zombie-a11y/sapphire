@@ -276,4 +276,9 @@ export const deDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sans-serif',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Lesen ist für immer kostenlos.',
+  'Watch an ad': 'Werbung ansehen',
+  'Donate': 'Spenden',
+  'Removes ads forever': 'Entfernt Werbung für immer',
+  'Not now': 'Jetzt nicht',
 };

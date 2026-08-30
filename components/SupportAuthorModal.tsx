@@ -1,7 +1,7 @@
 // components/SupportAuthorModal.tsx
 // Окно поддержки: показывается при открытии книги (с задержкой, см. ReaderScreen).
-// Варианты: посмотреть рекламу, задонатить/купить подписку (окно больше не появляется),
-// или закрыть «не сейчас». Чтение не блокируется. Адаптивное окно.
+// Варианты: посмотреть рекламу, задонатить (убирает рекламу навсегда), или закрыть.
+// Чтение не блокируется. Адаптивное окно.
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
@@ -35,7 +35,8 @@ export default function SupportAuthorModal({
     alignItems: 'center',
     justifyContent: 'center',
   };
-  const btnText = { color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.body };
+  const btnText = { color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.body, textAlign: 'center' as const };
+  const subText = { color: theme.secondaryText, fontSize: a.fs(10), marginTop: 2, textAlign: 'center' as const };
   return (
     <ModalSheet
       visible={visible}
@@ -64,26 +65,20 @@ export default function SupportAuthorModal({
             color: theme.secondaryText,
           }}
         >
-          {t("Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.")}
+          {t("Reading is free forever.")}
         </Text>
 
         <TouchableOpacity style={[surface(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onSupport}>
-          <Text style={btnText}>{t("Watch an ad (30s)")}</Text>
-          {/* Fallback: якщо реклама не завантажилась — юзер все одно може підтримати донатом */}
-          <Text style={{ color: theme.secondaryText, fontSize: a.fs(10), marginTop: 2 }}>
-            {t("If the ad doesn't load, try again or use donate")}
-          </Text>
+          <Text style={btnText}>{t("Watch an ad")}</Text>
         </TouchableOpacity>
         {onDonate && (
           <TouchableOpacity style={[surface(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onDonate}>
-            <Text style={btnText}>{t("Donate via card / crypto")}</Text>
-            <Text style={{ color: theme.secondaryText, fontSize: a.fs(10), marginTop: 2 }}>
-              {t("Opens a secure payment page — your donation removes ads forever (this prompt won't appear again)")}
-            </Text>
+            <Text style={btnText}>{t("Donate")}</Text>
+            <Text style={subText}>{t("Removes ads forever")}</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity style={[surface(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onDismiss}>
-          <Text style={btnText}>{t("Thanks, not now")}</Text>
+          <Text style={btnText}>{t("Not now")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </ModalSheet>

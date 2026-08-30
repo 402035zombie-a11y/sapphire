@@ -266,4 +266,9 @@ export const bgDict: Record<string, string> = {
   'Serif': 'Серифен',
   'Sans-serif': 'Безсерифен',
   'Mono': 'Монопространствен',
+  'Reading is free forever.': 'Четенето е безплатно завинаги.',
+  'Watch an ad': 'Гледай реклама',
+  'Donate': 'Дари',
+  'Removes ads forever': 'Премахва рекламите завинаги',
+  'Not now': 'Не сега',
 };

@@ -266,4 +266,9 @@ export const fiDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sans-serif',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Lukeminen on ilmaista ikuisesti.',
+  'Watch an ad': 'Katso mainos',
+  'Donate': 'Lahjoita',
+  'Removes ads forever': 'Poistaa mainokset ikuisesti',
+  'Not now': 'Ei nyt',
 };

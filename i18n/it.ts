@@ -266,4 +266,9 @@ export const itDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Senza grazie',
   'Mono': 'Mono',
+  'Reading is free forever.': 'La lettura è gratis per sempre.',
+  'Watch an ad': 'Guarda un annuncio',
+  'Donate': 'Dona',
+  'Removes ads forever': 'Rimuove gli annunci per sempre',
+  'Not now': 'Non ora',
 };

@@ -270,4 +270,9 @@ export const trDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sans-serif',
   'Mono': 'Sabit genişlikli',
+  'Reading is free forever.': 'Okumak sonsuza dek ücretsiz.',
+  'Watch an ad': 'Reklam izle',
+  'Donate': 'Bağış yap',
+  'Removes ads forever': 'Reklamları kalıcı olarak kaldırır',
+  'Not now': 'Şimdi değil',
 };

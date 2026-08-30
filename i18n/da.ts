@@ -267,4 +267,9 @@ export const daDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Sans-serif',
   'Mono': 'Mono',
+  'Reading is free forever.': 'Læsning er gratis for altid.',
+  'Watch an ad': 'Se en annonce',
+  'Donate': 'Donér',
+  'Removes ads forever': 'Fjerner annoncer for altid',
+  'Not now': 'Ikke nu',
 };

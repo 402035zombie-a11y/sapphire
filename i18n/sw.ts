@@ -266,4 +266,9 @@ export const swDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'Bila serif',
   'Mono': 'Upano sawa',
+  'Reading is free forever.': 'Kusoma ni bure milele.',
+  'Watch an ad': 'Tazama tangazo',
+  'Donate': 'Changia',
+  'Removes ads forever': 'Huondoa matangazo milele',
+  'Not now': 'Sio sasa',
 };

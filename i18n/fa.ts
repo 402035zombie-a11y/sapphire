@@ -266,4 +266,9 @@ export const faDict: Record<string, string> = {
   'Serif': 'Serif',
   'Sans-serif': 'بدون سریف',
   'Mono': 'تک‌فاصله',
+  'Reading is free forever.': 'خواندن برای همیشه رایگان است.',
+  'Watch an ad': 'تماشای تبلیغ',
+  'Donate': 'اهدا',
+  'Removes ads forever': 'تبلیغات را برای همیشه حذف می‌کند',
+  'Not now': 'الان نه',
 };
