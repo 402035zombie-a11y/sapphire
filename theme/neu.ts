@@ -67,7 +67,7 @@ export function neuRaised(t: ThemePalette, radius: number, strength = 1): any {
     backgroundClip: 'padding-box',
     // Android: gradient-фон не рендериться → поверхня мертво пласка. Тонкий бордер
     // light-кольором дає читабельну кромку (рендериться нативно).
-    ...(Platform.OS === 'web' ? {} : { borderWidth: 1, borderColor: t.neu.shadowLight }),
+    ...(Platform.OS === 'web' ? {} : {}),
     borderRadius: radius,
     boxShadow: [
       `${oX}px ${oY}px ${oB1}px ${d}`, // тёмная падающая (ближняя)
@@ -165,8 +165,6 @@ export function neuPrimary(t: ThemePalette, radius: number): any {
       `inset ${-ix}px ${-iy}px ${iblur}px rgba(0,0,0,0.45)`,
     ].join(', '),
     ...(Platform.OS === 'web' ? {} : {
-      borderWidth: 1,
-      borderColor: t.neu.shadowLight,
       shadowColor: specDark(t),
       shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
       shadowOpacity: 0.9,
@@ -339,11 +337,8 @@ export function surfaceRaised(t: ThemePalette, radius: number, strength = 1): an
       `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`, // объёмный specular сверху-слева (мягко, не полоса)
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`, // тёмная грань снизу-справа
     ].join(', '),
-    // Юзер P4 (24.08): на Android boxShadow НЕ рендериться → єдиний об'єм дають
-    // shadow*/elevation + border-кромка. Підсилюємо до видимого рівня.
+    // Android: єдиний об'єм дають shadow*/elevation (без border — біла обгортка не потрібна).
     ...(Platform.OS === 'web' ? {} : {
-      borderWidth: 1,
-      borderColor: t.neu.shadowLight,
       shadowColor: specDark(t),
       shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
       shadowOpacity: 0.9,
@@ -443,7 +438,13 @@ export function surfaceCircleInset(t: ThemePalette, size: number): any {
       `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
     ].join(', '),
-    elevation: 3,
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 4,
+    }),
   };
 }
 
@@ -705,7 +706,13 @@ export function neuDeleteBtn(t: ThemePalette, size: number): any {
       `inset ${Math.round(ix * 1.4)}px ${Math.round(iy * 1.4)}px ${Math.round(iblur * 1.6)}px ${specDark(t)}`,
       `inset ${-Math.round(ix * lightCut)}px ${-Math.round(iy * lightCut)}px ${iblur}px ${t.neu.soft}`,
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 4,
+    }),
   };
 }
 
@@ -877,6 +884,12 @@ export function surfaceInset(t: ThemePalette, radius: number, strength = 1): any
       `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
     ].join(', '),
-    elevation: 2,
+    ...(Platform.OS === 'web' ? {} : {
+      shadowColor: specDark(t),
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 3,
+    }),
   };
 }
