@@ -167,6 +167,8 @@ export function neuPrimary(t: ThemePalette, radius: number): any {
       `inset ${-ix}px ${-iy}px ${iblur}px rgba(0,0,0,0.45)`,
     ].join(', '),
     ...(Platform.OS === 'web' ? {} : {
+      borderWidth: 1,
+      borderColor: rim(t),
       shadowColor: specDark(t),
       shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
       shadowOpacity: 0.9,
@@ -341,8 +343,10 @@ export function surfaceRaised(t: ThemePalette, radius: number, strength = 1): an
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`, // тёмная грань снизу-справа
     ].join(', '),
     // Юзер P4 (24.08): на Android boxShadow НЕ рендериться → єдиний об'єм дають
-    // shadow*/elevation (без border — обводка виглядає як рамка, не потрібна).
+    // shadow*/elevation + border-кромка. Підсилюємо до видимого рівня.
     ...(Platform.OS === 'web' ? {} : {
+      borderWidth: 1,
+      borderColor: t.neu.light,
       shadowColor: specDark(t),
       shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
       shadowOpacity: 0.9,
@@ -420,25 +424,6 @@ export function surfaceCircleInset(t: ThemePalette, size: number): any {
   const iblur = Math.max(3, Math.round(off * 1.5));
   // компактна зовнішня тінь (юзер: маленькі зовнішні тіні на всіх кнопках)
   const ox = Math.max(2, Math.round(off * 0.35 * sc.spread));
-  // Android: вдавлений circle через кольоровий бордер (inset boxShadow + surfaceBg не рендеряться)
-  if (Platform.OS !== 'web') {
-    const bw = Math.max(1, Math.round(ix * 0.5));
-    return {
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: t.neu.base,
-      borderWidth: bw,
-      borderColor: t.neu.shadowDark,
-      borderTopColor: t.neu.shadowDark,
-      borderLeftColor: t.neu.shadowDark,
-      borderBottomColor: t.neu.light,
-      borderRightColor: t.neu.light,
-      elevation: 0,
-    };
-  }
   return {
     width: size,
     height: size,
@@ -654,23 +639,6 @@ export function neuSpeakBtn(t: ThemePalette, size: number): any {
   const ix = Math.max(2, Math.round(off * 0.5));
   const iy = Math.max(2, Math.round(off * 0.5));
   const iblur = Math.max(2, Math.round(off * 1.4));
-  // Android: випукла кнопка через м'яку зовнішню тінь (shadow*+elevation), БЕЗ border
-  // (border виглядає як різка лінія, а не розмита тінь).
-  if (Platform.OS !== 'web') {
-    return {
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: t.neu.base,
-      shadowColor: t.neu.shadowDark,
-      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.6)) },
-      shadowOpacity: 0.5,
-      shadowRadius: Math.max(4, blur1),
-      elevation: 3,
-    };
-  }
   return {
     width: size,
     height: size,
@@ -715,25 +683,6 @@ export function neuDeleteBtn(t: ThemePalette, size: number): any {
   const ix = Math.max(2, Math.round(off * 0.55));
   const iy = Math.max(2, Math.round(off * 0.55));
   const iblur = Math.max(2, Math.round(off * 1.5));
-  // Android: вдавлена лунка через темний бордер top/left + світлий bottom/right (elevation 0 = не випукла)
-  if (Platform.OS !== 'web') {
-    const bw = Math.max(1, Math.round(ix * 0.5));
-    return {
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: t.neu.base,
-      borderWidth: bw,
-      borderColor: t.neu.shadowDark,
-      borderTopColor: t.neu.shadowDark,
-      borderLeftColor: t.neu.shadowDark,
-      borderBottomColor: t.neu.light,
-      borderRightColor: t.neu.light,
-      elevation: 0,
-    };
-  }
   return {
     width: size,
     height: size,
@@ -779,22 +728,6 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
   const ix = Math.max(2, Math.round(off * 0.5));
   const iy = Math.max(2, Math.round(off * 0.5));
   const iblur = Math.max(2, Math.round(off * 1.4));
-  // Android: випукла кнопка через м'яку зовнішню тінь (shadow*+elevation), БЕЗ border.
-  if (Platform.OS !== 'web') {
-    return {
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: t.neu.base,
-      shadowColor: t.neu.shadowDark,
-      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.6)) },
-      shadowOpacity: 0.5,
-      shadowRadius: Math.max(4, blur1),
-      elevation: 3,
-    };
-  }
   return {
     width: size,
     height: size,
@@ -822,25 +755,6 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
 function surfaceStamp(t: ThemePalette, size: number): any {
   const r = size / 2;
   const o = Math.max(2, Math.round(Math.pow(Math.max(size, 12), 0.72) * 0.5 * (t.neuScale?.depth ?? 1))); // глубина лунки — нелінійна, per-theme
-  // Android: штампована лунка через кольоровий бордер (inset boxShadow + gradient не рендеряться)
-  if (Platform.OS !== 'web') {
-    const bw = Math.max(1, Math.round(o * 0.6));
-    return {
-      width: size,
-      height: size,
-      borderRadius: r,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: t.neu.base,
-      borderWidth: bw,
-      borderColor: t.neu.shadowDark,
-      borderTopColor: t.neu.shadowDark,
-      borderLeftColor: t.neu.shadowDark,
-      borderBottomColor: t.neu.light,
-      borderRightColor: t.neu.light,
-      elevation: 0,
-    };
-  }
   return {
     width: size,
     height: size,
@@ -882,71 +796,46 @@ function surfaceTab(t: ThemePalette, radius: number, active: boolean): any {
     };
   }
   // активный: глубоко ВДАВЛЕННЫЙ металл (чёткий эффект нажатой кнопки)
-  const { soft: s, light: l, shadowDark: sd, hi: rim } = t.neu;
+  const { soft: s } = t.neu;
   const o = Math.max(5, Math.round(radius * 0.5)); // глубже, чем у неактивного
-  const bw = Math.max(1, Math.round(o * 0.6));
-  const insets: any = Platform.OS === 'web'
-    ? [
-        `inset ${o}px ${o}px ${o * 2.6}px ${sd}`,
-        `inset ${-o}px ${-o}px ${o * 2.2}px ${s}`,
-        `inset 0 1px 0 0 ${rim}`,
-      ].join(', ')
-    : {
-        borderWidth: bw,
-        borderColor: sd,
-        borderTopColor: sd,
-        borderLeftColor: sd,
-        borderBottomColor: l,
-        borderRightColor: l,
-        elevation: 0,
-      };
   return {
     borderRadius: radius,
     backgroundColor: t.neu.base,
-    backgroundImage: Platform.OS === 'web' ? surfaceBg(t) : undefined,
+    backgroundImage: surfaceBg(t),
     backgroundClip: 'padding-box',
     transition: 'box-shadow 160ms ease, background 160ms ease',
-    ...(Platform.OS === 'web' ? { boxShadow: insets } : insets),
+    boxShadow: [
+      `inset ${o}px ${o}px ${o * 2.6}px ${specDark(t)}`, // глубокая тёмная грань (вдавленность)
+      `inset ${-o}px ${-o}px ${o * 2.2}px ${s}`, // светлая противоположная грань
+      `inset 0 1px 0 0 ${rim(t)}`,
+    ].join(', '),
   };
 }
 
-// штампованный таб: ВНЕШНИЙ вдавленная лунка + ВНУТРЕННИЙ выпуклый купол (machined surface).
+// штампованный таб: ВНЕШНЕ вдавленная лунка + ВНУТРЕННЕ выпуклый купол (machined surface).
 function surfaceTabStamp(t: ThemePalette, radius: number, active: boolean): any {
   const o = Math.max(4, Math.round(radius * 0.4));
-  const { soft: s, light: l, shadowDark: sd, hi: rim } = t.neu;
+  const { soft: s, light: l } = t.neu;
   const ix = Math.max(2, Math.round(o * 0.5));
   const iy = Math.max(2, Math.round(o * 0.5));
   const iblur = Math.round(o * 1.4);
-  const bw = Math.max(1, Math.round(o * 0.6));
-  const isWeb = Platform.OS === 'web';
-  const insets: any = isWeb
-    ? [
-        // ВНЕШНЯЯ лунка (вдавленность): тёмная сверху-слева, светлая снизу-справа
-        `inset ${o}px ${o}px ${o * 2}px ${sd}`,
-        `inset ${-o}px ${-o}px ${o * 2}px ${s}`,
-        // ВНУТРЕННИЙ купол (выпуклость): светлая верхняя грань + тёмная нижняя
-        `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${rim}`,
-        `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${sd}`,
-        // холодный edge-rim
-        `inset 0 0 0 1px ${rim}`,
-      ].join(', ')
-    : {
-        borderWidth: bw,
-        borderColor: sd,
-        borderTopColor: sd,
-        borderLeftColor: sd,
-        borderBottomColor: l,
-        borderRightColor: l,
-        elevation: 0,
-      };
   return {
     borderRadius: radius,
     backgroundColor: t.neu.base,
-    backgroundImage: isWeb ? surfaceBg(t) : undefined,
+    backgroundImage: surfaceBg(t),
     backgroundClip: 'padding-box',
     transition: 'box-shadow 160ms ease, background 160ms ease',
-    ...(isWeb ? { boxShadow: insets } : insets),
-    ...(isWeb ? { elevation: Math.max(3, Math.round(o)) } : {}),
+    boxShadow: [
+      // ВНЕШНЯЯ лунка (вдавленность): тёмная сверху-слева, светлая снизу-справа
+      `inset ${o}px ${o}px ${o * 2}px ${specDark(t)}`,
+      `inset ${-o}px ${-o}px ${o * 2}px ${s}`,
+      // ВНУТРЕННИЙ купол (выпуклость): светлая верхняя грань + тёмная нижняя
+      `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${rim(t)}`,
+      `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${specDark(t)}`,
+      // холодный edge-rim
+      `inset 0 0 0 1px ${rim(t)}`,
+    ].join(', '),
+    elevation: Math.max(3, Math.round(o)),
   };
 }
 
@@ -959,24 +848,6 @@ export function surfaceInset(t: ThemePalette, radius: number, strength = 1): any
   const iblur = Math.max(3, Math.round(off * 1.6));
   const ox = Math.max(2, Math.round(off * 0.4 * sc.spread));
   const { soft: s, light: l } = t.neu;
-
-  // ANDROID/NATIVE: CSS `inset` boxShadow НЕ рендериться. Імітуємо вдавлення
-  // кольоровим бордером (темний зверху-зліва + світлий знизу-справа = грань лунки),
-  // без тіней — тільки бордер, як у neuInset. shadowRadius = ореол instead на Android.
-  if (Platform.OS !== 'web') {
-    const bw = Math.max(1, Math.round(ix * 0.5));
-    return {
-      backgroundColor: t.neu.base,
-      borderRadius: radius,
-      borderWidth: bw,
-      borderColor: t.neu.shadowDark,
-      borderTopColor: t.neu.shadowDark,
-      borderLeftColor: t.neu.shadowDark,
-      borderBottomColor: t.neu.light,
-      borderRightColor: t.neu.light,
-      elevation: 0,
-    };
-  }
 
   return {
     backgroundColor: t.neu.base,
