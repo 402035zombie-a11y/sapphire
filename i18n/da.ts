@@ -273,7 +273,7 @@ export const daDict: Record<string, string> = {
   'Removes ads forever': 'Fjerner annoncer for altid',
   'Not now': 'Ikke nu',
   'Unsupported format': 'Ikke-understøttet format',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Understøttede formater: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Understøttede formater: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Oversættelsestjenester',
   'Free translation services and their current limits. Limits reset automatically.': 'Gratis oversættelsestjenester og deres aktuelle grænser. Grænser nulstilles automatisk.',
 };

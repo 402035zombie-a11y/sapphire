@@ -272,7 +272,7 @@ export const heDict: Record<string, string> = {
   'Removes ads forever': 'מסיר פרסומות לנצח',
   'Not now': 'לא עכשיו',
   'Unsupported format': 'פורמט לא נתמך',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'פורמטים נתמכים: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'פורמטים נתמכים: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'שירותי תרגום',
   'Free translation services and their current limits. Limits reset automatically.': 'שירותי תרגום חינמיים והמגבלות הנוכחיות שלהם. המגבלות מתאפסות אוטומטית.',
 };

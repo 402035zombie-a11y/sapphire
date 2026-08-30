@@ -272,7 +272,7 @@ export const lvDict: Record<string, string> = {
   'Removes ads forever': 'Uz visiem laikiem noņem reklāmas',
   'Not now': 'Ne tagad',
   'Unsupported format': 'Neatbalstīts formāts',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Atbalstītie formāti: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Atbalstītie formāti: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Tulkošanas pakalpojumi',
   'Free translation services and their current limits. Limits reset automatically.': 'Bezmaksas tulkošanas pakalpojumi un to pašreizējie ierobežojumi. Ierobežojumi tiek automātiski atiestatīti.',
 };

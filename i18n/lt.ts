@@ -272,7 +272,7 @@ export const ltDict: Record<string, string> = {
   'Removes ads forever': 'Pašalina skelbimus visam laikui',
   'Not now': 'Ne dabar',
   'Unsupported format': 'Nepalaikomas formatas',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Palaikomi formatai: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Palaikomi formatai: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Vertimo paslaugos',
   'Free translation services and their current limits. Limits reset automatically.': 'Nemokamos vertimo paslaugos ir jų dabartiniai limitai. Limitai atstatomi automatiškai.',
 };

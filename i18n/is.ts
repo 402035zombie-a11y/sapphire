@@ -272,7 +272,7 @@ export const isDict: Record<string, string> = {
   'Removes ads forever': 'Fjarlægir auglýsingar að eilífu',
   'Not now': 'Ekki núna',
   'Unsupported format': 'Óstudd skráarsnið',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Studd skráarsnið: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Studd skráarsnið: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Þýðingarþjónustur',
   'Free translation services and their current limits. Limits reset automatically.': 'Ókeypis þýðingarþjónustur og núverandi takmarkanir þeirra. Takmarkanir endurstillast sjálfkrafa.',
 };

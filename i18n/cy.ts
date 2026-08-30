@@ -272,7 +272,7 @@ export const cyDict: Record<string, string> = {
   'Removes ads forever': 'Yn dileu hysbysebion am byth',
   'Not now': 'Dim nawr',
   'Unsupported format': 'Fformat heb ei gefnogi',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Fformatau â chymorth: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Fformatau â chymorth: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Gwasanaethau cyfieithu',
   'Free translation services and their current limits. Limits reset automatically.': 'Gwasanaethau cyfieithu am ddim a\'u terfynau cyfredol. Mae terfynau\'n ailosod yn awtomatig.',
 };

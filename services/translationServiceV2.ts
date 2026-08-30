@@ -88,17 +88,16 @@ export async function translateBatch(
   from: LangCode,
   to: LangCode,
 ): Promise<Map<string | number, TranslateResult>> {
-  const results = await Promise.all(
-    items.map(async (it) => {
-      try {
-        const res = await translateCached(it.text, from, to);
-        return [it.id, res] as [string | number, TranslateResult];
-      } catch {
-        return [it.id, { text: '', source: 'none' as const }] as [string | number, TranslateResult];
-      }
-    }),
-  );
-  return new Map<string | number, TranslateResult>(results);
+  // БАТЧИНГ: один запит на групу (translateMany з v1), не Promise.all per-sentence.
+  // Інакше prefetchAhead робить сотні паралельних запитів → Google GTX банить за лімітом.
+  const { translateMany } = await import('./translationService');
+  const texts = items.map((it) => it.text);
+  const translated = await translateMany(texts, from, to);
+  const map = new Map<string | number, TranslateResult>();
+  for (let i = 0; i < items.length; i++) {
+    map.set(items[i].id, { text: translated[i] ?? '', source: 'lingva' });
+  }
+  return map;
 }
 
 /** Кэш LRU (як у v1) — не дергаємо мережу на кожен тап. */

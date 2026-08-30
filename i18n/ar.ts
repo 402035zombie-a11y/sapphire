@@ -272,7 +272,7 @@ export const arDict: Record<string, string> = {
   'Removes ads forever': 'يزيل الإعلانات إلى الأبد',
   'Not now': 'ليس الآن',
   'Unsupported format': 'تنسيق غير مدعوم',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'التنسيقات المدعومة: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'التنسيقات المدعومة: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'خدمات الترجمة',
   'Free translation services and their current limits. Limits reset automatically.': 'خدمات الترجمة المجانية وحدودها الحالية. تُعاد الحدود تلقائيًا.',
 };

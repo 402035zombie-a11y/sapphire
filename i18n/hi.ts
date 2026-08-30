@@ -272,7 +272,7 @@ export const hiDict: Record<string, string> = {
   'Removes ads forever': 'विज्ञापन हमेशा के लिए हटाता है',
   'Not now': 'अभी नहीं',
   'Unsupported format': 'असमर्थित प्रारूप',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'समर्थित प्रारूप: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'समर्थित प्रारूप: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'अनुवाद सेवाएँ',
   'Free translation services and their current limits. Limits reset automatically.': 'मुफ़्त अनुवाद सेवाएँ और उनकी वर्तमान सीमाएँ। सीमाएँ स्वचालित रूप से रीसेट होती हैं।',
 };

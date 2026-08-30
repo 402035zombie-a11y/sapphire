@@ -272,7 +272,7 @@ export const svDict: Record<string, string> = {
   'Removes ads forever': 'Tar bort annonser för alltid',
   'Not now': 'Inte nu',
   'Unsupported format': 'Formatet stöds inte',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Format som stöds: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Format som stöds: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Översättningstjänster',
   'Free translation services and their current limits. Limits reset automatically.': 'Gratis översättningstjänster och deras nuvarande gränser. Gränserna återställs automatiskt.',
 };

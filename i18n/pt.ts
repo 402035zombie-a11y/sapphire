@@ -276,7 +276,7 @@ export const ptDict: Record<string, string> = {
   'Removes ads forever': 'Remove os anúncios para sempre',
   'Not now': 'Agora não',
   'Unsupported format': 'Formato não suportado',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formatos suportados: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Formatos suportados: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Serviços de tradução',
   'Free translation services and their current limits. Limits reset automatically.': 'Serviços de tradução gratuitos e seus limites atuais. Os limites são redefinidos automaticamente.',
 };

@@ -272,7 +272,7 @@ export const swDict: Record<string, string> = {
   'Removes ads forever': 'Huondoa matangazo milele',
   'Not now': 'Sio sasa',
   'Unsupported format': 'Muundo haujasaidiwa',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Miundo inayosaidiwa: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Miundo inayosaidiwa: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Huduma za tafsiri',
   'Free translation services and their current limits. Limits reset automatically.': 'Huduma za tafsiri bila malipo na vikomo vyake vya sasa. Vikomo huwekwa upya kiotomatiki.',
 };

@@ -276,7 +276,7 @@ export const jaDict: Record<string, string> = {
   'Removes ads forever': '広告を完全に削除',
   'Not now': 'あとで',
   'Unsupported format': 'サポートされていない形式',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': '対応形式: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': '対応形式: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': '翻訳サービス',
   'Free translation services and their current limits. Limits reset automatically.': '無料の翻訳サービスと現在の制限。制限は自動的にリセットされます。',
 };

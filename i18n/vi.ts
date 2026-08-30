@@ -272,7 +272,7 @@ export const viDict: Record<string, string> = {
   'Removes ads forever': 'Xóa quảng cáo vĩnh viễn',
   'Not now': 'Không phải bây giờ',
   'Unsupported format': 'Định dạng không được hỗ trợ',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Định dạng được hỗ trợ: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Định dạng được hỗ trợ: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Dịch vụ dịch thuật',
   'Free translation services and their current limits. Limits reset automatically.': 'Dịch vụ dịch thuật miễn phí và giới hạn hiện tại. Giới hạn tự động đặt lại.',
 };

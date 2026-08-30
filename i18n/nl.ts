@@ -272,7 +272,7 @@ export const nlDict: Record<string, string> = {
   'Removes ads forever': 'Verwijdert advertenties voor altijd',
   'Not now': 'Niet nu',
   'Unsupported format': 'Niet-ondersteund formaat',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Ondersteunde formaten: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Ondersteunde formaten: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Vertaaldiensten',
   'Free translation services and their current limits. Limits reset automatically.': 'Gratis vertaaldiensten en hun huidige limieten. Limieten worden automatisch gereset.',
 };

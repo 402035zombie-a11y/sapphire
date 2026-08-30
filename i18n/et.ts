@@ -272,7 +272,7 @@ export const etDict: Record<string, string> = {
   'Removes ads forever': 'Eemaldab reklaamid igaveseks',
   'Not now': 'Mitte praegu',
   'Unsupported format': 'Toetamata vorming',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Toetatud vormingud: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Toetatud vormingud: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Tõlketeenused',
   'Free translation services and their current limits. Limits reset automatically.': 'Tasuta tõlketeenused ja nende praegused limiidid. Limiidid lähtestuvad automaatselt.',
 };

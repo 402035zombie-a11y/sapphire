@@ -276,7 +276,7 @@ export const thDict: Record<string, string> = {
   'Removes ads forever': 'ลบโฆษณาอย่างถาวร',
   'Not now': 'ไม่ใช่ตอนนี้',
   'Unsupported format': 'รูปแบบที่ไม่รองรับ',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'รูปแบบที่รองรับ: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'รูปแบบที่รองรับ: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'บริการแปลภาษา',
   'Free translation services and their current limits. Limits reset automatically.': 'บริการแปลภาษาฟรีและขีดจำกัดปัจจุบัน ขีดจำกัดจะรีเซ็ตโดยอัตโนมัติ',
 };
