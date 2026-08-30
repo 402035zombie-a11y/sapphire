@@ -277,4 +277,6 @@ export const trDict: Record<string, string> = {
   'Not now': 'Şimdi değil',
   'Unsupported format': 'Desteklenmeyen biçim',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Desteklenen biçimler: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Çeviri hizmetleri',
+  'Free translation services and their current limits. Limits reset automatically.': 'Ücretsiz çeviri hizmetleri ve güncel limitleri. Limitler otomatik olarak sıfırlanır.',
 };

@@ -273,4 +273,6 @@ export const nlDict: Record<string, string> = {
   'Not now': 'Niet nu',
   'Unsupported format': 'Niet-ondersteund formaat',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Ondersteunde formaten: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Vertaaldiensten',
+  'Free translation services and their current limits. Limits reset automatically.': 'Gratis vertaaldiensten en hun huidige limieten. Limieten worden automatisch gereset.',
 };

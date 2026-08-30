@@ -36,10 +36,10 @@ export default function TranslationLimitsModal({ visible, onRetry, onClose }: Pr
     <ModalSheet visible={visible} onClose={onClose}>
       <View style={{ width: '100%', gap: a.gap }}>
         <Text style={{ fontSize: a.h2, fontFamily: FONTS.bold, color: theme.primaryText, textAlign: 'center' }}>
-          {t('Translation limits reached')}
+          {t('Translation services')}
         </Text>
         <Text style={{ fontSize: a.small_fs, color: theme.secondaryText, textAlign: 'center' }}>
-          {t('All free translation providers are exhausted. Limits reset automatically — see schedule below.')}
+          {t('Free translation services and their current limits. Limits reset automatically.')}
         </Text>
 
         <View style={{ gap: a.gap * 0.6 }}>

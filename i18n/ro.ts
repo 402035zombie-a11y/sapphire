@@ -273,4 +273,6 @@ export const roDict: Record<string, string> = {
   'Not now': 'Nu acum',
   'Unsupported format': 'Format neacceptat',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formate acceptate: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Servicii de traducere',
+  'Free translation services and their current limits. Limits reset automatically.': 'Servicii de traducere gratuite și limitele lor actuale. Limitele se resetează automat.',
 };

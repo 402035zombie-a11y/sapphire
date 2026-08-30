@@ -273,4 +273,6 @@ export const faDict: Record<string, string> = {
   'Not now': 'الان نه',
   'Unsupported format': 'قالب پشتیبانی‌نشده',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'قالب‌های پشتیبانی‌شده: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'خدمات ترجمه',
+  'Free translation services and their current limits. Limits reset automatically.': 'خدمات ترجمه رایگان و محدودیت‌های فعلی آن‌ها. محدودیت‌ها به‌صورت خودکار بازنشانی می‌شوند.',
 };

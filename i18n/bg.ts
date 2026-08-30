@@ -273,4 +273,6 @@ export const bgDict: Record<string, string> = {
   'Not now': 'Не сега',
   'Unsupported format': 'Неподдържан формат',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Поддържани формати: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Услуги за превод',
+  'Free translation services and their current limits. Limits reset automatically.': 'Безплатни услуги за превод и текущите им лимити. Лимитите се нулират автоматично.',
 };

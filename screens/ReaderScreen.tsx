@@ -648,6 +648,7 @@ export default function ReaderScreen({ route }: { route: any }) {
             <IconButton icon="language" onPress={() => setLangOpen((v) => !v)} variant="circle" size={a.fab()} hitSlop={8} />
           )}
           <IconButton icon="settings" onPress={() => setFontOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
+          <IconButton icon="refresh" onPress={() => setLimitsOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
           <IconButton icon="heart" onPress={() => setSupportOpen(true)} variant="circle" size={a.fab()} hitSlop={8} />
           {langOpen && (
             <LanguageDropdown

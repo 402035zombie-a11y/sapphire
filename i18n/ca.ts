@@ -273,4 +273,6 @@ export const caDict: Record<string, string> = {
   'Not now': 'Ara no',
   'Unsupported format': 'Format no compatible',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formats compatibles: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Serveis de traducció',
+  'Free translation services and their current limits. Limits reset automatically.': 'Serveis de traducció gratuïts i els seus límits actuals. Els límits es restableixen automàticament.',
 };

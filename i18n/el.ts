@@ -273,4 +273,6 @@ export const elDict: Record<string, string> = {
   'Not now': 'Όχι τώρα',
   'Unsupported format': 'Μη υποστηριζόμενη μορφή',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Υποστηριζόμενες μορφές: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Υπηρεσίες μετάφρασης',
+  'Free translation services and their current limits. Limits reset automatically.': 'Δωρεάν υπηρεσίες μετάφρασης και τα τρέχοντα όριά τους. Τα όρια επαναφέρονται αυτόματα.',
 };

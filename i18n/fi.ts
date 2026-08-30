@@ -273,4 +273,6 @@ export const fiDict: Record<string, string> = {
   'Not now': 'Ei nyt',
   'Unsupported format': 'Ei-tuettu muoto',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Tuetut muodot: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Käännöspalvelut',
+  'Free translation services and their current limits. Limits reset automatically.': 'Ilmaiset käännöspalvelut ja niiden nykyiset rajat. Rajat nollautuvat automaattisesti.',
 };

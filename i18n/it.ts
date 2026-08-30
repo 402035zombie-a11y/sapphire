@@ -273,4 +273,6 @@ export const itDict: Record<string, string> = {
   'Not now': 'Non ora',
   'Unsupported format': 'Formato non supportato',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formati supportati: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Servizi di traduzione',
+  'Free translation services and their current limits. Limits reset automatically.': 'Servizi di traduzione gratuiti e i loro limiti attuali. I limiti si azzerano automaticamente.',
 };

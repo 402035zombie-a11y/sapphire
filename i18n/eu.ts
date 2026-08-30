@@ -273,4 +273,6 @@ export const euDict: Record<string, string> = {
   'Not now': 'Orain ez',
   'Unsupported format': 'Onartu gabeko formatua',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Onartutako formatuak: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Itzulpen-zerbitzuak',
+  'Free translation services and their current limits. Limits reset automatically.': 'Doako itzulpen-zerbitzuak eta haien egungo mugak. Mugak automatikoki berrezartzen dira.',
 };

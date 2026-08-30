@@ -273,4 +273,6 @@ export const etDict: Record<string, string> = {
   'Not now': 'Mitte praegu',
   'Unsupported format': 'Toetamata vorming',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Toetatud vormingud: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Tõlketeenused',
+  'Free translation services and their current limits. Limits reset automatically.': 'Tasuta tõlketeenused ja nende praegused limiidid. Limiidid lähtestuvad automaatselt.',
 };

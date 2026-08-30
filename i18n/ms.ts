@@ -273,4 +273,6 @@ export const msDict: Record<string, string> = {
   'Not now': 'Bukan sekarang',
   'Unsupported format': 'Format tidak disokong',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Format yang disokong: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Perkhidmatan terjemahan',
+  'Free translation services and their current limits. Limits reset automatically.': 'Perkhidmatan terjemahan percuma dan had semasanya. Had ditetapkan semula secara automatik.',
 };

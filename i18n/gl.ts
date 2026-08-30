@@ -273,4 +273,6 @@ export const glDict: Record<string, string> = {
   'Not now': 'Agora non',
   'Unsupported format': 'Formato non compatible',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formatos compatibles: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Servizos de tradución',
+  'Free translation services and their current limits. Limits reset automatically.': 'Servizos de tradución gratuítos e os seus límites actuais. Os límites restablécense automaticamente.',
 };

@@ -273,4 +273,6 @@ export const idDict: Record<string, string> = {
   'Not now': 'Nanti saja',
   'Unsupported format': 'Format tidak didukung',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Format yang didukung: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Layanan terjemahan',
+  'Free translation services and their current limits. Limits reset automatically.': 'Layanan terjemahan gratis dan batasannya saat ini. Batasan direset secara otomatis.',
 };

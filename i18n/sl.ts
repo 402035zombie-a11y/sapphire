@@ -273,4 +273,6 @@ export const slDict: Record<string, string> = {
   'Not now': 'Ne zdaj',
   'Unsupported format': 'Nepodprt format',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Podprti formati: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Prevajalske storitve',
+  'Free translation services and their current limits. Limits reset automatically.': 'Brezplačne prevajalske storitve in njihove trenutne omejitve. Omejitve se samodejno ponastavijo.',
 };

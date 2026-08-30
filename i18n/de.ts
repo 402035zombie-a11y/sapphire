@@ -283,4 +283,6 @@ export const deDict: Record<string, string> = {
   'Not now': 'Jetzt nicht',
   'Unsupported format': 'Nicht unterstütztes Format',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Unterstützte Formate: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Übersetzungsdienste',
+  'Free translation services and their current limits. Limits reset automatically.': 'Kostenlose Übersetzungsdienste und ihre aktuellen Limits. Limits werden automatisch zurückgesetzt.',
 };

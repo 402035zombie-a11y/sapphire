@@ -277,4 +277,6 @@ export const koDict: Record<string, string> = {
   'Not now': '나중에',
   'Unsupported format': '지원되지 않는 형식',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': '지원 형식: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': '번역 서비스',
+  'Free translation services and their current limits. Limits reset automatically.': '무료 번역 서비스와 현재 한도. 한도는 자동으로 초기화됩니다.',
 };

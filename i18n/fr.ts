@@ -274,4 +274,6 @@ export const frDict: Record<string, string> = {
   'Not now': 'Pas maintenant',
   'Unsupported format': 'Format non pris en charge',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formats pris en charge : EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Services de traduction',
+  'Free translation services and their current limits. Limits reset automatically.': 'Services de traduction gratuits et leurs limites actuelles. Les limites se réinitialisent automatiquement.',
 };

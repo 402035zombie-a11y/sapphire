@@ -273,4 +273,6 @@ export const heDict: Record<string, string> = {
   'Not now': 'לא עכשיו',
   'Unsupported format': 'פורמט לא נתמך',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'פורמטים נתמכים: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'שירותי תרגום',
+  'Free translation services and their current limits. Limits reset automatically.': 'שירותי תרגום חינמיים והמגבלות הנוכחיות שלהם. המגבלות מתאפסות אוטומטית.',
 };

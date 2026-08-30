@@ -282,4 +282,6 @@ export const ukDict: Record<string, string> = {
   'Not now': 'Не зараз',
   'Unsupported format': 'Непідтримуваний формат',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Підтримувані формати: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Сервіси перекладу',
+  'Free translation services and their current limits. Limits reset automatically.': 'Безкоштовні сервіси перекладу та їх поточні ліміти. Ліміти скидаються автоматично.',
 };

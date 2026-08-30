@@ -273,4 +273,6 @@ export const noDict: Record<string, string> = {
   'Not now': 'Ikke nå',
   'Unsupported format': 'Format som ikke støttes',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Støttede formater: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Oversettelsestjenester',
+  'Free translation services and their current limits. Limits reset automatically.': 'Gratis oversettelsestjenester og gjeldende grenser. Grensene tilbakestilles automatisk.',
 };

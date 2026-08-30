@@ -273,4 +273,6 @@ export const afDict: Record<string, string> = {
   'Not now': 'Nie nou nie',
   'Unsupported format': 'Onondersteunde formaat',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Ondersteunde formate: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Vertaaldienste',
+  'Free translation services and their current limits. Limits reset automatically.': 'Gratis vertaaldienste en hul huidige limiete. Limiete word outomaties teruggestel.',
 };

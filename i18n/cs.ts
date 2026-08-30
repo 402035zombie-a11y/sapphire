@@ -273,4 +273,6 @@ export const csDict: Record<string, string> = {
   'Not now': 'Teď ne',
   'Unsupported format': 'Nepodporovaný formát',
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Podporované formáty: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Translation services': 'Překladové služby',
+  'Free translation services and their current limits. Limits reset automatically.': 'Bezplatné překladové služby a jejich aktuální limity. Limity se obnovují automaticky.',
 };
