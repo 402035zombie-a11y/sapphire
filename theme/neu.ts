@@ -161,6 +161,8 @@ export function neuPrimary(t: ThemePalette, radius: number): any {
       `${Math.max(3, Math.round(oX * 1.6))}px ${Math.max(3, Math.round(oY * 1.6))}px ${Math.max(5, oB2)}px ${specDark(t)}`,
       `${-Math.max(1, Math.round(oX * 0.8 * lightCut))}px ${-Math.max(1, Math.round(oY * 0.8 * lightCut))}px ${Math.max(3, oB1)}px ${t.neu.soft}`,
       `${-Math.max(2, Math.round(oX * 1.4 * lightCut))}px ${-Math.max(2, Math.round(oY * 1.4 * lightCut))}px ${Math.max(5, oB2)}px ${t.neu.light}`,
+      `inset 0 1px 3px 0 ${rim(t)}`,
+      `inset 0 1px 3px 0 rgba(255,255,255,0.45)`,
       `inset ${ix}px ${iy}px ${iblur}px rgba(255,255,255,0.35)`,
       `inset ${-ix}px ${-iy}px ${iblur}px rgba(0,0,0,0.45)`,
     ].join(', '),
@@ -279,7 +281,6 @@ function sheen(): string {
 function spec(t: ThemePalette): string { return t.neu.soft; }
 function specDark(t: ThemePalette): string { return t.neu.shadowDark; }
 function rim(t: ThemePalette): string { return t.neu.hi; }
-function specLight(t: ThemePalette): string { return t.neu.shadowLight; }
 
 function surfaceExtrude(t: ThemePalette): string {
   // Темозависимый металлический градиент: в светлой теме — бежевый хром (светлее фона),
@@ -334,10 +335,13 @@ export function surfaceRaised(t: ThemePalette, radius: number, strength = 1): an
     boxShadow: [
       `${-oX}px ${-oY}px ${oB1}px ${s}`,
       `${-Math.round(oX * 1.6)}px ${-Math.round(oY * 1.6)}px ${oB2}px ${l}`,
+      `inset 0 1px 3px 0 ${rim(t)}`, // светлый верхний rim (кромка металла, мягко)
+      `inset 0 1px 3px 0 ${spec(t)}`, // РЕЗКИЙ specular-блик у верхнего края (литой блеск, светло-серый)
       `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`, // объёмный specular сверху-слева (мягко, не полоса)
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`, // тёмная грань снизу-справа
     ].join(', '),
-    // Android: єдиний об'єм дають shadow*/elevation (без border — біла обгортка не потрібна).
+    // Юзер P4 (24.08): на Android boxShadow НЕ рендериться → єдиний об'єм дають
+    // shadow*/elevation + border-кромка. Підсилюємо до видимого рівня.
     ...(Platform.OS === 'web' ? {} : {
       shadowColor: specDark(t),
       shadowOffset: { width: oX || 2, height: Math.max(oY, 3) },
@@ -397,16 +401,11 @@ export function surfaceCircle(t: ThemePalette, size: number, filled = false): an
           `${Math.max(2, Math.round(off * 0.55))}px ${Math.max(2, Math.round(off * 0.65))}px ${blur1}px ${specDark(t)}`,
           `${-Math.round(off * 0.45)}px ${-Math.round(off * 0.45)}px ${Math.max(4, Math.round(blur1))}px ${s}`,
           `${-Math.round(off * 0.8)}px ${-Math.round(off * 0.8)}px ${Math.max(6, Math.round(blur2))}px ${l}`,
-              `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
+          `inset 0 1px 3px 0 ${rim(t)}`,
+          `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
           `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
         ].join(', '),
-    ...(Platform.OS === 'web' ? {} : {
-      shadowColor: specDark(t),
-      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.5)) },
-      shadowOpacity: 0.5,
-      shadowRadius: Math.max(4, blur1),
-      elevation: filled ? Math.max(4, Math.round(off * 1.2)) : Math.max(5, Math.round(off)),
-    }),
+    elevation: filled ? Math.max(4, Math.round(off * 1.2)) : Math.max(2, Math.round(off * 0.8)),
   };
 }
 
@@ -437,14 +436,9 @@ export function surfaceCircleInset(t: ThemePalette, size: number): any {
       `${-Math.max(2, Math.round(ox * 0.7))}px ${-Math.max(2, Math.round(ox * 0.7))}px ${Math.round(ox * 1.5)}px ${spec(t)}`,
       `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
+      `inset 0 1px 3px 0 ${rim(t)}`,
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : {
-      shadowColor: specDark(t),
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.5,
-      shadowRadius: 4,
-      elevation: 4,
-    }),
+    elevation: 3,
   };
 }
 
@@ -606,6 +600,7 @@ export function neuConvexConcave(t: ThemePalette, radius: number, strength = 1):
       `${-Math.max(2, Math.round(oX * 1.4 * lightCut))}px ${-Math.max(2, Math.round(oY * 1.4 * lightCut))}px ${Math.max(5, oB2)}px ${l}`,
       `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${s}`,
+      `inset 0 1px 3px 0 ${rim(t)}`,
     ].join(', '),
     ...(Platform.OS === 'web' ? {} : {
       shadowColor: specDark(t),
@@ -653,16 +648,11 @@ export function neuSpeakBtn(t: ThemePalette, size: number): any {
       `${Math.max(1, Math.round(off * 0.5))}px ${Math.max(1, Math.round(off * 0.6))}px ${blur1}px ${specDark(t)}`,
       `${-Math.max(1, Math.round(off * 0.4 * lightCut))}px ${-Math.max(1, Math.round(off * 0.4 * lightCut))}px ${Math.max(2, Math.round(blur1))}px ${t.neu.soft}`,
       `${-Math.max(1, Math.round(off * 0.7 * lightCut))}px ${-Math.max(1, Math.round(off * 0.7 * lightCut))}px ${Math.max(3, Math.round(blur2))}px ${t.neu.light}`,
+      `inset 0 1px 3px 0 ${rim(t)}`,
       `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : {
-      shadowColor: specDark(t),
-      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.5)) },
-      shadowOpacity: 0.55,
-      shadowRadius: Math.max(4, blur1),
-      elevation: Math.max(5, Math.round(off)),
-    }),
+    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
   };
 }
 
@@ -705,14 +695,9 @@ export function neuDeleteBtn(t: ThemePalette, size: number): any {
       `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
       `inset ${Math.round(ix * 1.4)}px ${Math.round(iy * 1.4)}px ${Math.round(iblur * 1.6)}px ${specDark(t)}`,
       `inset ${-Math.round(ix * lightCut)}px ${-Math.round(iy * lightCut)}px ${iblur}px ${t.neu.soft}`,
+      `inset 0 1px 3px 0 ${rim(t)}`,
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : {
-      shadowColor: specDark(t),
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.5,
-      shadowRadius: 4,
-      elevation: 4,
-    }),
+    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
   };
 }
 
@@ -752,16 +737,11 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
       `${Math.max(2, Math.round(off * 0.6))}px ${Math.max(2, Math.round(off * 0.7))}px ${blur1}px ${specDark(t)}`,
       `${-Math.max(1, Math.round(off * 0.45 * lightCut))}px ${-Math.max(1, Math.round(off * 0.45 * lightCut))}px ${blur1}px ${t.neu.soft}`,
       `${-Math.max(2, Math.round(off * 0.8 * lightCut))}px ${-Math.max(2, Math.round(off * 0.8 * lightCut))}px ${blur2}px ${t.neu.light}`,
+      `inset 0 1px 3px 0 ${rim(t)}`,
       `inset ${ix}px ${iy}px ${iblur}px ${spec(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${specDark(t)}`,
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : {
-      shadowColor: specDark(t),
-      shadowOffset: { width: 0, height: Math.max(2, Math.round(off * 0.5)) },
-      shadowOpacity: 0.55,
-      shadowRadius: Math.max(4, blur1),
-      elevation: Math.max(5, Math.round(off)),
-    }),
+    ...(Platform.OS === 'web' ? {} : { elevation: 2 }),
   };
 }
 
@@ -797,13 +777,7 @@ function surfaceStamp(t: ThemePalette, size: number): any {
     ].join(', '),
     // Android: elevation без суцільного фону малює КВАДРАТНУ тінь поверх скруглення
     // (backgroundImage-градієнти на Android не рендеряться) → вимикаємо.
-    ...(Platform.OS === 'web' ? {} : {
-      shadowColor: specDark(t),
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.5,
-      shadowRadius: 4,
-      elevation: 5,
-    }),
+    ...(Platform.OS === 'web' ? {} : { elevation: 0 }),
   };
 }
 
@@ -829,6 +803,7 @@ function surfaceTab(t: ThemePalette, radius: number, active: boolean): any {
     boxShadow: [
       `inset ${o}px ${o}px ${o * 2.6}px ${specDark(t)}`, // глубокая тёмная грань (вдавленность)
       `inset ${-o}px ${-o}px ${o * 2.2}px ${s}`, // светлая противоположная грань
+      `inset 0 1px 3px 0 ${rim(t)}`,
     ].join(', '),
   };
 }
@@ -883,13 +858,8 @@ export function surfaceInset(t: ThemePalette, radius: number, strength = 1): any
       `${-Math.max(2, Math.round(ox * 0.7))}px ${-Math.max(2, Math.round(ox * 0.7))}px ${Math.round(ox * 1.5)}px ${spec(t)}`,
       `inset ${ix}px ${iy}px ${iblur}px ${specDark(t)}`,
       `inset ${-ix}px ${-iy}px ${iblur}px ${spec(t)}`,
+      `inset 0 1px 3px 0 ${rim(t)}`,
     ].join(', '),
-    ...(Platform.OS === 'web' ? {} : {
-      shadowColor: specDark(t),
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.5,
-      shadowRadius: 4,
-      elevation: 3,
-    }),
+    elevation: 2,
   };
 }
