@@ -2,7 +2,7 @@
 // Единая замена <Modal> для экранов внутри навигатора (Rule 23):
 // react-native <Modal> и @gorhom/bottom-sheet НЕ рендерятся надёжно в RN-web навигаторе.
 // Собственный оверлей на чистом RN (View+TouchableOpacity) — гарантированно рисуется на web.
-// ModalSheet = оверлей (затемнение) + ЕДИНСТВЕННАЯ metal-панель. Дочерние компоненты
+// ModalSheet = оверлей (затемнение) + ЕДИНСТВЕННАЯ surface-панель. Дочерние компоненты
 // рисуют ТОЛЬКО контент (заголовок, кнопки) — НЕ свою панель, иначе «окно-в-окне».
 //
 // КЛАССЫ (props) — один компонент, разные варианты без дублирования:
@@ -16,7 +16,7 @@ import { View, TouchableOpacity, Modal as RNModal, Platform } from 'react-native
 import { BlurView } from 'expo-blur';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal } from '../theme/neu';
+import { surface } from '../theme/neu';
 
 export type ModalVariant = 'center' | 'sheet';
 
@@ -70,7 +70,7 @@ export default function ModalSheet({
       {dismissable && <TouchableOpacity style={{ position: 'absolute' as any, left: 0, right: 0, top: 0, bottom: 0 }} activeOpacity={1} onPress={onClose} />}
       <View
         style={[
-          metal(theme, role, { radius: a.radius + 4, strength: 0.85 }),
+          surface(theme, role, { radius: a.radius + 4, strength: 0.85 }),
           {
             width: '100%',
             maxHeight: mh,

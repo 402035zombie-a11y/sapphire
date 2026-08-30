@@ -27,7 +27,7 @@ import LanguageDropdown from '../components/LanguageDropdown';
 import { useTheme } from '../theme/ThemeContext';
 import { useT } from '../i18n';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal } from '../theme/neu';
+import { surface } from '../theme/neu';
 import { SIZES, FONTS } from '../theme/constants';
 import { useLibraryStore } from '../store/libraryStore';
 import { BookParagraph } from '../store/libraryStore';
@@ -637,7 +637,7 @@ export default function ReaderScreen({ route }: { route: any }) {
   );
 
   const header = (
-    <View style={[styles.header, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
+    <View style={[styles.header, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
       <View style={[styles.headerRow, { paddingLeft: a.pad, paddingRight: a.pad, paddingTop: a.small ? 4 : 6, paddingBottom: a.small ? 4 : 6, maxHeight: a.small ? 56 : 68 }]}>
         <IconButton icon="arrow-back" onPress={() => navigation.goBack()} variant="circle" size={a.fab()} hitSlop={8} style={{ flexShrink: 0 }} />
         <View style={styles.titleGroup}>
@@ -689,7 +689,7 @@ export default function ReaderScreen({ route }: { route: any }) {
             autoFocus
           />
           <TouchableOpacity
-            style={[styles.searchClear, metal(theme, 'primary', { size: 10 })]}
+            style={[styles.searchClear, surface(theme, 'primary', { size: 10 })]}
             onPress={() => {
               setQuery('');
               setSearchOpen(false);
@@ -766,8 +766,8 @@ export default function ReaderScreen({ route }: { route: any }) {
 
 function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof useTheme>) {
   const playSz = a.fab();
-  const neuBtn = metal(theme, 'circle', { size: playSz });
-  const neuUp = metal(theme, 'circle', { size: a.fab() });
+  const neuBtn = surface(theme, 'circle', { size: playSz });
+  const neuUp = surface(theme, 'circle', { size: a.fab() });
   return StyleSheet.create({
     container: { flex: 1, position: 'relative', userSelect: 'none' },
     header: {
@@ -794,7 +794,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     langDropdown: { position: 'absolute', top: '100%', right: 0, zIndex: 100 },
     playBtn: { ...neuBtn, borderRadius: playSz / 2 },
     title: { fontSize: a.h2, fontFamily: FONTS.bold },
-    langChip: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, ...metal(theme, 'inset', { radius: 12 }) },
+    langChip: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, ...surface(theme, 'inset', { radius: 12 }) },
     langChipText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     // Колонка текста ограничена по ширине на больших мониторах — иначе строки нечитаемо длинные.
     list: { paddingVertical: 12, paddingBottom: 40, width: '100%', maxWidth: a.readerMaxW, alignSelf: 'center', overflow: 'visible' },

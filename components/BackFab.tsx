@@ -6,7 +6,7 @@ import { TouchableOpacity, View, Platform } from 'react-native';
 import Icon from './Icon';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { surface, neuShadowPad, screenBg, surfaceText } from '../theme/neu';
 
 export default function BackFab({
   onPress,
@@ -29,7 +29,7 @@ export default function BackFab({
       onPress={onPress}
       hitSlop={10}
       style={[
-        metal(theme, 'circle', { size: s }),
+        surface(theme, 'circle', { size: s }),
         {
           position: 'absolute',
           top: (top ?? pad) + safeTop,

@@ -9,7 +9,7 @@ import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
 import Icon from './Icon';
 import { ViewStyle } from 'react-native';
-import { neuShadowPad, metal } from '../theme/neu';
+import { neuShadowPad, surface } from '../theme/neu';
 import { useT } from '../i18n';
 import ModalSheet from './ModalSheet';
 
@@ -67,7 +67,7 @@ export default function SupportAuthorModal({
           {t("Reading is free and always will be — this is the price of a free app. Support the project in any way that suits you.")}
         </Text>
 
-        <TouchableOpacity style={[metal(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onSupport}>
+        <TouchableOpacity style={[surface(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onSupport}>
           <Text style={btnText}>{t("Watch an ad (30s)")}</Text>
           {/* Fallback: якщо реклама не завантажилась — юзер все одно може підтримати донатом */}
           <Text style={{ color: theme.secondaryText, fontSize: a.fs(10), marginTop: 2 }}>
@@ -75,14 +75,14 @@ export default function SupportAuthorModal({
           </Text>
         </TouchableOpacity>
         {onDonate && (
-          <TouchableOpacity style={[metal(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onDonate}>
+          <TouchableOpacity style={[surface(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onDonate}>
             <Text style={btnText}>{t("Donate via card / crypto")}</Text>
             <Text style={{ color: theme.secondaryText, fontSize: a.fs(10), marginTop: 2 }}>
               {t("Opens a secure payment page — your donation removes ads forever (this prompt won't appear again)")}
             </Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity style={[metal(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onDismiss}>
+        <TouchableOpacity style={[surface(theme, 'raised', { radius: a.radius }), btnStyle]} onPress={onDismiss}>
           <Text style={btnText}>{t("Thanks, not now")}</Text>
         </TouchableOpacity>
       </ScrollView>

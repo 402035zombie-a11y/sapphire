@@ -9,7 +9,7 @@ import { View, Text, TouchableOpacity, TextInput, ScrollView, Pressable, useWind
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { useT } from '../i18n';
-import { metal } from '../theme/neu';
+import { surface } from '../theme/neu';
 import { LANGUAGES, LangOption } from '../utils/languages';
 import Icon from './Icon';
 
@@ -46,13 +46,13 @@ export default function LanguagePicker({ visible, value, onSelect, onClose, allo
     <View style={{ width: '100%', maxWidth: 360, alignSelf: 'center', maxHeight: Math.round(winH * 0.75), display: 'flex', flexDirection: 'column' }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: a.gap }}>
         <Text style={{ fontSize: a.h2, fontFamily: 'System', fontWeight: '700', color: theme.primaryText }}>{t('Choose language')}</Text>
-        <TouchableOpacity onPress={onClose} hitSlop={12} style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}>
+        <TouchableOpacity onPress={onClose} hitSlop={12} style={[surface(theme, 'circle', { size: a.fab() }), { padding: 0 }]}>
           <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
         </TouchableOpacity>
       </View>
       <TextInput
         style={[
-          metal(theme, 'inset', { radius: a.radius }),
+          surface(theme, 'inset', { radius: a.radius }),
           {
             paddingHorizontal: 12,
             paddingVertical: a.tiny ? 7 : 10,

@@ -6,7 +6,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
 import Icon from './Icon';
-import { metal } from '../theme/neu';
+import { surface } from '../theme/neu';
 import ModalSheet from './ModalSheet';
 import { useT } from '../i18n';
 
@@ -31,7 +31,7 @@ export default function SpeedVariantModal({ visible, title, onSelect, onClose }:
   const iconBox = a.dim(0.055, 32, 44);
 
   return (
-    <ModalSheet visible={visible} onClose={onClose} panelStyle={{ ...metal(theme, 'raised', { radius: a.radius + 4, strength: 0.85 }) }}>
+    <ModalSheet visible={visible} onClose={onClose} panelStyle={{ ...surface(theme, 'raised', { radius: a.radius + 4, strength: 0.85 }) }}>
       <View onStartShouldSetResponder={() => true} style={{ width: '100%' }}>
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
           <View style={{ flex: 1 }}>
@@ -42,7 +42,7 @@ export default function SpeedVariantModal({ visible, title, onSelect, onClose }:
               {t('Choose a speed reading mode')}
             </Text>
           </View>
-          <TouchableOpacity onPress={onClose} hitSlop={10} style={[metal(theme, 'circle', { size: a.fab() }), { padding: 0 }]}>
+          <TouchableOpacity onPress={onClose} hitSlop={10} style={[surface(theme, 'circle', { size: a.fab() }), { padding: 0 }]}>
             <Icon name="close" size={a.icon(20)} color={theme.secondaryText} />
           </TouchableOpacity>
         </View>
@@ -52,7 +52,7 @@ export default function SpeedVariantModal({ visible, title, onSelect, onClose }:
             <TouchableOpacity
               key={o.variant}
               style={[
-                metal(theme, 'raised', { radius: 12, strength: 0.8 }),
+                surface(theme, 'raised', { radius: 12, strength: 0.8 }),
                 {
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -70,7 +70,7 @@ export default function SpeedVariantModal({ visible, title, onSelect, onClose }:
             >
               <View
                 style={{
-                  ...metal(theme, 'inset', { radius: iconBox / 2, strength: 1.0 }),
+                  ...surface(theme, 'inset', { radius: iconBox / 2, strength: 1.0 }),
                   width: iconBox,
                   height: iconBox,
                   borderRadius: iconBox / 2,

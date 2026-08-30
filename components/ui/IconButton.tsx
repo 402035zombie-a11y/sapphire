@@ -1,13 +1,13 @@
 // components/ui/IconButton.tsx
 // Металлическая кнопка с иконкой. Заменяет дубли
-// <TouchableOpacity style={[metal(theme, 'circle'|'inset'|'primary', {size}), ...]}><Icon .../></TouchableOpacity>.
+// <TouchableOpacity style={[surface(theme, 'circle'|'inset'|'primary', {size}), ...]}><Icon .../></TouchableOpacity>.
 // variant: 'circle' (выпуклая круглая) | 'inset' (вдавленная) | 'primary' (залитая accent).
 import React from 'react';
 import { TouchableOpacity, ViewStyle } from 'react-native';
 import Icon, { IconName } from '../Icon';
 import { useTheme } from '../../theme/ThemeContext';
 import { useAdaptive } from '../../theme/useAdaptive';
-import { metal } from '../../theme/neu';
+import { surface } from '../../theme/neu';
 
 export default function IconButton({
   icon,
@@ -36,7 +36,7 @@ export default function IconButton({
     <TouchableOpacity
       onPress={onPress}
       hitSlop={hitSlop}
-      style={[metal(theme, role, { size: s }), { padding: 0 }, style]}
+      style={[surface(theme, role, { size: s }), { padding: 0 }, style]}
     >
       <Icon name={icon} size={Math.round(s * 0.5)} color={iconColor} />
     </TouchableOpacity>

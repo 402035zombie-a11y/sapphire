@@ -34,7 +34,7 @@ import { extractBookWords } from '../utils/bookWords';
 import { getBookParagraphs } from '../services/bookText';
 import { effectiveLang } from '../utils/lang';
 import Icon from '../components/Icon';
-import { neuShadowPad, screenBg, metal } from '../theme/neu';
+import { neuShadowPad, screenBg, surface } from '../theme/neu';
 import SupportButton from '../components/SupportButton';
 import SupportAuthorModal from '../components/SupportAuthorModal';
 import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
@@ -66,8 +66,8 @@ function PickerList({ items, emptyHint, styles, activeKey }: { items: { key: str
             style={[
               styles.pickItem,
               active
-                ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+                ? { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                : surface(theme, 'inset', { radius: a.radius, strength: 0.9 })
             ]}
             onPress={it.onPress}
           >
@@ -103,9 +103,9 @@ function WordCard({ item, theme, a, styles, progress, editing, setEditing, updat
   const box = tp?.box ?? 1;
   const c = tp?.correctCount ?? 0;
   const w = tp?.wrongCount ?? 0;
-  // B9/HWUI: memoize metal()-стилі бейджів — НЕ перераховувати тіні при скролі FlatList.
-  const badgeStyle = React.useMemo(() => metal(theme, 'inset', { radius: 8 }), [theme]);
-  const freqBadgeStyle = React.useMemo(() => metal(theme, 'inset', { radius: 8 }), [theme]);
+  // B9/HWUI: memoize surface()-стилі бейджів — НЕ перераховувати тіні при скролі FlatList.
+  const badgeStyle = React.useMemo(() => surface(theme, 'inset', { radius: 8 }), [theme]);
+  const freqBadgeStyle = React.useMemo(() => surface(theme, 'inset', { radius: 8 }), [theme]);
 
   // Автоматичний фоновий підвантажувач для слів без перекладу при їх рендері у видимості списку
   React.useEffect(() => {
@@ -153,7 +153,7 @@ function WordCard({ item, theme, a, styles, progress, editing, setEditing, updat
           </TouchableOpacity>
         )}
       </View>
-      <TouchableOpacity style={[styles.deleteBtn, metal(theme, 'deleteBtn', { size: a.dim(0.045, 26, 34) }), { padding: 0 }]} onPress={() => removeEntry(item.id)} hitSlop={10}>
+      <TouchableOpacity style={[styles.deleteBtn, surface(theme, 'deleteBtn', { size: a.dim(0.045, 26, 34) }), { padding: 0 }]} onPress={() => removeEntry(item.id)} hitSlop={10}>
         <Icon name="close" size={a.dim(0.025, 14, 18)} color={theme.danger} />
       </TouchableOpacity>
     </Card>
@@ -504,7 +504,7 @@ const importAnkiApkg = async () => {
   // ТУЛБАР: Dictionary живе в Tab-навігаторі з headerShown:false → navigation.setOptions
   // headerRight НІДЕ не рендериться. Тулбар малюємо в тілі екрана як звичайний рядок.
   const tbSize = a.dim(0.06, 30, 40);
-  const tb = metal(theme, 'circle', { size: tbSize });
+  const tb = surface(theme, 'circle', { size: tbSize });
   const isz = a.dim(0.028, 16, 24);
   const toolbar = (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -541,7 +541,7 @@ const importAnkiApkg = async () => {
 
   return (
     <Screen contentStyle={{ padding: a.pad }}>
-      <View style={[styles.counterRow, metal(theme, 'raised', { radius: a.radius, strength: 0.85 })]}>
+      <View style={[styles.counterRow, surface(theme, 'raised', { radius: a.radius, strength: 0.85 })]}>
         <Text style={[styles.counterText, { color: theme.primaryText }]}>
           {t('Total words:')} <Text style={styles.counterNum}>{scopedEntries.length}</Text>
           {'  '}·{'  '}{t('Answers:')} <Text style={styles.counterNum}>{totalAnswers}</Text>
@@ -640,8 +640,8 @@ const importAnkiApkg = async () => {
               style={[
                 styles.pickItem,
                 source?.type !== 'book'
-                  ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                  : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+                  ? { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                  : surface(theme, 'inset', { radius: a.radius, strength: 0.9 })
               ]}
               onPress={() => setSource({ type: 'general' })}
             >
@@ -706,8 +706,8 @@ const importAnkiApkg = async () => {
               style={[
                 styles.pickItem,
                 source?.type !== 'book'
-                  ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                  : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+                  ? { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                  : surface(theme, 'inset', { radius: a.radius, strength: 0.9 })
               ]}
               onPress={() => { setSource({ type: 'general' }); setBookPickOpen(false); }}
             >
@@ -758,7 +758,7 @@ const importAnkiApkg = async () => {
               <TouchableOpacity style={[styles.confirmBtn]} onPress={() => setConfirmDelete(false)}>
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Cancel')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.confirmBtn, metal(theme, 'primary', { radius: a.radius })]} onPress={confirmDeleteAction}>
+              <TouchableOpacity style={[styles.confirmBtn, surface(theme, 'primary', { radius: a.radius })]} onPress={confirmDeleteAction}>
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Delete')}</Text>
               </TouchableOpacity>
             </View>
@@ -769,7 +769,7 @@ const importAnkiApkg = async () => {
       <View
         style={[
           styles.fabGroup,
-          metal(theme, 'raised', { radius: 14, strength: 0.8 }),
+          surface(theme, 'raised', { radius: 14, strength: 0.8 }),
           {
             flexDirection: 'column',
             padding: 6,
@@ -780,7 +780,7 @@ const importAnkiApkg = async () => {
         ]}
       >
         <TouchableOpacity
-          style={[styles.fab, metal(theme, 'primary', { size: a.dim(0.06, 38, 46), radius: 10 }), { position: 'relative', bottom: 'auto', right: 'auto' }]}
+          style={[styles.fab, surface(theme, 'primary', { size: a.dim(0.06, 38, 46), radius: 10 }), { position: 'relative', bottom: 'auto', right: 'auto' }]}
           onPress={() => {
             setAddWord('');
             setAddTrans('');
@@ -791,14 +791,14 @@ const importAnkiApkg = async () => {
           <Icon name="plus" size={a.dim(0.05, 20, 26)} color={theme.onPrimary} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.fab, metal(theme, 'stamp', { size: a.dim(0.06, 38, 46), radius: 10 }), { position: 'relative', bottom: 'auto', right: 'auto' }]}
+          style={[styles.fab, surface(theme, 'stamp', { size: a.dim(0.06, 38, 46), radius: 10 }), { position: 'relative', bottom: 'auto', right: 'auto' }]}
           onPress={() => setBookPickOpen(true)}
           activeOpacity={0.85}
         >
           <Icon name="swap" size={a.dim(0.05, 20, 26)} color={theme.primaryText} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.fab, metal(theme, 'stamp', { size: a.dim(0.06, 38, 46), radius: 10 }), { position: 'relative', bottom: 'auto', right: 'auto' }]}
+          style={[styles.fab, surface(theme, 'stamp', { size: a.dim(0.06, 38, 46), radius: 10 }), { position: 'relative', bottom: 'auto', right: 'auto' }]}
           onPress={() => setMenuOpen(true)}
           activeOpacity={0.85}
         >
@@ -813,56 +813,56 @@ const importAnkiApkg = async () => {
           <ScrollView style={{ maxHeight: Math.round(a.height * 0.6), overflow: 'visible' }} contentContainerStyle={{ paddingBottom: 8, paddingHorizontal: 4 }} keyboardShouldPersistTaps="handled">
             {/* Пошук */}
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
+              style={[styles.pickItem, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); setSearchOpen(true); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Search words')}</Text>
             </TouchableOpacity>
             {/* Змінити джерело (книга / весь словник) */}
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
+              style={[styles.pickItem, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); setBookPickOpen(true); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Change source')}</Text>
             </TouchableOpacity>
             {/* Імпорт з книги */}
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
+              style={[styles.pickItem, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); setBookPickOpen(true); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From book (extract words)')}</Text>
             </TouchableOpacity>
             {/* Імпорт JSON */}
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
+              style={[styles.pickItem, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); importJsonFromPicker(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From system file (JSON)')}</Text>
             </TouchableOpacity>
             {/* Імпорт Anki */}
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
+              style={[styles.pickItem, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); importAnkiApkg(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('From Anki deck (.apkg)')}</Text>
             </TouchableOpacity>
             {/* Експорт JSON */}
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
+              style={[styles.pickItem, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); exportAll(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('Export dictionary (JSON)')}</Text>
             </TouchableOpacity>
             {/* Експорт Anki */}
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
+              style={[styles.pickItem, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); exportAnki(); }}
             >
               <Text style={[styles.pickText, { color: theme.primaryText }]}>{t('To Anki deck (.apkg) — export')}</Text>
             </TouchableOpacity>
             {/* Очистити все */}
             <TouchableOpacity
-              style={[styles.pickItem, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
+              style={[styles.pickItem, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}
               onPress={() => { setMenuOpen(false); handleDeleteAll(); }}
             >
               <Text style={[styles.pickText, { color: theme.danger }]}>{t('Delete all words')}</Text>
@@ -896,7 +896,7 @@ const importAnkiApkg = async () => {
                 <Text style={[styles.sortTabText, { color: theme.primaryText }]}>{t('Cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.confirmBtn, metal(theme, 'primary', { radius: a.radius })]}
+                style={[styles.confirmBtn, surface(theme, 'primary', { radius: a.radius })]}
                 onPress={() => {
                   const w = addWord.trim();
                   if (!w) return;
@@ -928,8 +928,8 @@ const importAnkiApkg = async () => {
                 style={[
                   styles.pickItem,
                   active
-                    ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                    : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+                    ? { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                    : surface(theme, 'inset', { radius: a.radius, strength: 0.9 })
                 ]}
                 onPress={() => { setSortBy(o.id); setSortPickerOpen(false); }}
               >
@@ -953,8 +953,8 @@ const importAnkiApkg = async () => {
                 style={[
                   styles.pickItem,
                   active
-                    ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                    : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+                    ? { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                    : surface(theme, 'inset', { radius: a.radius, strength: 0.9 })
                 ]}
                 onPress={() => { setLevelFilter(o.id); setLevelPickerOpen(false); }}
               >
@@ -983,8 +983,8 @@ const importAnkiApkg = async () => {
                 style={[
                   styles.pickItem,
                   active
-                    ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                    : metal(theme, 'inset', { radius: a.radius, strength: 0.9 })
+                    ? { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                    : surface(theme, 'inset', { radius: a.radius, strength: 0.9 })
                 ]}
                 onPress={() => { setDueFilter(o.id); setDuePickerOpen(false); }}
               >
@@ -1013,9 +1013,9 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     screenTitle: { fontSize: a.title, fontFamily: FONTS.bold, marginBottom: a.gap },
     headerRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: a.gap, flexWrap: 'wrap' },
     headerActions: { flexDirection: 'row', gap: 8 },
-    confirmBtn: { flex: 1, paddingVertical: Math.max(10, Math.round(13 * a.scale)), paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'inset', { radius: a.radius }) },
-    iconBtn: { ...metal(theme, 'circle', { size: iconBtn }), width: iconBtn, height: iconBtn, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
-    // Юзер T9: без backgroundColor override — metal inset сам дає neu.base
+    confirmBtn: { flex: 1, paddingVertical: Math.max(10, Math.round(13 * a.scale)), paddingHorizontal: 16, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center', ...surface(theme, 'inset', { radius: a.radius }) },
+    iconBtn: { ...surface(theme, 'circle', { size: iconBtn }), width: iconBtn, height: iconBtn, borderRadius: a.radius, alignItems: 'center', justifyContent: 'center' },
+    // Юзер T9: без backgroundColor override — surface inset сам дає neu.base
     searchInline: { width: '100%', minWidth: 200, height: Math.round(iconBtn * 1.15), paddingHorizontal: 12, fontSize: a.body, color: theme.primaryText },
     modalBackdrop: { flex: 1 },
     searchPop: { width: '100%', maxWidth: Math.min(a.width - 24, 520), borderRadius: a.radius, padding: 12 },
@@ -1033,24 +1033,24 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     filterBlock: { padding: a.tiny ? 5 : 7, borderRadius: a.radius, gap: a.tiny ? 5 : 7, marginBottom: a.gap },
     sortBar: { flexDirection: 'row', borderRadius: a.radius, padding: 2, flexWrap: 'wrap' },
     // Юзер M4: inset робив таби занадто темними → компактний raised
-    sortTab: { paddingVertical: a.tiny ? 3 : 5, paddingHorizontal: a.tiny ? 7 : 10, ...metal(theme, 'raised', { radius: a.radius, strength: 0.45 }) },
+    sortTab: { paddingVertical: a.tiny ? 3 : 5, paddingHorizontal: a.tiny ? 7 : 10, ...surface(theme, 'raised', { radius: a.radius, strength: 0.45 }) },
     sortTabText: { fontSize: a.fs(11), fontFamily: FONTS.bold },
     levelBar: { flexDirection: 'row', borderRadius: a.radius, padding: 3 },
     levelTrigger: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingVertical: a.tiny ? 6 : 9, paddingHorizontal: a.pad, borderRadius: a.radius },
     levelTabText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
-    viewBar: { ...metal(theme, 'inset', { radius: a.radius }), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.gap },
+    viewBar: { ...surface(theme, 'inset', { radius: a.radius }), flexDirection: 'row', borderRadius: a.radius, padding: 2, marginBottom: a.gap },
     viewTab: { flex: 1, paddingVertical: a.tiny ? 6 : 8, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
     viewTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     fabGroup: { position: 'absolute', right: a.pad, bottom: a.tabBarH + a.pad + 10, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
-    fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center', ...metal(theme, 'raised', { radius: a.radius, strength: 0.6 }) },
+    fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center', ...surface(theme, 'raised', { radius: a.radius, strength: 0.6 }) },
     toolbar: { flexDirection: 'row', gap: 8, marginBottom: a.gap },
-    search: { flex: 1, ...metal(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },
+    search: { flex: 1, ...surface(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },
     exportBtn: { borderRadius: a.radius, paddingHorizontal: a.pad, justifyContent: 'center' },
     exportText: { color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.small_fs },
     list: { paddingTop: a.headerH + a.insetTop + a.pad + 20, paddingBottom: a.tabBarH + a.pad + a.dim(0.06, 46, 56) + a.gap, gap: a.gap, justifyContent: 'flex-start' },
     empty: { textAlign: 'center', fontSize: a.body },
     row: {
-      ...metal(theme, 'raised', { radius: a.radius, strength: 0.45 }),
+      ...surface(theme, 'raised', { radius: a.radius, strength: 0.45 }),
       flexDirection: 'row',
       alignItems: 'flex-start',
       borderRadius: a.radius,
@@ -1061,16 +1061,16 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     },
     wordLine: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 },
     word: { fontSize: a.body, fontFamily: FONTS.bold, flexShrink: 1, maxWidth: '70%', wordBreak: 'break-word', overflow: 'hidden' } as any,
-    speakInline: { ...metal(theme, 'circle', { size: a.dim(0.05, 28, 34) }), alignItems: 'center', justifyContent: 'center' },
+    speakInline: { ...surface(theme, 'circle', { size: a.dim(0.05, 28, 34) }), alignItems: 'center', justifyContent: 'center' },
     speakInlineIcon: { fontSize: a.fs(14), color: theme.primaryText },
     lang: { fontSize: a.fs(12), fontFamily: FONTS.regular },
-    badge: { ...metal(theme, 'inset', { radius: 8 }), flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
+    badge: { ...surface(theme, 'inset', { radius: 8 }), flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     badgeBox: { fontSize: a.fs(12), fontFamily: FONTS.bold },
-    freqBadge: { ...metal(theme, 'inset', { radius: 8 }), borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
+    freqBadge: { ...surface(theme, 'inset', { radius: 8 }), borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     freqText: { fontSize: a.fs(12), fontFamily: FONTS.bold },
     translation: { fontSize: a.body, marginTop: 2 },
     context: { fontSize: a.small_fs, marginTop: 6, fontStyle: 'italic' },
-    editInput: { ...metal(theme, 'inset', { radius: 8 }), borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8, fontSize: a.body, marginTop: 4 },
-    deleteBtn: { ...metal(theme, 'circleInset', { size: a.dim(0.05, 28, 38) }), alignItems: 'center', justifyContent: 'center' },
+    editInput: { ...surface(theme, 'inset', { radius: 8 }), borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8, fontSize: a.body, marginTop: 4 },
+    deleteBtn: { ...surface(theme, 'circleInset', { size: a.dim(0.05, 28, 38) }), alignItems: 'center', justifyContent: 'center' },
   });
 }

@@ -3,7 +3,7 @@
 import React from 'react';
 import { View, Text, ViewStyle, TextStyle } from 'react-native';
 import { useTheme } from '../../theme/ThemeContext';
-import { metal } from '../../theme/neu';
+import { surface } from '../../theme/neu';
 
 export default function Chip({
   label,
@@ -26,7 +26,7 @@ export default function Chip({
     <Comp
       onPress={onPress}
       style={[
-        metal(theme, active ? 'tabActive' : 'inset', { radius: radius ?? 10 }),
+        surface(theme, active ? 'tabActive' : 'inset', { radius: radius ?? 10 }),
         { paddingVertical: 6, paddingHorizontal: 12, alignItems: 'center', justifyContent: 'center' },
         style,
       ]}

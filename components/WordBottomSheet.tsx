@@ -9,7 +9,7 @@ import { useDictionaryStore } from '../store/dictionaryStore';
 import { normalizeWord } from '../utils/wordTokenizer';
 import { effectiveLang } from '../utils/lang';
 import Icon from '../components/Icon';
-import { metal } from '../theme/neu';
+import { surface } from '../theme/neu';
 import { useT } from '../i18n';
 import { FONTS } from '../theme/constants';
 import ModalSheet from './ModalSheet';
@@ -106,7 +106,7 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
   const fromLang = effectiveLang(lang);
 
   const actionBtnStyle = [
-    metal(theme, 'circle', { size: a.icon(36) }),
+    surface(theme, 'circle', { size: a.icon(36) }),
     { width: a.icon(36), height: a.icon(36), padding: 0, alignItems: 'center' as const, justifyContent: 'center' as const }
   ];
 
@@ -170,8 +170,8 @@ export default function WordBottomSheet({ word, sentence, lang, targetLang, book
         <TouchableOpacity
           style={[
             isKnown
-              ? { ...metal(theme, 'raised', { radius: a.radius }), backgroundColor: theme.surface, borderColor: theme.success, borderWidth: 1 }
-              : { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary },
+              ? { ...surface(theme, 'raised', { radius: a.radius }), backgroundColor: theme.surface, borderColor: theme.success, borderWidth: 1 }
+              : { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary },
             {
               paddingVertical: Math.max(10, Math.round(13 * a.scale)),
               alignItems: 'center',

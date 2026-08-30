@@ -251,16 +251,16 @@ export function neuCircle(t: ThemePalette, size: number, filled = false): any {
   };
 }
 
-// ====================== МЕТАЛЛ (liquid-metal / polished chrome) ======================
+// ====================== МЕТАЛЛ (liquid-surface / polished chrome) ======================
 // Элитный премиум: холодный полированный металл (хром/анодированный алюминий),
 // а НЕ брушеная сталь со щёточными линиями (выглядит старомодно, как скевоморфизм 2011).
-// По стандарту Argent liquid-metal (2026): металл = ТЕКУЩИЕ ОТРАЖАЮЩИЕ ПОЛОСЫ (reflection
+// По стандарту Argent liquid-surface (2026): металл = ТЕКУЩИЕ ОТРАЖАЮЩИЕ ПОЛОСЫ (reflection
 // banding) + spec(t)ULAR SHEEN + EDGE rim(t), без вертикальных линий щётки.
 //  - ДИАГОНАЛЬНЫЙ мягкий блик (linear-gradient 135deg со светлой полосой по краю) = отражение.
 //  - РАДИАЛЬНЫЙ specular в углу = как полированный шар (для круглых).
 //  - EDGE RIM (светлая кромка) — металл сосредоточен на краю, центр спокойный → читаемость.
 //  - Холодная хромовая палитра: base тёмно-стальной, light = холодный серебристый (не тёплый).
-// Гравированный текст на металле — через metalText(t).
+// Гравированный текст на металле — через surfaceText(t).
 
 // холодное отражение (УГЛОВОЙ radial-specular, РЕЗКИЙ — без размытия «грязного» блика)
 // Позиция блика — в ПИКСЕЛЯХ (а не %), чтобы на больших элементах он оставался
@@ -284,20 +284,20 @@ function spec(t: ThemePalette): string { return t.neu.soft; }
 function specDark(t: ThemePalette): string { return t.neu.shadowDark; }
 function rim(t: ThemePalette): string { return t.neu.hi; }
 
-function metalExtrude(t: ThemePalette): string {
+function surfaceExtrude(t: ThemePalette): string {
   // Темозависимый металлический градиент: в светлой теме — бежевый хром (светлее фона),
   // в тёмной — стальной. Берём оттенки из t.neu, чтобы панели НЕ имели чужеродного
   // (стального/синего) оттенка на светлом бежевом фоне.
   return `linear-gradient(145deg, ${t.neu.light} 0%, ${t.neu.base} 46%, ${t.neu.base} 54%, ${t.neu.dark} 100%)`;
 }
 
-function metalBg(t: ThemePalette): string {
+function surfaceBg(t: ThemePalette): string {
   // мягкий блик ПОВЕРХ направленного хромового градиента (без вертикальных линий)
-  return `${sheen()}, ${metalExtrude(t)}`;
+  return `${sheen()}, ${surfaceExtrude(t)}`;
 }
 
 
-export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): any {
+export function surfaceRaised(t: ThemePalette, radius: number, strength = 1): any {
   // FLAT-режим: плаский бокс з обводкою, без металу
   if ((t as any).flat) {
     return {
@@ -331,7 +331,7 @@ export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): a
   const oB2 = Math.round(blur2 * OUTER_SHADOW);
   return {
     backgroundColor: t.neu.base,
-    backgroundImage: metalBg(t),
+    backgroundImage: surfaceBg(t),
     backgroundClip: 'padding-box',
     borderRadius: radius,
     boxShadow: [
@@ -356,7 +356,7 @@ export function neuMetalRaised(t: ThemePalette, radius: number, strength = 1): a
   };
 }
 
-export function neuMetalCircle(t: ThemePalette, size: number, filled = false): any {
+export function surfaceCircle(t: ThemePalette, size: number, filled = false): any {
   const sc = t.neuScale ?? { depth: 1, spread: 1 };
   // Нелінійно: мала кнопка (28px) має компактну тінь з видимим контуром,
   // великий FAB (56px) — пропорційно глибшу, але не вдвічі більшу.
@@ -380,7 +380,7 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
           backgroundColor: filled ? t.primary : t.neu.base,
           backgroundImage: filled
             ? `linear-gradient(180deg, ${shade(t.primary, 0.25)} 0%, ${t.primary} 55%, ${shade(t.primary, -0.28)} 100%)`
-            : metalBg(t),
+            : surfaceBg(t),
           backgroundClip: 'padding-box',
         }
       : {
@@ -416,7 +416,7 @@ export function neuMetalCircle(t: ThemePalette, size: number, filled = false): a
 // ВДАВЛЕНИЙ circle (для кнопок видалення) — без зовнішніх тіней, тільки inset
 // ВДАВЛЕНИЙ circle (кнопки видалення/дій всередині карток): м'який внутрішній рельєф
 // + ЛЕГКИЙ зовнішній контур (раніше elevation=0 і жодних зовнішніх шарів → кнопка "плавала")
-export function neuMetalCircleInset(t: ThemePalette, size: number): any {
+export function surfaceCircleInset(t: ThemePalette, size: number): any {
   const sc = t.neuScale ?? { depth: 1, spread: 1 };
   const off = Math.max(3, Math.round(Math.pow(Math.max(size, 12), 0.72) * 0.5 * sc.depth));
   const ix = Math.max(2, Math.round(off * 0.55));
@@ -424,7 +424,7 @@ export function neuMetalCircleInset(t: ThemePalette, size: number): any {
   const iblur = Math.max(3, Math.round(off * 1.5));
   // компактна зовнішня тінь (юзер: маленькі зовнішні тіні на всіх кнопках)
   const ox = Math.max(2, Math.round(off * 0.35 * sc.spread));
-  // Android: вдавлений circle через кольоровий бордер (inset boxShadow + metalBg не рендеряться)
+  // Android: вдавлений circle через кольоровий бордер (inset boxShadow + surfaceBg не рендеряться)
   if (Platform.OS !== 'web') {
     const bw = Math.max(1, Math.round(ix * 0.5));
     return {
@@ -448,7 +448,7 @@ export function neuMetalCircleInset(t: ThemePalette, size: number): any {
     height: size,
     borderRadius: size / 2,
     backgroundColor: t.neu.base,
-    backgroundImage: metalBg(t),
+    backgroundImage: surfaceBg(t),
     backgroundClip: 'padding-box',
     alignItems: 'center',
     justifyContent: 'center',
@@ -466,19 +466,19 @@ export function neuMetalCircleInset(t: ThemePalette, size: number): any {
 }
 
 // гравированный текст на металле: тёмная тень сверху + светлая снизу (эффект чеканки)
-export function metalText(t: ThemePalette, color?: string): any {
+export function surfaceText(t: ThemePalette, color?: string): any {
   return {
     color: color ?? t.primaryText,
   };
 }
 
-// ====================== ЕДИНЫЙ МЕТАЛЛ-СКИН ======================
+// ====================== ЕДИНИЙ СКІН ПОВЕРХНІ ======================
 // Центральный диспетчер: один вызов стилизует любой элемент с ролью + модификаторами.
 // Роли: 'raised' | 'inset' | 'circle' | 'primary' | 'tab' | 'tabActive' | 'text'
 // Модификаторы: { size?, radius?, filled?, active?, pressed? }
-// Это даёт сплошную систему вместо разрозненных вызовов neuMetalRaised/neuMetalCircle/...
-type MetalRole = 'raised' | 'inset' | 'circle' | 'circleInset' | 'primary' | 'tab' | 'tabActive' | 'tabStamp' | 'tabStampActive' | 'stamp' | 'speakBtn' | 'deleteBtn' | 'libraryDeleteBtn' | 'convexConcave' | 'text';
-interface MetalOpts {
+// Это даёт сплошную систему вместо разрозненных вызовов surfaceRaised/surfaceCircle/...
+type SurfaceRole = 'raised' | 'inset' | 'circle' | 'circleInset' | 'primary' | 'tab' | 'tabActive' | 'tabStamp' | 'tabStampActive' | 'stamp' | 'speakBtn' | 'deleteBtn' | 'libraryDeleteBtn' | 'convexConcave' | 'text';
+interface SurfaceOpts {
   size?: number;
   radius?: number;
   filled?: boolean;
@@ -488,7 +488,7 @@ interface MetalOpts {
   /** Рівень глибини (ієрархія сцени): контейнер < елемент. 0.5 = м'який контейнер, 1 = звичайний, >1 = акцент. */
   strength?: number;
 }
-export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): any {
+export function surface(t: ThemePalette, role: SurfaceRole, opts: SurfaceOpts = {}): any {
   const radius = opts.radius ?? 14;
   // FLAT-режим (blackout): весь метал-скін → пласкі елементи з бордером кольору тексту
   if ((t as any).flat) {
@@ -538,35 +538,35 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
         // FLAT blackout: неактивні таби з чорним фоном (прозорі зливаються з доком)
         return { borderRadius: radius, backgroundColor: t.background };
       case 'text':
-        return metalText(t, opts.textColor);
+        return surfaceText(t, opts.textColor);
       default:
         return flatBox;
     }
   }
   switch (role) {
     case 'circle':
-      return neuMetalCircle(t, opts.size ?? 40, opts.filled ?? false);
+      return surfaceCircle(t, opts.size ?? 40, opts.filled ?? false);
     case 'circleInset':
-      return neuMetalCircleInset(t, opts.size ?? 40);
+      return surfaceCircleInset(t, opts.size ?? 40);
     case 'primary':
       // primary БЕЗ size = велика прямокутна кнопка (Check/Save), як у FLAT-гілці вище.
-      // neuMetalCircle тут давав "таблетку" (borderRadius=size/2, фіксовані 40x40).
+      // surfaceCircle тут давав "таблетку" (borderRadius=size/2, фіксовані 40x40).
       if (opts.size == null) return neuPrimary(t, radius);
-      return neuMetalCircle(t, opts.size, true);
+      return surfaceCircle(t, opts.size, true);
     case 'raised':
-      return neuMetalRaised(t, radius, opts.strength ?? 1);
+      return surfaceRaised(t, radius, opts.strength ?? 1);
     case 'inset':
-      return neuMetalInset(t, radius, opts.strength ?? 1);
+      return surfaceInset(t, radius, opts.strength ?? 1);
     case 'tab':
-      return metalTab(t, radius, false);
+      return surfaceTab(t, radius, false);
     case 'tabActive':
-      return metalTab(t, radius, true);
+      return surfaceTab(t, radius, true);
     case 'tabStamp':
-      return metalTabStamp(t, radius, false);
+      return surfaceTabStamp(t, radius, false);
     case 'tabStampActive':
-      return metalTabStamp(t, radius, true);
+      return surfaceTabStamp(t, radius, true);
     case 'stamp':
-      return metalStamp(t, opts.size ?? 36);
+      return surfaceStamp(t, opts.size ?? 36);
     case 'speakBtn':
       return neuSpeakBtn(t, opts.size ?? 32);
     case 'deleteBtn':
@@ -576,9 +576,9 @@ export function metal(t: ThemePalette, role: MetalRole, opts: MetalOpts = {}): a
     case 'convexConcave':
       return neuConvexConcave(t, radius, opts.strength ?? 1);
     case 'text':
-      return metalText(t, opts.textColor);
+      return surfaceText(t, opts.textColor);
     default:
-      return neuMetalRaised(t, radius);
+      return surfaceRaised(t, radius);
   }
 }
 
@@ -613,7 +613,7 @@ export function neuConvexConcave(t: ThemePalette, radius: number, strength = 1):
 
   return {
     backgroundColor: t.surface ?? t.neu.base,
-    backgroundImage: metalBg(t),
+    backgroundImage: surfaceBg(t),
     backgroundClip: 'padding-box',
     borderRadius: radius,
     boxShadow: [
@@ -684,7 +684,7 @@ export function neuSpeakBtn(t: ThemePalette, size: number): any {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: t.neu.base,
-    backgroundImage: metalBg(t),
+    backgroundImage: surfaceBg(t),
     backgroundClip: 'padding-box',
     boxShadow: [
       `${Math.max(1, Math.round(off * 0.5))}px ${Math.max(1, Math.round(off * 0.6))}px ${blur1}px ${specDark(t)}`,
@@ -747,7 +747,7 @@ export function neuDeleteBtn(t: ThemePalette, size: number): any {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: t.neu.base,
-    backgroundImage: metalBg(t),
+    backgroundImage: surfaceBg(t),
     backgroundClip: 'padding-box',
     boxShadow: [
       `${Math.max(2, Math.round(off * 0.6))}px ${Math.max(2, Math.round(off * 0.7))}px ${blur1}px ${specDark(t)}`,
@@ -811,7 +811,7 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: t.neu.base,
-    backgroundImage: metalBg(t),
+    backgroundImage: surfaceBg(t),
     backgroundClip: 'padding-box',
     boxShadow: [
       `${Math.max(2, Math.round(off * 0.6))}px ${Math.max(2, Math.round(off * 0.7))}px ${blur1}px ${specDark(t)}`,
@@ -826,9 +826,9 @@ export function neuLibraryDeleteBtn(t: ThemePalette, size: number): any {
 }
 
 // ШТАМПОВАННЫЙ МЕТАЛЛ: внешне ВДАВЛЕННАЯ «лунка» (inset well) + внутренне ВЫПУКЛЫЙ купол (convex dome).
-// Убирает «грязную» размытость: блик РЕЗКИЙ, форма машиностроительная (machined metal).
+// Убирает «грязную» размытость: блик РЕЗКИЙ, форма машиностроительная (machined surface).
 // Применять к крестикам (✕), выбранным элементам и кнопкам-индикаторам.
-function metalStamp(t: ThemePalette, size: number): any {
+function surfaceStamp(t: ThemePalette, size: number): any {
   const r = size / 2;
   const o = Math.max(2, Math.round(Math.pow(Math.max(size, 12), 0.72) * 0.5 * (t.neuScale?.depth ?? 1))); // глубина лунки — нелінійна, per-theme
   // Android: штампована лунка через кольоровий бордер (inset boxShadow + gradient не рендеряться)
@@ -881,7 +881,7 @@ function metalStamp(t: ThemePalette, size: number): any {
 }
 
 // таб в таб-баре: плоский (неактивный) или ВДАВЛЕННЫЙ металл (активный)
-function metalTab(t: ThemePalette, radius: number, active: boolean): any {
+function surfaceTab(t: ThemePalette, radius: number, active: boolean): any {
   const off = Math.max(3, Math.round(radius * 0.35));
   if (!active) {
     return {
@@ -912,15 +912,15 @@ function metalTab(t: ThemePalette, radius: number, active: boolean): any {
   return {
     borderRadius: radius,
     backgroundColor: t.neu.base,
-    backgroundImage: Platform.OS === 'web' ? metalBg(t) : undefined,
+    backgroundImage: Platform.OS === 'web' ? surfaceBg(t) : undefined,
     backgroundClip: 'padding-box',
     transition: 'box-shadow 160ms ease, background 160ms ease',
     ...(Platform.OS === 'web' ? { boxShadow: insets } : insets),
   };
 }
 
-// штампованный таб: ВНЕШНИЙ вдавленная лунка + ВНУТРЕННИЙ выпуклый купол (machined metal).
-function metalTabStamp(t: ThemePalette, radius: number, active: boolean): any {
+// штампованный таб: ВНЕШНИЙ вдавленная лунка + ВНУТРЕННИЙ выпуклый купол (machined surface).
+function surfaceTabStamp(t: ThemePalette, radius: number, active: boolean): any {
   const o = Math.max(4, Math.round(radius * 0.4));
   const { soft: s, light: l, shadowDark: sd, hi: rim } = t.neu;
   const ix = Math.max(2, Math.round(o * 0.5));
@@ -951,7 +951,7 @@ function metalTabStamp(t: ThemePalette, radius: number, active: boolean): any {
   return {
     borderRadius: radius,
     backgroundColor: t.neu.base,
-    backgroundImage: isWeb ? metalBg(t) : undefined,
+    backgroundImage: isWeb ? surfaceBg(t) : undefined,
     backgroundClip: 'padding-box',
     transition: 'box-shadow 160ms ease, background 160ms ease',
     ...(isWeb ? { boxShadow: insets } : insets),
@@ -960,7 +960,7 @@ function metalTabStamp(t: ThemePalette, radius: number, active: boolean): any {
 }
 
 // металлический inset (утопленный) — для полей ввода, контейнеров
-export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): any {
+export function surfaceInset(t: ThemePalette, radius: number, strength = 1): any {
   const sc = t.neuScale ?? { depth: 1, spread: 1 };
   const off = Math.max(3, Math.round(Math.pow(Math.max(radius, 8), 0.75) * 1.6 * strength * sc.depth));
   const ix = Math.max(2, Math.round(off * 0.6));
@@ -989,7 +989,7 @@ export function neuMetalInset(t: ThemePalette, radius: number, strength = 1): an
 
   return {
     backgroundColor: t.neu.base,
-    backgroundImage: metalBg(t),
+    backgroundImage: surfaceBg(t),
     backgroundClip: 'padding-box',
     borderRadius: radius,
     // Повноцінна неоморфічна лунка:

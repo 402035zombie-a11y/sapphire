@@ -6,7 +6,7 @@ import { View, Text, TouchableOpacity, TextInput, FlatList, Pressable } from 're
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { useT } from '../i18n';
-import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { surface, neuShadowPad, screenBg, surfaceText } from '../theme/neu';
 import { LANGUAGES, LangOption } from '../utils/languages';
 import Icon from './Icon';
 
@@ -37,7 +37,7 @@ export default function LanguageDropdown({ value, onSelect, onClose, excludeRu }
   return (
     <View
       style={[
-        metal(theme, 'raised', { radius: a.radius + 4 }),
+        surface(theme, 'raised', { radius: a.radius + 4 }),
         {
           position: 'absolute',
           top: a.dim(0.038, 20, 28) + a.pad,
@@ -52,7 +52,7 @@ export default function LanguageDropdown({ value, onSelect, onClose, excludeRu }
     >
       <TextInput
         style={[
-          metal(theme, 'inset', { radius: a.radius }),
+          surface(theme, 'inset', { radius: a.radius }),
           {
             paddingHorizontal: 10,
             paddingVertical: a.tiny ? 6 : 8,

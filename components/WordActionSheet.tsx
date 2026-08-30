@@ -7,7 +7,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
 import Icon from './Icon';
-import { metal } from '../theme/neu';
+import { surface } from '../theme/neu';
 import { useT } from '../i18n';
 import ModalSheet from './ModalSheet';
 import { translateCached, translationErrorMessage } from '../services/translationService';
@@ -107,7 +107,7 @@ export default function WordActionSheet({ visible, word, sentence, lang = 'en', 
   const fromLang = effectiveLang(lang);
 
   const btnBase = [
-    metal(theme, 'circle', { size: a.icon(36) }),
+    surface(theme, 'circle', { size: a.icon(36) }),
     {
       width: a.icon(36),
       height: a.icon(36),
@@ -157,8 +157,8 @@ export default function WordActionSheet({ visible, word, sentence, lang = 'en', 
         <TouchableOpacity
           style={[
             isKnown
-              ? { ...metal(theme, 'raised', { radius: a.radius }), backgroundColor: theme.surface, borderColor: theme.success, borderWidth: 1 }
-              : { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary },
+              ? { ...surface(theme, 'raised', { radius: a.radius }), backgroundColor: theme.surface, borderColor: theme.success, borderWidth: 1 }
+              : { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary },
             {
               paddingVertical: Math.max(10, Math.round(13 * a.scale)),
               alignItems: 'center',

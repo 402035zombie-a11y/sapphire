@@ -5,14 +5,14 @@ import { TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import Icon from './Icon';
-import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { surface, neuShadowPad, screenBg, surfaceText } from '../theme/neu';
 
 export default function HeaderHomeButton({ navigation }: { navigation: any }) {
   const theme = useTheme();
   const a = useAdaptive();
   return (
     <TouchableOpacity
-      style={[metal(theme, 'circle', { size: a.icon(38) }), { marginLeft: 14, padding: 0 }]}
+      style={[surface(theme, 'circle', { size: a.icon(38) }), { marginLeft: 14, padding: 0 }]}
       onPress={() => navigation.navigate('Home')}
       hitSlop={10}
     >

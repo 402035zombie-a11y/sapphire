@@ -7,7 +7,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from './Icon';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { surface, neuShadowPad, screenBg, surfaceText } from '../theme/neu';
 import { FONTS } from '../theme/constants';
 
 type RouteName = 'Library' | 'Dictionary' | 'Training';
@@ -55,7 +55,7 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
           borderRadius: Math.round(a.radius * 1.6),
           // N1 ревізія: док = контейнер сцени → СЛАБКИЙ raised (depth 0.55).
           // Елементи всередині завжди глибші за контейнер, інакше об'єм не читається.
-          ...metal(theme, 'raised', { radius: Math.round(a.radius * 1.6), strength: 0.55 }),
+          ...surface(theme, 'raised', { radius: Math.round(a.radius * 1.6), strength: 0.55 }),
         }}
       >
       {state.routes.map((route: any, index: number) => {
@@ -83,8 +83,8 @@ export default function BottomTabBar({ state, descriptors, navigation }: any) {
               // N1 v3 (юзер): активний = ВИПУКЛИЙ + заливка primary + виразний внутрішній рельєф
               // Неактивні = ВДАВЛЕНІ лунки. Контраст станів = протилежні тіні.
               ...(focused
-                ? metal(theme, 'primary', { radius: a.radius })
-                : metal(theme, 'inset', { radius: a.radius, strength: 1.0 })),
+                ? surface(theme, 'primary', { radius: a.radius })
+                : surface(theme, 'inset', { radius: a.radius, strength: 1.0 })),
             }}
           >
             <Icon

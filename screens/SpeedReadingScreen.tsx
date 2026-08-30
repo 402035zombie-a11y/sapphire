@@ -16,7 +16,7 @@ import { getBookParagraphs } from '../services/bookText';
 import { useSettingsStore } from '../store/settingsStore';
 import Icon from '../components/Icon';
 import SupportButton from '../components/SupportButton';
-import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { surface, neuShadowPad, screenBg, surfaceText } from '../theme/neu';
 import { useT } from '../i18n';
 
 // сокращения (т.к., т.е., т.д., др., пр., пн., ср. и т.п.) НЕ дают паузу
@@ -154,7 +154,7 @@ export default function SpeedReadingScreen() {
     return (
       <Screen contentStyle={{ alignItems: 'center', justifyContent: 'center' }}>
         <TouchableOpacity
-          style={[metal(theme, 'primary', { radius: a.radius }), { paddingVertical: 12, paddingHorizontal: 24 }]}
+          style={[surface(theme, 'primary', { radius: a.radius }), { paddingVertical: 12, paddingHorizontal: 24 }]}
           onPress={() => navigation.navigate('Library' as never)}
         >
           <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold, fontSize: a.body }}>{t('Select a book')}</Text>
@@ -249,7 +249,7 @@ export default function SpeedReadingScreen() {
 
   const speedBox = (
     <View style={styles.speedBox}>
-      <TouchableOpacity style={[styles.speedBtn, metal(theme, 'circle', { size: a.fab() })]} onPress={() => setWpm((v) => clampWpm(v - 25))}>
+      <TouchableOpacity style={[styles.speedBtn, surface(theme, 'circle', { size: a.fab() })]} onPress={() => setWpm((v) => clampWpm(v - 25))}>
         <Text style={[styles.speedBtnText, { color: theme.primaryText }]}>−</Text>
       </TouchableOpacity>
       <TextField
@@ -259,7 +259,7 @@ export default function SpeedReadingScreen() {
         keyboardType="numeric"
         onChangeText={(t) => setWpm(clampWpm(Number(t.replace(/\D/g, ''))))}
       />
-      <TouchableOpacity style={[styles.speedBtn, metal(theme, 'circle', { size: a.fab() })]} onPress={() => setWpm((v) => clampWpm(v + 25))}>
+      <TouchableOpacity style={[styles.speedBtn, surface(theme, 'circle', { size: a.fab() })]} onPress={() => setWpm((v) => clampWpm(v + 25))}>
         <Text style={[styles.speedBtnText, { color: theme.primaryText }]}>+</Text>
       </TouchableOpacity>
       <Text style={[styles.speedLabel, { color: theme.secondaryText }]}>{t('words/min')}</Text>
@@ -325,7 +325,7 @@ export default function SpeedReadingScreen() {
       showsVerticalScrollIndicator={false}
     >
 
-      <View style={[styles.stage, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { paddingVertical: stagePad }]}>
+      <View style={[styles.stage, surface(theme, 'raised', { radius: a.radius, strength: 0.6 }), { paddingVertical: stagePad }]}>
         {variant === 'ticker' ? (
           <View
             style={styles.tickerWrap}
@@ -369,20 +369,20 @@ export default function SpeedReadingScreen() {
 
       <View style={[styles.playerRow, { marginTop: a.small ? 8 : 16 }]}>
         <View style={styles.controls}>
-          <TouchableOpacity style={[styles.ctrlBtn, metal(theme, 'circle', { size: ctrlSize })]} onPress={() => setResetPrompt(true)}>
+          <TouchableOpacity style={[styles.ctrlBtn, surface(theme, 'circle', { size: ctrlSize })]} onPress={() => setResetPrompt(true)}>
             <Icon name="close" size={a.dim(0.032, 18, 26)} color={theme.primaryText} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.ctrlBtn, metal(theme, 'circle', { size: ctrlSize })]} onPress={goPrevSentence}>
+          <TouchableOpacity style={[styles.ctrlBtn, surface(theme, 'circle', { size: ctrlSize })]} onPress={goPrevSentence}>
             <Icon name="chevron-back" size={a.dim(0.032, 18, 26)} color={theme.primaryText} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.playBtn, metal(theme, 'primary', { size: ctrlSize + 12 })]} onPress={() => {
+          <TouchableOpacity style={[styles.playBtn, surface(theme, 'primary', { size: ctrlSize + 12 })]} onPress={() => {
             // Если дошли до конца — при старте начинаем сначала.
             if (!playing && pos >= words.length - 1) setPos(0);
             setPlaying((p) => !p);
           }}>
             <Icon name={playing ? 'pause' : 'play'} size={a.dim(0.042, 22, 34)} color={theme.onPrimary} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.ctrlBtn, metal(theme, 'circle', { size: ctrlSize })]} onPress={goNextSentence}>
+          <TouchableOpacity style={[styles.ctrlBtn, surface(theme, 'circle', { size: ctrlSize })]} onPress={goNextSentence}>
             <Icon name="chevron-forward" size={a.dim(0.032, 18, 26)} color={theme.primaryText} />
           </TouchableOpacity>
         </View>
@@ -392,7 +392,7 @@ export default function SpeedReadingScreen() {
       {variant === 'rsvp' && (
         <View style={{ width: '92%', maxWidth: 320, alignSelf: 'center', marginTop: a.gap }}>
           <TouchableOpacity
-            style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad, justifyContent: 'center' }]}
+            style={[styles.microToggle, surface(theme, 'raised', { radius: a.radius, strength: 0.6 }), { paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad, justifyContent: 'center' }]}
             onPress={() => setMicroPauses((v) => !v)}
           >
             <View style={[styles.microDot, { backgroundColor: microPauses ? theme.success : theme.border }, !microPauses && { backgroundColor: theme.border }]} />
@@ -400,7 +400,7 @@ export default function SpeedReadingScreen() {
           </TouchableOpacity>
           {microPauses && (
             <View style={{ width: '100%', marginTop: 6 }}>
-              <View style={[styles.pauseRow, metal(theme, 'inset', { radius: a.radius })]}>
+              <View style={[styles.pauseRow, surface(theme, 'inset', { radius: a.radius })]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseCommaMs - 10); setPauseCommaMs(v); setReader({ pauseCommaMs: v }); }}>
                     <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
@@ -412,7 +412,7 @@ export default function SpeedReadingScreen() {
                 </View>
                 <Text style={[styles.pauseHint, { color: theme.secondaryText }]}>{t('comma , ; :')}</Text>
               </View>
-              <View style={[styles.pauseRow, metal(theme, 'inset', { radius: a.radius })]}>
+              <View style={[styles.pauseRow, surface(theme, 'inset', { radius: a.radius })]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseSentMs - 10); setPauseSentMs(v); setReader({ pauseSentMs: v }); }}>
                     <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
@@ -424,7 +424,7 @@ export default function SpeedReadingScreen() {
                 </View>
                 <Text style={[styles.pauseHint, { color: theme.secondaryText }]}>{t('end . ! ?')}</Text>
               </View>
-              <View style={[styles.pauseRow, metal(theme, 'inset', { radius: a.radius })]}>
+              <View style={[styles.pauseRow, surface(theme, 'inset', { radius: a.radius })]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <TouchableOpacity style={styles.pauseBtn} onPress={() => { const v = Math.max(0, pauseBracketMs - 10); setPauseBracketMs(v); setReader({ pauseBracketMs: v }); }}>
                     <Text style={[styles.pauseBtnText, { color: theme.primaryText }]}>−</Text>
@@ -443,7 +443,7 @@ export default function SpeedReadingScreen() {
 
       {variant === 'ticker' && (
         <TouchableOpacity
-          style={[styles.microToggle, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
+          style={[styles.microToggle, surface(theme, 'raised', { radius: a.radius, strength: 0.6 }), { marginTop: a.small ? 8 : 16, paddingVertical: a.small ? 8 : 12, paddingHorizontal: a.pad }]}
           onPress={() => setTickerDir((d) => (d === 'rtl' ? 'ltr' : 'rtl'))}
         >
           <View style={[styles.microDot, { backgroundColor: tickerDir === 'rtl' ? theme.success : theme.border }, tickerDir !== 'rtl' && { backgroundColor: theme.border }]} />
@@ -457,13 +457,13 @@ export default function SpeedReadingScreen() {
             <Text style={[styles.resetTitle, { color: theme.primaryText }]}>{t('Start over?')}</Text>
             <View style={styles.resetRow}>
               <TouchableOpacity
-                style={[styles.resetBtn, metal(theme, 'primary', { radius: a.radius })]}
+                style={[styles.resetBtn, surface(theme, 'primary', { radius: a.radius })]}
                 onPress={() => { setResetPrompt(false); stopAll(); }}
               >
                 <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold, fontSize: a.body }}>{t('Yes')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.resetBtn, metal(theme, 'inset', { radius: a.radius })]}
+                style={[styles.resetBtn, surface(theme, 'inset', { radius: a.radius })]}
                 onPress={() => setResetPrompt(false)}
               >
                 <Text style={{ color: theme.primaryText, fontFamily: FONTS.bold, fontSize: a.body }}>{t('No')}</Text>
@@ -552,7 +552,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     },
     controls: { flexDirection: 'row', alignItems: 'center', gap: Math.round(Math.max(10, 24 * a.scale)), marginTop: a.small ? 8 : a.gap },
     playBtn: { alignItems: 'center', justifyContent: 'center' },
-    ctrlBtn: { ...metal(theme, 'circle', { size: Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale))) }), borderRadius: Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale))) / 2 },
+    ctrlBtn: { ...surface(theme, 'circle', { size: Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale))) }), borderRadius: Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale))) / 2 },
     progressTrack: { height: 6, width: '100%', borderRadius: 3, overflow: 'hidden' },
     progressFill: { height: 6 },
     microToggle: {
@@ -575,7 +575,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
       borderRadius: a.radius,
       flexWrap: 'nowrap',
     },
-    pauseBtn: { ...metal(theme, 'circle', { size: pauseSz }), width: pauseSz, height: pauseSz, borderRadius: pauseSz / 2, alignItems: 'center', justifyContent: 'center' },
+    pauseBtn: { ...surface(theme, 'circle', { size: pauseSz }), width: pauseSz, height: pauseSz, borderRadius: pauseSz / 2, alignItems: 'center', justifyContent: 'center' },
     pauseBtnText: { fontSize: a.fs(22), fontFamily: FONTS.bold },
     pauseValue: { fontSize: a.title, fontFamily: FONTS.bold, minWidth: 60, textAlign: 'center' },
     pauseHint: { fontSize: a.fs(12), flex: 1, textAlign: 'right', marginLeft: 8 },

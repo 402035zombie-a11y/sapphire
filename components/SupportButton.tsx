@@ -7,7 +7,7 @@ import { TouchableOpacity, Modal } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import Icon from './Icon';
-import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { surface, neuShadowPad, screenBg, surfaceText } from '../theme/neu';
 import SupportAuthorModal from './SupportAuthorModal';
 import { useSupportStore } from '../store/supportStore';
 import { openDonatePage } from '../services/donate';
@@ -32,7 +32,7 @@ export default function SupportButton({
   return (
     <>
       <TouchableOpacity
-        style={[metal(theme, variant, { size: btnSize }), { padding: 0 }]}
+        style={[surface(theme, variant, { size: btnSize }), { padding: 0 }]}
         onPress={() => setOpen(true)}
         hitSlop={8}
         accessibilityLabel={t("Support the author")}

@@ -9,7 +9,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useLibraryStore } from '../store/libraryStore';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal, neuShadowPad } from '../theme/neu';
+import { surface, neuShadowPad } from '../theme/neu';
 import { useT } from '../i18n';
 import Screen from '../components/Screen';
 
@@ -61,7 +61,7 @@ export default function SectionsScreen() {
           <Text style={{ color: theme.secondaryText }}>{t('No sections.')}</Text>
         ) : (
           sections.map((item, index) => (
-            <TouchableOpacity key={String(index)} style={[styles.row, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { borderBottomWidth: 0, backgroundColor: index === currentSectionIdx ? theme.selected : theme.neu.base }]} onPress={() => go(item.paragraphIndex)}>
+            <TouchableOpacity key={String(index)} style={[styles.row, surface(theme, 'raised', { radius: a.radius, strength: 0.6 }), { borderBottomWidth: 0, backgroundColor: index === currentSectionIdx ? theme.selected : theme.neu.base }]} onPress={() => go(item.paragraphIndex)}>
               <Text style={[styles.index, { color: theme.secondaryText }]}>{index + 1}</Text>
               <Text style={[styles.name, { color: theme.primaryText }]} numberOfLines={2}>
                 {item.title}

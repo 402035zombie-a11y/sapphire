@@ -11,7 +11,7 @@ import { useSettingsStore } from '../store/settingsStore';
 import { ThemeMode } from '../theme/themes';
 import Icon from '../components/Icon';
 import { FONTS } from '../theme/constants';
-import { neuInset, neuRaised, neuCircle , metal } from '../theme/neu';
+import { neuInset, neuRaised, neuCircle , surface } from '../theme/neu';
 import { useT } from '../i18n';
 
 interface Props {
@@ -94,7 +94,7 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
         <TouchableOpacity
           onPress={onClose}
           hitSlop={10}
-          style={[metal(theme, 'circle', { size: a.fab() }), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
+          style={[surface(theme, 'circle', { size: a.fab() }), { position: 'absolute', top: a.pad, right: a.pad, zIndex: 20, padding: 0 }]}
         >
           <Icon name="close" size={a.icon(22)} color={theme.secondaryText} />
         </TouchableOpacity>
@@ -126,8 +126,8 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                     style={[
                       styles.chip,
                       active
-                        ? metal(theme, 'primary', { radius: 8 })
-                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
+                        ? surface(theme, 'primary', { radius: 8 })
+                        : surface(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
                     ]}
                     onPress={() => setReader({ fontFamily: f.id })}
                   >
@@ -158,8 +158,8 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                     style={[
                       styles.chip,
                       active
-                        ? metal(theme, 'primary', { radius: 8 })
-                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
+                        ? surface(theme, 'primary', { radius: 8 })
+                        : surface(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
                     ]}
                     onPress={() => setReader({ textAlign: al.id as any })}
                   >
@@ -212,8 +212,8 @@ export default function FontSettingsSheet({ visible, mode = 'dual', onClose }: P
                     style={[
                       styles.chip,
                       active
-                        ? metal(theme, 'primary', { radius: 8 })
-                        : metal(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
+                        ? surface(theme, 'primary', { radius: 8 })
+                        : surface(theme, 'convexConcave', { radius: 8, strength: 0.85 }),
                     ]}
                     onPress={() => setTheme(th.id)}
                   >
@@ -257,7 +257,7 @@ function makeStyles(a: Adaptive, theme: ReturnType<typeof useTheme>) {
       paddingHorizontal: 4,
       minHeight: a.tiny ? 34 : 40,
     },
-    stepBtn: { ...metal(theme, 'circle', { size: a.tiny ? 30 : 36 }), paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 10 : 14 },
+    stepBtn: { ...surface(theme, 'circle', { size: a.tiny ? 30 : 36 }), paddingVertical: a.tiny ? 4 : 6, paddingHorizontal: a.tiny ? 10 : 14 },
     stepSign: { fontSize: a.fs(20), fontFamily: FONTS.bold },
     stepperVal: { fontSize: a.body, fontFamily: FONTS.bold },
     toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 2, gap: 8 },

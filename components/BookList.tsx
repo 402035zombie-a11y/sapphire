@@ -16,7 +16,7 @@ import { Book } from '../store/libraryStore';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { useT } from '../i18n';
-import { metal } from '../theme/neu';
+import { surface } from '../theme/neu';
 import Icon from './Icon';
 
 interface Props {
@@ -39,11 +39,11 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
   const theme = useTheme();
   const a = useAdaptive();
   const t = useT();
-  // B10/HWUI: memoize metal()-стилі — НЕ перераховувати тіні при кожному render (скрол FlatList).
+  // B10/HWUI: memoize surface()-стилі — НЕ перераховувати тіні при кожному render (скрол FlatList).
   // Залежність від [theme, a.radius, a.scale] — перерахунок тільки при зміні теми/розміру.
-  const raisedStyle = React.useMemo(() => metal(theme, 'raised', { radius: a.radius, strength: 0.9 }), [theme, a.radius, a.scale]);
+  const raisedStyle = React.useMemo(() => surface(theme, 'raised', { radius: a.radius, strength: 0.9 }), [theme, a.radius, a.scale]);
   const circleStyle = React.useMemo(
-    () => metal(theme, 'circleInset', { size: a.dim(0.05, 30, 40) }),
+    () => surface(theme, 'circleInset', { size: a.dim(0.05, 30, 40) }),
     [theme, a.radius, a.scale],
   );
   return (
@@ -69,7 +69,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
         <TouchableOpacity
           onPress={(e: any) => { e?.stopPropagation?.(); onRemove(item.id); }}
           hitSlop={10}
-          style={[metal(theme, 'libraryDeleteBtn', { size: a.dim(0.05, 28, 36) }), { padding: 0 }]}
+          style={[surface(theme, 'libraryDeleteBtn', { size: a.dim(0.05, 28, 36) }), { padding: 0 }]}
         >
           <Icon name="close" size={a.dim(0.025, 14, 18)} color={theme.danger} />
         </TouchableOpacity>

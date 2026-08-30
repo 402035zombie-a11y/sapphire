@@ -10,7 +10,7 @@ import { useLibraryStore } from '../store/libraryStore';
 import { getBookParagraphs } from '../services/bookText';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal, neuShadowPad } from '../theme/neu';
+import { surface, neuShadowPad } from '../theme/neu';
 import { useT } from '../i18n';
 import Screen from '../components/Screen';
 
@@ -64,7 +64,7 @@ export default function BookmarksScreen() {
           </Text>
         ) : (
           items.map((item) => (
-            <TouchableOpacity key={String(item.index)} style={[styles.row, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { borderBottomWidth: 0 }]} onPress={() => open(item.index)}>
+            <TouchableOpacity key={String(item.index)} style={[styles.row, surface(theme, 'raised', { radius: a.radius, strength: 0.6 }), { borderBottomWidth: 0 }]} onPress={() => open(item.index)}>
               <Icon name="bookmark-filled" size={18} color={theme.primaryText} />
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={[styles.snippet, { color: theme.primaryText }]} numberOfLines={2}>

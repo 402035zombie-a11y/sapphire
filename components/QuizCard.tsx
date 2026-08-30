@@ -4,7 +4,7 @@ import React, { useState, useEffect, memo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal } from '../theme/neu';
+import { surface } from '../theme/neu';
 import { TrainingProgress } from '../store/trainingStore';
 import * as Speech from 'expo-speech';
 import { useT } from '../i18n';
@@ -71,15 +71,15 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
   const stability = Math.round(progress?.stability ?? 0);
 
   return (
-    <View style={[styles.card, metal(theme, 'raised', { radius: a.radius + 4, strength: 0.85 }), { backgroundColor: theme.surface }]}>
+    <View style={[styles.card, surface(theme, 'raised', { radius: a.radius + 4, strength: 0.85 }), { backgroundColor: theme.surface }]}>
       <View style={styles.wordRow}>
         {stability > 0 && (
-          <View style={[styles.boxBadge, metal(theme, 'inset', { radius: 8 })]}>
+          <View style={[styles.boxBadge, surface(theme, 'inset', { radius: 8 })]}>
             <Text style={styles.boxText}>{t("{n}d").replace("{n}", String(stability))}</Text>
           </View>
         )}
         <Text style={styles.word}>{item.word}</Text>
-        <TouchableOpacity style={[styles.speakBtn, metal(theme, 'speakBtn', { size: a.icon(32) })]} onPress={() => speak(item.word, item.fromLang || 'en')} hitSlop={6}>
+        <TouchableOpacity style={[styles.speakBtn, surface(theme, 'speakBtn', { size: a.icon(32) })]} onPress={() => speak(item.word, item.fromLang || 'en')} hitSlop={6}>
           <Icon name="play" size={a.icon(16)} color={theme.primaryText} />
         </TouchableOpacity>
       </View>
@@ -100,7 +100,7 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
               style={[
                 styles.option,
                 // Профіль 1: подвійно випуклі кнопки вибору відповіді
-                metal(theme, showState && isCorrect ? 'primary' : showState && isPicked ? 'inset' : 'raised', { radius: a.radius, strength: 0.85 }),
+                surface(theme, showState && isCorrect ? 'primary' : showState && isPicked ? 'inset' : 'raised', { radius: a.radius, strength: 0.85 }),
                 answered && isCorrect && { backgroundColor: theme.success },
                 answered && isPicked && !isCorrect && { backgroundColor: theme.danger },
                 a.width >= 700 && { flexBasis: '48%', flexGrow: 1 },
@@ -116,7 +116,7 @@ function QuizCard({ item, onAnswer, onNext, progress, resetKey }: Props) {
               >
                 {opt}
               </Text>
-              <TouchableOpacity style={[styles.speakSmall, metal(theme, 'speakBtn', { size: a.icon(28) })]} onPress={() => speak(opt, item.toLang || 'en')} hitSlop={6}>
+              <TouchableOpacity style={[styles.speakSmall, surface(theme, 'speakBtn', { size: a.icon(28) })]} onPress={() => speak(opt, item.toLang || 'en')} hitSlop={6}>
                 <Icon name="play" size={a.icon(13)} color={theme.primaryText} />
               </TouchableOpacity>
             </TouchableOpacity>

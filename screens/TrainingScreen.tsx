@@ -33,7 +33,7 @@ import { useSupportAutoOpen } from '../hooks/useSupportAutoOpen';
 import { useSupportStore } from '../store/supportStore';
 import { showSupportAd } from '../services/monetization';
 import { openDonatePage } from '../services/donate';
-import { metal, neuShadowPad } from '../theme/neu';
+import { surface, neuShadowPad } from '../theme/neu';
 import { FONTS } from '../theme/constants';
 
 const TARGET_STREAK = 5;
@@ -124,8 +124,8 @@ export default function TrainingScreen() {
     // Індикатори прогресу слова (крапки):
     // inactive = Профіль 2 (зовнішньо випуклі, внутрішньо вдавлені)
     // active = Профіль 1 (зовнішньо і внутрішньо випуклі + акцентний колір)
-    dotInactive: { width: a.icon(14), height: a.icon(14), borderRadius: a.icon(14) / 2, ...metal(theme, 'convexConcave', { radius: a.icon(14) / 2, strength: 0.85 }) },
-    dotActive: { width: a.icon(14), height: a.icon(14), borderRadius: a.icon(14) / 2, ...metal(theme, 'primary', { radius: a.icon(14) / 2 }), backgroundColor: theme.primary },
+    dotInactive: { width: a.icon(14), height: a.icon(14), borderRadius: a.icon(14) / 2, ...surface(theme, 'convexConcave', { radius: a.icon(14) / 2, strength: 0.85 }) },
+    dotActive: { width: a.icon(14), height: a.icon(14), borderRadius: a.icon(14) / 2, ...surface(theme, 'primary', { radius: a.icon(14) / 2 }), backgroundColor: theme.primary },
     streakNum: { fontSize: a.body, fontFamily: 'bold', marginRight: a.fab() * 2 },
     accuracy: { fontSize: a.small_fs, textAlign: 'center', marginBottom: a.gap },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: a.pad },
@@ -133,7 +133,7 @@ export default function TrainingScreen() {
     bigCount: { fontSize: a.fs(a.isTablet ? 60 : 44), fontFamily: 'bold', lineHeight: Math.round(a.fs(a.isTablet ? 60 : 44) * 1.05) },
     countLabel: { fontSize: a.small_fs, lineHeight: Math.round(a.small_fs * 1.25), flexShrink: 1 },
     result: { marginTop: 8, marginBottom: a.gap, fontSize: a.body },
-    finishBanner: { ...metal(theme, 'raised', { radius: a.radius + 4, strength: 0.6 }), alignItems: 'center', padding: a.pad, gap: 2, borderWidth: 0 },
+    finishBanner: { ...surface(theme, 'raised', { radius: a.radius + 4, strength: 0.6 }), alignItems: 'center', padding: a.pad, gap: 2, borderWidth: 0 },
     finishTitle: { fontSize: a.title, fontFamily: 'bold' },
     finishSub: { fontSize: a.body, marginTop: 4, marginBottom: 6 },
     btn: { flex: 1, borderRadius: a.radius + 2, paddingVertical: a.tiny ? 12 : 16, paddingHorizontal: a.tiny ? 10 : 16, alignItems: 'center', minHeight: a.tiny ? 56 : 64 },
@@ -572,7 +572,7 @@ export default function TrainingScreen() {
           <SupportButton size={a.fab()} iconSize={Math.round(a.fab() * 0.5)} />
         </View>
         {finished && (
-          <View style={[styles.finishBanner, metal(theme, 'raised', { radius: a.radius + 4, strength: 0.6 }), { borderColor: theme.success }]}>
+          <View style={[styles.finishBanner, surface(theme, 'raised', { radius: a.radius + 4, strength: 0.6 }), { borderColor: theme.success }]}>
             <Text style={[styles.finishTitle, { color: theme.success }]}>{t("Keep it up! 🎉")}</Text>
             <Text style={[styles.finishSub, { color: theme.primaryText }]}>{t("All words from the book are learned!")}</Text>
             <Text style={[styles.finishStats, { color: theme.secondaryText }]}>
@@ -582,7 +582,7 @@ export default function TrainingScreen() {
         )}
 
         {/* Карточка прогресса: Профіль 2 (зовнішньо випукла / внутрішньо вдавлена) */}
-        <View style={[styles.heroCard, metal(theme, 'convexConcave', { radius: a.radius + 4, strength: 0.95 })]}>
+        <View style={[styles.heroCard, surface(theme, 'convexConcave', { radius: a.radius + 4, strength: 0.95 })]}>
           <View style={styles.heroTop}>
             <Text style={[styles.bigCount, { color: theme.primary }]}>{entries.length}</Text>
             <Text style={[styles.countLabel, { color: theme.secondaryText }]}>{t("words")}{'\n'}{t("in dictionary")}</Text>
@@ -647,7 +647,7 @@ export default function TrainingScreen() {
           ] as const).map(({ mode: m, label, sub }) => (
             <TouchableOpacity
               key={m}
-              style={[styles.btn, metal(theme, 'raised', { radius: a.radius + 2, strength: 0.85 }), { width: '100%' }]}
+              style={[styles.btn, surface(theme, 'raised', { radius: a.radius + 2, strength: 0.85 }), { width: '100%' }]}
               onPress={() => start(m)}
             >
               <Text style={[styles.btnText, { color: theme.primaryText }]}>{label}</Text>
@@ -657,15 +657,15 @@ export default function TrainingScreen() {
         </View>
 
         {!routeBookId && (
-          <View style={[styles.sourceCard, metal(theme, 'convexConcave', { radius: a.radius + 4, strength: 0.95 })]}>
+          <View style={[styles.sourceCard, surface(theme, 'convexConcave', { radius: a.radius + 4, strength: 0.95 })]}>
             <Text style={[styles.sourceLabel, { color: theme.secondaryText }]}>{t("Train")}</Text>
             <View style={styles.sourceTabs}>
               <TouchableOpacity
                 style={[
                   styles.sourceTab,
                   source === 'all'
-                    ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                    : metal(theme, 'convexConcave', { radius: a.radius, strength: 0.85 })
+                    ? { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                    : surface(theme, 'convexConcave', { radius: a.radius, strength: 0.85 })
                 ]}
                 onPress={() => setSource('all')}
               >
@@ -679,8 +679,8 @@ export default function TrainingScreen() {
                   style={[
                     styles.sourceTab,
                     source === b.id
-                      ? { ...metal(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
-                      : metal(theme, 'convexConcave', { radius: a.radius, strength: 0.85 })
+                      ? { ...surface(theme, 'primary', { radius: a.radius }), backgroundColor: theme.primary }
+                      : surface(theme, 'convexConcave', { radius: a.radius, strength: 0.85 })
                   ]}
                   onPress={() => setSource(b.id)}
                 >
@@ -738,10 +738,10 @@ export default function TrainingScreen() {
         <IconButton icon="arrow-back" onPress={() => { setStarted(false); setFinished(false); setIndex(0); }} variant="circle" size={a.icon(36)} hitSlop={8} />
         <View style={styles.counterBadges}>
           {/* Профіль 2: зовнішньо випуклий / внутрішньо вдавлений */}
-          <View style={[styles.counterBadge, metal(theme, 'convexConcave', { radius: a.radius, strength: 0.85 }), { backgroundColor: theme.success }]}>
+          <View style={[styles.counterBadge, surface(theme, 'convexConcave', { radius: a.radius, strength: 0.85 }), { backgroundColor: theme.success }]}>
             <Text style={[styles.counterBadgeText, { color: "#FFFFFF" }]}>✓ {stats.correct}</Text>
           </View>
-          <View style={[styles.counterBadge, metal(theme, 'convexConcave', { radius: a.radius, strength: 0.85 }), { backgroundColor: theme.danger }]}>
+          <View style={[styles.counterBadge, surface(theme, 'convexConcave', { radius: a.radius, strength: 0.85 }), { backgroundColor: theme.danger }]}>
             <Text style={[styles.counterBadgeText, { color: "#FFFFFF" }]}>✗ {stats.wrong}</Text>
           </View>
         </View>
@@ -753,7 +753,7 @@ export default function TrainingScreen() {
         <View style={styles.dots}>{dots}</View>
         {/* Напрямок: слово→переклад / переклад→слово — Профіль 1 з делікатним мікро-об'ємом */}
         <TouchableOpacity
-          style={[metal(theme, 'raised', { radius: 999, strength: 0.12 }),
+          style={[surface(theme, 'raised', { radius: 999, strength: 0.12 }),
                   { flexDirection: 'row', alignItems: 'center', gap: 4,
                     paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999 }]}
           onPress={() => setDirections((d) => ({ ...d, [mode]: !d[mode] }))}
@@ -772,11 +772,11 @@ export default function TrainingScreen() {
       )}
 
       {mode === 'type' && current && (
-        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius, strength: 0.85 }), { padding: a.pad, backgroundColor: theme.surface }]}>
+        <View style={[styles.typeCard, surface(theme, 'raised', { radius: a.radius, strength: 0.85 }), { padding: a.pad, backgroundColor: theme.surface }]}>
           <View style={styles.wordRow}>
             <Text style={styles.typeWord}>{reverse ? current.translation : (current.surfaceForm || current.word)}</Text>
             {!reverse && (
-              <TouchableOpacity style={[styles.speakBtn, metal(theme, 'speakBtn', { size: a.icon(32) })]} onPress={() => { if (current.word) { Speech.stop(); Speech.speak(current.word, { language: current.lang || 'en', rate: 0.95 }); } }} hitSlop={6}>
+              <TouchableOpacity style={[styles.speakBtn, surface(theme, 'speakBtn', { size: a.icon(32) })]} onPress={() => { if (current.word) { Speech.stop(); Speech.speak(current.word, { language: current.lang || 'en', rate: 0.95 }); } }} hitSlop={6}>
                 <Icon name="play" size={a.icon(16)} color={theme.primaryText} />
               </TouchableOpacity>
             )}
@@ -822,7 +822,7 @@ export default function TrainingScreen() {
           />
           <View style={{ flexDirection: 'column', gap: a.gap, marginTop: 12 }}>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, typeChecked ? 'inset' : 'primary', { radius: a.radius }), !typed.trim() && !typeChecked && { opacity: 1 }]}
+              style={[styles.typeCheck, surface(theme, typeChecked ? 'inset' : 'primary', { radius: a.radius }), !typed.trim() && !typeChecked && { opacity: 1 }]}
               disabled={!typed.trim()}
               onPress={() => {
                 // Другий тап по Check (після перевірки) = перейти до наступного слова
@@ -849,7 +849,7 @@ export default function TrainingScreen() {
             </TouchableOpacity>
             {/* Skip: кругла іконка рестарту / заміни слова з делікатним мікро-об'ємом */}
             <TouchableOpacity
-              style={[styles.skipBtn, metal(theme, 'circle', { size: a.icon(32), strength: 0.35 }), { width: a.icon(32), height: a.icon(32), borderRadius: a.icon(32) / 2, alignSelf: 'center' }]}
+              style={[styles.skipBtn, surface(theme, 'circle', { size: a.icon(32), strength: 0.35 }), { width: a.icon(32), height: a.icon(32), borderRadius: a.icon(32) / 2, alignSelf: 'center' }]}
               onPress={() => { if (!typeChecked) onNext(); }}
               hitSlop={8}
             >
@@ -857,7 +857,7 @@ export default function TrainingScreen() {
             </TouchableOpacity>
             {typeChecked && typeOk && (
               <TouchableOpacity
-                style={[styles.typeCheck, metal(theme, 'inset', { radius: a.radius })]}
+                style={[styles.typeCheck, surface(theme, 'inset', { radius: a.radius })]}
                 onPress={knowAndRemove}
               >
                 <Text style={[styles.btnText, { color: theme.danger }]}>✗ {t("I know it")}</Text>
@@ -870,7 +870,7 @@ export default function TrainingScreen() {
       {mode === 'tf' && current && tfPair && (
         <>
         <View style={{ flexGrow: 1, justifyContent: 'center' }}>
-        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius, strength: 0.85 }), { padding: a.pad, backgroundColor: theme.surface }]}>
+        <View style={[styles.typeCard, surface(theme, 'raised', { radius: a.radius, strength: 0.85 }), { padding: a.pad, backgroundColor: theme.surface }]}>
           <Text style={[styles.typeWord, { fontSize: a.fs(26) }]}>{reverse ? current.translation : (current.surfaceForm || current.word)}</Text>
           <Text style={{ color: theme.secondaryText, fontSize: a.small_fs, textAlign: 'center', marginTop: 4 }}>
             {reverse ? t('Word:') : t('Translation:')}
@@ -901,7 +901,7 @@ export default function TrainingScreen() {
           }}
         >
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, tfAnswered !== null ? 'inset' : 'raised', { radius: a.radius }), { borderWidth: 1, borderColor: theme.success }, tfAnswered !== null && { opacity: 0.5 }]}
+              style={[styles.typeCheck, surface(theme, tfAnswered !== null ? 'inset' : 'raised', { radius: a.radius }), { borderWidth: 1, borderColor: theme.success }, tfAnswered !== null && { opacity: 0.5 }]}
               disabled={tfAnswered !== null}
               onPress={() => answerTf(true)}
             >
@@ -911,7 +911,7 @@ export default function TrainingScreen() {
             <TouchableOpacity
               style={[
                 styles.typeCheck,
-                metal(theme, 'raised', { radius: a.radius, strength: 0.75 }),
+                surface(theme, 'raised', { radius: a.radius, strength: 0.75 }),
                 { maxWidth: 64, flex: 0.6 }
               ]}
               onPress={() => onNext()}
@@ -920,7 +920,7 @@ export default function TrainingScreen() {
               <Icon name="refresh" size={a.dim(0.028, 18, 24)} color={theme.primaryText} />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.typeCheck, metal(theme, tfAnswered !== null ? 'inset' : 'raised', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger }, tfAnswered !== null && { opacity: 0.5 }]}
+              style={[styles.typeCheck, surface(theme, tfAnswered !== null ? 'inset' : 'raised', { radius: a.radius }), { borderWidth: 1, borderColor: theme.danger }, tfAnswered !== null && { opacity: 0.5 }]}
               disabled={tfAnswered !== null}
               onPress={() => answerTf(false)}
             >
@@ -931,7 +931,7 @@ export default function TrainingScreen() {
       )}
 
       {mode === 'cloze' && current && cloze && (
-        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius, strength: 0.85 }), { padding: a.pad, marginTop: 8, backgroundColor: theme.surface }]}>
+        <View style={[styles.typeCard, surface(theme, 'raised', { radius: a.radius, strength: 0.85 }), { padding: a.pad, marginTop: 8, backgroundColor: theme.surface }]}>
           <Text style={{ color: theme.secondaryText, fontSize: a.small_fs, textAlign: 'center', marginBottom: 10 }}>
             {t("Fill the blank")}
           </Text>
@@ -956,7 +956,7 @@ export default function TrainingScreen() {
                 <TouchableOpacity
                   key={opt}
                   // Юзер M10: без обводки; варіанти = випуклі, стан тінями+заливкою
-                  style={[styles.typeCheck, metal(theme,
+                  style={[styles.typeCheck, surface(theme,
                     showState && isRight ? 'primary' : showState && isPicked ? 'inset' : 'raised',
                     { radius: a.radius })]}
                   disabled={clozePicked !== null}
@@ -972,7 +972,7 @@ export default function TrainingScreen() {
       </ScrollView>
       {/* Модалка вибору цільової мови перекладу */}
       <ModalSheet visible={langPickerOpen} onClose={() => setLangPickerOpen(false)}>
-        <View style={[styles.typeCard, metal(theme, 'raised', { radius: a.radius, strength: 0.6 }), { padding: a.pad }]}>
+        <View style={[styles.typeCard, surface(theme, 'raised', { radius: a.radius, strength: 0.6 }), { padding: a.pad }]}>
           <Text style={[styles.typeWord, { fontSize: a.h2, color: theme.primaryText }]}>{t('Translate to')}</Text>
           <ScrollView style={{ maxHeight: Math.round(a.height * 0.55) }} contentContainerStyle={{ paddingBottom: 8 }}>
             {['uk', 'en', 'de', 'fr', 'es', 'it', 'pl', 'pt', 'nl', 'cs', 'sk', 'sv', 'da', 'fi', 'no', 'hu', 'ro', 'bg', 'el', 'hr', 'sr', 'sl', 'et', 'lv', 'lt', 'vi', 'th', 'id', 'ms', 'hi', 'he', 'fa', 'ar', 'sw', 'zh', 'ja', 'ko', 'ca', 'eu', 'gl', 'cy', 'af', 'is'].map((code) => {

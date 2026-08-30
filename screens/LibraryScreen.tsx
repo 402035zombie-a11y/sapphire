@@ -39,7 +39,7 @@ import { enqueueWordImport, useWordImportStore } from '../services/wordImportQue
 import LanguagePicker from '../components/LanguagePicker';
 import ProgressBar from '../components/ProgressBar';
 import IconButton from '../components/ui/IconButton';
-import { neuShadowPad, screenBg, metal } from '../theme/neu';
+import { neuShadowPad, screenBg, surface } from '../theme/neu';
 import OpenModeModal from '../components/OpenModeModal';
 import SpeedVariantModal from '../components/SpeedVariantModal';
 import AppSettingsModal from '../components/AppSettingsModal';
@@ -408,7 +408,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         <SupportButton size={a.fab()} iconSize={Math.round(a.fab()*0.5)} />
       </View>
       {loading && (
-        <View style={[styles.progressCard, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
+        <View style={[styles.progressCard, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
           <Text style={[styles.progressText, { color: theme.secondaryText }]}>{t('Reading file…')} {Math.round(progress * 100)}%</Text>
           <ProgressBar progress={progress} />
         </View>
@@ -423,13 +423,13 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           </Text>
 
           <Text style={[styles.label, { color: theme.secondaryText }]}>{t('Original language:')}</Text>
-          <TouchableOpacity style={[styles.langButton, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setPickerVisible(true)}>
+          <TouchableOpacity style={[styles.langButton, surface(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setPickerVisible(true)}>
             <Text style={[styles.langButtonText, { color: theme.primaryText }]}>{langName(draft.language)}</Text>
             <Text style={[styles.langArrow, { color: theme.secondaryText }]}>▾</Text>
           </TouchableOpacity>
 
           <Text style={[styles.label, { color: theme.secondaryText, marginTop: a.gap }]}>{t('Translation language:')}</Text>
-          <TouchableOpacity style={[styles.langButton, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setTargetPickerVisible(true)}>
+          <TouchableOpacity style={[styles.langButton, surface(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setTargetPickerVisible(true)}>
             <Text style={[styles.langButtonText, { color: theme.primaryText }]}>{langName(draft.targetLang)}</Text>
             <Text style={[styles.langArrow, { color: theme.secondaryText }]}>▾</Text>
           </TouchableOpacity>
@@ -437,7 +437,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           <TouchableOpacity
             style={[
               styles.importBtn,
-              metal(theme, 'inset', { radius: a.radius }),
+              surface(theme, 'inset', { radius: a.radius }),
               importing && { backgroundColor: theme.success, opacity: 0.9 },
             ]}
             onPress={importBookDict}
@@ -457,10 +457,10 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           )}
 
           <View style={styles.draftActions}>
-            <TouchableOpacity style={[styles.actionBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setDraft(null)}>
+            <TouchableOpacity style={[styles.actionBtn, surface(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }]} onPress={() => setDraft(null)}>
               <Text style={[styles.actionText, { color: theme.secondaryText }]}>{t('Cancel')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionBtn, metal(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }, { backgroundColor: theme.primary }]} onPress={saveDraft}>
+            <TouchableOpacity style={[styles.actionBtn, surface(theme, 'inset', { radius: a.radius }), { borderWidth: 0 }, { backgroundColor: theme.primary }]} onPress={saveDraft}>
               <Text style={[styles.saveText, { color: theme.onPrimary }]}>{t('Save')}</Text>
             </TouchableOpacity>
           </View>
@@ -484,7 +484,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       </ModalSheet>
 
       {activeJobs.length > 0 && (
-        <View style={[styles.progressCard, metal(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
+        <View style={[styles.progressCard, surface(theme, 'raised', { radius: a.radius, strength: 0.6 })]}>
           {activeJobs.map((j) => (
             <View key={j.bookId} style={{ marginBottom: 6 }}>
               <Text style={[styles.progressText, { color: theme.secondaryText }]} numberOfLines={1}>
@@ -507,7 +507,7 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
 
       {!onSelectBook && (
         <TouchableOpacity
-          style={[styles.fab, metal(theme, 'primary', { size: fabSize })]}
+          style={[styles.fab, surface(theme, 'primary', { size: fabSize })]}
           onPress={onAddPress}
           hitSlop={12}
         >

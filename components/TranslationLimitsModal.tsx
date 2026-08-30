@@ -6,7 +6,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal } from '../theme/neu';
+import { surface } from '../theme/neu';
 import { useT } from '../i18n';
 import ModalSheet from './ModalSheet';
 import { getProvidersStatus } from '../services/translationProviders';
@@ -56,7 +56,7 @@ export default function TranslationLimitsModal({ visible, onRetry, onClose }: Pr
                   paddingVertical: 8,
                   paddingHorizontal: 12,
                   borderRadius: a.radius,
-                  ...metal(theme, 'inset', { radius: a.radius }),
+                  ...surface(theme, 'inset', { radius: a.radius }),
                 }}
               >
                 <Text style={{ fontSize: a.body, color: theme.primaryText }}>{p.label}</Text>
@@ -75,7 +75,7 @@ export default function TranslationLimitsModal({ visible, onRetry, onClose }: Pr
         </View>
 
         <TouchableOpacity
-          style={[metal(theme, 'primary', { radius: a.radius }), { paddingVertical: Math.max(10, Math.round(13 * a.scale)), alignItems: 'center', marginTop: 4 }]}
+          style={[surface(theme, 'primary', { radius: a.radius }), { paddingVertical: Math.max(10, Math.round(13 * a.scale)), alignItems: 'center', marginTop: 4 }]}
           onPress={onRetry}
         >
           <Text style={{ color: theme.onPrimary, fontFamily: FONTS.bold, fontSize: a.body }}>

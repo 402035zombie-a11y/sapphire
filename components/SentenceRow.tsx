@@ -9,7 +9,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
-import { metal, neuShadowPad, screenBg, metalText } from '../theme/neu';
+import { surface, neuShadowPad, screenBg, surfaceText } from '../theme/neu';
 
 interface Props {
   index: number;
@@ -171,13 +171,13 @@ function SentenceRow({
         <View style={styles.controls}>
           {/* ▶ озвучка — Профіль 3: спеціалізована роль speakBtn */}
           {showSpeak && (
-            <TouchableOpacity style={metal(theme, 'speakBtn', { size: a.icon(30) })} onPress={() => onSpeak(original)} hitSlop={8}>
+            <TouchableOpacity style={surface(theme, 'speakBtn', { size: a.icon(30) })} onPress={() => onSpeak(original)} hitSlop={8}>
               <Text style={[styles.playIcon, { color: theme.primaryText }]}>▶</Text>
             </TouchableOpacity>
           )}
           {/* Перевести — Профіль 3: спеціалізована роль speakBtn */}
           {onTranslate && !translation && showTranslate && (
-            <TouchableOpacity style={metal(theme, 'speakBtn', { size: a.icon(30) })} onPress={() => onTranslate(index)} hitSlop={8}>
+            <TouchableOpacity style={surface(theme, 'speakBtn', { size: a.icon(30) })} onPress={() => onTranslate(index)} hitSlop={8}>
               <Text style={[styles.translateIcon, { color: theme.primaryText }]}>⇄</Text>
             </TouchableOpacity>
           )}
