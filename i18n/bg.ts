@@ -271,4 +271,6 @@ export const bgDict: Record<string, string> = {
   'Donate': 'Дари',
   'Removes ads forever': 'Премахва рекламите завинаги',
   'Not now': 'Не сега',
+  'Unsupported format': 'Неподдържан формат',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Поддържани формати: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

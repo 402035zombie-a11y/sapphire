@@ -174,19 +174,15 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       if (res.canceled || !res.assets?.length) return;
       const asset = res.assets[0];
       const lower = asset.name.toLowerCase();
-      const format: 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html' = lower.endsWith('.txt')
-        ? 'txt'
-        : lower.endsWith('.fb2')
-        ? 'fb2'
-        : lower.endsWith('.docx')
-        ? 'docx'
-        : lower.endsWith('.odt')
-        ? 'odt'
-        : lower.endsWith('.rtf')
-        ? 'rtf'
-        : lower.endsWith('.html') || lower.endsWith('.htm')
+      const ext = (lower.split('.').pop() || '').trim();
+      const SUPPORTED = new Set(['epub', 'txt', 'fb2', 'docx', 'odt', 'rtf', 'html', 'htm']);
+      if (!SUPPORTED.has(ext)) {
+        Alert.alert(t('Unsupported format'), t('Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML'));
+        return;
+      }
+      const format: 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html' = ext === 'htm'
         ? 'html'
-        : 'epub';
+        : (ext as 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html');
 
       setLoading(true);
       setProgress(0.02);

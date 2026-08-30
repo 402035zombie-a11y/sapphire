@@ -271,4 +271,6 @@ export const msDict: Record<string, string> = {
   'Donate': 'Derma',
   'Removes ads forever': 'Mengalih keluar iklan selama-lamanya',
   'Not now': 'Bukan sekarang',
+  'Unsupported format': 'Format tidak disokong',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Format yang disokong: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

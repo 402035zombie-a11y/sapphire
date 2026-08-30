@@ -271,4 +271,6 @@ export const swDict: Record<string, string> = {
   'Donate': 'Changia',
   'Removes ads forever': 'Huondoa matangazo milele',
   'Not now': 'Sio sasa',
+  'Unsupported format': 'Muundo haujasaidiwa',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Miundo inayosaidiwa: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

@@ -271,4 +271,6 @@ export const idDict: Record<string, string> = {
   'Donate': 'Donasi',
   'Removes ads forever': 'Menghapus iklan selamanya',
   'Not now': 'Nanti saja',
+  'Unsupported format': 'Format tidak didukung',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Format yang didukung: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

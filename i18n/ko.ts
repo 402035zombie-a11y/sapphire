@@ -275,4 +275,6 @@ export const koDict: Record<string, string> = {
   'Donate': '기부',
   'Removes ads forever': '광고를 영원히 제거',
   'Not now': '나중에',
+  'Unsupported format': '지원되지 않는 형식',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': '지원 형식: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

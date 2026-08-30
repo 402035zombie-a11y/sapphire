@@ -271,4 +271,6 @@ export const plDict: Record<string, string> = {
   'Donate': 'Wesprzyj',
   'Removes ads forever': 'Usuwa reklamy na zawsze',
   'Not now': 'Nie teraz',
+  'Unsupported format': 'Nieobsługiwany format',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Obsługiwane formaty: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

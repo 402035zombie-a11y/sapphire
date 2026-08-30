@@ -271,4 +271,6 @@ export const afDict: Record<string, string> = {
   'Donate': 'Skenk',
   'Removes ads forever': 'Verwyder advertensies vir altyd',
   'Not now': 'Nie nou nie',
+  'Unsupported format': 'Onondersteunde formaat',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Ondersteunde formate: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

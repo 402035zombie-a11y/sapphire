@@ -275,4 +275,6 @@ export const ptDict: Record<string, string> = {
   'Donate': 'Doar',
   'Removes ads forever': 'Remove os anúncios para sempre',
   'Not now': 'Agora não',
+  'Unsupported format': 'Formato não suportado',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formatos suportados: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

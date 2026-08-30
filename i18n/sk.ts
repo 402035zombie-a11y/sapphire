@@ -271,4 +271,6 @@ export const skDict: Record<string, string> = {
   'Donate': 'Prispieť',
   'Removes ads forever': 'Navždy odstráni reklamy',
   'Not now': 'Teraz nie',
+  'Unsupported format': 'Nepodporovaný formát',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Podporované formáty: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

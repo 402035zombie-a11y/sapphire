@@ -271,4 +271,6 @@ export const srDict: Record<string, string> = {
   'Donate': 'Doniraj',
   'Removes ads forever': 'Zauvek uklanja reklame',
   'Not now': 'Ne sada',
+  'Unsupported format': 'Nepodržan format',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Podržani formati: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

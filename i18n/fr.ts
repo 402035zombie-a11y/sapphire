@@ -272,4 +272,6 @@ export const frDict: Record<string, string> = {
   'Donate': 'Faire un don',
   'Removes ads forever': 'Supprime les publicités pour toujours',
   'Not now': 'Pas maintenant',
+  'Unsupported format': 'Format non pris en charge',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formats pris en charge : EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

@@ -271,4 +271,6 @@ export const faDict: Record<string, string> = {
   'Donate': 'اهدا',
   'Removes ads forever': 'تبلیغات را برای همیشه حذف می‌کند',
   'Not now': 'الان نه',
+  'Unsupported format': 'قالب پشتیبانی‌نشده',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'قالب‌های پشتیبانی‌شده: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

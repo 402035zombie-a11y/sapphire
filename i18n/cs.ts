@@ -271,4 +271,6 @@ export const csDict: Record<string, string> = {
   'Donate': 'Přispět',
   'Removes ads forever': 'Odstraní reklamy navždy',
   'Not now': 'Teď ne',
+  'Unsupported format': 'Nepodporovaný formát',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Podporované formáty: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

@@ -271,4 +271,6 @@ export const esDict: Record<string, string> = {
   'Donate': 'Donar',
   'Removes ads forever': 'Elimina los anuncios para siempre',
   'Not now': 'Ahora no',
+  'Unsupported format': 'Formato no compatible',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formatos compatibles: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

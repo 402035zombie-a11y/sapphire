@@ -271,4 +271,6 @@ export const hiDict: Record<string, string> = {
   'Donate': 'दान करें',
   'Removes ads forever': 'विज्ञापन हमेशा के लिए हटाता है',
   'Not now': 'अभी नहीं',
+  'Unsupported format': 'असमर्थित प्रारूप',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'समर्थित प्रारूप: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

@@ -271,4 +271,6 @@ export const caDict: Record<string, string> = {
   'Donate': 'Dona',
   'Removes ads forever': 'Elimina els anuncis per sempre',
   'Not now': 'Ara no',
+  'Unsupported format': 'Format no compatible',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formats compatibles: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

@@ -275,4 +275,6 @@ export const thDict: Record<string, string> = {
   'Donate': 'บริจาค',
   'Removes ads forever': 'ลบโฆษณาอย่างถาวร',
   'Not now': 'ไม่ใช่ตอนนี้',
+  'Unsupported format': 'รูปแบบที่ไม่รองรับ',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'รูปแบบที่รองรับ: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

@@ -271,4 +271,6 @@ export const euDict: Record<string, string> = {
   'Donate': 'Eman dohaintza',
   'Removes ads forever': 'Iragarkiak betiko kentzen ditu',
   'Not now': 'Orain ez',
+  'Unsupported format': 'Onartu gabeko formatua',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Onartutako formatuak: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

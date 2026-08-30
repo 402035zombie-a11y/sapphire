@@ -271,4 +271,6 @@ export const huDict: Record<string, string> = {
   'Donate': 'Adományozás',
   'Removes ads forever': 'Örökre eltávolítja a hirdetéseket',
   'Not now': 'Most nem',
+  'Unsupported format': 'Nem támogatott formátum',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Támogatott formátumok: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

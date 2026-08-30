@@ -271,4 +271,6 @@ export const noDict: Record<string, string> = {
   'Donate': 'Doner',
   'Removes ads forever': 'Fjerner annonser for alltid',
   'Not now': 'Ikke nå',
+  'Unsupported format': 'Format som ikke støttes',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Støttede formater: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

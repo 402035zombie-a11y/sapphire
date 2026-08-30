@@ -271,4 +271,6 @@ export const lvDict: Record<string, string> = {
   'Donate': 'Ziedot',
   'Removes ads forever': 'Uz visiem laikiem noņem reklāmas',
   'Not now': 'Ne tagad',
+  'Unsupported format': 'Neatbalstīts formāts',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Atbalstītie formāti: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

@@ -281,4 +281,6 @@ export const deDict: Record<string, string> = {
   'Donate': 'Spenden',
   'Removes ads forever': 'Entfernt Werbung für immer',
   'Not now': 'Jetzt nicht',
+  'Unsupported format': 'Nicht unterstütztes Format',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Unterstützte Formate: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

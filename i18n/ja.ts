@@ -275,4 +275,6 @@ export const jaDict: Record<string, string> = {
   'Donate': '寄付',
   'Removes ads forever': '広告を完全に削除',
   'Not now': 'あとで',
+  'Unsupported format': 'サポートされていない形式',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': '対応形式: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

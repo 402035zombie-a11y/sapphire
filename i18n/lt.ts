@@ -271,4 +271,6 @@ export const ltDict: Record<string, string> = {
   'Donate': 'Paaukoti',
   'Removes ads forever': 'Pašalina skelbimus visam laikui',
   'Not now': 'Ne dabar',
+  'Unsupported format': 'Nepalaikomas formatas',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Palaikomi formatai: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

@@ -271,4 +271,6 @@ export const isDict: Record<string, string> = {
   'Donate': 'Styrkja',
   'Removes ads forever': 'Fjarlægir auglýsingar að eilífu',
   'Not now': 'Ekki núna',
+  'Unsupported format': 'Óstudd skráarsnið',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Studd skráarsnið: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

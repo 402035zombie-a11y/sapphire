@@ -271,4 +271,6 @@ export const itDict: Record<string, string> = {
   'Donate': 'Dona',
   'Removes ads forever': 'Rimuove gli annunci per sempre',
   'Not now': 'Non ora',
+  'Unsupported format': 'Formato non supportato',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formati supportati: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

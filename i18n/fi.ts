@@ -271,4 +271,6 @@ export const fiDict: Record<string, string> = {
   'Donate': 'Lahjoita',
   'Removes ads forever': 'Poistaa mainokset ikuisesti',
   'Not now': 'Ei nyt',
+  'Unsupported format': 'Ei-tuettu muoto',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Tuetut muodot: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

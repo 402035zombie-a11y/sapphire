@@ -280,4 +280,6 @@ export const ukDict: Record<string, string> = {
   'Donate': 'Пожертвувати',
   'Removes ads forever': 'Прибирає рекламу назавжди',
   'Not now': 'Не зараз',
+  'Unsupported format': 'Непідтримуваний формат',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Підтримувані формати: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

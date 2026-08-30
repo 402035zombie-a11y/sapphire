@@ -271,4 +271,6 @@ export const cyDict: Record<string, string> = {
   'Donate': 'Cyfrannu',
   'Removes ads forever': 'Yn dileu hysbysebion am byth',
   'Not now': 'Dim nawr',
+  'Unsupported format': 'Fformat heb ei gefnogi',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Fformatau â chymorth: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

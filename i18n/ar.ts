@@ -271,4 +271,6 @@ export const arDict: Record<string, string> = {
   'Donate': 'تبرع',
   'Removes ads forever': 'يزيل الإعلانات إلى الأبد',
   'Not now': 'ليس الآن',
+  'Unsupported format': 'تنسيق غير مدعوم',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'التنسيقات المدعومة: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

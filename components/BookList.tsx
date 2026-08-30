@@ -62,6 +62,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
         <Text style={[styles.bookTitle, { color: theme.primaryText }]} numberOfLines={2}>{item.title}</Text>
         <Text style={[styles.bookMeta, { color: theme.secondaryText }]} numberOfLines={2}>
           {item.author ? `${item.author} · ` : ''}
+          {item.format ? `${item.format.toUpperCase()} · ` : ''}
           {item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()}{wordCount ? ` · ${wordCount} ${t('words')}` : ''}
         </Text>
       </View>

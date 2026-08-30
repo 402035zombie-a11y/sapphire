@@ -271,4 +271,6 @@ export const heDict: Record<string, string> = {
   'Donate': 'תרומה',
   'Removes ads forever': 'מסיר פרסומות לנצח',
   'Not now': 'לא עכשיו',
+  'Unsupported format': 'פורמט לא נתמך',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'פורמטים נתמכים: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

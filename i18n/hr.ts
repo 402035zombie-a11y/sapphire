@@ -271,4 +271,6 @@ export const hrDict: Record<string, string> = {
   'Donate': 'Doniraj',
   'Removes ads forever': 'Zauvijek uklanja oglase',
   'Not now': 'Ne sada',
+  'Unsupported format': 'Nepodržani format',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Podržani formati: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

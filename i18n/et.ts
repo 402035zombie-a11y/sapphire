@@ -271,4 +271,6 @@ export const etDict: Record<string, string> = {
   'Donate': 'Anneta',
   'Removes ads forever': 'Eemaldab reklaamid igaveseks',
   'Not now': 'Mitte praegu',
+  'Unsupported format': 'Toetamata vorming',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Toetatud vormingud: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

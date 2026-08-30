@@ -271,4 +271,6 @@ export const roDict: Record<string, string> = {
   'Donate': 'Donează',
   'Removes ads forever': 'Elimină reclamele pentru totdeauna',
   'Not now': 'Nu acum',
+  'Unsupported format': 'Format neacceptat',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formate acceptate: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

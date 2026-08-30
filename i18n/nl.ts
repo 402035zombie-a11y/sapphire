@@ -271,4 +271,6 @@ export const nlDict: Record<string, string> = {
   'Donate': 'Doneer',
   'Removes ads forever': 'Verwijdert advertenties voor altijd',
   'Not now': 'Niet nu',
+  'Unsupported format': 'Niet-ondersteund formaat',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Ondersteunde formaten: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

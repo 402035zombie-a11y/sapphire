@@ -271,4 +271,6 @@ export const glDict: Record<string, string> = {
   'Donate': 'Doar',
   'Removes ads forever': 'Elimina os anuncios para sempre',
   'Not now': 'Agora non',
+  'Unsupported format': 'Formato non compatible',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Formatos compatibles: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

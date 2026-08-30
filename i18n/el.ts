@@ -271,4 +271,6 @@ export const elDict: Record<string, string> = {
   'Donate': 'Δωρεά',
   'Removes ads forever': 'Αφαιρεί τις διαφημίσεις για πάντα',
   'Not now': 'Όχι τώρα',
+  'Unsupported format': 'Μη υποστηριζόμενη μορφή',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Υποστηριζόμενες μορφές: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

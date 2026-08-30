@@ -275,4 +275,6 @@ export const trDict: Record<string, string> = {
   'Donate': 'Bağış yap',
   'Removes ads forever': 'Reklamları kalıcı olarak kaldırır',
   'Not now': 'Şimdi değil',
+  'Unsupported format': 'Desteklenmeyen biçim',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Desteklenen biçimler: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

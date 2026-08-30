@@ -271,4 +271,6 @@ export const svDict: Record<string, string> = {
   'Donate': 'Donera',
   'Removes ads forever': 'Tar bort annonser för alltid',
   'Not now': 'Inte nu',
+  'Unsupported format': 'Formatet stöds inte',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Format som stöds: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

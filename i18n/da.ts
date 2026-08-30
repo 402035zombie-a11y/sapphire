@@ -272,4 +272,6 @@ export const daDict: Record<string, string> = {
   'Donate': 'Donér',
   'Removes ads forever': 'Fjerner annoncer for altid',
   'Not now': 'Ikke nu',
+  'Unsupported format': 'Ikke-understøttet format',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': 'Understøttede formater: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };

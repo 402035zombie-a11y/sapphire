@@ -275,4 +275,6 @@ export const zhDict: Record<string, string> = {
   'Donate': '捐赠',
   'Removes ads forever': '永久移除广告',
   'Not now': '现在不要',
+  'Unsupported format': '不支持的格式',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML': '支持的格式: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
 };
