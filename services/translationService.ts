@@ -108,3 +108,77 @@ export async function translateCached(text: string, from: LangCode, to: LangCode
   }
   return result;
 }
+
+/**
+ * БАТЧИНГ: перекладає групу текстів ОДНИМ запитом (склеює через `\n`),
+ * замість окремого HTTP-запиту на кожне речення. Без цього prefetch робить
+ * сотні запитів і безкоштовний Google GTX банить по кількості запитів
+ * за кілька сторінок (юзер 2026-08-30: «ліміт за кілька сторінок, а не 13 романів»).
+ *
+ * Групуємо в батчі по ~4000 char (безпечно для Google GTX/clients5 5000 та Lingva 4500).
+ * Якщо кількість рядків відповіді не співпала з кількістю речень → fallback
+ * по-реченнєво (надійність понад швидкістю).
+ */
+const BATCH_MAX_CHARS = 4000;
+
+export async function translateMany(
+  texts: string[],
+  from: LangCode,
+  to: LangCode,
+): Promise<string[]> {
+  if (texts.length === 0) return [];
+  if (texts.length === 1) {
+    const r = await translateCached(texts[0], from, to);
+    return [r.text];
+  }
+
+  // Групуємо в батчі по BATCH_MAX_CHARS
+  const batches: string[][] = [];
+  let cur: string[] = [];
+  let curLen = 0;
+  for (const t of texts) {
+    if (curLen + t.length + 1 > BATCH_MAX_CHARS && cur.length > 0) {
+      batches.push(cur);
+      cur = [];
+      curLen = 0;
+    }
+    cur.push(t);
+    curLen += t.length + 1;
+  }
+  if (cur.length) batches.push(cur);
+
+  const SEP = '\n';
+  const out: string[] = [];
+  for (const batch of batches) {
+    if (batch.length === 1) {
+      const r = await translateCached(batch[0], from, to);
+      out.push(r.text);
+      continue;
+    }
+    const joined = batch.join(SEP);
+    try {
+      const r = await translateCached(joined, from, to);
+      const parts = r.text.split(SEP).map((s) => s.trim());
+      if (parts.length === batch.length) {
+        out.push(...parts);
+        continue;
+      }
+      // рядки не співпали → fallback по-реченнєво
+      for (const t of batch) {
+        const rr = await translateCached(t, from, to);
+        out.push(rr.text);
+      }
+    } catch {
+      // помилка батча → fallback по-реченнєво (кожне речення окремо)
+      for (const t of batch) {
+        try {
+          const rr = await translateCached(t, from, to);
+          out.push(rr.text);
+        } catch {
+          out.push('');
+        }
+      }
+    }
+  }
+  return out;
+}

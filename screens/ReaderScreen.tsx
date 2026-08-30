@@ -34,7 +34,7 @@ import { BookParagraph } from '../store/libraryStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useSupportStore } from '../store/supportStore';
 import { splitIntoSegments } from '../utils/sentenceSplitter';
-import { translateCached } from '../services/translationService';
+import { translateCached, translateMany } from '../services/translationService';
 import { saveSentenceTranslations, getSentenceTranslations, clearSentenceTranslations } from '../services/sentenceTranslationsDb';
 import { stripHtmlToText } from '../services/bookText';
 import { showSupportAd } from '../services/monetization';
@@ -314,28 +314,26 @@ export default function ReaderScreen({ route }: { route: any }) {
 
       setLoadingSet((prev) => new Set([...prev, ...indices.map((x) => x.idx)]));
       try {
-        const results = await Promise.all(
-          indices.map(async (it) => {
-            try {
-              const res = await translateCached(it.text, from, targetLang);
-              return { key: it.key, translation: res.text } as { key: string; translation: string };
-            } catch (e) {
-              // Rate-limit/timeout/empty → показуємо стан у рядку, а не мовчки.
-              const kind = (e as any)?.kind;
-              if ((e as any)?.providers || kind === 'rate-limit') {
-                // Усі провайдери вичерпані → модалка з розкладом поновлення.
-                setLimitsOpen(true);
-              } else if (kind === 'forbidden' || kind === 'timeout') {
-                setTranslateError(translationErrorMessage(e));
-              }
-              return null;
-            }
-          }),
+        // БАТЧИНГ: перекладаємо групу речень одним запитом (translateMany),
+        // а не окремим HTTP-запитом на кожне (Google GTX банить по кількості запитів).
+        const translated = await translateMany(
+          indices.map((x) => x.text),
+          from,
+          targetLang,
         );
-        const ok = results.filter((r): r is { key: string; translation: string } => r !== null);
+        const ok: { key: string; translation: string }[] = [];
+        for (let i = 0; i < indices.length; i++) {
+          if (translated[i]) ok.push({ key: indices[i].key, translation: translated[i] });
+        }
         if (ok.length) persistTranslations(ok);
-      } catch {
-        // ігноруємо — переклад відновиться при наступному показі
+      } catch (e) {
+        const kind = (e as any)?.kind;
+        if ((e as any)?.providers || kind === 'rate-limit') {
+          // Усі провайдери вичерпані → модалка з розкладом поновлення.
+          setLimitsOpen(true);
+        } else if (kind === 'forbidden' || kind === 'timeout') {
+          setTranslateError(translationErrorMessage(e));
+        }
       } finally {
         setLoadingSet((prev) => {
           const next = new Set(prev);
