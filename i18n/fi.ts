@@ -272,7 +272,7 @@ export const fiDict: Record<string, string> = {
   'Removes ads forever': 'Poistaa mainokset ikuisesti',
   'Not now': 'Ei nyt',
   'Unsupported format': 'Ei-tuettu muoto',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Tuetut muodot: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Tuetut muodot: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Käännöspalvelut',
   'Free translation services and their current limits. Limits reset automatically.': 'Ilmaiset käännöspalvelut ja niiden nykyiset rajat. Rajat nollautuvat automaattisesti.',
 };

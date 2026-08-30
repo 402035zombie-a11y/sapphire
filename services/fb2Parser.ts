@@ -57,7 +57,18 @@ export async function parseFb2(
   onProgress?: (p: number) => void,
 ): Promise<Fb2ParseResult> {
   onProgress?.(0.1);
-  const raw = await (await fetch(uri)).text();
+  // file:// (document picker) не читається через fetch() на нативі — читаємо байти
+  // через expo-file-system/legacy (як docxParser/epubParser).
+  let raw: string;
+  if (/^https?:\/\//i.test(uri)) {
+    raw = await (await fetch(uri)).text();
+  } else {
+    // @ts-ignore
+    const FS: any = require('expo-file-system/legacy');
+    const cacheUri = `${FS.cacheDirectory}br_fb2_${Date.now()}.fb2`;
+    await FS.copyAsync({ from: uri, to: cacheUri });
+    raw = await FS.readAsStringAsync(cacheUri, { encoding: 'utf8' as any });
+  }
   onProgress?.(0.4);
   const res = parseFb2Text(raw);
   onProgress?.(1);

@@ -272,7 +272,7 @@ export const caDict: Record<string, string> = {
   'Removes ads forever': 'Elimina els anuncis per sempre',
   'Not now': 'Ara no',
   'Unsupported format': 'Format no compatible',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Formats compatibles: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Formats compatibles: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Serveis de traducció',
   'Free translation services and their current limits. Limits reset automatically.': 'Serveis de traducció gratuïts i els seus límits actuals. Els límits es restableixen automàticament.',
 };

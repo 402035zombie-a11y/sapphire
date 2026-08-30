@@ -281,7 +281,7 @@ export const ukDict: Record<string, string> = {
   'Removes ads forever': 'Прибирає рекламу назавжди',
   'Not now': 'Не зараз',
   'Unsupported format': 'Непідтримуваний формат',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Підтримувані формати: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Підтримувані формати: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Сервіси перекладу',
   'Free translation services and their current limits. Limits reset automatically.': 'Безкоштовні сервіси перекладу та їх поточні ліміти. Ліміти скидаються автоматично.',
 };

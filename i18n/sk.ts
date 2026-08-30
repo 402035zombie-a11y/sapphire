@@ -272,7 +272,7 @@ export const skDict: Record<string, string> = {
   'Removes ads forever': 'Navždy odstráni reklamy',
   'Not now': 'Teraz nie',
   'Unsupported format': 'Nepodporovaný formát',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Podporované formáty: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Podporované formáty: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Prekladové služby',
   'Free translation services and their current limits. Limits reset automatically.': 'Bezplatné prekladové služby a ich aktuálne limity. Limity sa obnovujú automaticky.',
 };

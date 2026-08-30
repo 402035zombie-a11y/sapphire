@@ -272,7 +272,7 @@ export const roDict: Record<string, string> = {
   'Removes ads forever': 'Elimină reclamele pentru totdeauna',
   'Not now': 'Nu acum',
   'Unsupported format': 'Format neacceptat',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Formate acceptate: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Formate acceptate: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Servicii de traducere',
   'Free translation services and their current limits. Limits reset automatically.': 'Servicii de traducere gratuite și limitele lor actuale. Limitele se resetează automat.',
 };

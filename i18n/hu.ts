@@ -272,7 +272,7 @@ export const huDict: Record<string, string> = {
   'Removes ads forever': 'Örökre eltávolítja a hirdetéseket',
   'Not now': 'Most nem',
   'Unsupported format': 'Nem támogatott formátum',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Támogatott formátumok: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Támogatott formátumok: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Fordítási szolgáltatások',
   'Free translation services and their current limits. Limits reset automatically.': 'Ingyenes fordítási szolgáltatások és aktuális korlátaik. A korlátok automatikusan visszaállnak.',
 };

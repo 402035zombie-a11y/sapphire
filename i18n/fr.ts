@@ -273,7 +273,7 @@ export const frDict: Record<string, string> = {
   'Removes ads forever': 'Supprime les publicités pour toujours',
   'Not now': 'Pas maintenant',
   'Unsupported format': 'Format non pris en charge',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Formats pris en charge : EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Formats pris en charge : EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Services de traduction',
   'Free translation services and their current limits. Limits reset automatically.': 'Services de traduction gratuits et leurs limites actuelles. Les limites se réinitialisent automatiquement.',
 };

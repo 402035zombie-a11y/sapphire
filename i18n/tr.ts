@@ -276,7 +276,7 @@ export const trDict: Record<string, string> = {
   'Removes ads forever': 'Reklamları kalıcı olarak kaldırır',
   'Not now': 'Şimdi değil',
   'Unsupported format': 'Desteklenmeyen biçim',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Desteklenen biçimler: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Desteklenen biçimler: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Çeviri hizmetleri',
   'Free translation services and their current limits. Limits reset automatically.': 'Ücretsiz çeviri hizmetleri ve güncel limitleri. Limitler otomatik olarak sıfırlanır.',
 };

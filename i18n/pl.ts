@@ -272,7 +272,7 @@ export const plDict: Record<string, string> = {
   'Removes ads forever': 'Usuwa reklamy na zawsze',
   'Not now': 'Nie teraz',
   'Unsupported format': 'Nieobsługiwany format',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Obsługiwane formaty: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Obsługiwane formaty: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Usługi tłumaczenia',
   'Free translation services and their current limits. Limits reset automatically.': 'Darmowe usługi tłumaczenia i ich aktualne limity. Limity resetują się automatycznie.',
 };

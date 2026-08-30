@@ -276,7 +276,7 @@ export const zhDict: Record<string, string> = {
   'Removes ads forever': '永久移除广告',
   'Not now': '现在不要',
   'Unsupported format': '不支持的格式',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': '支持的格式: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': '支持的格式: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': '翻译服务',
   'Free translation services and their current limits. Limits reset automatically.': '免费翻译服务及其当前限制。限制会自动重置。',
 };

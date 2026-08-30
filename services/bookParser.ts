@@ -13,6 +13,7 @@ import { parseRtf } from './rtfParser';
 import { parseOdt } from './odtParser';
 import { parseHtml } from './htmlParser';
 import { parseMobi } from './mobiParser';
+import { parseZip } from './zipParser';
 
 export interface ParsedChapter {
   idx: number;
@@ -44,6 +45,7 @@ const byFormat: Record<string, AnyParser> = {
   azw: parseMobi as AnyParser,
   azw3: parseMobi as AnyParser,
   prc: parseMobi as AnyParser,
+  zip: parseZip as AnyParser,
 };
 
 export function detectFormat(filePath: string): string {

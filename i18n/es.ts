@@ -272,7 +272,7 @@ export const esDict: Record<string, string> = {
   'Removes ads forever': 'Elimina los anuncios para siempre',
   'Not now': 'Ahora no',
   'Unsupported format': 'Formato no compatible',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Formatos compatibles: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Formatos compatibles: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Servicios de traducción',
   'Free translation services and their current limits. Limits reset automatically.': 'Servicios de traducción gratuitos y sus límites actuales. Los límites se restablecen automáticamente.',
 };

@@ -272,7 +272,7 @@ export const elDict: Record<string, string> = {
   'Removes ads forever': 'Αφαιρεί τις διαφημίσεις για πάντα',
   'Not now': 'Όχι τώρα',
   'Unsupported format': 'Μη υποστηριζόμενη μορφή',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Υποστηριζόμενες μορφές: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Υποστηριζόμενες μορφές: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Υπηρεσίες μετάφρασης',
   'Free translation services and their current limits. Limits reset automatically.': 'Δωρεάν υπηρεσίες μετάφρασης και τα τρέχοντα όριά τους. Τα όρια επαναφέρονται αυτόματα.',
 };

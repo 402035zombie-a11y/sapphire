@@ -272,7 +272,7 @@ export const srDict: Record<string, string> = {
   'Removes ads forever': 'Zauvek uklanja reklame',
   'Not now': 'Ne sada',
   'Unsupported format': 'Nepodržan format',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Podržani formati: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Podržani formati: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Usluge prevođenja',
   'Free translation services and their current limits. Limits reset automatically.': 'Besplatne usluge prevođenja i njihova trenutna ograničenja. Ograničenja se automatski resetuju.',
 };

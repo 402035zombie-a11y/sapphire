@@ -272,7 +272,7 @@ export const msDict: Record<string, string> = {
   'Removes ads forever': 'Mengalih keluar iklan selama-lamanya',
   'Not now': 'Bukan sekarang',
   'Unsupported format': 'Format tidak disokong',
-  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI': 'Format yang disokong: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
+  'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Format yang disokong: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Perkhidmatan terjemahan',
   'Free translation services and their current limits. Limits reset automatically.': 'Perkhidmatan terjemahan percuma dan had semasanya. Had ditetapkan semula secara automatik.',
 };
