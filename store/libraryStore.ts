@@ -3,7 +3,7 @@
 import { persist } from './createStore';
 import { deleteBookData } from '../services/bookText';
 
-export type BookFormat = 'epub' | 'txt' | 'fb2' | 'pdf' | 'docx' | 'odt' | 'rtf' | 'html';
+export type BookFormat = 'epub' | 'txt' | 'fb2' | 'pdf' | 'docx' | 'odt' | 'rtf' | 'html' | 'mobi';
 
 export interface BookParagraph {
   index: number;

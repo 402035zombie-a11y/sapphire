@@ -31,6 +31,7 @@ import { parseDocx } from '../services/docxParser';
 import { parseOdt } from '../services/odtParser';
 import { parseRtf } from '../services/rtfParser';
 import { parseHtml } from '../services/htmlParser';
+import { parseMobi } from '../services/mobiParser';
 import { splitIntoSentences } from '../utils/sentenceSplitter';
 import { extractSections } from '../utils/sections';
 import { langName } from '../utils/languages';
@@ -49,7 +50,7 @@ import SupportButton from '../components/SupportButton';
 interface Draft {
   title: string;
   author?: string;
-  format: 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html';
+  format: 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html' | 'mobi';
   uri: string;
   language: string;
   targetLang: string;
@@ -167,6 +168,9 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
           'text/rtf',
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
           'application/vnd.oasis.opendocument.text',
+          'application/x-mobipocket-ebook',
+          'application/vnd.amazon.mobi8-ebook',
+          'application/octet-stream',
           '*/*',
         ],
         copyToCacheDirectory: true,
@@ -175,14 +179,14 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       const asset = res.assets[0];
       const lower = asset.name.toLowerCase();
       const ext = (lower.split('.').pop() || '').trim();
-      const SUPPORTED = new Set(['epub', 'txt', 'fb2', 'docx', 'odt', 'rtf', 'html', 'htm']);
+      const SUPPORTED = new Set(['epub', 'txt', 'fb2', 'docx', 'odt', 'rtf', 'html', 'htm', 'mobi', 'azw', 'azw3', 'prc']);
       if (!SUPPORTED.has(ext)) {
-        Alert.alert(t('Unsupported format'), t('Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML'));
+        Alert.alert(t('Unsupported format'), t('Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI'));
         return;
       }
-      const format: 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html' = ext === 'htm'
+      const format: 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html' | 'mobi' = ext === 'htm'
         ? 'html'
-        : (ext as 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html');
+        : (ext === 'azw' || ext === 'azw3' || ext === 'prc' ? 'mobi' : (ext as 'epub' | 'txt' | 'fb2' | 'docx' | 'odt' | 'rtf' | 'html' | 'mobi'));
 
       setLoading(true);
       setProgress(0.02);
@@ -200,6 +204,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         parsed = await parseRtf(asset.uri, setProgress);
       } else if (format === 'html') {
         parsed = await parseHtml(asset.uri, setProgress);
+      } else if (format === 'mobi') {
+        parsed = await parseMobi(asset.uri);
       } else {
         parsed = await (async () => {
           const res = await fetch(asset.uri);
