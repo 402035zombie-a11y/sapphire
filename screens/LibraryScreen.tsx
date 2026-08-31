@@ -96,8 +96,10 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   // Id поточної чернетки: генерується ОДИН раз при setDraft і юзається importBook/saveDraft/importBookDict.
   const draftIdRef = useRef<string>('');
   const setDraftWithId = (d: Draft | null) => {
-    if (d && (!draft || draft.title !== d.title)) {
-      draftIdRef.current = `${d.title.replace(/[^\p{L}\p{N}]+/gu, '_')}`;
+    if (d && (!draft || draft.title !== d.title || draft.format !== d.format)) {
+      // Id включає формат: fb2 і epub з однаковою назвою («Hyperion») мають бути ОКРЕМИМИ книгами,
+      // інакше addBook перезаписує одну одною.
+      draftIdRef.current = `${d.title.replace(/[^\p{L}\p{N}]+/gu, '_')}_${d.format}`;
     }
     setDraft(d);
   };

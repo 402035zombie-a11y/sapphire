@@ -298,6 +298,9 @@ export default function ReaderScreen({ route }: { route: any }) {
 
   const translateBatch = useCallback(
     async (first: number, last: number) => {
+      // У read-режимі (оригінал) переклад НЕ грузимо взагалі — жодного мережевого запиту.
+      // Інакше onViewableItemsChanged/onMomentumScrollEnd стріляють перекладом і спалюють ліміт.
+      if (mode === 'read') return;
       const b = bookRef.current;
       if (!b) return;
       const from = b.language === 'auto' ? 'auto' : b.language;
@@ -342,7 +345,7 @@ export default function ReaderScreen({ route }: { route: any }) {
         });
       }
     },
-    [targetLang, persistTranslations],
+    [targetLang, persistTranslations, mode],
   );
   // Стабильный коллбек для SentenceRow.onTranslate(index) — інакше renderItem створює нову
   // функцію на кожен рендер і ламає React.memo(SentenceRow), викликаючи перерендер всіх рядків.
