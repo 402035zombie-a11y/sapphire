@@ -30,7 +30,6 @@ export interface Book {
   targetLang: string;
   paragraphs: BookParagraph[];
   sections: BookSection[];
-  wordCount?: number; // кількість слів у книзі (рахується при імпорті)
   coverImage?: string; // base64 data URI або file:// шлях до обкладинки
   sentenceTranslations?: Record<string, string>; // key: paragraphIndex*1000+sentenceIndex -> переклад речення
   createdAt: number;

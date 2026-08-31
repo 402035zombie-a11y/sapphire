@@ -802,17 +802,14 @@ function surfaceStamp(t: ThemePalette, size: number): any {
       // ВНУТРЕННИЙ купол (выпуклый): светлая верхняя грань + тёмная нижняя
       `inset 0 ${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${rim(t)}`,
       `inset 0 -${Math.max(1, Math.round(o * 0.5))}px ${Math.round(o * 1.2)}px ${specDark(t)}`,
-      // холодный edge-rim
-      `inset 0 0 0 1px ${rim(t)}`,
     ].join(', '),
-    // Android: elevation без суцільного фону малює КВАДРАТНУ тінь поверх скруглення
-    // (backgroundImage-градієнти на Android не рендеряться) → вимикаємо.
+    // Android: штампована лунка — зовнішня тінь (помітна) + без жорсткої обводки.
     ...(Platform.OS === 'web' ? {} : {
       shadowColor: specDark(t),
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.5,
-      shadowRadius: 4,
-      elevation: 5,
+      shadowOffset: { width: 0, height: Math.max(3, Math.round(o * 0.7)) },
+      shadowOpacity: 0.6,
+      shadowRadius: Math.max(6, Math.round(o * 1.2)),
+      elevation: Math.max(6, Math.round(o)),
     }),
   };
 }

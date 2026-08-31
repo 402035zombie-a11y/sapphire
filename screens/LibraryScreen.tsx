@@ -325,8 +325,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       // ТЕКСТ книги більше НЕ в сторе (SQLite books.db.chapters — джерело істини).
       // Легкий desc → AsyncStorage не росте, старт апки не парсить мегабайти JSON.
       paragraphs: [],
-      // Рахуємо кількість слів з draft.paragraphs (повний текст до збереження)
-      wordCount: draft.paragraphs.reduce((sum, p) => sum + (p.original.match(/\S+/g)?.length ?? 0), 0),
       sections: draft.sections,
       coverImage: draft.cover,
       createdAt: Date.now(),

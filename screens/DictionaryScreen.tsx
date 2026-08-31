@@ -1042,7 +1042,7 @@ function makeStyles(a: ReturnType<typeof useAdaptive>, theme: ReturnType<typeof 
     viewTab: { flex: 1, paddingVertical: a.tiny ? 6 : 8, borderRadius: Math.max(4, a.radius - 4), alignItems: 'center' },
     viewTabText: { fontSize: a.small_fs, fontFamily: FONTS.bold },
     fabGroup: { position: 'absolute', right: a.pad, bottom: a.tabBarH + a.pad + 10, flexDirection: 'column', gap: a.gap, alignItems: 'center', zIndex: 50 },
-    fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center', ...surface(theme, 'raised', { radius: a.radius, strength: 0.6 }) },
+    fab: { width: a.dim(0.06, 46, 56), height: a.dim(0.06, 46, 56), borderRadius: a.dim(0.06, 46, 56) / 2, alignItems: 'center', justifyContent: 'center' },
     toolbar: { flexDirection: 'row', gap: 8, marginBottom: a.gap },
     search: { flex: 1, ...surface(theme, 'inset', { radius: a.radius }), paddingHorizontal: 12, paddingVertical: a.tiny ? 7 : 10, fontSize: a.body },
     exportBtn: { borderRadius: a.radius, paddingHorizontal: a.pad, justifyContent: 'center' },

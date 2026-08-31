@@ -62,7 +62,7 @@ function BookCard({ item, onOpen, onRemove }: {
         <Text style={[styles.bookMeta, { color: theme.secondaryText }]} numberOfLines={2}>
           {item.author ? `${item.author} · ` : ''}
           {item.format ? `${item.format.toUpperCase()} · ` : ''}
-          {item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()}{item.wordCount ? ` · ${item.wordCount} ${t('words')}` : ''}
+          {item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()}
         </Text>
       </View>
       <View style={styles.rowActions}>
