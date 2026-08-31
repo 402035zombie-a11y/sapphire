@@ -21,6 +21,41 @@ function hasListMarker(s: string): boolean {
   return /\n\s*(?:(?:\d+|[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|[-*•‣▪·◦▪])\s/.test(s);
 }
 
+// Перевірка, чи починається сегмент text[start..] з маркера списку (БЕЗ slice).
+function hasListMarkerAt(text: string, start: number): boolean {
+  let k = start;
+  while (k < text.length && /\s/.test(text[k])) k++;
+  return isListItemAt(text, k);
+}
+
+// Чи є маркер списку на позиції k (числовий/буквений/римський + [.)] або тире/крапка)
+function isListItemAt(text: string, k: number): boolean {
+  if (k >= text.length) return false;
+  const c = text[k];
+  if ('-*•‣▪·◦▪'.includes(c)) return true;
+  let m = k;
+  while (m < text.length && /[0-9a-zA-ZivxlcdmIVXLCDM]/.test(text[m])) m++;
+  if (m === k) return false;
+  if (m >= text.length) return false;
+  const sep = text[m];
+  if (sep !== '.' && sep !== ')') return false;
+  const after = text[m + 1] ?? '';
+  return m + 1 >= text.length || /\s/.test(after);
+}
+
+// Довжина маркера списку на позиції start (від пробілів до кінця маркера включно).
+function listMarkerLenAt(text: string, start: number): number {
+  let k = start;
+  while (k < text.length && /\s/.test(text[k])) k++;
+  const begin = k;
+  if ('-*•‣▪·◦▪'.includes(text[k])) return k - start + 1;
+  while (k < text.length && /[0-9a-zA-ZivxlcdmIVXLCDM]/.test(text[k])) k++;
+  if (k === begin) return 0;
+  if (text[k] === '.' || text[k] === ')') k++;
+  else return 0;
+  return k - start;
+}
+
 export function splitIntoSentences(text: string): string[] {
   if (!text || !text.trim()) return [];
 
@@ -32,25 +67,25 @@ export function splitIntoSentences(text: string): string[] {
     const c = text[i];
     if (!TERMINAL.includes(c)) return false;
     const before = text[i - 1] ?? '';
-    const afterRun = text.slice(i + 1).match(/\S*/)?.[0] ?? '';
-    if (c === '.' && /\d/.test(before) && /^\d/.test(afterRun)) return false;
+    // Пропускаємо пробіли після термінала БЕЗ slice (O(1) на символ, а не O(n) копіювання)
     let j = i + 1;
     while (j < n && /\s/.test(text[j])) j++;
     const next = text[j] ?? '';
     const nextIsBoundary = j >= n || /[A-ZА-ЯЄЇІҐЁ«"'(«0-9]/.test(next);
     if (!nextIsBoundary) return false;
-    // если текущий накопленный кусок содержит пункт списка (маркер в начале или сразу после переноса строки),
-    // режем ТОЛЬКО если следующий тоже пункт списка
-    const curSeg = text.slice(start, i + 1).trim();
-    if (hasListMarker(curSeg)) {
-      // curSeg ЦЕ ЛИШЕ маркер (напр. "001." без тексту) → не boundary, накопичуємо далі
-      if (curSeg.replace(/[\s.)\]]*$/, '') === curSeg.match(/^\s*(?:\d+|[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)/)?.[0]?.trim()) return false;
-      // Якщо після крапки йде ВЕЛИКА літера — це початок нового речення (напр. "001. The board... 002. The startup"),
-      // а не маркер списку. Ріжемо як речення, інакше нумеровані речення склеюються в один блок.
+    // Десяткові дроби "3.14" — НЕ режемо
+    if (c === '.' && /\d/.test(before) && /\d/.test(next)) return false;
+    // якщо поточний накопичений сегмент — пункт списку, перевіряємо початок сегмента БЕЗ slice
+    if (hasListMarkerAt(text, start)) {
+      // curSeg = text[start..i]. Якщо це ЛИШЕ маркер (напр. "001.") → не boundary
+      const markerLen = listMarkerLenAt(text, start);
+      if (markerLen > 0 && start + markerLen >= i + 1) return false;
+      // Якщо після крапки йде ВЕЛИКА літера — початок нового речення
       const nextIsSentenceStart = /[A-ZА-ЯЄЇІҐЁ«"'(«]/.test(next);
       if (nextIsSentenceStart) return true;
+      // кінець списку або кінець тексту
       const rest = text.slice(j).trimStart();
-      return isListItem(rest) || !rest; // конец списка или конец текста
+      return isListItem(rest) || !rest;
     }
     return true;
   };

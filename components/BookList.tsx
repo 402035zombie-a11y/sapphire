@@ -21,7 +21,6 @@ import Icon from './Icon';
 
 interface Props {
   books: Book[];
-  bookWordCount?: Map<string, number>;
   onOpen: (bookId: string) => void;
   onRemove: (bookId: string) => void;
 }
@@ -33,8 +32,8 @@ function coverColor(title: string): string {
   return palette[Math.abs(h) % palette.length];
 }
 
-function BookCard({ item, wordCount, onOpen, onRemove }: {
-  item: Book; wordCount: number; onOpen: (id: string) => void; onRemove: (id: string) => void;
+function BookCard({ item, onOpen, onRemove }: {
+  item: Book; onOpen: (id: string) => void; onRemove: (id: string) => void;
 }) {
   const theme = useTheme();
   const a = useAdaptive();
@@ -63,7 +62,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
         <Text style={[styles.bookMeta, { color: theme.secondaryText }]} numberOfLines={2}>
           {item.author ? `${item.author} · ` : ''}
           {item.format ? `${item.format.toUpperCase()} · ` : ''}
-          {item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()}{wordCount ? ` · ${wordCount} ${t('words')}` : ''}
+          {item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()}{item.wordCount ? ` · ${item.wordCount} ${t('words')}` : ''}
         </Text>
       </View>
       <View style={styles.rowActions}>
@@ -79,7 +78,7 @@ function BookCard({ item, wordCount, onOpen, onRemove }: {
   );
 }
 
-export function BookList({ books, bookWordCount, onOpen, onRemove }: Props) {
+export function BookList({ books, onOpen, onRemove }: Props) {
   const a = useAdaptive();
   const theme = useTheme();
   const t = useT();
@@ -92,7 +91,6 @@ export function BookList({ books, bookWordCount, onOpen, onRemove }: Props) {
         <View style={a.columns > 1 ? { width: `${100 / a.columns - 2}%` } : undefined}>
           <BookCard
             item={item}
-            wordCount={bookWordCount?.get(item.id) || 0}
             onOpen={onOpen}
             onRemove={onRemove}
           />

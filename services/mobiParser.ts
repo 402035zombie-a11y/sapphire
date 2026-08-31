@@ -97,8 +97,8 @@ function cp1252Decode(bytes: Uint8Array): string {
   return out;
 }
 
-// UTF-8 → string (строга версія — кидає помилку при невалідних байтах, щоб спрацював CP1252 fallback)
-function utf8DecodeStrict(bytes: Uint8Array): string {
+// UTF-8 → string (loose: невалідні байти → U+FFFD, не кидає помилку).
+function utf8DecodeLoose(bytes: Uint8Array): string {
   let out = '';
   let i = 0;
   while (i < bytes.length) {
@@ -106,24 +106,33 @@ function utf8DecodeStrict(bytes: Uint8Array): string {
     if (b0 < 0x80) {
       out += String.fromCharCode(b0);
     } else if ((b0 & 0xe0) === 0xc0) {
-      if (i >= bytes.length) throw new Error('truncated utf8');
       const b1 = bytes[i++];
-      if ((b1 & 0xc0) !== 0x80) throw new Error('invalid utf8 continuation');
-      out += String.fromCharCode(((b0 & 0x1f) << 6) | (b1 & 0x3f));
+      if ((b1 & 0xc0) === 0x80) {
+        out += String.fromCharCode(((b0 & 0x1f) << 6) | (b1 & 0x3f));
+      } else {
+        out += '\uFFFD';
+        i--;
+      }
     } else if ((b0 & 0xf0) === 0xe0) {
-      if (i + 1 >= bytes.length) throw new Error('truncated utf8');
       const b1 = bytes[i++], b2 = bytes[i++];
-      if ((b1 & 0xc0) !== 0x80 || (b2 & 0xc0) !== 0x80) throw new Error('invalid utf8 continuation');
-      out += String.fromCharCode(((b0 & 0x0f) << 12) | ((b1 & 0x3f) << 6) | (b2 & 0x3f));
+      if ((b1 & 0xc0) === 0x80 && (b2 & 0xc0) === 0x80) {
+        out += String.fromCharCode(((b0 & 0x0f) << 12) | ((b1 & 0x3f) << 6) | (b2 & 0x3f));
+      } else {
+        out += '\uFFFD';
+        i -= 2;
+      }
     } else if ((b0 & 0xf8) === 0xf0) {
-      if (i + 2 >= bytes.length) throw new Error('truncated utf8');
       const b1 = bytes[i++], b2 = bytes[i++], b3 = bytes[i++];
-      if ((b1 & 0xc0) !== 0x80 || (b2 & 0xc0) !== 0x80 || (b3 & 0xc0) !== 0x80) throw new Error('invalid utf8 continuation');
-      const cp = ((b0 & 0x07) << 18) | ((b1 & 0x3f) << 12) | ((b2 & 0x3f) << 6) | (b3 & 0x3f);
-      const code = cp - 0x10000;
-      out += String.fromCharCode(0xd800 + (code >> 10), 0xdc00 + (code & 0x3ff));
+      if ((b1 & 0xc0) === 0x80 && (b2 & 0xc0) === 0x80 && (b3 & 0xc0) === 0x80) {
+        const cp = ((b0 & 0x07) << 18) | ((b1 & 0x3f) << 12) | ((b2 & 0x3f) << 6) | (b3 & 0x3f);
+        const code = cp - 0x10000;
+        out += String.fromCharCode(0xd800 + (code >> 10), 0xdc00 + (code & 0x3ff));
+      } else {
+        out += '\uFFFD';
+        i -= 3;
+      }
     } else {
-      throw new Error('invalid utf8 lead byte');
+      out += '\uFFFD';
     }
   }
   return out;
@@ -273,12 +282,10 @@ export async function parseMobi(uri: string): Promise<MobiParseResult> {
   }
   let html: string;
   if (encoding === 65001) {
-    // UTF-8: строга спроба, при невалідних байтах → CP1252 fallback
-    try {
-      html = utf8DecodeStrict(body);
-    } catch {
-      html = cp1252Decode(body);
-    }
+    // UTF-8 (replacement для невалідних байтів, НЕ fallback на CP1252).
+    // Amazon може лишити кілька CP1252-байтів, але основний текст — UTF-8;
+    // CP1252-fallback тут давав «â€œ» замість лапок «“».
+    html = utf8DecodeLoose(body);
   } else {
     html = cp1252Decode(body);
   }

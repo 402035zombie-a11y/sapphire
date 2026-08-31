@@ -85,12 +85,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const addBook = useLibraryStore((s) => s.addBook);
   const removeBook = useLibraryStore((s) => s.removeBook);
   const importEntries = useDictionaryStore((s) => s.importEntries);
-  const dictEntries = useDictionaryStore((s) => s.entries);
-  // O(1) lookup вместо O(books × dictEntries) filter на каждом рендере (поиск/pressedId).
-  const bookWordCount = useMemo(
-    () => dictEntries.reduce((m, e) => { if (e.bookId) m.set(e.bookId, (m.get(e.bookId) || 0) + 1); return m; }, new Map<string, number>()),
-    [dictEntries],
-  );
 
   const [draft, setDraft] = useState<Draft | null>(null);
   // Id поточної чернетки: генерується ОДИН раз при setDraft і юзається importBook/saveDraft/importBookDict.
@@ -331,6 +325,8 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       // ТЕКСТ книги більше НЕ в сторе (SQLite books.db.chapters — джерело істини).
       // Легкий desc → AsyncStorage не росте, старт апки не парсить мегабайти JSON.
       paragraphs: [],
+      // Рахуємо кількість слів з draft.paragraphs (повний текст до збереження)
+      wordCount: draft.paragraphs.reduce((sum, p) => sum + (p.original.match(/\S+/g)?.length ?? 0), 0),
       sections: draft.sections,
       coverImage: draft.cover,
       createdAt: Date.now(),
@@ -511,7 +507,6 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
 
       <BookList
         books={visibleBooks}
-        bookWordCount={bookWordCount}
         onOpen={openReader}
         onRemove={removeBook}
       />
