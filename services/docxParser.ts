@@ -3,6 +3,7 @@
 // по параграфам (<w:p>), и docProps/core.xml для title/author.
 import JSZip from 'jszip';
 import { tStatic } from '../i18n';
+import { decodeHtmlEntities } from '../utils/htmlEntities';
 
 export interface DocxParseResult {
   text: string;
@@ -11,13 +12,7 @@ export interface DocxParseResult {
 }
 
 function decodeEntities(s: string): string {
-  return s
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#0?39;|&apos;/g, "'")
-    .replace(/&nbsp;/g, ' ');
+  return decodeHtmlEntities(s);
 }
 
 function firstMatch(xml: string, re: RegExp): string | undefined {

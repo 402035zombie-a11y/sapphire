@@ -5,7 +5,7 @@
 // Кликабельность реализована через Text.onPress (валидно в RN/RN-web), а не TouchableOpacity
 // внутри текста, который ломает инлайн-вёрстку и часть слов перестаёт ловить тап.
 import React, { useMemo, memo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { FONTS } from '../theme/constants';
 import { useAdaptive } from '../theme/useAdaptive';
@@ -104,6 +104,7 @@ function SentenceRow({
   showTranslate,
   onWordPress,
   onRowLayout,
+  onCopy,
 }: Props) {
   const theme = useTheme();
   const a = useAdaptive();
@@ -166,7 +167,7 @@ function SentenceRow({
   const isPlain = mode === 'read';
 
   return (
-    <View style={[styles.row, isPlain && styles.rowPlain, pageMarginPx !== 0 ? { paddingHorizontal: pageMarginPx } : null, paragraphSpacing ? { marginBottom: paragraphSpacing } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))}>
+    <Pressable style={[styles.row, isPlain && styles.rowPlain, pageMarginPx !== 0 ? { paddingHorizontal: pageMarginPx } : null, paragraphSpacing ? { marginBottom: paragraphSpacing } : null, { borderBottomColor: theme.border }]} onLayout={(e) => onRowLayout?.(paragraphIndex ?? index, Math.round((e.nativeEvent?.layout?.height) || 0))} onLongPress={onCopy} delayLongPress={350}>
       {!isPlain && (showSpeak || (onTranslate && !translation && showTranslate)) && (
         <View style={styles.controls}>
           {/* ▶ озвучка — Профіль 3: спеціалізована роль speakBtn */}
@@ -195,7 +196,7 @@ function SentenceRow({
           </Text>
         ) : null}
       </View>
-    </View>
+    </Pressable>
   );
 }
 

@@ -1,6 +1,7 @@
 // services/htmlParser.ts
 // HTML → чистий текст (strip тегів). Параграфи/блоки → \n.
 import { tStatic } from '../i18n';
+import { decodeHtmlEntities } from '../utils/htmlEntities';
 
 export interface HtmlParseResult {
   text: string;
@@ -19,13 +20,7 @@ async function readText(uri: string): Promise<string> {
 }
 
 function decodeEntities(s: string): string {
-  return s
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#0?39;|&apos;/g, "'")
-    .replace(/&nbsp;/g, ' ');
+  return decodeHtmlEntities(s);
 }
 
 export async function parseHtml(

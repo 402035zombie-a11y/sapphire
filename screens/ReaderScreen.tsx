@@ -603,6 +603,9 @@ export default function ReaderScreen({ route }: { route: any }) {
         showTranslate={reader.showTranslateButton ?? true}
         onWordPress={onWordPress}
         onRowLayout={onRowLayoutCb}
+        onCopy={() => {
+          Clipboard.setString(item.original);
+        }}
         forceHideTranslation={mode === 'read'}
         mode={mode}
         query={query}

@@ -3,6 +3,7 @@
 // у звичайний zip. Розпаковуємо через jszip, знаходимо ПЕРШИЙ файл книги
 // (txt/fb2/epub/html/mobi/docx/odt/rtf) і делегуємо відповідному парсеру.
 import JSZip from 'jszip';
+import { stripHtmlToText } from '../utils/htmlEntities';
 import { parseTxt } from './txtParser';
 import { parseFb2 } from './fb2Parser';
 import { parseEpub } from './epubParser';
@@ -128,14 +129,5 @@ export async function parseZip(uri: string): Promise<ZipParseResult> {
 }
 
 async function stripHtmlText(html: string): Promise<string> {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<\s*(p|div|br|h[1-6]|li|\/p|\/div|\/h[1-6]|\/li)\s*\/?\s*>/gi, '\n')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&nbsp;/g, ' ')
-    .replace(/[ \t]+/g, ' ')
-    .replace(/\n{2,}/g, '\n')
-    .trim();
+  return stripHtmlToText(html);
 }

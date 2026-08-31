@@ -2,6 +2,7 @@
 // FB2 (FictionBook 2.0) — XML. Извлекаем текст из <body> (пропуская notes),
 // разбиваем на параграфы по <p>/<empty-line>/<title>.
 import * as FileSystem from 'expo-file-system';
+import { decodeHtmlEntities } from '../utils/htmlEntities';
 
 export interface Fb2ParseResult {
   text: string;
@@ -10,13 +11,7 @@ export interface Fb2ParseResult {
 }
 
 function decodeEntities(s: string): string {
-  return s
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#0?39;|&apos;/g, "'")
-    .replace(/&nbsp;/g, ' ');
+  return decodeHtmlEntities(s);
 }
 
 export function parseFb2Text(xml: string): Fb2ParseResult {

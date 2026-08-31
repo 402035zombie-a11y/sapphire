@@ -95,11 +95,45 @@ function stripHtml(html: string): string {
     .replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<\s*(p|div|br|h[1-6]|li|\/p|\/div|\/h[1-6]|\/li)\s*\/?\s*>/gi, '\n')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&nbsp;/g, ' ')
     .replace(/[ \t]+/g, ' ')
     .replace(/\n{2,}/g, '\n');
+  t = decodeHtmlEntities(t);
   return t.trim();
+}
+
+// Повний HTML-entity декодер (named + числові десяткові &#NNN; + шістнадцяткові &#xNN;).
+// MOBI/Kindle файли рясно використовують числові entities (&#8220; лапки, &#8217; апостроф,
+// &#233; é тощо) — без цього юзер бачить «незрозумілі символи» замість тексту.
+function decodeHtmlEntities(s: string): string {
+  const NAMED: Record<string, string> = {
+    amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+    mdash: '—', ndash: '–', hellip: '…', lsquo: '\u2018', rsquo: '\u2019',
+    ldquo: '\u201C', rdquo: '\u201D', laquo: '«', raquo: '»', bull: '•',
+    middot: '·', copy: '©', reg: '®', trade: '™', sect: '§', para: '¶',
+    deg: '°', plusmn: '±', times: '×', divide: '÷', frac12: '½', frac14: '¼',
+    frac34: '¾', sup1: '¹', sup2: '²', sup3: '³', eacute: 'é', egrave: 'è',
+    ecirc: 'ê', euml: 'ë', agrave: 'à', aacute: 'á', acirc: 'â', auml: 'ä',
+    aring: 'å', ccedil: 'ç', iacute: 'í', igrave: 'ì', icirc: 'î', iuml: 'ï',
+    oacute: 'ó', ograve: 'ò', ocirc: 'ô', ouml: 'ö', oslash: 'ø', uacute: 'ú',
+    ugrave: 'ù', ucirc: 'û', uuml: 'ü', ntilde: 'ñ', szlig: 'ß', yacute: 'ý',
+    yuml: 'ÿ', aelig: 'æ', oelig: 'œ', pound: '£', yen: '¥', euro: '€',
+    cent: '¢', curren: '¤', brvbar: '¦', not: '¬', shy: '\u00AD', macr: '¯',
+    uml: '¨', acute: '´', cedil: '¸', iquest: '¿', iexcl: '¡',
+  };
+  // числові та named
+  return s.replace(/&(#x?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/g, (m, ent: string) => {
+    if (ent[0] === '#') {
+      const hex = ent[1] === 'x' || ent[1] === 'X';
+      const code = parseInt(hex ? ent.slice(2) : ent.slice(1), hex ? 16 : 10);
+      if (!Number.isFinite(code) || code <= 0) return '';
+      try {
+        return String.fromCodePoint(code);
+      } catch {
+        return '';
+      }
+    }
+    return NAMED[ent] ?? m;
+  });
 }
 
 export async function parseMobi(uri: string): Promise<MobiParseResult> {
