@@ -54,7 +54,8 @@ function decompressPalmdoc(data: Uint8Array, maxLen: number): Uint8Array {
       if (i >= n) break;
       const c2 = data[i++];
       const length = (c & 0x07) + 3;
-      const dist = (((c >> 3) & 0x07) << 8) | c2; // 0..2047
+      // PalmDOC LZ77: distance = ((c & 0x38) << 5) | next_byte  (bits 3-5 × 32, НЕ ×256)
+      const dist = ((c & 0x38) << 5) | c2;
       const start = out.length - dist;
       for (let k = 0; k < length; k++) {
         const idx = start + k;

@@ -230,10 +230,14 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         Alert.alert(t('Empty'), t('Could not extract text from this file.'));
         return;
       }
+      // Для ZIP показуємо ВНУТРІШНІЙ формат книги (mobi/epub/txt...), не «zip».
+      const displayFormat = (format === 'zip' && (parsed as any).innerFormat)
+        ? (parsed as any).innerFormat
+        : format;
       setDraftWithId({
         title: cleanTitle(parsed.title || asset.name),
         author: parsed.author,
-        format,
+        format: displayFormat,
         uri: asset.uri,
         language: 'auto',
         targetLang: 'uk',
