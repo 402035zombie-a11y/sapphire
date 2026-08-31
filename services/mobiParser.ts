@@ -33,58 +33,94 @@ function base64ToBytes(b64: string): Uint8Array {
   return new Uint8Array(out);
 }
 
-// PalmDOC / MOBI LZ77-декомпресія (стандарт Calibre/mobipocket)
+// PalmDOC / MOBI LZ77-декомпресія (точний алгоритм Calibre mobi_uncompress.PalmdocReader).
 function decompressPalmdoc(data: Uint8Array, maxLen: number): Uint8Array {
   const out: number[] = [];
   let i = 0;
   const n = data.length;
   while (i < n && out.length < maxLen) {
-    const c = data[i++];
+    let c = data[i++];
     if (c === 0) break; // end of text
     if (c >= 1 && c <= 8) {
+      // literal run of c bytes
       for (let k = 0; k < c && i < n; k++) out.push(data[i++]);
     } else if (c < 0x80) {
-      const len = c - 8;
-      for (let k = 0; k < len && i < n; k++) out.push(data[i++]);
+      // literal SINGLE byte (9..127) — НЕ "run of c-8"!
+      out.push(c);
     } else if (c >= 0xc0) {
-      out.push(0x20); // space
+      // space + (c ^ 0x80)
+      out.push(0x20);
       out.push(c ^ 0x80);
     } else {
-      // 0x80..0xBF: LZ77 назад
+      // 0x80..0xBF: LZ77 — pair = (c<<8)|next
       if (i >= n) break;
       const c2 = data[i++];
-      const length = (c & 0x07) + 3;
-      // PalmDOC LZ77: distance = ((c & 0x38) << 5) | next_byte  (bits 3-5 × 32, НЕ ×256)
-      const dist = ((c & 0x38) << 5) | c2;
-      const start = out.length - dist;
-      for (let k = 0; k < length; k++) {
-        const idx = start + k;
-        out.push(idx >= 0 && idx < out.length ? out[idx] : 0x20);
+      const pair = (c << 8) | c2;
+      const dist = (pair >> 3) & 0x7ff; // distance (11 bits)
+      const len = (pair & 0x07) + 3; // length
+      for (let k = 0; k < len; k++) {
+        const src = out.length - dist + k;
+        out.push(src >= 0 && src < out.length ? out[src] : 0x20);
       }
     }
   }
   return new Uint8Array(out);
 }
 
-// UTF-8 → string (самодостатній декодер, без TextDecoder, якого може не бути в Hermes)
-function utf8Decode(bytes: Uint8Array): string {
+// CP1252 (Windows-1252) → string. PalmDOC текст у MOBI — single-byte CP1252
+// (навіть коли text_encoding=65001/UTF-8, реальні байти лишаються CP1252 — відомий
+// баг Amazon). Таблиця 0x80..0x9F → символи (€ ‚ ƒ „ … † ‡ ˆ ‰ Š ‹ Œ Ž ' ' " " • – — ˜ ™ š › œ ž Ÿ).
+function cp1252Decode(bytes: Uint8Array): string {
+  const SPECIAL: Record<number, number> = {
+    0x80: 0x20AC, 0x82: 0x201A, 0x83: 0x0192, 0x84: 0x201E, 0x85: 0x2026,
+    0x86: 0x2020, 0x87: 0x2021, 0x88: 0x02C6, 0x89: 0x2030, 0x8A: 0x0160,
+    0x8B: 0x2039, 0x8C: 0x0152, 0x8E: 0x017D, 0x91: 0x2018, 0x92: 0x2019,
+    0x93: 0x201C, 0x94: 0x201D, 0x95: 0x2022, 0x96: 0x2013, 0x97: 0x2014,
+    0x98: 0x02DC, 0x99: 0x2122, 0x9A: 0x0161, 0x9B: 0x203A, 0x9C: 0x0153,
+    0x9E: 0x017E, 0x9F: 0x0178,
+  };
+  let out = '';
+  for (let i = 0; i < bytes.length; i++) {
+    const b = bytes[i];
+    if (b < 0x80) {
+      out += String.fromCharCode(b);
+    } else if (b in SPECIAL) {
+      out += String.fromCharCode(SPECIAL[b]);
+    } else {
+      // 0xA0..0xFF → Latin-1 (CP1252 == Latin-1 у цьому діапазоні)
+      out += String.fromCharCode(b);
+    }
+  }
+  return out;
+}
+
+// UTF-8 → string (строга версія — кидає помилку при невалідних байтах, щоб спрацював CP1252 fallback)
+function utf8DecodeStrict(bytes: Uint8Array): string {
   let out = '';
   let i = 0;
   while (i < bytes.length) {
     const b0 = bytes[i++];
     if (b0 < 0x80) {
       out += String.fromCharCode(b0);
-    } else if (b0 < 0xe0) {
+    } else if ((b0 & 0xe0) === 0xc0) {
+      if (i >= bytes.length) throw new Error('truncated utf8');
       const b1 = bytes[i++];
+      if ((b1 & 0xc0) !== 0x80) throw new Error('invalid utf8 continuation');
       out += String.fromCharCode(((b0 & 0x1f) << 6) | (b1 & 0x3f));
-    } else if (b0 < 0xf0) {
+    } else if ((b0 & 0xf0) === 0xe0) {
+      if (i + 1 >= bytes.length) throw new Error('truncated utf8');
       const b1 = bytes[i++], b2 = bytes[i++];
+      if ((b1 & 0xc0) !== 0x80 || (b2 & 0xc0) !== 0x80) throw new Error('invalid utf8 continuation');
       out += String.fromCharCode(((b0 & 0x0f) << 12) | ((b1 & 0x3f) << 6) | (b2 & 0x3f));
-    } else {
+    } else if ((b0 & 0xf8) === 0xf0) {
+      if (i + 2 >= bytes.length) throw new Error('truncated utf8');
       const b1 = bytes[i++], b2 = bytes[i++], b3 = bytes[i++];
+      if ((b1 & 0xc0) !== 0x80 || (b2 & 0xc0) !== 0x80 || (b3 & 0xc0) !== 0x80) throw new Error('invalid utf8 continuation');
       const cp = ((b0 & 0x07) << 18) | ((b1 & 0x3f) << 12) | ((b2 & 0x3f) << 6) | (b3 & 0x3f);
       const code = cp - 0x10000;
       out += String.fromCharCode(0xd800 + (code >> 10), 0xdc00 + (code & 0x3ff));
+    } else {
+      throw new Error('invalid utf8 lead byte');
     }
   }
   return out;
@@ -175,9 +211,31 @@ export async function parseMobi(uri: string): Promise<MobiParseResult> {
   const recordCount = dv.getUint16(hdrStart + 8);
   const recordSize = dv.getUint16(hdrStart + 10);
 
-  // Збираємо текст із records 1..recordCount
+  // recordCount з MOBI header може бути менший за реальну кількість текстових records
+  // (images починаються після тексту). Знаходимо перший image-запис (JPEG/GIF/PNG magic)
+  // і читаємо всі текстові records ДО нього.
+  function isImageStart(b: Uint8Array): boolean {
+    return (
+      (b.length >= 2 && b[0] === 0xff && b[1] === 0xd8) || // JPEG
+      (b.length >= 3 && b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) || // GIF
+      (b.length >= 4 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) // PNG
+    );
+  }
+  let firstImageIdx = recordCount + 1; // default: after recordCount
+  for (let r = 1; r < numRecords; r++) {
+    const s = offsets[r];
+    const e = offsets[r + 1] ?? bytes.length;
+    if (s == null || s >= e) continue;
+    if (isImageStart(bytes.slice(s, Math.min(s + 4, e)))) {
+      firstImageIdx = r;
+      break;
+    }
+  }
+  const textRecords = Math.min(firstImageIdx, numRecords);
+
+  // Збираємо текст із records 1..textRecords-1
   const chunks: Uint8Array[] = [];
-  for (let r = 1; r <= recordCount && r < numRecords; r++) {
+  for (let r = 1; r < textRecords; r++) {
     const start = offsets[r];
     const end = offsets[r + 1] ?? bytes.length;
     if (start == null || start >= end) continue;
@@ -200,8 +258,27 @@ export async function parseMobi(uri: string): Promise<MobiParseResult> {
   let off = 0;
   for (const c of chunks) { merged.set(c, off); off += c.length; }
   const finalLen = textLength > 0 ? Math.min(textLength, merged.length) : merged.length;
+  const body = merged.slice(0, finalLen);
 
-  const html = utf8Decode(merged.slice(0, finalLen));
+  // Визначаємо кодування з MOBI header (text_encoding на offset 12 у MOBI header).
+  // 65001 = UTF-8, 1252 = CP1252. Але Amazon часто лишає CP1252 байти навіть у
+  // «UTF-8» файлах → пробуємо UTF-8 strict, при помилці — CP1252.
+  const mobiOff = hdrStart + 16;
+  let encoding = 1252;
+  if (mobiOff + 16 <= bytes.length) {
+    encoding = dv.getUint32(mobiOff + 12);
+  }
+  let html: string;
+  if (encoding === 65001) {
+    // UTF-8: строга спроба, при невалідних байтах → CP1252 fallback
+    try {
+      html = utf8DecodeStrict(body);
+    } catch {
+      html = cp1252Decode(body);
+    }
+  } else {
+    html = cp1252Decode(body);
+  }
   const text = stripHtml(html);
   if (!text) throw new Error('Could not extract text from MOBI');
 
