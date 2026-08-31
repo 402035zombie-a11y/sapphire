@@ -787,13 +787,21 @@ function surfaceStamp(t: ThemePalette, size: number): any {
     borderRadius: r,
     alignItems: 'center',
     justifyContent: 'center',
-    // купол: радиальный блик сверху-слева → тёмный снизу-справа (выпуклость)
-    backgroundColor: t.neu.base,
-    backgroundImage: [
-      `radial-gradient(80% 80% at 32% 28%, ${t.neu.hi} 0%, rgba(0,0,0,0) 55%)`,
-      `linear-gradient(150deg, ${t.neu.light} 0%, ${t.neu.base} 50%, ${t.neu.dark} 100%)`,
-    ].join(', '),
-    backgroundClip: 'padding-box',
+    // купол: радиальный блик сверху-слева → тёмный снизу-справа (выпуклость).
+    // backgroundImage — ТІЛЬКИ на web (Android не рендерить CSS-gradient, і його
+    // наявність у стилі блокує elevation → тінь зникає). На Android — суцільний фон.
+    ...(Platform.OS === 'web'
+      ? {
+          backgroundColor: t.neu.base,
+          backgroundImage: [
+            `radial-gradient(80% 80% at 32% 28%, ${t.neu.hi} 0%, rgba(0,0,0,0) 55%)`,
+            `linear-gradient(150deg, ${t.neu.light} 0%, ${t.neu.base} 50%, ${t.neu.dark} 100%)`,
+          ].join(', '),
+          backgroundClip: 'padding-box',
+        }
+      : {
+          backgroundColor: t.neu.base,
+        }),
     transition: 'box-shadow 160ms ease, transform 160ms ease',
     boxShadow: [
       // ВНЕШНЯЯ лунка (вдавленная окантовка): тёмная сверху-слева, светлая снизу-справа
