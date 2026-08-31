@@ -58,8 +58,11 @@ function decompressPalmdoc(data: Uint8Array, maxLen: number): Uint8Array {
       const pair = (c << 8) | c2;
       const dist = (pair >> 3) & 0x7ff; // distance (11 bits)
       const len = (pair & 0x07) + 3; // length
+      // Критично для dist < len (self-overlap): копіюємо БАЙТ-ЗА-БАЙТОМ з
+      // out.length - dist, щоб перекриття читало вже щойно додані байти.
+      // (Спрощене out[dist+k] з fallback 0x20 давало «кашу» — сміття замість повторів.)
       for (let k = 0; k < len; k++) {
-        const src = out.length - dist + k;
+        const src = out.length - dist;
         out.push(src >= 0 && src < out.length ? out[src] : 0x20);
       }
     }
