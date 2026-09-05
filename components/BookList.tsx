@@ -45,10 +45,55 @@ function BookCard({ item, onOpen, onRemove }: {
     () => surface(theme, 'circleInset', { size: a.dim(0.05, 30, 40) }),
     [theme, a.radius, a.scale],
   );
+  
+  // Import state handling
+  const isImporting = item.status === 'parsing' || item.status === 'saving';
+  const hasError = item.status === 'error';
+  const showProgress = isImporting || hasError;
+  const progressPercent = item.importProgress ?? 0;
+  
+  // Cancel/Delete/Retry button text & handler
+  const getActionButton = () => {
+    if (hasError) {
+      return (
+        <View style={styles.errorActions}>
+          <TouchableOpacity
+            onPress={(e: any) => { e?.stopPropagation?.(); onRemove(item.id); }}
+            hitSlop={10}
+            style={[surface(theme, 'circleInset', { size: a.dim(0.05, 28, 36) }), { padding: 0 }]}
+          >
+            <Icon name="close" size={a.dim(0.025, 14, 18)} color={theme.danger} />
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    if (isImporting) {
+      return (
+        <TouchableOpacity
+          onPress={(e: any) => { e?.stopPropagation?.(); onRemove(item.id); }}
+          hitSlop={10}
+          style={[surface(theme, 'circleInset', { size: a.dim(0.05, 28, 36) }), { padding: 0 }]}
+        >
+          <Icon name="close" size={a.dim(0.025, 14, 18)} color={theme.danger} />
+        </TouchableOpacity>
+      );
+    }
+    // Ready state - delete button
+    return (
+      <TouchableOpacity
+        onPress={(e: any) => { e?.stopPropagation?.(); onRemove(item.id); }}
+        hitSlop={10}
+        style={[surface(theme, 'circleInset', { size: a.dim(0.05, 28, 36) }), { padding: 0 }]}
+      >
+        <Icon name="close" size={a.dim(0.025, 14, 18)} color={theme.danger} />
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <TouchableOpacity
       style={[styles.bookRow, raisedStyle]}
-      onPress={() => onOpen(item.id)}
+      onPress={() => !isImporting && onOpen(item.id)}
     >
       <View style={[styles.cover, item.coverImage ? {} : { backgroundColor: coverColor(item.title) }]}>
         {item.coverImage ? (
@@ -58,22 +103,23 @@ function BookCard({ item, onOpen, onRemove }: {
         )}
       </View>
       <View style={{ flex: 1, flexShrink: 1, marginLeft: Math.round(12 * a.scale), minWidth: 0 }}>
-        <Text style={[styles.bookTitle, { color: theme.primaryText }]} numberOfLines={2}>{item.title}</Text>
+        <Text style={[styles.bookTitle, { color: theme.primaryText, opacity: isImporting ? 0.7 : 1 }]} numberOfLines={2}>{item.title}</Text>
         <Text style={[styles.bookMeta, { color: theme.secondaryText }]} numberOfLines={2}>
-          {item.author ? `${item.author} · ` : ''}
-          {item.format ? `${item.format.toUpperCase()} · ` : ''}
-          {item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()}
+          {hasError ? `${t('Import failed')}: ${item.importError}` : ''}
+          {isImporting ? `${t(item.status === 'parsing' ? 'Parsing...' : 'Saving...')} ${progressPercent}%` : ''}
+          {!showProgress && item.author ? `${item.author} · ` : ''}
+          {!showProgress && item.format ? `${item.format.toUpperCase()} · ` : ''}
+          {!showProgress ? `${item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()}` : ''}
         </Text>
       </View>
       <View style={styles.rowActions}>
-        <TouchableOpacity
-          onPress={(e: any) => { e?.stopPropagation?.(); onRemove(item.id); }}
-          hitSlop={10}
-          style={[surface(theme, 'libraryDeleteBtn', { size: a.dim(0.05, 28, 36) }), { padding: 0 }]}
-        >
-          <Icon name="close" size={a.dim(0.025, 14, 18)} color={theme.danger} />
-        </TouchableOpacity>
+        {getActionButton()}
       </View>
+      {showProgress && (
+        <View style={styles.progressContainer}>
+          <View style={[styles.progressBar, { width: `${progressPercent}%` }]} />
+        </View>
+      )}
     </TouchableOpacity>
   );
 }
@@ -111,4 +157,7 @@ const styles = StyleSheet.create({
   bookTitle: { fontSize: 16, fontWeight: '600' },
   bookMeta: { fontSize: 13, marginTop: 2 },
   rowActions: { marginLeft: 8 },
+  progressContainer: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, backgroundColor: 'transparent' },
+  progressBar: { height: 3, borderRadius: 2 },
+  errorActions: { flexDirection: 'row', gap: 8 },
 });

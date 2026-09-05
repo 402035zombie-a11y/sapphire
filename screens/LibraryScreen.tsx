@@ -84,6 +84,11 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   const books = useLibraryStore((s) => s.books);
   const addBook = useLibraryStore((s) => s.addBook);
   const removeBook = useLibraryStore((s) => s.removeBook);
+  const addBookPlaceholder = useLibraryStore((s) => s.addBookPlaceholder);
+  const updateImportProgress = useLibraryStore((s) => s.updateImportProgress);
+  const finishBookImport = useLibraryStore((s) => s.finishBookImport);
+  const failBookImport = useLibraryStore((s) => s.failBookImport);
+  const cancelBookImport = useLibraryStore((s) => s.cancelBookImport);
   const importEntries = useDictionaryStore((s) => s.importEntries);
 
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -190,60 +195,123 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
       setLoading(true);
       setProgress(0.02);
 
+      // ФАЗА 1: створюємо placeholder-картку одразу — користувач бачить книгу в списку
+      // ще до завершення парсингу. Це фундамент для майбутнього Web Worker.
+      const placeholderId = `importing_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+      addBookPlaceholder({
+        id: placeholderId,
+        title: cleanTitle(asset.name),
+        format: format === 'zip' ? 'txt' : format,
+        uri: asset.uri,
+        language: 'auto',
+        targetLang: defaultTarget ?? 'uk',
+        paragraphs: [],
+        sections: [],
+        createdAt: Date.now(),
+        progress: 0,
+        lastPosition: 0,
+        bookmarks: [],
+        status: 'parsing',
+        importProgress: 0,
+      });
+      // progress-callback → оновлює % у placeholder-картці
+      const onParseProgress = (p: number) => {
+        const percent = Math.round(p * 100);
+        setProgress(p);
+        updateImportProgress(placeholderId, percent);
+      };
+
       let parsed: { text: string; title?: string; author?: string; cover?: string };
-      if (format === 'epub') {
-        parsed = await parseEpub(asset.uri, setProgress);
-      } else if (format === 'fb2') {
-        parsed = await parseFb2(asset.uri, setProgress);
-      } else if (format === 'docx') {
-        parsed = await parseDocx(asset.uri, setProgress);
-      } else if (format === 'odt') {
-        parsed = await parseOdt(asset.uri, setProgress);
-      } else if (format === 'rtf') {
-        parsed = await parseRtf(asset.uri, setProgress);
-      } else if (format === 'html') {
-        parsed = await parseHtml(asset.uri, setProgress);
-      } else if (format === 'mobi') {
-        parsed = await parseMobi(asset.uri);
-      } else if (format === 'zip') {
-        parsed = await parseZip(asset.uri);
-      } else {
-        parsed = await (async () => {
-          const res = await fetch(asset.uri);
-          const raw = await res.text();
-          const text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
-          return { text, title: asset.name.replace(/\.txt$/i, '') };
-        })();
+      try {
+        if (format === 'epub') {
+          parsed = await parseEpub(asset.uri, onParseProgress);
+        } else if (format === 'fb2') {
+          parsed = await parseFb2(asset.uri, onParseProgress);
+        } else if (format === 'docx') {
+          parsed = await parseDocx(asset.uri, onParseProgress);
+        } else if (format === 'odt') {
+          parsed = await parseOdt(asset.uri, onParseProgress);
+        } else if (format === 'rtf') {
+          parsed = await parseRtf(asset.uri, onParseProgress);
+        } else if (format === 'html') {
+          parsed = await parseHtml(asset.uri, onParseProgress);
+        } else if (format === 'mobi') {
+          parsed = await parseMobi(asset.uri);
+        } else if (format === 'zip') {
+          parsed = await parseZip(asset.uri);
+        } else {
+          parsed = await (async () => {
+            const res = await fetch(asset.uri);
+            const raw = await res.text();
+            const text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+            return { text, title: asset.name.replace(/\.txt$/i, '') };
+          })();
+        }
+      } catch (parseErr: any) {
+        // Помилка парсингу → placeholder залишається в бібліотеці зі статусом 'error'
+        // (юзер може Retry або видалити). Не блокуємо UI далі.
+        failBookImport(placeholderId, parseErr?.message ?? String(parseErr));
+        Alert.alert(t('Error reading file'), parseErr?.message ?? String(parseErr));
+        setLoading(false);
+        return;
       }
-      setProgress(0.95);
-      // PERF: важка синхронна сегментація великого тексту блокує JS-поток → фриз UI.
+      onParseProgress(0.95);
+      // PERF: важка синхронна сегментація великого тексту блокує JS-потік → фриз UI.
       // Віддаємо кадр перед і після (InteractionManager + setTimeout 0), потім chunk-обробка.
       await new Promise((r) => setTimeout(r, 0));
       const paragraphs = buildParagraphs(parsed.text);
       const sections = extractSections(paragraphs);
-      setProgress(1);
+      onParseProgress(1);
       if (paragraphs.length === 0) {
+        failBookImport(placeholderId, t('Could not extract text from this file.'));
         Alert.alert(t('Empty'), t('Could not extract text from this file.'));
+        setLoading(false);
         return;
       }
       // Для ZIP показуємо ВНУТРІШНІЙ формат книги (mobi/epub/txt...), не «zip».
       const displayFormat = (format === 'zip' && (parsed as any).innerFormat)
         ? (parsed as any).innerFormat
         : format;
+
+      // Генеруємо стабільний id на основі title+format (як у setDraftWithId).
+      // Видаляємо placeholder і створюємо реальну книгу через addBook.
+      const realId = `${cleanTitle(parsed.title || asset.name).replace(/[^\p{L}\p{N}]+/gu, '_')}_${displayFormat}`;
+      cancelBookImport(placeholderId);
+      addBook({
+        id: realId,
+        title: cleanTitle(parsed.title || asset.name),
+        author: parsed.author,
+        format: displayFormat,
+        uri: asset.uri,
+        language: 'auto',
+        targetLang: defaultTarget ?? 'uk',
+        paragraphs: [],
+        sections,
+        coverImage: parsed.cover,
+        createdAt: Date.now(),
+        progress: 0,
+        lastPosition: 0,
+        bookmarks: [],
+        status: 'ready',
+        importProgress: 100,
+      });
+
       setDraftWithId({
         title: cleanTitle(parsed.title || asset.name),
         author: parsed.author,
         format: displayFormat,
         uri: asset.uri,
         language: 'auto',
-        targetLang: 'uk',
+        targetLang: defaultTarget ?? 'uk',
         paragraphs,
         sections,
         cover: parsed.cover,
       });
+      // Синхронізуємо draftIdRef з реальним id (інакше importBookDict працюватиме з різними id)
+      draftIdRef.current = realId;
       // E3: parse-once → books.db.chapters (для миттєвого повторного відкриття).
       // id той самий, що піде в store (draftBookId) — інакше Reader не знайде глави в БД.
-      if (draftIdRef.current) importBook(asset.uri, format, undefined, draftIdRef.current).catch((e) => {
+      if (realId) importBook(asset.uri, format, undefined, realId).catch((e) => {
         console.warn('[bookImport] failed (non-fatal):', e);
       });
     } catch (e: any) {
@@ -313,28 +381,31 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
   };
 
   const saveDraft = () => {
-    if (!draft || !draftBookId) return;
-    const book: Book = {
-      id: draftBookId,
-      title: cleanTitle(draft.title),
-      author: draft.author,
-      format: draft.format,
-      uri: draft.uri,
-      language: draft.language,
-      targetLang: draft.targetLang,
-      // ТЕКСТ книги більше НЕ в сторе (SQLite books.db.chapters — джерело істини).
-      // Легкий desc → AsyncStorage не росте, старт апки не парсить мегабайти JSON.
-      paragraphs: [],
-      sections: draft.sections,
-      coverImage: draft.cover,
-      createdAt: Date.now(),
-      progress: 0,
-      lastPosition: 0,
-      bookmarks: [],
+      if (!draft || !draftBookId) return;
+      const book: Book = {
+        id: draftBookId,
+        title: cleanTitle(draft.title),
+        author: draft.author,
+        format: draft.format,
+        uri: draft.uri,
+        language: draft.language,
+        targetLang: draft.targetLang,
+        // ТЕКСТ книги більше НЕ в сторе (SQLite books.db.chapters — джерело істини).
+        // Легкий desc → AsyncStorage не росте, старт апки не парсить мегабайти JSON.
+        paragraphs: [],
+        sections: draft.sections,
+        coverImage: draft.cover,
+        createdAt: Date.now(),
+        progress: 0,
+        lastPosition: 0,
+        bookmarks: [],
+        // Import states
+        status: 'ready',
+        importProgress: 100,
+      };
+      addBook(book);
+      setDraft(null);
     };
-    addBook(book);
-    setDraft(null);
-  };
 
   const importBookDict = () => {
     if (!draft || importing || !draftBookId) return; // importing = миттєвий блок повторних тапів
