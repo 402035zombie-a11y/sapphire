@@ -3,15 +3,13 @@
 // у звичайний zip. Розпаковуємо через jszip, знаходимо ПЕРШИЙ файл книги
 // (txt/fb2/epub/html/mobi/docx/odt/rtf) і делегуємо відповідному парсеру.
 import JSZip from 'jszip';
-import { stripHtmlToText } from '../utils/htmlEntities';
-import { parseTxt } from './txtParser';
-import { parseFb2 } from './fb2Parser';
-import { parseEpub } from './epubParser';
-import { parseHtml } from './htmlParser';
-import { parseMobi } from './mobiParser';
-import { parseDocx } from './docxParser';
-import { parseOdt } from './odtParser';
-import { parseRtf } from './rtfParser';
+import { parseHtmlFromBytes } from './htmlParser';
+import { parseFb2FromBytes } from './fb2Parser';
+import { parseEpubFromBytes } from './epubParser';
+import { parseMobiFromBytes } from './mobiParser';
+import { parseDocxFromBytes } from './docxParser';
+import { parseOdtFromBytes } from './odtParser';
+import { parseRtfFromBytes } from './rtfParser';
 
 export interface ZipParseResult {
   text: string;
@@ -42,26 +40,36 @@ export async function parseZip(uri: string): Promise<ZipParseResult> {
     await FileSystem.copyAsync({ from: uri, to: cacheUri });
     base64 = await FileSystem.readAsStringAsync(cacheUri, { encoding: 'base64' as any });
   }
+  // base64 → ArrayBuffer
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return parseZipFromBytes(bytes.buffer);
+}
 
-  const zip = await JSZip.loadAsync(base64, { base64: true });
+/**
+ * Парсер ZIP з готових байтів — для Web Worker.
+ * Знаходить першу книгу всередині zip і парсить її відповідним парсером.
+ */
+export async function parseZipFromBytes(
+  arrayBuffer: ArrayBuffer,
+  _onProgress?: (p: number) => void,
+): Promise<ZipParseResult> {
+  const zip = await JSZip.loadAsync(arrayBuffer);
 
-  // Збираємо всі файли (не директорії), сортуємо: спершу менші за 2MB (ймовірні книги)
   const files = Object.values(zip.files).filter((f) => !f.dir);
   if (files.length === 0) throw new Error('ZIP is empty');
 
-  // Знайти кандидата-книгу: файл з розширенням книги, без "mimetype"/"container.xml"/описових
   const candidates = files
     .map((f) => f.name)
     .filter((n) => {
       const e = extOf(n);
       if (!BOOK_EXTS.has(e)) return false;
       const base = n.split('/').pop() || '';
-      // відсіюємо службові файли
       if (/mimetype|container\.xml|\.opf$|\.ncx$|\.css$|\.js$|\.json$/.test(base)) return false;
       return true;
     })
     .sort((a, b) => {
-      // глибина шляху: кореневий файл перший
       const depthA = a.split('/').length;
       const depthB = b.split('/').length;
       if (depthA !== depthB) return depthA - depthB;
@@ -72,62 +80,52 @@ export async function parseZip(uri: string): Promise<ZipParseResult> {
     throw new Error('No readable book found inside ZIP (supported: txt, fb2, epub, html, mobi, docx, odt, rtf)');
   }
 
-  // Беремо перший кандидат, читаємо як base64, далі парсимо за розширенням
   const name = candidates[0];
   const ext = extOf(name);
   const file = zip.file(name);
   if (!file) throw new Error('ZIP entry missing: ' + name);
-  const innerB64 = await file.async('base64');
-
-  // txt/html читаються з тексту напряму; інші — потребують файл/шлях, тому
-  // зберігаємо в cache і викликаємо парсер по file:// uri.
-  if (ext === 'txt' || ext === 'htm' || ext === 'html') {
-    const text = await file.async('text');
-    return {
-      text: ext === 'txt' ? text : await stripHtmlText(text),
-      title: (name.split('/').pop() || '').replace(/\.[^.]+$/, ''),
-      innerFormat: ext,
-    };
-  }
-
-  // Для fb2/mobi/docx/odt/rtf/epub — записуємо розпакований файл у cache і парсимо по uri
-  const innerUri = `${FileSystem.cacheDirectory}br_zip_inner_${Date.now()}.${ext}`;
-  await FileSystem.writeAsStringAsync(innerUri, innerB64, { encoding: 'base64' as any });
+  const innerBytes = await file.async('uint8array');
+  // Створюємо КОПІЮ як ArrayBuffer (slice повертає ArrayBufferLike, потрібен ArrayBuffer).
+  const innerBuffer = new Uint8Array(innerBytes).slice().buffer;
 
   switch (ext) {
+    case 'txt': {
+      const text = new TextDecoder('utf-8').decode(innerBytes);
+      return { text, title: (name.split('/').pop() || '').replace(/\.[^.]+$/, ''), innerFormat: ext };
+    }
+    case 'htm':
+    case 'html': {
+      const r = await parseHtmlFromBytes(innerBuffer);
+      return { text: r.text, title: r.title ?? (name.split('/').pop() || '').replace(/\.[^.]+$/, ''), innerFormat: ext };
+    }
     case 'fb2': {
-      const r = await parseFb2(innerUri);
-      return { text: (r as any).text ?? '', title: (r as any).title, innerFormat: ext };
+      const r = await parseFb2FromBytes(innerBuffer);
+      return { text: r.text, title: r.title, innerFormat: ext };
     }
     case 'mobi':
     case 'azw':
     case 'azw3':
     case 'prc': {
-      const r = await parseMobi(innerUri);
+      const r = await parseMobiFromBytes(innerBuffer);
       return { text: r.text, title: r.title, innerFormat: ext };
     }
     case 'docx': {
-      const r = await parseDocx(innerUri);
-      return { text: (r as any).text ?? '', title: (r as any).title, innerFormat: ext };
+      const r = await parseDocxFromBytes(innerBuffer);
+      return { text: r.text, title: r.title, innerFormat: ext };
     }
     case 'odt': {
-      const r = await parseOdt(innerUri);
-      return { text: (r as any).text ?? '', title: (r as any).title, innerFormat: ext };
+      const r = await parseOdtFromBytes(innerBuffer);
+      return { text: r.text, title: r.title, innerFormat: ext };
     }
     case 'rtf': {
-      const r = await parseRtf(innerUri);
-      return { text: (r as any).text ?? '', title: (r as any).title, innerFormat: ext };
+      const r = await parseRtfFromBytes(innerBuffer);
+      return { text: r.text, title: r.title, innerFormat: ext };
     }
     case 'epub': {
-      // epub у zip — розпаковуємо на disk і читаємо parseEpub
-      const r = await parseEpub(innerUri);
-      return { text: (r as any).text ?? '', title: (r as any).title, author: (r as any).author, cover: (r as any).cover, innerFormat: ext };
+      const r = await parseEpubFromBytes(innerBuffer);
+      return { text: r.text, title: r.title, author: r.author, cover: r.cover, innerFormat: ext };
     }
     default:
       throw new Error('Unsupported inner format: ' + ext);
   }
-}
-
-async function stripHtmlText(html: string): Promise<string> {
-  return stripHtmlToText(html);
 }

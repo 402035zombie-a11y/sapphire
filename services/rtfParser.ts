@@ -28,9 +28,27 @@ export async function parseRtf(
   uri: string,
   onProgress?: (p: number) => void,
 ): Promise<RtfParseResult> {
+  const raw = await readText(uri);
+  return parseRtfFromString(raw, onProgress);
+}
+
+/**
+ * Парсер RTF з готових байтів — для Web Worker.
+ */
+export async function parseRtfFromBytes(
+  arrayBuffer: ArrayBuffer,
+  onProgress?: (p: number) => void,
+): Promise<RtfParseResult> {
+  const raw = new TextDecoder('utf-8').decode(new Uint8Array(arrayBuffer));
+  return parseRtfFromString(raw, onProgress);
+}
+
+async function parseRtfFromString(
+  raw: string,
+  onProgress?: (p: number) => void,
+): Promise<RtfParseResult> {
   const tick = (p: number) => onProgress?.(p);
   tick(0.1);
-  const raw = await readText(uri);
   tick(0.4);
 
   // Стекове проходження: викидаємо службові групи цілком, лишаємо текст тіла.

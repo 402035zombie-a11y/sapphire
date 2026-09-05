@@ -27,9 +27,27 @@ export async function parseHtml(
   uri: string,
   onProgress?: (p: number) => void,
 ): Promise<HtmlParseResult> {
+  const html = await readText(uri);
+  return parseHtmlFromString(html, onProgress);
+}
+
+/**
+ * Парсер HTML з готових байтів — для Web Worker.
+ */
+export async function parseHtmlFromBytes(
+  arrayBuffer: ArrayBuffer,
+  onProgress?: (p: number) => void,
+): Promise<HtmlParseResult> {
+  const html = new TextDecoder('utf-8').decode(new Uint8Array(arrayBuffer));
+  return parseHtmlFromString(html, onProgress);
+}
+
+async function parseHtmlFromString(
+  html: string,
+  onProgress?: (p: number) => void,
+): Promise<HtmlParseResult> {
   const tick = (p: number) => onProgress?.(p);
   tick(0.1);
-  const html = await readText(uri);
   tick(0.5);
   let t = html.replace(/<script[\s\S]*?<\/script>/gi, ' ');
   t = t.replace(/<style[\s\S]*?<\/style>/gi, ' ');

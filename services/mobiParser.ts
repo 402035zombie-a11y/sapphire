@@ -200,6 +200,18 @@ export async function parseMobi(uri: string): Promise<MobiParseResult> {
     const b64 = await FileSystem.readAsStringAsync(cacheUri, { encoding: 'base64' as any });
     bytes = base64ToBytes(b64);
   }
+  return parseMobiFromBytes(bytes.buffer as ArrayBuffer);
+}
+
+/**
+ * Парсер MOBI з готових байтів — для Web Worker.
+ * Приймає ArrayBuffer → повертає { text, title }.
+ */
+export async function parseMobiFromBytes(
+  arrayBuffer: ArrayBuffer,
+  _onProgress?: (p: number) => void,
+): Promise<MobiParseResult> {
+  const bytes = new Uint8Array(arrayBuffer);
 
   const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   if (bytes.length < 78) throw new Error('Invalid MOBI: file too short');

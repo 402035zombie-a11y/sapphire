@@ -40,12 +40,28 @@ export async function parseDocx(
   const tick = (p: number) => onProgress?.(p);
   tick(0.05);
   const base64 = await readBase64(uri);
-  tick(0.25);
-  const zip = await JSZip.loadAsync(base64, { base64: true });
+  // base64 → ArrayBuffer
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return parseDocxFromBytes(bytes.buffer, onProgress);
+}
+
+/**
+ * Парсер DOCX з готових байтів — для Web Worker.
+ */
+export async function parseDocxFromBytes(
+  arrayBuffer: ArrayBuffer,
+  onProgress?: (p: number) => void,
+): Promise<DocxParseResult> {
+  const tick = (p: number) => onProgress?.(p);
+  tick(0.05);
+  const zip = await JSZip.loadAsync(arrayBuffer);
 
   const docFile = zip.file('word/document.xml') || zip.file('word/document2.xml');
   if (!docFile) throw new Error(tStatic('Invalid DOCX: missing word/document.xml'));
   const xml = await docFile.async('text');
+  tick(0.25);
 
   // Розбиваемо на параграфи по <w:p> і збираем <w:t> у кожному
   const paraBlocks = xml.split(/<w:p[ >]/i).slice(1);

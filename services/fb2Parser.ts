@@ -70,6 +70,23 @@ export async function parseFb2(
   return res;
 }
 
+/**
+ * Парсер FB2 з готових байтів — для Web Worker.
+ * bytes = UTF-8 text.
+ */
+export async function parseFb2FromBytes(
+  bytes: ArrayBuffer,
+  onProgress?: (p: number) => void,
+): Promise<Fb2ParseResult> {
+  onProgress?.(0.1);
+  // ArrayBuffer → string (UTF-8)
+  const raw = new TextDecoder('utf-8').decode(new Uint8Array(bytes));
+  onProgress?.(0.4);
+  const res = parseFb2Text(raw);
+  onProgress?.(1);
+  return res;
+}
+
 function matchTag(xml: string, tag: string): string | undefined {
   const m = xml.match(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'));
   if (!m) return undefined;

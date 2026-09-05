@@ -25,14 +25,9 @@ import { useT } from '../i18n';
 import { useTheme } from '../theme/ThemeContext';
 import { useAdaptive } from '../theme/useAdaptive';
 import { importBook } from '../services/bookImport';
-import { parseEpub } from '../services/epubParser';
-import { parseFb2, parseFb2Text } from '../services/fb2Parser';
-import { parseDocx } from '../services/docxParser';
-import { parseOdt } from '../services/odtParser';
-import { parseRtf } from '../services/rtfParser';
-import { parseHtml } from '../services/htmlParser';
-import { parseMobi } from '../services/mobiParser';
-import { parseZip } from '../services/zipParser';
+import { parserClient, ParserFormat } from '../services/parserClient';
+import { parseTxt } from '../services/txtParser';
+import { parseFb2Text } from '../services/fb2Parser';
 import { splitIntoSentences } from '../utils/sentenceSplitter';
 import { extractSections } from '../utils/sections';
 import { langName } from '../utils/languages';
@@ -221,31 +216,34 @@ export default function LibraryScreen({ onSelectBook }: { onSelectBook?: (bookId
         updateImportProgress(placeholderId, percent);
       };
 
-      let parsed: { text: string; title?: string; author?: string; cover?: string };
+      let parsed: { text: string; title?: string; author?: string; cover?: string; innerFormat?: string };
       try {
-        if (format === 'epub') {
-          parsed = await parseEpub(asset.uri, onParseProgress);
-        } else if (format === 'fb2') {
-          parsed = await parseFb2(asset.uri, onParseProgress);
-        } else if (format === 'docx') {
-          parsed = await parseDocx(asset.uri, onParseProgress);
-        } else if (format === 'odt') {
-          parsed = await parseOdt(asset.uri, onParseProgress);
-        } else if (format === 'rtf') {
-          parsed = await parseRtf(asset.uri, onParseProgress);
-        } else if (format === 'html') {
-          parsed = await parseHtml(asset.uri, onParseProgress);
-        } else if (format === 'mobi') {
-          parsed = await parseMobi(asset.uri);
-        } else if (format === 'zip') {
-          parsed = await parseZip(asset.uri);
+        // Web Worker не підтримує txt inline (бо File API в main, а Worker ізольований).
+        // Тому txt читаємо напряму тут — це швидко, бо txt-файли зазвичай невеликі.
+        if (format === 'txt') {
+          // @ts-ignore
+          const FileSystem: any = require('expo-file-system/legacy');
+          let text: string;
+          if (/^https?:\/\//i.test(asset.uri)) {
+            text = await (await fetch(asset.uri)).text();
+          } else {
+            const cacheUri = `${FileSystem.cacheDirectory}br_txt_${Date.now()}.txt`;
+            await FileSystem.copyAsync({ from: asset.uri, to: cacheUri });
+            text = await FileSystem.readAsStringAsync(cacheUri, { encoding: 'utf8' as any });
+            try { await FileSystem.deleteAsync(cacheUri, { idempotent: true }); } catch {}
+          }
+          onParseProgress(0.9);
+          parsed = {
+            text: text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim(),
+            title: asset.name.replace(/\.txt$/i, ''),
+          };
         } else {
-          parsed = await (async () => {
-            const res = await fetch(asset.uri);
-            const raw = await res.text();
-            const text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
-            return { text, title: asset.name.replace(/\.txt$/i, '') };
-          })();
+          // Усі інші формати → parserClient (Worker на web, fallback на main на native)
+          parsed = await parserClient.enqueue({
+            format: format as ParserFormat,
+            uri: asset.uri,
+            onProgress: onParseProgress,
+          });
         }
       } catch (parseErr: any) {
         // Помилка парсингу → placeholder залишається в бібліотеці зі статусом 'error'

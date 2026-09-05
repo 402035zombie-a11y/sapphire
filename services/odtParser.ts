@@ -40,8 +40,23 @@ export async function parseOdt(
   const tick = (p: number) => onProgress?.(p);
   tick(0.05);
   const base64 = await readBase64(uri);
-  tick(0.25);
-  const zip = await JSZip.loadAsync(base64, { base64: true });
+  // base64 → ArrayBuffer
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return parseOdtFromBytes(bytes.buffer, onProgress);
+}
+
+/**
+ * Парсер ODT з готових байтів — для Web Worker.
+ */
+export async function parseOdtFromBytes(
+  arrayBuffer: ArrayBuffer,
+  onProgress?: (p: number) => void,
+): Promise<OdtParseResult> {
+  const tick = (p: number) => onProgress?.(p);
+  tick(0.05);
+  const zip = await JSZip.loadAsync(arrayBuffer);
 
   const contentFile =
     zip.file('content.xml') ||
@@ -49,6 +64,7 @@ export async function parseOdt(
     Object.values(zip.files).find((f: any) => /content\.xml$/i.test(f.name));
   if (!contentFile) throw new Error(tStatic('Invalid ODT: missing content.xml'));
   const xml = await contentFile.async('text');
+  tick(0.25);
 
   const paraBlocks = xml.split(/<text:p[ >]/i).slice(1);
   const paragraphs: string[] = [];

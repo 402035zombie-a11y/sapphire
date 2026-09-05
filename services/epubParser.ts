@@ -191,6 +191,126 @@ export async function parseEpub(
   return { text: paragraphs.join('\n\n'), title, author, cover };
 }
 
+/**
+ * Парсер EPUB з готових байтів (ArrayBuffer) — використовується у Web Worker.
+ * На вхід: байти файлу + onProgress. Повертає: text + title + author + cover (data URI).
+ */
+export async function parseEpubFromBytes(
+  bytes: ArrayBuffer,
+  onProgress?: (p: number) => void,
+): Promise<EpubParseResult> {
+  const emit = onProgress ? throttle(onProgress, 250) : undefined;
+  let last = 0;
+  const tick = (p: number) => { if (p - last >= 0.02 || p >= 1) { last = p; emit?.(p); } };
+  tick(0.05);
+
+  // ArrayBuffer → base64 для JSZip (jszip приймає ArrayBuffer напряму у loadAsync)
+  const zip = await JSZip.loadAsync(bytes);
+
+  const containerFile = zip.file('META-INF/container.xml');
+  if (!containerFile) throw new Error(tStatic('Invalid EPUB: missing META-INF/container.xml'));
+  const containerXml = await containerFile.async('text');
+  const opfRelPath = firstMatch(containerXml, /full-path="([^"]+)"/i);
+  if (!opfRelPath) throw new Error(tStatic('OPF path not found in container.xml'));
+
+
+  const opfFile = zip.file(opfRelPath);
+  if (!opfFile) throw new Error(tStatic('OPF not found in archive: {path}').replace('{path}', opfRelPath));
+  const opfXml = await opfFile.async('text');
+  const opfDir = opfRelPath.includes('/') ? opfRelPath.slice(0, opfRelPath.lastIndexOf('/')) : '';
+
+  // манифест: id -> { href, mediaType }
+  const manifest: Record<string, { href: string; mediaType: string }> = {};
+  const itemRe = /<item\b[^>]*?>/gi;
+  let im: RegExpExecArray | null;
+  while ((im = itemRe.exec(opfXml))) {
+    const tag = im[0];
+    const idM = tag.match(/\bid="([^"]+)"/i);
+    const hrefM = tag.match(/\bhref="([^"]+)"/i);
+    const mtM = tag.match(/\bmedia-type="([^"]+)"/i);
+    if (idM && hrefM && mtM) {
+      manifest[idM[1]] = { href: hrefM[1], mediaType: mtM[1] };
+    }
+  }
+
+  // обкладинка
+  let coverHref: string | null = null;
+  let coverType = 'image/jpeg';
+  let firstImageHref: string | null = null;
+  let firstImageType = 'image/jpeg';
+  for (const [id, m] of Object.entries(manifest)) {
+    if (!/image\//i.test(m.mediaType)) continue;
+    if (!firstImageHref) { firstImageHref = m.href; firstImageType = m.mediaType; }
+    coverType = m.mediaType;
+    const props = opfXml.match(new RegExp(`<item\\b[^>]*\\bid="${id}"[^>]*\\bproperties="([^"]*)"`, 'i'));
+    if (props && /cover-image/i.test(props[1])) { coverHref = m.href; break; }
+    if (/cover/i.test(id)) { coverHref = m.href; break; }
+  }
+  if (!coverHref) { coverHref = firstImageHref; coverType = firstImageType; }
+  let cover: string | undefined;
+  if (coverHref) {
+    const cands = [
+      resolvePath(opfDir, coverHref),
+      coverHref.replace(/^OEBPS\//i, ''),
+      `OEBPS/${coverHref.replace(/^OEBPS\//i, '')}`,
+    ];
+    for (const c of cands) {
+      const f = zip.file(c);
+      if (f) {
+        const b64 = await f.async('base64');
+        cover = `data:${coverType};base64,${b64}`;
+        break;
+      }
+    }
+  }
+
+  // spine
+  const spineBlock = opfXml.match(/<spine\b[\s\S]*?<\/spine>/i);
+  const orderedHrefs: string[] = [];
+  if (spineBlock) {
+    const refRe = /<itemref\b[^>]*?\bidref="([^"]+)"/gi;
+    let rm: RegExpExecArray | null;
+    while ((rm = refRe.exec(spineBlock[0]))) {
+      const href = manifest[rm[1]]?.href;
+      if (href) orderedHrefs.push(resolvePath(opfDir, href));
+    }
+  }
+  if (orderedHrefs.length === 0) {
+    Object.values(manifest).forEach((m) => orderedHrefs.push(resolvePath(opfDir, m.href)));
+  }
+
+  const paragraphs: string[] = [];
+  for (let i = 0; i < orderedHrefs.length; i++) {
+    const href = orderedHrefs[i];
+    const candidates = [
+      href,
+      opfDir ? `${opfDir}/${href}` : href,
+      href.replace(/^OEBPS\//i, ''),
+      href.replace(/^OEBPS\//i, '').replace(/^\//, ''),
+      `OEBPS/${href.replace(/^OEBPS\//i, '')}`,
+    ];
+    let file: any = null;
+    for (const c of candidates) {
+      file = zip.file(c);
+      if (file) break;
+    }
+    if (!file) continue;
+    const raw = await file.async('text');
+    const text = stripHtml(raw);
+    if (text) paragraphs.push(text);
+    tick(0.3 + (0.6 * (i + 1)) / orderedHrefs.length);
+    if ((i & 3) === 3) {
+      await new Promise((r) => setTimeout(r, 0));
+    }
+  }
+
+  const title = firstMatch(opfXml, /<dc:title[^>]*>([\s\S]*?)<\/dc:title>/i);
+  const author = firstMatch(opfXml, /<dc:creator[^>]*>([\s\S]*?)<\/dc:creator>/i);
+
+  tick(1);
+  return { text: paragraphs.join('\n\n'), title, author, cover };
+}
+
 // Минимальный лимитер для progress-коллбеков. Один вызов за `minMs` — хватает на
 // UI-обновление прогресса без setState-шторма на каждый xhtml-файл большой книги.
 function throttle(fn: (p: number) => void, minMs: number): (p: number) => void {
