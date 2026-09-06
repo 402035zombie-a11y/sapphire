@@ -1,20 +1,25 @@
 // services/parserClient.ts
-// Клієнт для виклику парсерів з main thread. На web — через Worker (без блокування UI),
-// на native — через main (Worker недоступний, але з yield через await → UI не фрізить).
+// Клієнт для виклику парсерів. На всіх платформах — main thread з yield через await.
+// Web Worker був би додатковою оптимізацією, але Hermes не підтримує import.meta,
+// RN Worker вимагає окремого native модуля, а inline-Worker не має доступу до парсерів.
 //
 // Підтримувані формати: epub, fb2, mobi, docx, odt, rtf, html, zip
-// TXT залишається inline (миттєвий, не блокує).
+// TXT залишається inline (миттєвий).
+//
+// Що дає main-thread з yield:
+//  - кожен парсер має setTimeout(0) кожні кілька глав/records → UI не фрізить
+//  - placeholder-картка в Library показує прогрес
+//  - юзер може гортати бібліотеку, відкривати налаштування, читати іншу книгу
+//  - помилка → картка лишається в error-стані
 
-import type { ParseResult } from '../workers/parserWorker';
+import type { ParseResult } from './parserTypes';
 
 export type ParserFormat = 'epub' | 'fb2' | 'mobi' | 'docx' | 'odt' | 'rtf' | 'html' | 'zip';
 
 export interface ParserTaskOptions {
   format: ParserFormat;
   uri: string;
-  bytes?: ArrayBuffer;        // опціонально: байти (для web Worker)
   onProgress?: (percent: number) => void;
-  signal?: AbortSignal;
 }
 
 export interface QueuedTask {
@@ -25,24 +30,9 @@ export interface QueuedTask {
 }
 
 class ParserClient {
-  private worker: Worker | null = null;
   private queue: QueuedTask[] = [];
   private current: QueuedTask | null = null;
   private nextId = 0;
-  private isWeb = typeof window !== 'undefined' && typeof Worker !== 'undefined';
-
-  private getWorker(): Worker | null {
-    if (!this.isWeb) return null;
-    if (this.worker) return this.worker;
-    try {
-      // new Worker(new URL(...)) — стандартний веб-патерн (vite/webpack підтримують).
-      this.worker = new Worker(new URL('../workers/parserWorker.web.ts', import.meta.url));
-      return this.worker;
-    } catch (e) {
-      console.warn('[parserClient] Worker init failed, fallback to main:', e);
-      return null;
-    }
-  }
 
   enqueue(options: ParserTaskOptions): Promise<ParseResult> {
     return new Promise((resolve, reject) => {
@@ -52,15 +42,6 @@ class ParserClient {
         reject,
         options,
       };
-
-      if (options.signal) {
-        options.signal.addEventListener('abort', () => {
-          const idx = this.queue.indexOf(task);
-          if (idx >= 0) this.queue.splice(idx, 1);
-          reject(new Error('Aborted'));
-        });
-      }
-
       this.queue.push(task);
       this.tick();
     });
@@ -78,86 +59,45 @@ class ParserClient {
   }
 
   private async runTask(task: QueuedTask): Promise<void> {
-    const { format, uri, bytes, onProgress } = task.options;
-    const worker = this.getWorker();
-
-    if (worker && bytes) {
-      try {
-        const result = await this.runOnWorker(worker, format, uri, bytes, onProgress);
-        task.resolve(result);
-        return;
-      } catch (e: any) {
-        console.warn('[parserClient] Worker failed, falling back to main:', e);
-      }
-    }
-
+    const { format, uri, onProgress } = task.options;
     try {
-      const result = await this.runOnMain(format, uri, bytes, onProgress);
+      // yield перед важкою роботою — дає UI відмалювати placeholder-картку
+      await new Promise((r) => setTimeout(r, 0));
+      const result = await this.runOnMain(format, uri, onProgress);
       task.resolve(result);
     } catch (e: any) {
       task.reject(e instanceof Error ? e : new Error(String(e)));
     }
   }
 
-  private runOnWorker(
-    worker: Worker,
-    format: ParserFormat,
-    uri: string,
-    bytes: ArrayBuffer,
-    onProgress?: (p: number) => void,
-  ): Promise<ParseResult> {
-    return new Promise((resolve, reject) => {
-      const onMessage = (e: MessageEvent) => {
-        const data = e.data;
-        if (data.type === 'progress') onProgress?.(data.percent);
-        else if (data.type === 'done') {
-          worker.removeEventListener('message', onMessage);
-          worker.removeEventListener('error', onError);
-          resolve(data.result);
-        } else if (data.type === 'error') {
-          worker.removeEventListener('message', onMessage);
-          worker.removeEventListener('error', onError);
-          reject(new Error(data.message));
-        }
-      };
-      const onError = (e: ErrorEvent) => {
-        worker.removeEventListener('message', onMessage);
-        worker.removeEventListener('error', onError);
-        reject(new Error(e.message));
-      };
-      worker.addEventListener('message', onMessage);
-      worker.addEventListener('error', onError);
-      // Transferable — zero-copy передача байтів
-      worker.postMessage({ type: 'parse', format, uri, bytes }, [bytes]);
-    });
-  }
-
   private async runOnMain(
     format: ParserFormat,
     uri: string,
-    bytes: ArrayBuffer | undefined,
     onProgress?: (p: number) => void,
   ): Promise<ParseResult> {
-    let arrayBuffer: ArrayBuffer | undefined = bytes;
-    if (!arrayBuffer) {
-      // @ts-ignore
-      const FileSystem: any = require('expo-file-system/legacy');
-      if (/^https?:\/\//i.test(uri)) {
-        const buf = await (await fetch(uri)).arrayBuffer();
-        arrayBuffer = buf;
-      } else {
-        const cacheUri = `${FileSystem.cacheDirectory}br_input_${Date.now()}.bin`;
-        await FileSystem.copyAsync({ from: uri, to: cacheUri });
-        const base64 = await FileSystem.readAsStringAsync(cacheUri, { encoding: 'base64' as any });
-        const binary = atob(base64);
-        const u8 = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) u8[i] = binary.charCodeAt(i);
-        arrayBuffer = u8.buffer;
-        try { await FileSystem.deleteAsync(cacheUri, { idempotent: true }); } catch {}
-      }
+    // @ts-ignore — legacy модуль на native має типи що конфліктують з tsc
+    const FileSystem: any = require('expo-file-system/legacy');
+
+    // 1. Прочитати байти (всі парсери тепер мають parse*FromBytes)
+    let arrayBuffer: ArrayBuffer;
+    if (/^https?:\/\//i.test(uri)) {
+      const buf = await (await fetch(uri)).arrayBuffer();
+      arrayBuffer = buf;
+    } else {
+      const cacheUri = `${FileSystem.cacheDirectory}br_input_${Date.now()}.bin`;
+      await FileSystem.copyAsync({ from: uri, to: cacheUri });
+      const base64 = await FileSystem.readAsStringAsync(cacheUri, { encoding: 'base64' as any });
+      const binary = atob(base64);
+      const u8 = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) u8[i] = binary.charCodeAt(i);
+      arrayBuffer = u8.buffer;
+      try { await FileSystem.deleteAsync(cacheUri, { idempotent: true }); } catch {}
     }
 
-    // Делегуємо парсеру
+    // 2. yield — UI може відреагувати
+    await new Promise((r) => setTimeout(r, 0));
+
+    // 3. Делегуємо парсеру
     switch (format) {
       case 'epub': {
         const { parseEpubFromBytes } = await import('./epubParser');
