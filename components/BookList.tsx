@@ -109,7 +109,7 @@ function BookCard({ item, onOpen, onRemove }: {
           {isImporting ? `${t(item.status === 'parsing' ? 'Parsing...' : 'Saving...')} ${progressPercent}%` : ''}
           {!showProgress && item.author ? `${item.author} · ` : ''}
           {!showProgress && item.format ? `${item.format.toUpperCase()} · ` : ''}
-          {!showProgress ? `${item.language.toUpperCase()} → {(item.targetLang ?? item.language).toUpperCase()}` : ''}
+          {!showProgress ? `${item.language.toUpperCase()} → ${(item.targetLang ?? item.language).toUpperCase()}` : ''}
         </Text>
       </View>
       <View style={styles.rowActions}>

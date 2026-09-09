@@ -88,7 +88,7 @@ export const THEMES: Record<ThemeMode, ThemePalette> = {
     posColor: '#B5742E',
     bgTop: '#F2E6CE',
     bgBot: '#E0CFA8',
-    neu: { base: '#EAD9BE', light: '#FCF3DF', dark: '#B5A179', shadowDark: 'rgba(150,130,95,0.6)', shadowLight: 'rgba(255,255,255,0.45)', soft: 'rgba(248,238,217,0.5)', hi: 'rgba(255,255,255,0.25)', glow: 'rgba(255,250,238,0.3)' },
+    neu: { base: '#EAD9BE', light: '#FCF3DF', dark: '#B5A179', shadowDark: 'rgba(150,130,95,0.6)', shadowLight: 'rgba(210,195,165,0.7)', soft: 'rgba(248,238,217,0.5)', hi: 'rgba(255,255,255,0.4)', glow: 'rgba(255,250,238,0.3)' },
     // День: м'які, щільні тіні — на світлому бежі глибина читається і без розльоту
     neuScale: { depth: 0.9, spread: 0.8, lightCut: 1.0 },
   },
