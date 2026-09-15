@@ -14,118 +14,178 @@ export interface RtfParseResult {
 // @ts-ignore
 const FileSystem: any = require('expo-file-system/legacy');
 
-async function readText(uri: string): Promise<string> {
-  if (/^https?:\/\//i.test(uri)) return (await (await fetch(uri)).text());
+async function readBytes(uri: string): Promise<Uint8Array> {
+  if (/^https?:\/\//i.test(uri)) {
+    const buf = await (await fetch(uri)).arrayBuffer();
+    return new Uint8Array(buf);
+  }
   const cacheUri = `${FileSystem.cacheDirectory}br_rtf_${Date.now()}.rtf`;
   await FileSystem.copyAsync({ from: uri, to: cacheUri });
-  return FileSystem.readAsStringAsync(cacheUri, { encoding: 'utf8' as any });
+  const base64 = await FileSystem.readAsStringAsync(cacheUri, { encoding: 'base64' as any });
+  // base64 → Uint8Array
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let j = 0; j < binary.length; j++) bytes[j] = binary.charCodeAt(j);
+  return bytes;
+}
+
+function bytesToString(bytes: Uint8Array): string {
+  let out = '';
+  for (let i = 0; i < bytes.length; i++) {
+    out += String.fromCharCode(bytes[i]);
+  }
+  return out;
 }
 
 // Службові групи, які треба цілком викинути (не лише їхні control words).
 const SKIP_GROUPS = /fonttbl|colortbl|info|stylesheet|generator|themedata|colorschememapping|datastore|listtable|listoverridetable|revtbl|rsidtbl|latentstyles|pgptbl|header|footer|headerl|headerr|footerl|footerr|formfield|pict|object|fldrslt|xmlnstbl|userprops/;
 
+// Windows-1252 → Unicode mapping for code points 0x80-0x9F
+// (RTF uses Windows-1252 for \\'hh escapes, but JS uses Unicode)
+const WIN1252_MAP: Record<number, number> = {
+  0x80: 0x20AC, // €
+  0x82: 0x201A, // ‚
+  0x83: 0x0192, // ƒ
+  0x84: 0x201E, // „
+  0x85: 0x2026, // …
+  0x86: 0x2020, // †
+  0x87: 0x2021, // ‡
+  0x88: 0x02C6, // ˆ
+  0x89: 0x2030, // ‰
+  0x8A: 0x0160, // Š
+  0x8B: 0x2039, // ‹
+  0x8C: 0x0152, // Œ
+  0x8E: 0x017D, // Ž
+  0x91: 0x2018, // ‘
+  0x92: 0x2019, // ’
+  0x93: 0x201C, // “
+  0x94: 0x201D, // ”
+  0x95: 0x2022, // •
+  0x96: 0x2013, // –
+  0x97: 0x2014, // —
+  0x98: 0x02DC, // ˜
+  0x99: 0x2122, // ™
+  0x9A: 0x0161, // š
+  0x9B: 0x203A, // ›
+  0x9C: 0x0153, // œ
+  0x9E: 0x017E, // ž
+  0x9F: 0x0178, // Ÿ
+};
+
+function win1252ToUnicode(code: number): number {
+  return WIN1252_MAP[code] ?? code;
+}
+
 export async function parseRtf(
   uri: string,
   onProgress?: (p: number) => void,
 ): Promise<RtfParseResult> {
-  const raw = await readText(uri);
-  return parseRtfFromString(raw, onProgress);
+  const bytes = await readBytes(uri);
+  return parseRtfFromBytes(bytes, onProgress);
 }
 
 /**
  * Парсер RTF з готових байтів — для Web Worker.
  */
 export async function parseRtfFromBytes(
-  arrayBuffer: ArrayBuffer,
+  bytes: ArrayBuffer | Uint8Array,
   onProgress?: (p: number) => void,
 ): Promise<RtfParseResult> {
-  const raw = new TextDecoder('utf-8').decode(new Uint8Array(arrayBuffer));
-  return parseRtfFromString(raw, onProgress);
+  const raw = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  return parseRtfFromBytesRaw(raw, onProgress);
 }
 
-async function parseRtfFromString(
-  raw: string,
+async function parseRtfFromBytesRaw(
+  raw: Uint8Array,
   onProgress?: (p: number) => void,
 ): Promise<RtfParseResult> {
   const tick = (p: number) => onProgress?.(p);
   tick(0.1);
   tick(0.4);
 
-  // Стекове проходження: викидаємо службові групи цілком, лишаємо текст тіла.
+  // Parse RTF at BYTE level — raw bytes, not UTF-8 string
+  // This preserves bytes 0x80-0x9F (Windows-1252) for hex escape decoding
   let out = '';
   let i = 0;
   const n = raw.length;
 
   while (i < n) {
     const ch = raw[i];
-    if (ch === '{') {
+    if (ch === 0x7b) { // '{'
       i++;
-      // після '{' зазвичай йде '\controlword' — пропускаємо backslash
+      // Skip leading backslash if present
       let word = '';
-      if (raw[i] === '\\') i++; // пропускаємо leading backslash
-      while (i < n && /[a-zA-Z]/.test(raw[i])) { word += raw[i]; i++; }
-      // пропускаємо цифровий параметр (напр. \rtf1 → "1")
-      while (i < n && /[0-9-]/.test(raw[i])) i++;
-      if (raw[i] === ' ') i++;
-      // якщо це службова група (\fonttbl, \*\generator, \colortbl, ...) → викидаємо всю групу
+      if (raw[i] === 0x5c) i++; // skip backslash
+      while (i < n && raw[i] >= 0x41 && raw[i] <= 0x7a) { word += String.fromCharCode(raw[i]); i++; }
+      while (i < n && (raw[i] >= 0x30 && raw[i] <= 0x39) || raw[i] === 0x2d) i++;
+      if (raw[i] === 0x20) i++;
+      // Check for skip groups
       if (word.startsWith('*') || SKIP_GROUPS.test(word)) {
         let depth = 1;
         while (i < n && depth > 0) {
-          if (raw[i] === '{') depth++;
-          else if (raw[i] === '}') depth--;
+          if (raw[i] === 0x7b) depth++;
+          else if (raw[i] === 0x7d) depth--;
           i++;
         }
         out += ' ';
         continue;
       }
-      // звичайна група — продовжуємо
       continue;
-    } else if (ch === '}') {
+    } else if (ch === 0x7d) { // '}'
       i++;
       continue;
-    } else if (ch === '\\') {
-      // control word / symbol
+    } else if (ch === 0x5c) { // backslash
       i++;
-      // \'hh — hex literal
-      if (raw[i] === "'") {
-        const hex = raw.substr(i + 1, 2);
-        const code = parseInt(hex, 16);
-        if (!isNaN(code)) {
-          out += String.fromCharCode(code);
+      // backslash-escape sequence
+      // Check for hex literal: \'hh
+      if (raw[i] === 0x27) { // apostrophe
+        const h1 = raw[i + 1];
+        const h2 = raw[i + 2];
+        // STRICT validation: both must be valid hex chars (0-9, a-f, A-F)
+        if (h1 && h2 && 
+            ((h1 >= 0x30 && h1 <= 0x39) || (h1 >= 0x41 && h1 <= 0x46) || (h1 >= 0x61 && h1 <= 0x66)) &&
+            ((h2 >= 0x30 && h2 <= 0x39) || (h2 >= 0x41 && h2 <= 0x46) || (h2 >= 0x61 && h2 <= 0x66))) {
+          const code = parseInt(String.fromCharCode(h1) + String.fromCharCode(h2), 16);
+          out += String.fromCharCode(win1252ToUnicode(code));
+          i += 3;
+          continue;
         }
-        i += 3;
+        // Not valid hex — output the apostrophe literally
+        out += "'";
+        i++;
         continue;
       }
-      // \uN — unicode (наступний символ — fallback для старих рідерів, пропускаємо)
-      if (raw[i] === 'u') {
+      // \uN — unicode
+      if (raw[i] === 0x75) { // 'u'
         i++;
         let num = '';
-        while (i < n && /[0-9-]/.test(raw[i])) { num += raw[i]; i++; }
+        while (i < n && ((raw[i] >= 0x30 && raw[i] <= 0x39) || raw[i] === 0x2d)) { num += String.fromCharCode(raw[i]); i++; }
         const code = parseInt(num, 10);
         if (!isNaN(code) && code > 0) {
           out += String.fromCharCode(code);
         }
-        // після \uN може бути пробіл-роздільник
-        if (raw[i] === ' ') i++;
+        // Skip fallback character
+        if (i < n && raw[i] < 0x41 || raw[i] > 0x7a) i++;
+        if (raw[i] === 0x20) i++;
         continue;
       }
-      // звичайне control word: \par, \tab, \line, \f0, \fs24, ...
+      // Skip other control words
       let word = '';
-      while (i < n && /[a-zA-Z]/.test(raw[i])) { word += raw[i]; i++; }
-      // необов'язковий цифровий параметр
-      if (raw[i] === '-') { i++; }
-      while (i < n && /[0-9]/.test(raw[i])) i++;
-      // роздільник пробіл
-      if (raw[i] === ' ') i++;
-
+      while (i < n && raw[i] >= 0x41 && raw[i] <= 0x7a) { word += String.fromCharCode(raw[i]); i++; }
+      if (raw[i] === 0x20) i++;
       if (word === 'par' || word === 'line') out += '\n';
       else if (word === 'tab') out += '\t';
-      else if (word === 'u') { /* вже оброблено вище */ }
-      // решта control words (fonts, sizes, colors) → ігноруємо
       continue;
+    } else if (ch >= 0x20 && ch < 0x7f) {
+      // ASCII printable
+      out += String.fromCharCode(ch);
+      i++;
+    } else if (ch >= 0x80) {
+      // High byte — decode Windows-1252
+      out += String.fromCharCode(win1252ToUnicode(ch));
+      i++;
     } else {
-      // звичайний текст
-      out += ch;
+      // Control chars (newline etc)
       i++;
     }
   }
@@ -139,8 +199,8 @@ async function parseRtfFromString(
 
   tick(0.9);
 
-  // title з {\info {\title ...}} — шукаємо у сирому тексті (вже вирізано, але спробуємо regex)
-  const titleM = raw.match(/\\title\s+([^{}\\]+)/i);
+  // title з {\\info {\\title ...}} — шукаємо у сирому тексті
+  const titleM = bytesToString(raw).match(/\\title\s+([^{}\\]+)/i);
   tick(1);
   return { text, title: titleM ? titleM[1].trim() : undefined };
 }

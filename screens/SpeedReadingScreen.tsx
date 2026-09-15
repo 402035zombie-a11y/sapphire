@@ -19,11 +19,8 @@ import SupportButton from '../components/SupportButton';
 import { surface, neuShadowPad, screenBg, surfaceText } from '../theme/neu';
 import { useT } from '../i18n';
 
-// сокращения (т.к., т.е., т.д., др., пр., пн., ср. и т.п.) НЕ дают паузу
-// постобработка: пунктуация, отделённая пробелом (" казаться"), склеивается с соседним словом
-// Вынесены в module scope: RegExp-литералы иначе создаются при каждом render'е SpeedReadingScreen.
 const ABBREV = /^(т\.к|т\.е|т\.д|др|пр|им|т\.п|п\.п|с\.р|г\.г|в\.т|ч\.л|т\.н|п\.с|с\.ш|ю\.ш|з\.г|вв|н\.э|пр\.-т|ст)$/i;
-const OPEN_PUNCT = /^[("«"\[]/; // открывающая — липнет к СЛЕДУЮЩЕМУ слову
+const OPEN_PUNCT = /^[("\u201C\[]/;
 const isPunctOnly = (s: string) => /^[^\p{L}\p{N}]+$/u.test(s);
 
 export default function SpeedReadingScreen() {
@@ -37,18 +34,13 @@ export default function SpeedReadingScreen() {
   const theme = useTheme();
   const t = useT();
   const navigation = useNavigation<any>();
-  // адаптивные размеры: всё влезает в экран независимо от его высоты
   const isShort = height < 640;
   const styles = useMemo(() => makeStyles(a, theme), [a, theme]);
-  // Размер слова: от высоты сцены, а не всего экрана (в landscape сцена низкая).
   const wordSize = Math.max(a.tiny ? 18 : 24, Math.min(a.landscape ? 44 : 56, Math.round(height * (a.landscape ? 0.1 : a.tiny ? 0.06 : 0.075))));
   const stagePad = a.landscape ? 18 : isShort ? 26 : Math.round(60 * a.scale);
   const ctrlSize = Math.round(Math.max(38, Math.min(60, (a.landscape ? 46 : 56) * a.scale)));
   const book = useLibraryStore((s) => s.books.find((b) => b.id === bookId));
 
-
-  // собираем все токены книги: слова/числа + прилегающие знаки (без пробела)
-  // boundaryType: 'sent' = конец предложения (.!?…), 'comma' = , ; : —, null = без паузы
   const words = useMemo(() => {
     if (!book) return [];
     const raw: { text: string; para: number }[] = [];
@@ -59,16 +51,13 @@ export default function SpeedReadingScreen() {
       const toks = p.original.match(/[\p{L}][\p{L}\p{M}'’-]*[^\p{L}\p{N}\s]*|\p{N}+[^\p{L}\p{N}\s]*|[^\p{L}\p{N}\s]+/gu) ?? [];
       for (const t of toks) raw.push({ text: t, para: p.index });
     }
-    // склейка пунктуации, отделённой пробелом (" казаться", "слово" )
-    // открывающая ( " ( [ « ) липнет к СЛЕДУЮЩЕМУ слову, закрывающая ( " ) ] » ) — к ПРЕДЫДУЩЕМУ
     const merged: { text: string; para: number }[] = [];
-    let pendingOpen = ''; // открывающая пунктуация, ждущая слова
+    let pendingOpen = '';
     for (const t of raw) {
       if (isPunctOnly(t.text)) {
         if (OPEN_PUNCT.test(t.text)) {
-          pendingOpen += t.text; // накопим, пока не встретится слово
+          pendingOpen += t.text;
         } else {
-          // закрывающая — липнем к предыдущему токену (слову или склейке)
           if (merged.length > 0) {
             const prev = merged[merged.length - 1];
             merged[merged.length - 1] = { ...prev, text: prev.text + t.text };
@@ -79,20 +68,18 @@ export default function SpeedReadingScreen() {
           }
         }
       } else {
-        // слово/число: если ждали открывающую пунктуацию — склеиваем спереди
         merged.push({ ...t, text: pendingOpen + t.text });
         pendingOpen = '';
       }
     }
     if (pendingOpen) merged.push({ text: pendingOpen, para: raw.length ? raw[raw.length - 1].para : 0 });
-    // финальная классификация границ
     const out: { text: string; para: number; boundaryType: 'sent' | 'comma' | 'bracketOpen' | 'bracketClose' | null }[] = [];
     for (const m of merged) {
       let boundaryType: 'sent' | 'comma' | 'bracketOpen' | 'bracketClose' | null = null;
       if (/[.!?…]["')\]»’]*$/u.test(m.text)) boundaryType = 'sent';
       else if (/[,;:—]$/u.test(m.text)) boundaryType = 'comma';
-      else if (/^[("«\[]/u.test(m.text)) boundaryType = 'bracketOpen'; // ( [ « — пауза на слове ПОСЛЕ
-      else if (/[)"\]»]$/u.test(m.text)) boundaryType = 'bracketClose'; // ) ] » — пауза на слове ПЕРЕД
+      else if (/^(\u201C|\[)/u.test(m.text)) boundaryType = 'bracketOpen';
+      else if (/[)"\u201D]$/u.test(m.text)) boundaryType = 'bracketClose';
       const base = m.text.replace(/[^\p{L}\p{N}]+$/u, '');
       if (boundaryType === 'sent' && ABBREV.test(base)) boundaryType = null;
       out.push({ text: m.text, para: m.para, boundaryType });
@@ -122,9 +109,6 @@ export default function SpeedReadingScreen() {
   const microRef = useRef(microPauses);
   useEffect(() => { microRef.current = microPauses; }, [microPauses]);
 
-  // интервал показа одного слова = 60000 / WPM мс
-  // пауза после знака применяется к САМОМУ слову со знаком (delay считается до инкремента idx)
-  // локальный idx синхронизируется с pos: показываем idx, через delay инкрементируем
   useEffect(() => {
     if (!playing || words.length === 0) return;
     let cancelled = false;
@@ -171,9 +155,6 @@ export default function SpeedReadingScreen() {
     );
   }
 
-  // границы предложений: начало каждого параграфа (параграф ≈ предложение в учебных текстах)
-  // Границы предложений: старт предложения = слово, перед которым предыдущее
-  // слово заканчивается на .!?… (boundaryType 'sent'). Fallback — по параграфам.
   const sentenceStarts = useMemo(() => {
     const starts: number[] = [0];
     for (let i = 1; i < words.length; i++) {
@@ -191,35 +172,35 @@ export default function SpeedReadingScreen() {
     return starts;
   }, [words]);
 
-  // Плавная прокрутка ticker-строки к позиции target (единый t ∈ [0,1] из интерполяции).
-  // При скачке стрелками строка НЕ дёргается мгновенно, а видимо едет к новому месту в книге.
   const animateTickerTo = (target: number) => {
-    const len = Math.max(1, words.length - 1);
-    const tTarget = Math.max(0, Math.min(1, target / len));
-    // гасим активный RAF-цикл и любую текущую анимацию
     if (tickerRAF.current != null) { cancelAnimationFrame(tickerRAF.current); tickerRAF.current = null; }
-    tickerX.stopAnimation();
-    if (tickerWidth <= 0 || tickerTextWidth <= 0) { tickerX.setValue(tTarget); return; }
-    Animated.timing(tickerX, {
-      toValue: tTarget,
-      duration: 480,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
+    if (tickerWidth <= 0 || tickerTextWidth <= 0) return;
+    const clamped = Math.max(-tickerTextWidth, Math.min(tickerWidth, target));
+    tickerFrom.current = tickerTranslateX;
+    tickerTo.current = clamped;
+    tickerStart.current = performance.now();
+    tickerDuration.current = 480;
+    const tick = (now: number) => {
+      const elapsed = now - tickerStart.current;
+      const t = Math.min(1, elapsed / tickerDuration.current);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const x = tickerFrom.current + (tickerTo.current - tickerFrom.current) * eased;
+      tickerRef.current?.setNativeProps({ style: { transform: [{ translateX: x }] } });
+      setTickerTranslateX(x);
+      if (t >= 1) { tickerRAF.current = null; return; }
+      tickerRAF.current = requestAnimationFrame(tick);
+    };
+    tickerRAF.current = requestAnimationFrame(tick);
   };
 
-  // Перемотка к конкретному слову: останавливаем все таймеры/анимации, ставим pos.
-  // Работает для обоих вариантов (rsvp и ticker).
   const seekToWord = (target: number) => {
     const clamped = Math.max(0, Math.min(words.length - 1, target));
     if (variant === 'ticker') {
-      // ticker: плавная прокрутка к новому месту вместо мгновенного скачка
       setPlaying(false);
       animateTickerTo(clamped);
       setPos(clamped);
     } else {
       if (timer.current) { clearTimeout(timer.current); timer.current = null; }
-      tickerX.stopAnimation();
       setPos(clamped);
     }
   };
@@ -237,11 +218,7 @@ export default function SpeedReadingScreen() {
   const stopAll = () => {
     setPlaying(false);
     if (timer.current) { clearTimeout(timer.current); timer.current = null; }
-    if (variant === 'ticker') {
-      animateTickerTo(0);
-    } else {
-      tickerX.stopAnimation();
-    }
+    if (variant === 'ticker') animateTickerTo(0);
     setPos(0);
   };
 
@@ -268,40 +245,39 @@ export default function SpeedReadingScreen() {
 
   const current = words[pos];
   const tickerText = useMemo(() => words.map((w) => w.text).join(' '), [words]);
-  const tickerX = useRef(new Animated.Value(0)).current;
+  const tickerRef = useRef<View>(null);
   const [tickerWidth, setTickerWidth] = useState(0);
   const [tickerTextWidth, setTickerTextWidth] = useState(0);
-  // Ticker-движок на requestAnimationFrame (позиция считается в JS, а не в Animated).
-  // Преимущество: смена WPM применяется мгновенно (строка НЕ останавливается),
-  // play/pause = старт/стоп цикла, стрелки перематывают через setPos.
-  // Остановка — через флаг cancelled (надёжнее, чем cancelAnimationFrame в web).
   const tickerRAF = useRef<number | null>(null);
   const tickerStart = useRef<number>(0);
   const tickerFrom = useRef<number>(0);
-  const tickerDur = useRef<number>(1);
-  const tickerDone = useRef(false);
+  const tickerTo = useRef<number>(0);
+  const tickerDuration = useRef<number>(1);
+  const [tickerTranslateX, setTickerTranslateX] = useState(0);
+
   useEffect(() => {
     if (variant !== 'ticker') return;
-    if (!playing) return; // строка стоит (cancelled-флаг в cleanup остановит цикл)
-    if (tickerWidth <= 0 || tickerTextWidth <= 0) return; // ждём измерения
-    tickerX.stopAnimation(); // фиксируем текущее значение (завершаем анимацию прыжка стрелкой)
+    if (!playing) return;
+    if (tickerWidth <= 0 || tickerTextWidth <= 0) return;
     const total = Math.max(2000, Math.round((words.length / wpm) * 60000));
-    // Если дошли до конца (или за пределы) — начинаем сначала.
     const startPos = posRef.current >= words.length - 1 ? 0 : posRef.current;
-    const from = startPos / Math.max(1, words.length - 1);
-    tickerFrom.current = from;
-    tickerDur.current = total;
-    tickerStart.current = (typeof performance !== 'undefined' ? performance.now() : Date.now());
-    tickerDone.current = false;
+    const fromT = startPos / Math.max(1, words.length - 1);
+    tickerFrom.current = tickerDir === 'rtl' ? tickerWidth - fromT * (tickerWidth + tickerTextWidth) : -fromT * (tickerWidth + tickerTextWidth);
+    tickerTo.current = tickerDir === 'rtl' ? -tickerTextWidth : tickerWidth;
+    tickerDuration.current = total;
+    tickerStart.current = performance.now();
     let cancelled = false;
+
     const step = () => {
       if (cancelled) return;
-      const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
-      const t = Math.min(1, (now - tickerStart.current) / tickerDur.current);
-      tickerX.setValue(tickerFrom.current + (1 - tickerFrom.current) * t);
+      const now = performance.now();
+      const t = Math.min(1, (now - tickerStart.current) / tickerDuration.current);
+      const eased = t;
+      const x = tickerFrom.current + (tickerTo.current - tickerFrom.current) * eased;
+      tickerRef.current?.setNativeProps({ style: { transform: [{ translateX: x }] } });
+      setTickerTranslateX(x);
       if (t >= 1) {
-        if (!tickerDone.current) {
-          tickerDone.current = true;
+        if (posRef.current >= words.length - 1) {
           setPos(words.length - 1);
           setPlaying(false);
         }
@@ -315,7 +291,7 @@ export default function SpeedReadingScreen() {
       if (tickerRAF.current != null) cancelAnimationFrame(tickerRAF.current);
       tickerRAF.current = null;
     };
-  }, [variant, playing, wpm, words.length, tickerWidth, tickerTextWidth]);
+  }, [variant, playing, wpm, words.length, tickerWidth, tickerTextWidth, tickerDir]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -331,19 +307,11 @@ export default function SpeedReadingScreen() {
             style={styles.tickerWrap}
             onLayout={(e) => setTickerWidth(e.nativeEvent.layout.width)}
           >
-            <Animated.View
+            <View
+              ref={tickerRef}
               style={[
                 styles.tickerTrack,
-                {
-                  transform: [
-                    {
-                      translateX: tickerX.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: tickerDir === 'rtl' ? [tickerWidth, -tickerTextWidth] : [-tickerTextWidth, tickerWidth],
-                      }),
-                    },
-                  ],
-                },
+                { transform: [{ translateX: tickerTranslateX }] },
               ]}
             >
               <Text
@@ -354,7 +322,7 @@ export default function SpeedReadingScreen() {
               >
                 {tickerText}
               </Text>
-            </Animated.View>
+            </View>
           </View>
         ) : (
           <>
@@ -376,7 +344,6 @@ export default function SpeedReadingScreen() {
             <Icon name="chevron-back" size={a.dim(0.032, 18, 26)} color={theme.primaryText} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.playBtn, surface(theme, 'primary', { size: ctrlSize + 12 })]} onPress={() => {
-            // Если дошли до конца — при старте начинаем сначала.
             if (!playing && pos >= words.length - 1) setPos(0);
             setPlaying((p) => !p);
           }}>
