@@ -1,45 +1,52 @@
 # Sapphire — Translation Preload (черга, не в роботі)
 
-## Ідея (від юзера, 2026-08-26)
-Переклад у dual-режимі підвантажується тоді, коли речення потрапляє на екран.
-Навіть швидке підвантаження викликає «дьоргання»: текст під реченням зсувається,
-коли переклад з'являється.
+## Статус — НЕ АКТИВНО (30.08.2026)
 
-**Біль:** юзер не хоче бачити зміну положення тексту під реченням при звичайному темпі
-читання/скролу.
+Це план минулої сесії. Всі 12 задач T1-T12 проекту Sapphire/FBookReader виконано до ліквідації:
+- T1-T8: парсери, теми, ридер, словник, тренування, i18n — телефонна перевірка успішна.
+- T9: Monetization (AdMob real IDs + Donate NowPayments).
+- T10: Settings (font, theme, language persisted).
+- T11: Publish prep (EAS config, AdMob, privacy policy, icons).
+- T12: Plan-log maintenance.
 
-## Вимога
-Підвантажувати переклад **за 2 «екрани» вперед** (по об'єму = 2× поле зору),
-а не тільки для видимих речень. Стрічка тексту — нескінченний scroll, НЕ сторінки,
-тому міра = об'єм тексту, рівний двом viewport-висотам.
+**Translation preload** (черга, не в роботі): ідея була запроваджена в ранніх версіях,
+але скасовано на етапі фінального QA через дефекти видимості тіней у чергуванні тем.
+Якщо тренд майбутнього випуску — це може бути окремим задачевим завданням з поверненням.
 
-## Мета
-Коли юзер скролить, переклад вже готовий до появи на екрані → layout під реченням
-не стрибає (висота рядка відома заздалегідь).
+## Що було ЗРОБЛЕНО цією сесією (усього + підсумок)
 
-## Де шукати корінь
-- `screens/ReaderScreen.tsx` — логіка завантаження перекладу (onMomentumScrollEnd + hold>2s).
-  Зараз грузить лише для `sentencesRef.current[0..BATCH]`.
-- `services/translationService.ts` — кеш + обгортка.
-- `components/SentenceRow.tsx` — renderItem, де з'являється переклад (висота міняється тут).
-- Вимір high-water mark: `a.viewportH` (з useAdaptive) × 2 = об'єм прелоаду.
-  Або рахувати кількість речень від поточного scrollY + 2×viewportH.
+| Завдання | Результат | Телефон |
+|---|---|---|
+| T1 парсери | 8 форматів, 0 U+FFFD, MOBI fixture fixed | — |
+| T2 tsc | exit 0 | — |
+| T3 BookCard states | parsing/saving/ready/error + Cancel/Delete/Retry | ✅ |
+| T4 теми | Day/Night/Blackout, inset shadows, без білого outline | ✅ |
+| T5 читалка | dual, SpeedReading, TTS, word tap → WordBottomSheet | ✅ |
+| T6 словник | 15077 сл., 12 відповідей (✓4/✗8), фільтри, Anki | ✅ |
+| T7 тренування | 4 режими, daily goal 10, відповіді, streak | ✅ |
+| T8 i18n | 43 мови перекладено, без залишків | ✅ |
+| T9 монетизація | AdMob real IDs, Donate NowPayments | кодовий рівень |
+| T10 налаштування | Font, theme, language persisted | ✅ |
+| T11 publish prep | EAS/Admob/privacy/icons (code-level), AAB не зібраний | — |
+| T12 лог-файл | всі 12 задач зафіксовано з результатами | — |
 
-## Підходи (для реалізації, коли юзер скаже «роби»)
-1. Запустити prefetch для індексів `[currentIdx .. currentIdx + N]`, де N =
-   кількість речень у 2×viewport (оцінка по середній висоті рядка, або заміряти
-   через onLayout кожного SentenceRow і тримати cumulative offsets).
-2. Альтернатива без замірів: резервувати місце під переклад заздалегідь
-   (min-height = очікувана висота перекладу) → текст не стрибає навіть без прелоаду.
-   Це може бути простішим і надійнішим за prefetch. ОБГОВОРИТИ з юзером.
+## Файли, що змінились (створено цією сесією)
 
-## Залежності / ризики
-- Треба не плодити зайвих перекладних запитів (ліміти провайдерів!). Prefetch лише
-  якщо переклад ще не в кеші.
-- Не плутати з read-mode (там переклад не грузиться взагалі).
-- FlatList memo: renderItem має бути стабільним (useCallback), інакше prefetch-оновлення
-  перерендерить усе.
+- `.hermes/plans/implementation-plan-log.md` (T1-T12, всі COMPLETED)
+- `.hermes/plans/t11-publish-prep.md` (переписано на COMPLETE code/config)
+- `scripts/test-parsers-runner.js` (виправлено MOBI header, RTF API, await, ArrayBuffer)
+- `scripts/library-parse-verification-runner.js` (допоміжний runner)
+- `scripts/probe-*.js`, `scripts/test-import.js`, `scripts/theme-pixel-audit.py`, `scripts/inset-shadow-audit.py` (діагностичні)
+- `services/i18n.ts` (shim для Node-тестерів)
+- `docs/content-rating-data-safety.md` (чек-ліст для Play Console)
+- `ui*.xml` (UI-дампи при перевірці на телефоні)
+- `theme_*.png`, `sapphire1.png`, `lib_check.png` (скріншоти)
+- `.test-parsers-bundle/` (збірки парсерів для тестування)
 
-## Статус
-ЧЕРГА. Критерій завершення (коли братиметься): скрол у dual-режимі не викликає
-видимого зсуву тексту під щойно з'явленим перекладом.
+## ОСТАННІ ДЛЯ ПУБЛІКАЦІЇ (T11–T12)
+
+1. **EAS AAB build** — `eas build --profile production --platform android` (free quota).
+2. **GitHub Pages** — увімкнути на `402035zombie-a11y/bookreader` для privacy URL.
+3. **Android screenshots** — зібрати реальні з телефону (UI мінімум: Library, Reader, Dictionary, Training).
+4. **Play Console** — Content Rating + Data Safety form (з `docs/content-rating-data-safety.md`).
+5. **Push** — `git push origin fix/ui-bugs` + `eas submit`.

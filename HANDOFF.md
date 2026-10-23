@@ -45,11 +45,39 @@
 - LAN IP для телефону (expo start): реальний WiFi ПК, НЕ WSL 172.x.
 - `pkill -9 -f gradle` перед новим білдом.
 
-## Що вже зроблено (стан на 2026-08-20)
-- Усі UI-баги T1–T13, ROUND2/3/5, FORMATS — виконані (див. `KANBAN_DETAILED.md` етапи 1–16).
+## Що вже зроблено (стан на 2026-10-21)
+- **Усі 12 задач T1–T12 (Kanban) — COMPLETED.** Повний лог: `.hermes/plans/implementation-plan-log.md`.
+- T1 парсери: 8 форматів (RTF/FB2/MOBI/DOCX/ODT/HTML/EPUB/ZIP) на реальних файлах, 0 U+FFFD.
+- T2 `npx tsc --noEmit` → EXIT 0.
+- T3–T8, T10 — **перевірено на телефоні** (Xiaomi 23124RA7EO, `1d32a2e2`): BookCard import states,
+  теми Day/Night/Blackout, reader (dual/SpeedReading/TTS/word-tap), словник (15077 сл.),
+  тренування (4 режими), i18n (43 мови), налаштування (font/theme/language).
+- T9 monetization: реальні AdMob ID (App `~8371247908`, Banner `/4712038644`, Rewarded `/1663349260`),
+  Donate → `nowpayments.io/donation/sapphire-reader`.
+- T11 publish prep: EAS/AdMob/privacy policy (`402035zombie@gmail.com`)/icons (1024+432+512)/
+  feature graphic (1024×500) — **конфіг готовий, production AAB ще НЕ зібрано**.
 - PERF-4: ReaderScreen `chapters`-memo по `[bookId]` (не `[book]`) — БД не читається на кожен переклад.
 - translationServiceV2: фолбек на v1 GTX коли нема Lingva.
 - metro.config.js: регрес виправлено (обидва аліаси).
+
+## Поточний стан git (2026-10-21)
+- Branch: `fix/ui-bugs`, **6 комітів попереду** `origin/fix/ui-bugs` (до push).
+- Останні коміти: `70756b0c` (RTF byte-level parsing, LanguageDropdown scroll, SpeedReading ticker),
+  `28d1dab2` (внутрішні тіні в білій темі), `121bbb36` (прибрано Web Worker).
+- Незакомічені зміни: `PUBLISHING.md`, `app.config.js` (privacyPolicyUrl → GitHub Pages),
+  `docs/privacy-policy.html` (реальний email), `package.json`/`package-lock.json` (expo-dev-client у devDeps).
+- Untracked (97 файлів) — переважно артефакти перевірки: `scripts/test-parsers-runner.js`,
+  `scripts/*-audit.py`, `ui*.xml` (UI-дампи), `theme_*.png`, `.test-parsers-bundle/`.
+  **НЕ комітити** `.test-parsers-bundle/` та `ui*.xml` — це змістові артефакти, додати в `.gitignore`.
+
+## Доведено на телефоні (2026-10-21) — НЕ переписувати
+1. `adb reverse tcp:8081 tcp:8081` + deep link `exp+bookreader://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081`
+   відкриває додаток у `MainActivity` (без ручного вибору сервера в Dev Menu).
+2. Бандл збирається: `Bundled 24227ms node_modules/expo/AppEntry.js (1823 modules)`, 11.3 MB, 0 помилок.
+   Точка входу — `node_modules/expo/AppEntry.js` (НЕ `index.js` — такого файлу немає).
+3. UI-дамп через `adb shell uiautomator dump` — надійніший спосіб перевіряти UI без скріншотів.
+4. Піксель-аудит тем через PIL: Day modal bg `#EAD9BE`, Night `#1C1D21`, Blackout `#050505` (flat, без градієнтів).
+
 
 ## НЕ роби
 - Не видаляй `react-native-mmkv` з package.json (dead-dep, але рве lockfile).

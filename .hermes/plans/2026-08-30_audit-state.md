@@ -1,5 +1,27 @@
 # Sapphire — AUDIT STATE (2026-08-30, paid model session)
 
+## ОНОВЛЕНО 2026-10-21 — T1–T12 COMPLETED
+
+Усі 12 задач Kanban виконано й перевірено на телефоні. Повний лог:
+`.hermes/plans/implementation-plan-log.md` + `.hermes/plans/2026-10-21_session-summary.md`.
+
+**Підтверджено на телефоні (Xiaomi 23124RA7EO):**
+- MOBI-фікстура була хибною, production-парсер — правильний (збіг із попереднім аудитом).
+- Текст книги читається з SQLite (`getBookChapters`) — проблема з `libraryStore.paragraphs`
+  підтвердилась як неактуальна для нових книг (self-heal `ensureBookChapters` працює).
+- Теми: Day `#EAD9BE`, Night `#1C1D21`, Blackout `#050505` (flat, 0 прозорості) — inset-тіні видимі,
+  білого outline в Day немає (регресія з 4 перевірок не повторилась).
+- RTF Win1252: 26 байтів 0x80–0x9F, U+FFFD = 0.
+
+**Технічні уроки, які треба зберегти:**
+1. Hermes не підтримує `import.meta.url` → Web Worker неможливий на RN.
+2. RTF `\'hh` = Windows-1252 (мапінг у Unicode), парсер читає байти, не UTF-8 рядки.
+3. Android inset: кольоровий бордер (dark top/left, light bottom/right) + `elevation: 0`.
+   НЕ `shadowRadius`/`shadowOpacity` (рівномірний ореол ≠ лунка).
+4. Blackout = FLAT, 0 прозорості.
+
+---
+
 ## Що було ЗЛАМАНО слабшими моделями (і виправлено)
 
 ### 1. TSC не компілювався (КРИТИЧНО)
