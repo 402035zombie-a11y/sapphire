@@ -17,7 +17,7 @@ var _rtfParser = require("./rtfParser");
 function extOf(name) {
   return (name.split('.').pop() || '').toLowerCase();
 }
-var BOOK_EXTS = new Set(['txt', 'fb2', 'html', 'htm', 'mobi', 'azw', 'azw3', 'prc', 'docx', 'odt', 'rtf']);
+var BOOK_EXTS = new Set(['txt', 'fb2', 'html', 'htm', 'xhtml', 'epub', 'mobi', 'azw', 'azw3', 'prc', 'docx', 'odt', 'rtf']);
 function parseZip(_x) {
   return _parseZip.apply(this, arguments);
 }
@@ -90,6 +90,7 @@ function _parseZipFromBytes() {
         }
       case 'htm':
       case 'html':
+      case 'xhtml':
         {
           var _r$title;
           var r = yield (0, _htmlParser.parseHtmlFromBytes)(innerBuffer);
