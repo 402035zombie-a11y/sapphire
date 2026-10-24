@@ -25,7 +25,7 @@ function extOf(name: string): string {
 }
 
 // Кандидати в порядку пріоритету (найпоширеніші першими)
-const BOOK_EXTS = new Set(['txt', 'fb2', 'html', 'htm', 'mobi', 'azw', 'azw3', 'prc', 'docx', 'odt', 'rtf']);
+const BOOK_EXTS = new Set(['txt', 'fb2', 'html', 'htm', 'xhtml', 'epub', 'mobi', 'azw', 'azw3', 'prc', 'docx', 'odt', 'rtf']);
 
 export async function parseZip(uri: string): Promise<ZipParseResult> {
   // Читаємо локальний файл (content:// file://) через expo-file-system, як epubParser.
@@ -94,7 +94,8 @@ export async function parseZipFromBytes(
       return { text, title: (name.split('/').pop() || '').replace(/\.[^.]+$/, ''), innerFormat: ext };
     }
     case 'htm':
-    case 'html': {
+    case 'html':
+    case 'xhtml': {
       const r = await parseHtmlFromBytes(innerBuffer);
       return { text: r.text, title: r.title ?? (name.split('/').pop() || '').replace(/\.[^.]+$/, ''), innerFormat: ext };
     }

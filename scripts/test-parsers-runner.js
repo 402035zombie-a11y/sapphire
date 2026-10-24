@@ -118,16 +118,18 @@ const fixturesDir = PATH.join(ROOT, 'data', 'test_files');
 FS.mkdirSync(fixturesDir, { recursive: true });
 
 async function writeFixtures() {
-  // RTF: any Windows-1252 byte 0x80..0x9F + \xhh escapes -> verify no U+FFFD, curly quotes intact
-  const win1252 = [...''].join('');
-  const rtfText = `{\\rtf1\\ansi\\ansicpg1252
-  \\b All Windows-1252 bytes: ${win1252}
-  \\par
-  Curly quotes from \\'93 \\'94 escapes: "quoted" \'single\'
-  Ellipsis \\'85 En-dash \\'96 Em-dash \\'80 Euro \\'83
-  \\par
-  High bytes as \\'hh: \\'80 \\'81 \\'82 \\'83 \\'84 \\'85`;
-  FS.writeFileSync(PATH.join(fixturesDir, 'rtf.w1252.rtf'), rtfText, 'utf8');
+  // RTF: СИРІ Windows-1252 байти 0x80..0x9F + \'hh escapes -> verify no U+FFFD, curly quotes intact
+  // (сирі байти, не UTF-8: інакше детектор кодування прийме їх за UTF-8)
+  const win1252 = Buffer.from([
+    0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
+    0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9e, 0x9f,
+  ]);
+  const head = Buffer.from("{\\rtf1\\ansi\\ansicpg1252\n  \\b All Windows-1252 bytes: ", 'latin1');
+  const tail = Buffer.from(
+    "\n  \\par\n  Curly quotes from \\'93 \\'94 escapes: \"quoted\" 'single'\n  Ellipsis \\'85 En-dash \\'96 Em-dash \\'80 Euro \\'83\n  \\par\n  High bytes as \\'hh: \\'80 \\'81 \\'82 \\'83 \\'84 \\'85",
+    'latin1',
+  );
+  FS.writeFileSync(PATH.join(fixturesDir, 'rtf.w1252.rtf'), Buffer.concat([head, win1252, tail]));
 
   FS.writeFileSync(PATH.join(fixturesDir, 'fb2.min.fb2'), [
     '<?xml version="1.0" encoding="UTF-8"?><!--FictionBook http://www.fictionbook.org-->',
@@ -203,10 +205,14 @@ async function writeFixtures() {
 
   // nested ZIP (EPUB inside)
   const innerEpub = new (require('jszip'))();
-  innerEpub.file('META-INF/container.xml', '<container><rootfiles><rootfile full-path="OEBPS/inner.opf" media-type="application/oebml+xml"/></rootfiles></container>');
-  innerEpub.file('OEBPS/inner.opf', '<package><metadata><dc:title>Inner</dc:title></metadata><manifest><item id="i" href="inner.xhtml" media-type="text/xhtml"/></manifest><spine><itemref idref="i"/></spine></package>');
+  innerEpub.file('mimetype', 'application/epub+zip');
+  innerEpub.file('META-INF/container.xml', '<container><rootfiles><rootfile full-path="OEBPS/inner.opf" media-type="application/oebps-package+xml"/></rootfiles></container>');
+  innerEpub.file('OEBPS/inner.opf', '<package><metadata><dc:title>Inner</dc:title></metadata><manifest><item id="i" href="inner.xhtml" media-type="application/xhtml+xml"/></manifest><spine><itemref idref="i"/></spine></package>');
   innerEpub.file('OEBPS/inner.xhtml', '<p>Inner epub content.</p>');
-  FS.writeFileSync(PATH.join(fixturesDir, 'epub_nested.zip'), Buffer.from(await innerEpub.generateAsync({ type: 'nodebuffer' })));
+  const innerEpubBuf = Buffer.from(await innerEpub.generateAsync({ type: 'nodebuffer' }));
+  const outerZip = new (require('jszip'))();
+  outerZip.file('book.epub', innerEpubBuf);
+  FS.writeFileSync(PATH.join(fixturesDir, 'epub_nested.zip'), Buffer.from(await outerZip.generateAsync({ type: 'nodebuffer' })));
 }
 
 // ---- parser entry registry ----
@@ -285,8 +291,35 @@ async function main() {
     console.log(`  context: ${JSON.stringify(around)}`);
   }
 
+  // --- RTF encoding regression: UTF-8 / cp1251 / \uN fallback (не регресити!) ---
+  console.log('\n' + 'RTF encoding regression — UTF-8 / cp1251 / \\uN fallback');
+  console.log('='.repeat(70));
+  const encCases = [
+    ['UTF-8 body (curly quotes + guillemets)',
+      Buffer.from('{\\rtf1\\ansi «Hi» “world” ‘it’s’}', 'utf8'),
+      ['«', '»', '“', '”', '‘', '’']],
+    ['cp1251 raw Cyrillic',
+      Uint8Array.from([0x7b, 0x5c, 0x72, 0x74, 0x66, 0x31, 0x5c, 0x61, 0x6e, 0x73, 0x69, 0x5c, 0x61, 0x6e, 0x73, 0x69, 0x63, 0x70, 0x67, 0x31, 0x32, 0x35, 0x31, 0xcf, 0xf0, 0xe8, 0xe2, 0xb3, 0xf2, 0x7d]),
+      ['П', 'р', 'и', 'в', 'і', 'т']],
+    ['\\uN + letter fallback (fallback не тече)',
+      Uint8Array.from([...'{\\rtf1\\ansi a \\u8220z b}'].map((c) => c.charCodeAt(0))),
+      ['a “b']],
+    ['\\uN + backslash next (контрольне слово не з\'їдене)',
+      Uint8Array.from([...'{\\rtf1\\ansi a \\u8220\\par b}'].map((c) => c.charCodeAt(0))),
+      ['a “\nb']],
+  ];
+  for (const [label, buf, expects] of encCases) {
+    const r = await require(BUNDLE('services/rtfParser.js')).parseRtfFromBytes(buf);
+    const missing = expects.filter((e) => !r.text.includes(e));
+    console.log(`  ${label.padEnd(46)} : ${missing.length === 0 ? 'OK' : 'FAIL missing=' + JSON.stringify(missing)}`);
+    if (missing.length) console.log(`      got: ${JSON.stringify(r.text)}`);
+  }
+
   // zip innerFormat detection for nested epub
-  const z = require('./services/zipParser').parseZipFromBytes(FS.readFileSync(PATH.join(fixturesDir, 'epub_nested.zip')).buffer);
+  // (Buffer.buffer — це pooled ArrayBuffer з offset, тому беремо точний зріз)
+  const zipBuf = FS.readFileSync(PATH.join(fixturesDir, 'epub_nested.zip'));
+  const zipAb = zipBuf.buffer.slice(zipBuf.byteOffset, zipBuf.byteOffset + zipBuf.byteLength);
+  const z = await require(BUNDLE('services/zipParser')).parseZipFromBytes(zipAb);
   console.log(`\nZIP nested EPUB -> text="${z.text.slice(0, 60)}", innerFormat="${z.innerFormat}"`);
 }
 
