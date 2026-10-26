@@ -79,7 +79,7 @@ Keep support as an **external donation link** (NOWPayments) inside SupportAuthor
 - [x] No hardcoded secrets in repo (grep clean)
 - [x] Privacy policy URL live (HTTP 200); package name final
 - [ ] **EAS project slug renamed to `sapphire`** — BLOCKED (30-секундна дія в дашборді, кроки нижче)
-- [ ] **AdMob APPLICATION_ID non-empty у реальній збірці** — BLOCKED (перевіряється `aapt2` після перезбірки)
+- [x] **AdMob APPLICATION_ID non-empty у реальній збірці** — ✅ 2026-10-26: `expo prebuild` + `gradlew :app:processReleaseManifest` → мержений манифест має `ca-app-pub-5113967448800652~8371247908`, deep link `exp+sapphire`, `versionCode 2`
 
 ### Кроки перейменування EAS-проєкту (зробити в браузері, ~30 с)
 1. Відкрити `https://expo.dev/accounts/mike4224/projects`

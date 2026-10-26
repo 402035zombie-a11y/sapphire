@@ -54,15 +54,24 @@
 
 ## 5. Додаткові ризики (не блокують, але фіксати)
 
-1. **APK не містять AdMob ID.** У ВСІХ APK в `artifacts/apks/` (Oct 21–23) `aapt2` показує
-   `com.google.android.gms.ads.APPLICATION_ID` = `""` (краш `MobileAdsInitProvider: Invalid application ID`).
-   Але фікс (`app.json` з `android_app_id`, коміт `88a1c9b` 2026-10-23 **23:38**) з’явився ПІСЛЯ останнього APK
-   (`build-1792778033289.apk`, Oct 23 **20:53**). Тобто фікс у коді Є, але **ніколи не перевірений у збірці**.
-   Очікувана логіка: `react-native-google-mobile-ads/android/build.gradle:104` ставить
-   `manifestPlaceholders = [appJSONGoogleMobileAdsAppID: <з app.json>]`, а `app-json.gradle` шукає `app.json`
-   на рівень вище `android/` → `C:\Users\DELL\Sapphire\app.json` ✅ (tracked).
-   **Обов'язкова перевірка після першої перезбірки:** `aapt2 dump xmltree --file AndroidManifest.xml <apk> | grep APPLICATION_ID`
-   → value має бути `ca-app-pub-5113967448800652~8371247908`.
+1. **APK не містять AdMob ID — ✅ ВИРІШЕНО 2026-10-26 (перевірено локально, без EAS).**
+   У СТАРИХ APK в `artifacts/apks/` (Oct 21–23) `aapt2` показував `APPLICATION_ID` = `""`.
+   Причина: фікс (`app.json` з `android_app_id`, коміт `88a1c9b` 2026-10-23 **23:38**) з’явився ПІСЛЯ
+   останнього APK (`build-1792778033289.apk`, Oct 23 **20:53**) — тому старі APK нею не володіли.
+   **Локальна перевірка (2026-10-26):**
+   ```
+   npx expo prebuild                                   # exit 0, android/ регенеровано з app.config.js
+   ./gradlew :app:processReleaseManifest               # BUILD SUCCESSFUL in 6m 18s
+   android/app/build/intermediates/merged_manifests/release/processReleaseManifest/AndroidManifest.xml
+   ```
+   У мерженому манифесті:
+   - `com.google.android.gms.ads.APPLICATION_ID` = **`ca-app-pub-5113967448800652~8371247908`** ✅ (НЕ порожній)
+   - `com.google.android.gms.permission.AD_ID` + `MobileAdsInitProvider` зареєстровані ✅
+   - deep link: `<data android:scheme="sapphire"/>` + `<data android:scheme="exp+sapphire"/>` ✅
+   - `package="com.mike.wolfskin"`, `versionCode="2"`, `versionName="1.0.0"` ✅
+   **Висновок:** фікс працює. EAS-збірка виконує ті самі кроки (prebuild з `app.json`), тому манифест
+   буде ідентичний. Перевірка виконана БЕЗ EAS — тобто slug-блокер на цей пункт не впливає.
+
 2. **`metro.config.js` втратив обидва аліаси** (коміт `796e4b7`, 2026-09-05) — зараз дефолтний.
    `HANDOFF.md` стверджує, що аліаси обов'язкові — **застаріло**. Збірки після 09-05 успішні, але
    `react-native-web@^0.21.0` досі в deps → латентний ризик. НЕ відновлювати наосліп.
