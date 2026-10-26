@@ -37,22 +37,20 @@
 - **EAS-акаунт — `mike4224`** (не `mike2424`, як у brief). `eas whoami` → mike4224 / 402035zombie@gmail.com.
 - Акаунти, в яких можна створювати проєкти: `mike4224`, `mike4224s-team`.
 
-**Рішення (на вибір користувача):**
-- (A) В EAS dashboard перейменувати slug проєкту `59123992` з `bookreader` → `sapphire` (зберігає build-історію).
-- (B) Створити новий проєкт: `eas init --account mike4224` у корені Sapphire, вписати виданий ID в `app.config.js`.
-- Після цього: `npx tsc --noEmit` → commit → build.
+**Рішення користувача (2026-10-26):** перейменувати slug проєкту `59123992` з `bookreader` → `sapphire`
+в EAS dashboard (зберігає build-історію). Точні кроки — у `PUBLISHING.md`, розділ 7.
+Перейменування НЕ вимагає правок коду: `app.config.js` уже має і правильний `extra.eas.projectId`,
+і правильний `slug: "sapphire"`.
 
-## 4. БЛОКЕР 3 — privacyPolicyUrl веде в 404 (репо private + безкоштовний GitHub)
+## 4. БЛОКЕР 3 — privacyPolicyUrl веде в 404 — ✅ ВИРІШЕНО 2026-10-26
 
-- `app.config.js:9` → `https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html` → **HTTP 404** (перевірено curl).
-- GitHub API: репо `402035zombie-a11y/sapphire` = **`"private":true`**, `"has_pages":false`; аккаунт `"plan": null` (безкоштовний).
-- **GitHub Pages на private-репо без платного плану неможливий.** Play Console вимагає ЖИВИЙ URL політики.
-- Файл політики готовий: `docs/privacy-policy.html` (4045 B).
+- Причина: репо `402035zombie-a11y/sapphire` = **`private`**, аккаунт GitHub = **безкоштовний план** → Pages неможливий.
+- **Рішення користувача:** зробити репо публічним.
+- **Виконано:** `PATCH /repos/... {"private":false}` → `visibility=public`; `POST /repos/.../pages {branch: main, path: /}`.
+- **Перевірено:** `https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html` → **HTTP 200** ✅
+- **Безпековий аудит після публікації:** `git ls-files .env` = пусто; `git grep` по PAT/AKIA/sk- = пусто;
+  секретів у 309 tracked-файлах немає. `.env` у `.gitignore`.
 
-**Рішення (на вибір користувача):**
-- (A) Окремий **публічний** репо (напр. `402035zombie-a11y/sapphire-privacy`) + Pages → URL `/sapphire-privacy/`. Основний репо лишається private.
-- (B) Зробити `sapphire` публічним (відкриває код).
-- (C) Безкоштовний статичний хостинг (Netlify / Vercel / Cloudflare Pages).
 
 ## 5. Додаткові ризики (не блокують, але фіксати)
 
@@ -82,13 +80,14 @@
 | 36–38 | metro.config.js має ОБИДВА аліаси | аліаси прибрані с 2026-09-05 (`796e4b7`); файл дефолтний |
 | 64 | «6 комітів попереду» | **0** — синхронізовано |
 
-## 7. Наступні кроки (коли користувач прийме рішення)
+## 7. Наступні кроки
 
-1. **Телефон:** USB → `adb devices` → перезбірка release APK → `pm install -r -t` → MIUI-гранти → чекліст Фази 3.
-2. **EAS:** вибрати (A)/(B) з п.3 → виправити `app.config.js` → commit → `eas build --profile preview`.
-3. **Privacy:** вибрати (A)/(C) з п.4 → задеплоїти → перевірити HTTP 200 → оновити `privacyPolicyUrl`.
-4. **Перезбірка:** `aapt2` на новому APK (AdMob value + `exp+sapphire://` scheme).
-5. **Play:** Content Rating + Data Safety (веб-форми), скріншоти, feature graphic (1024×500 — `docs/sapphire-feature-graphic.png`), AAB.
+1. **Користувач:** перейменувати slug EAS-проєкту (`bookreader` → `sapphire`), кроки — `PUBLISHING.md` §7.
+2. **Перезбірка release APK** (схема `exp+sapphire://` + perf-код живуть ТІЛЬКИ в APK).
+3. **`aapt2` на новому APK:** AdMob value = `ca-app-pub-5113967448800652~8371247908`; scheme `exp+sapphire`.
+4. **Телефон:** `adb devices` → `pm install -r -t` → MIUI-гранти → чекліст Фази 3 (4 пункти).
+5. **Play:** AAB, Content Rating + Data Safety (веб-форми), скріншоти з телефона, feature graphic.
+
 
 ## 8. Команди
 

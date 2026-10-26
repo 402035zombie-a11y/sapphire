@@ -7,8 +7,8 @@ Source of truth for going live: install on device, publish to Google Play, conne
 - [x] **AdMob account** — admob.com (same Google login). Create an **App** → copy **App ID** (`ca-app-pub-5113967448800652~8371247908`). Inside it create two **Ad Units**:
   - Banner: `ca-app-pub-5113967448800652/4712038644`
   - Rewarded: `ca-app-pub-5113967448800652/1663349260`
-- [ ] **Privacy Policy URL** — host `docs/privacy-policy.html` on GitHub Pages. Required by Play. **CURRENTLY 404** — Pages not deployed.
-- [x] **Expo EAS** — `npm i -g eas-cli` then `eas login` (account: mike4224 / 402035zombie@gmail.com).
+- [x] **Privacy Policy URL** — LIVE (2026-10-26): `https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html` → **HTTP 200**. Repo `402035zombie-a11y/sapphire` made public + Pages enabled on `main` (root).
+- [x] **Expo EAS** — `eas login` (account: **mike4224** / 402035zombie@gmail.com). ⚠️ Проєкт `59123992-…` має slug `bookreader` — перейменувати на `sapphire` в дашборді, інакше **КОЖЕН білд падає** (EAS не резолвить по slug).
 - [x] **Package name final** — `com.mike.wolfskin` (set via `EXPO_PUBLIC_ANDROID_PACKAGE`). Cannot change after first publish.
 
 ## 1. Install on your phone (live testing)
@@ -77,7 +77,18 @@ Keep support as an **external donation link** (NOWPayments) inside SupportAuthor
 - [ ] `npx expo export --platform web` succeeds — **KNOWN BROKEN** (expo-sqlite WASM), not blocking for Android
 - [ ] Dev build installed on phone, AdMob banner visible, rewarded ad plays on "Support"
 - [x] No hardcoded secrets in repo (grep clean)
-- [ ] Privacy policy URL live; package name final — **BLOCKED** (GitHub Pages 404)
+- [x] Privacy policy URL live (HTTP 200); package name final
+- [ ] **EAS project slug renamed to `sapphire`** — BLOCKED (30-секундна дія в дашборді, кроки нижче)
+- [ ] **AdMob APPLICATION_ID non-empty у реальній збірці** — BLOCKED (перевіряється `aapt2` після перезбірки)
+
+### Кроки перейменування EAS-проєкту (зробити в браузері, ~30 с)
+1. Відкрити `https://expo.dev/accounts/mike4224/projects`
+2. Відкрити проєкт `bookreader` (id `59123992-8765-4762-87a4-9449c7384d79`).
+3. Settings → змінити **Slug** `bookreader` → `sapphire` → Save.
+4. Перевірити: `eas build:list` у `C:\Users\DELL\Sapphire` більше НЕ падає з slug mismatch.
+
+> Після перейменування КОД НЕ ЧІПАТИ: `app.config.js` вже має правильний `extra.eas.projectId`
+> і правильний `slug: "sapphire"`. Блокувався лише slug на боці EAS.
 
 ## 8. Assets verified (2026-10-21)
 | Asset | Path | Dimensions | Status |
