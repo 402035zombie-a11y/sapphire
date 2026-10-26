@@ -90,6 +90,15 @@ Keep support as an **external donation link** (NOWPayments) inside SupportAuthor
 > Після перейменування КОД НЕ ЧІПАТИ: `app.config.js` вже має правильний `extra.eas.projectId`
 > і правильний `slug: "sapphire"`. Блокувався лише slug на боці EAS.
 
+### versionCode — для КОЖНОЇ наступної збірки
+`app.config.js` має `android.versionCode: 2`. Google Play відхиляє завантаження з уже існуючим
+versionCode. Для першої публікації `2` — ок; для кожного наступного релізу вершити ОДЕ з:
+- вписати `versionCode + 1` в `app.config.js` (і закомітитизи), або
+- додати `"autoIncrement": true` у `production`-профіль `eas.json` (тоді EAS змінює його сам).
+
+**Не забувай про це перед ДРУГИМ `eas build --profile production`.**
+
+
 ## 8. Assets verified (2026-10-21)
 | Asset | Path | Dimensions | Status |
 |-------|------|------------|--------|
