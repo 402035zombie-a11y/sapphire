@@ -60,10 +60,19 @@ OR manually: Play Console → Create app → upload the .aab → Internal testin
 - **Store listing**: icon (auto from assets/icon.png), screenshots (phone + tablet), description.
 
 ## 4. Connect ads — test vs real
-- **Dev / Preview**: code uses **test IDs** by default → safe, no ban risk.
-- **Production**: set the 3 env vars above with REAL IDs → real ads serve after publish.
-- Switching is purely env-based; no code edits between builds.
-- Banner is rendered in LibraryScreen; rewarded plays from "Support the author" modal.
+- **Реальні AdMob ID задіяні ЗАВЖДИ** (не «test by default», як було написано раніше — це була хибна
+  теза). Джерело: `app.config.js` → `extra.admob.{appId,bannerId,rewardedId}` → `Constants.expoConfig.extra.admob.*`.
+- Детект тестового ID є лише для rewarded (`services/monetization.native.ts:13`,
+  `isRealAdUnit = !startsWith('ca-app-pub-3940256099942544')`) і використовується як **заглушка**:
+  `adsUnavailableReason()` повертає `'AdMob rewarded unit is a test ID'` → `showSupportAd()` не показує рекламу.
+  Банер (`components/AdBanner.native.tsx`) такого детекту **не має** — крутиться з реальним ID.
+- **Наслідок:** preview/dev-білд показує **реальні** оголошення. Для AdMob це означає реальні
+  impressions; тривале тестування своїм пристроєм створює трафік з одного джерела — ризик
+  «invalid traffic». Якщо потрібна безпечна тестова збірка — ставити **тестові** ID в `app.config.js`
+  (`extra.admob.*`), а не розраховувати на авто-перемикання.
+- `requestNonPersonalizedAdsOnly: true` — запит без персоналізації (належить до політики AdMob + GDPR).
+- Banner рендериться в LibraryScreen; rewarded — з модалки «Support the author».
+
 
 ## 5. Monetization decision (recommendation)
 Keep support as an **external donation link** (NOWPayments) inside SupportAuthorModal, NOT Google Play Billing. Reason: all reading is free, it is a donation, not a digital good, and external links avoid Google's 15% cut. (Play Billing is only required for in-app digital products.) Wire the link in `onDonate` in ReaderScreen.
