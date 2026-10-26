@@ -3,13 +3,18 @@
 > Читай це ПЕРШИМ. Це єдине джерело актуальної правди. Старі `BUGS_ROUND*.md` / `ROUND5.md` /
 > `FORMATS_ROUND.md` / `ARCH_ANALYSIS.md` ВИДАЛЕНІ — вони містили застарілі PENDING, що вводили в оману.
 > Актуальний канбан — `KANBAN_DETAILED.md`. Інструкція запуску/білду — `DEV-GUIDE.md`.
+>
+> **АКТУАЛЬНИЙ СТАН + БЛОКЕРИ (2026-10-26): `.hermes/plans/2026-10-26_phase3-4-blockers.md`**
+> (EAS projectId = старий проєкт `bookreader` → білд падає; privacyPolicyUrl = 404, репо private;
+> телефон не підключений; APK не містять AdMob ID).
 
 ## Що це
 - React Native + Expo SDK54, **New Architecture**, Android-only. iOS не налаштовано.
 - Package: `com.mike.wolfskin` (фінальний, збігається з Play Console). Slug: `sapphire`.
 - APP_NAME: `Sapphire`.
-- EAS projectId: `c6014b22-df9e-464c-903c-ffa9a5793249`.
-- **EAS-акаунт: `mike2424`** (НЕ `mike4224` — це помилка в старому handoff-файлі, більше не існує).
+- **EAS projectId:** `59123992-8765-4762-87a4-9449c7384d79` — ⚠️ ЦЕ СТАРИЙ ПРОЄКТ (slug `bookreader`).
+  `eas build` падає: slug mismatch. Правильний ID — в EAS dashboard. Деталі: `.hermes/plans/2026-10-26_phase3-4-blockers.md`.
+- **EAS-акаунт: `mike4224`** (`eas whoami` → mike4224 / 402035zombie@gmail.com). Не `mike2424`.
 
 ## Потік даних (читання книги)
 1. `LibraryScreen` → `importBook` (parse-once) → глави пишуться в `books.db` (expo-sqlite) через `services/bookImport.ts:getBookChapters`.
@@ -17,8 +22,8 @@
 3. Переклад per-sentence: `translationService.ts` (v1 Google GTX, безключовий) — **основний**.
    `translationServiceV2.ts` (Lingva + фолбек на v1 GTX) — використовується для prefetchAhead.
    Ключ перекладу: `paragraphIndex*1000 + sentenceIndex` (fix `ed148ad`).
-4. Перекладені речення зберігаються в `book.sentenceTranslations` (libraryStore → AsyncStorage JSON).
-   ⚠️ ТЕХБОРГ: на 50k+ речень — freeze (треба SQLite, як chapters). Не чіпай без наказу.
+4. Перекладені речення зберігаються в **SQLite** `books.db` — `services/sentenceTranslationsDb.ts`
+   (складений ключ `(book_id, skey, lang)`). `libraryStore.sentenceTranslations` — МЕРТВЕ поле, не чіпай.
 
 ## Нативні модулі (TurboModule, JSI)
 - `NativeBookParser` (Kotlin) — EPUB/FB2 парсинг. Фасад `services/bookParser.ts` → тихий JS-fallback.
@@ -33,9 +38,9 @@
    ```
 2. **dev-client потребує mmkv 2.x** (не 3.x) — інакше "native MMKV Module could not be found".
    `appStore.ts` вже на AsyncStorage (не mmkv). `react-native-mmkv` у package.json — dead-dep, не видаляй (рве lockfile).
-3. **metro.config.js** має ОБИДВА аліаси: `alias['react-native-web']=false` (інакше 'View config getter for component pre')
-   + `extraNodeModules['react-native-google-mobile-ads']` → mock (dev-client без нативного модуля не падає).
-   Не прибирай жоден.
+3. **metro.config.js** — ДЕФОЛТНИЙ (аліаси `react-native-web` та AdMob-mock прибрані комітом `796e4b7`,
+   2026-09-05). НЕ відновлюй наосліп — збірки після 09-05 успішні, але `react-native-web@^0.21.0`
+   досі в deps (латентний ризик «View config getter for component 'pre'»).
 4. **AdMob**: dev-client APK не має нативного модуля → `monetization.native.ts` + `AdBanner.native.tsx` роблять lazy `require`.
    Prod-білд (EAS) має реальну рекламу (alias не діє в проді).
 5. **ОДИН білд у кінці етапу** — користувач заборонив білди між фіксами (2026-08-14).
@@ -58,10 +63,10 @@
   feature graphic (1024×500) — **конфіг готовий, production AAB ще НЕ зібрано**.
 - PERF-4: ReaderScreen `chapters`-memo по `[bookId]` (не `[book]`) — БД не читається на кожен переклад.
 - translationServiceV2: фолбек на v1 GTX коли нема Lingva.
-- metro.config.js: регрес виправлено (обидва аліаси).
+- metro.config.js: дефолтний (аліаси прибрані 2026-09-05).
 
 ## Поточний стан git (2026-10-21)
-- Branch: `fix/ui-bugs`, **6 комітів попереду** `origin/fix/ui-bugs` (до push).
+- Branch: `fix/ui-bugs`, **синхронізовано** з `origin/fix/ui-bugs` (0 попереду / 0 позаду, перевірено 2026-10-26).
 - Останні коміти: `70756b0c` (RTF byte-level parsing, LanguageDropdown scroll, SpeedReading ticker),
   `28d1dab2` (внутрішні тіні в білій темі), `121bbb36` (прибрано Web Worker).
 - Незакомічені зміни: `PUBLISHING.md`, `app.config.js` (privacyPolicyUrl → GitHub Pages),
