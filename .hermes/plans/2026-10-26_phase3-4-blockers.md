@@ -153,5 +153,27 @@ wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && export ANDROID_HOME=/opt/a
 
 **Висновок:** не тратити час на локальний `assembleRelease`. Брати APK/AAB з EAS.
 
+## 12. Play compliance — виправлено 2026-10-26 (перевірка claim'ів проти коду)
+
+Запит «чи правда те, що ми обіцяємо» — по кожному пункту store listing.
+
+| Claim | Код | Висновок |
+|---|---|---|
+| 44 цільові мови | `utils/languages.ts` = 45 записів − `auto` | ✅ точно 44 |
+| Day / Night / Blackout | `themes.ts` day/night/blackout | ✅ |
+| Speed reading | `screens/SpeedReadingScreen.tsx` | ✅ |
+| TTS | `expo-speech` у ReaderScreen + DictionaryScreen | ✅ |
+| EPUB/FB2/MOBI/DOCX/ODT/RTF/HTML/TXT/ZIP | 8 парсерів + TXT inline | ✅ |
+| FSRS | власний рушій | ✅ |
+| **«No tracking»** | — | ❌ **НЕПРАВДА** → виправлено: «No account, no login, no server of our own. Ads are served by Google AdMob». Обіцянка «no tracking» при живому AdMob = ризик відхилення |
+| **Sentry «no-op»** | не встановлено, не імпортовано (dead code) | ❌ **НЕПРАВДА** → рядок прибрано з privacy policy; заявлено «стороння аналітика відсутня» |
+| «функція очищення в налаштуваннях» | фактично `DictionaryScreen` → `clearAll` | ⚠️ уточнено в privacy policy |
+| Донат через NOWPayments | `services/donate.ts` → **placeholder URL** | ❌ **МЕРТВЕ ПОСИЛАННЯ** (перевірено: JS-оболонка NOWPayments, сторінки донату нема) → додано в `PUBLISHING.md` як обов'язкову передумову |
+
+**Принцип:** у Play не обіцяють те, чого нема в коді, і не замовчують те, що є. Розбіжність між
+лістингом і реальністю — це не «дрібниця», а підстава для відхилення чи блокування акаунта.
+Тому кожен claim перевіряється грепом по коду, а не «на око».
+
+
 
 

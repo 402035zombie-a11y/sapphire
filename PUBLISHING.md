@@ -8,7 +8,8 @@ Source of truth for going live: install on device, publish to Google Play, conne
   - Banner: `ca-app-pub-5113967448800652/4712038644`
   - Rewarded: `ca-app-pub-5113967448800652/1663349260`
 - [x] **Privacy Policy URL** — LIVE (2026-10-26): `https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html` → **HTTP 200**. Repo `402035zombie-a11y/sapphire` made public + Pages enabled on `main` (root).
-- [x] **Expo EAS** — `eas login` (account: **mike4224** / 402035zombie@gmail.com). ⚠️ Проєкт `59123992-…` має slug `bookreader` — перейменувати на `sapphire` в дашборді, інакше **КОЖЕН білд падає** (EAS не резолвить по slug).
+- [x] **Expo EAS** — `eas login` (account: **mike4224** / 402035zombie@gmail.com). ✅ 2026-10-26: створено проєкт `@mike4224/sapphire` (id `34cd71e8-645b-4ab5-ad87-ab7dd0243e9e`). Старий `59123992-…` (slug `bookreader`) **незмінний** — slug не має REST/GraphQL endpoint для перейменування, тому створено новий проєкт.
+- [ ] **NOWPayments donation URL** — ⚠️ **ОБОВ'ЯЗКОВО ПЕРЕД РЕЛІЗОМ.** Зараз `services/donate.ts` має placeholder `https://nowpayments.io/donation/sapphire-reader` (JS-оболонка NOWPayments, реальної сторінки донату не існує — перевірено 2026-10-26). Потрібно: створити сторінку донату в NOWPayments → вписати URL у `EXPO_PUBLIC_DONATE_URL` (`eas.json` env) або замінити fallback в `app.config.js:34`. Без цього кнопка «Donate» відкриває мертве посилання.
 - [x] **Package name final** — `com.mike.wolfskin` (set via `EXPO_PUBLIC_ANDROID_PACKAGE`). Cannot change after first publish.
 
 ## 1. Install on your phone (live testing)
@@ -133,7 +134,7 @@ No device connected (`adb devices` empty). Web export broken → cannot generate
 Full checklist in `docs/content-rating-data-safety.md`. Key declarations:
 - Contains ads: Yes (AdMob banner + rewarded)
 - Advertising ID collected & shared with Google AdMob
-- No personal data collected; all user data local
+- No personal data (PII) collected by the app; all user data local. AdMob collects the Advertising ID (declared above); translation requests go to Google/Lingva.
 - Permissions: INTERNET, ACCESS_NETWORK_STATE, VIBRATE, READ/WRITE_EXTERNAL_STORAGE (file import/export)
 
 ---

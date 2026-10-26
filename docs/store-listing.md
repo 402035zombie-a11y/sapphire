@@ -33,7 +33,8 @@ The dictionary and the flashcards are filled from YOUR book, not from a generic 
 You only revise words you genuinely encountered — and you delete the ones you already
 know instead of confirming them forever.
 
-Everything is stored on your device. No account, no tracking, no server.
+Everything is stored on your device. No account, no login, no server of our own.
+Ads are served by Google AdMob (see the privacy policy).
 ```
 
 ### UA
@@ -58,7 +59,8 @@ Sapphire — білінгвальний паралельний рідер: ан�
 Ви повторюєте лише ті слова, які справді зустріли, — і видаляєте ті, що вже знаєте,
 замість вічно їх підтверджувати.
 
-Усе зберігається на вашому пристрої. Без акаунта, без стеження, без сервера.
+Усе зберігається на вашому пристрої. Без акаунта, без входу, без власного сервера.
+Рекламу показує Google AdMob (див. політику конфіденційності).
 ```
 
 ## Ключові слова (ASO, чернетка)
