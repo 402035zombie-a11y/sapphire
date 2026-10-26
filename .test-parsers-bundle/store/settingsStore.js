@@ -54,7 +54,7 @@ var useSettingsStore = exports.useSettingsStore = (0, _createStore.persist)(func
     }
   };
 }, {
-  name: 'bookreader-settings',
+  name: 'sapphire-settings',
   partialize: function partialize(s) {
     return {
       targetLang: s.targetLang,
