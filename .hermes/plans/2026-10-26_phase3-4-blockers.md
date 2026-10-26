@@ -134,7 +134,24 @@ wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && export ANDROID_HOME=/opt/a
    (книги — мегабайти). Фікс: `try { ... } finally { deleteAsync(cacheUri, {idempotent:true}) }` у кожному.
    Свідомо відкладено: імпорт верифікований на телефоні, тому правити його без потреби — ризик.
 2. **`btoa(String.fromCharCode(...new Uint8Array(buf)))`** у http-гілках парсерів — spread на великих
-   масивах (2M+ елементів) дасть `RangeError`. На практиці не стреляє: http-гілка не використовується
+   масивах (2M+ елементів) дасть `RangeError`. На практиці не стріляє: http-гілка не використовується
    (файли приходять з document picker). Якщо колись додать завантаження по URL — робити чанками.
+
+## 11. Локальна gradle-збірка — НЕ працює в цьому середовищі (перевірено 2026-10-26)
+
+`./gradlew :app:assembleRelease` (у WSL, проєкт на `/mnt/c`) падає 3-ма спробами:
+- `Failed to release lock on Build Output Cleanup Cache / executionHistory` (9p/drvfs не відпускає
+  Gradle file-locks); прибирання `*.lock` і `--no-build-cache` не допомогло.
+- Після 59 хв — процес впав без повідомлення про помилку; у логах `Hard link ... failed. Doing a slower
+  copy instead` (9p не підтримує hard-link) → C/C++ компіляція на порядки повільніша.
+- Пам'ять WSL: 7.8 GiB; gradle `-Xmx4096m` + kotlin daemon `-Xmx4096m` = 8 GiB → можливий OOM.
+
+**Що це НЕ зачіпає:** EAS cloud build (виконує компіляцію на серверах Expo, не на `/mnt/c`) — це
+штатний і ЄДИНИЙ рекомендований шлях (`HANDOFF.md` правило 1). EAS-блокер знято 2026-10-26.
+**Маніфестна перевірка (AdMob ID + схема) виконана окремо** через `processReleaseManifest` — вона
+успішна і не потребує повної збірки.
+
+**Висновок:** не тратити час на локальний `assembleRelease`. Брати APK/AAB з EAS.
+
 
 
