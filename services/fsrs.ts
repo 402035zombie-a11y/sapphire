@@ -62,9 +62,11 @@ function nextStability(st: FsrsState, grade: Grade): number {
   }
   // hard/good/easy: зростання
   const inc = 1 + Math.exp(W[8]) * (11 - d) * Math.pow(s, -W[9]) * (Math.exp(W[10] * (1 - r)) - 1);
-  const hardPenalty = grade === 2 ? W[15 - 3] ?? 1 : 1; // W[12]... спрощено: hard множник
-  const mult = grade === 2 ? 1.2 / 1.0 : grade === 4 ? 1.3 : 1.0; // hard ~×1.2, easy ×1.3 поверх
-  const newS = s * Math.max(1, inc) * (grade === 2 ? 1 : 1) * mult * hardPenalty;
+  // Множники: hard ×(1.2 · W[12]) ≈ ×0.73 (S падає на ~27%), good ×1, easy ×1.3.
+  // Порівняння (d=7, s=10, R=0.9): again ×0.14, hard ×0.73, good ×2.34, easy ×3.05.
+  const hardPenalty = grade === 2 ? W[12] : 1;
+  const mult = grade === 2 ? 1.2 : grade === 4 ? 1.3 : 1.0;
+  const newS = s * Math.max(1, inc) * mult * hardPenalty;
   return clamp(newS, 0.1, 36500);
 }
 
