@@ -174,6 +174,30 @@ wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && export ANDROID_HOME=/opt/a
 лістингом і реальністю — це не «дрібниця», а підстава для відхилення чи блокування акаунта.
 Тому кожен claim перевіряється грепом по коду, а не «на око».
 
+## 13. `SYSTEM_ALERT_WINDOW` у маніфесті — ПРИБРАНО (2026-10-26)
+
+**Симптом:** у merged release-маніфесті був `android.permission.SYSTEM_ALERT_WINDOW`, якого немає
+в `app.config.js` (`permissions: []`) і який ніхто не використовує. Play вважає цей дозвіл чутливим
+(потребує виправдання ключовою фічею) → ризик додаткового рев'ю/відхилення.
+
+**Корінь:** `expo prebuild` використовує шаблон
+`@expo/config-plugins/build/plugins/withAndroidBaseMods.js` → `getAndroidManifestTemplate()` з
+комментарем `<!-- OPTIONAL PERMISSIONS, REMOVE WHATEVER YOU DO NOT NEED -->`. Шаблон **завжди**
+містить `INTERNET`, `SYSTEM_ALERT_WINDOW`, `VIBRATE`, `READ/WRITE_EXTERNAL_STORAGE`.
+
+**Чому `android.permissions` не допомагає:** поле `permissions` у конфізі **додає** до шаблону,
+а не замінює його. Перевірено емпірично: з `permissions: [5 дозволів]` у маніфесті лишились усі 5
++ `SYSTEM_ALERT_WINDOW`.
+
+**Фікс:** config plugin `plugins/withRemoveSystemAlertWindow.js` (`withAndroidManifest` → видалити
+`uses-permission` з `android:name="android.permission.SYSTEM_ALERT_WINDOW"`). Підключено в
+`app.config.js` plugins. Перевірено: `grep -c SYSTEM_ALERT_WINDOW` на merged release-маніфесті = **0**.
+
+**Принцип:** шаблон генератора — це не «наша конфігурація». Усе, що генерується, треба читати
+і звіряти з тим, що реально потрібно; «дефолт фреймворку» часто містить зайве (дозволи, залежності,
+конфіги). Маніфест — джерело правди для Play, не конфіг.
+
+
 
 
 

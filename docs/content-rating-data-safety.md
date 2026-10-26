@@ -72,20 +72,29 @@
 
 ---
 
-## 5. Permissions Declared (AndroidManifest)
+## 5. Permissions Declared (merged release manifest — verified 2026-10-26)
 
-| Permission | Reason |
-|------------|--------|
-| `INTERNET` | AdMob (ad requests), translation API, donation link |
-| `ACCESS_NETWORK_STATE` | AdMob network awareness |
-| `VIBRATE` | Optional haptic feedback (user setting) |
-| `READ_EXTERNAL_STORAGE` | Import books from storage (API 32+ uses READ_MEDIA_*) |
-| `WRITE_EXTERNAL_STORAGE` | Export Anki decks / backup (legacy; scoped storage preferred) |
-| `POST_NOTIFICATIONS` | Optional daily reminder (API 33+) |
-| `SYSTEM_ALERT_WINDOW` | Not used — legacy/removed |
+| Permission | Source | Reason |
+|------------|--------|--------|
+| `INTERNET` | app | AdMob (ad requests), translation API, donation link |
+| `ACCESS_NETWORK_STATE` | app | AdMob network awareness |
+| `VIBRATE` | app | Optional haptic feedback (user setting) |
+| `READ_EXTERNAL_STORAGE` | app | Import books from storage |
+| `WRITE_EXTERNAL_STORAGE` | app | Export Anki decks / backup |
+| `ACCESS_ADSERVICES_AD_ID` | AdMob SDK | Advertising ID for ads |
+| `ACCESS_ADSERVICES_ATTRIBUTION` | AdMob SDK | Ad attribution |
+| `ACCESS_ADSERVICES_TOPICS` | AdMob SDK | Ad topics |
+| `FOREGROUND_SERVICE` | library | Background service (library) |
+| `WAKE_LOCK` | library | Keep CPU awake (library) |
+
+**`SYSTEM_ALERT_WINDOW` — REMOVED.** Expo's bare-minimum manifest template ships it by default and
+`android.permissions` only ADDS to the template, never removes. Added
+`plugins/withRemoveSystemAlertWindow.js` to strip it — verified **0 occurrences** in the merged release
+manifest. Play treats this permission as sensitive (needs a core-feature justification) and Sapphire
+never draws over other apps.
 
 **Play Console flags:**
-- `READ_EXTERNAL_STORAGE` / `WRITE_EXTERNAL_STORAGE` → File access → "This app accesses files on device" → Justify: Import/export user books & Anki decks
+- `READ_EXTERNAL_STORAGE` / `WRITE_EXTERNAL_STORAGE` → File access → justify: import/export user books & Anki decks
 - `INTERNET` + `ACCESS_NETWORK_STATE` → Network → AdMob + translation
 
 ---

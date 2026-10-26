@@ -1,6 +1,6 @@
 # Sapphire — DEV GUIDE (handoff для агентів)
 
-Додаток: **Android native** (Expo RN, NOT web). Package `com.mike.wolfskin`, назва **Sapphire** (APP_NAME у app.config.js). Акаунт EAS: `mike2424`, проєкт `sapphire`.
+Додаток: **Android native** (Expo RN, NOT web). Package `com.mike.wolfskin`, назва **Sapphire** (APP_NAME у app.config.js). Акаунт EAS: `mike4224`, проєкт `sapphire` (id `34cd71e8-645b-4ab5-ad87-ab7dd0243e9e`).
 
 ## Швидкий цикл (без білду)
 Після того як dev-client APK встановлений на телефон — ЗВИЧАЙНІ правки (UI/логіка/стилі/тексти) НЕ потребують білду:
