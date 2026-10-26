@@ -17,11 +17,24 @@
 ## Підсумок перевірки
 
 ```
-git grep -i bookreader (живий код)  -> 2 (навмисні: scheme + Pages URL)
+git grep -i bookreader (живий код)  -> 1 (навмисний: scheme)
 npx tsc --noEmit                    -> exit 0
 node scripts/test-parsers-runner.js -> 15/15 OK
 git status --short                  -> чисто
 ```
+
+## Бонус: APK-артефакти прибрано з git (2026-10-26)
+
+**Проблема:** push відхилався — `apk/app-debug.apk` (223 MB) перевищує ліміт GitHub (100 MB).
+У історії було 4 APK (~635 MB), `.git` = 555 MB.
+
+**Рішення:** APK = build-артефакти, не джерело → не версіонуються.
+- Файли перенесено в `artifacts/apks/` (на диску, поза git) — інсталятори для телефона цілі
+- `.gitignore`: `*.apk`, `artifacts/`, `apk/`, `app-release-apk/`, `build-*.apk`, `dev-client.apk`
+- `git filter-repo --invert-paths --path-glob '*.apk' --path-glob 'artifacts/*' --force`
+
+**Результат:** `.git` 555 MB → **8.8 MB** (−98.4%). Найбільший блоб — `assets/icon-flux.png` (4.4 MB).
+Push: `fix/ui-bugs` → `d183d91`, усі теги синхронізовано.
 
 ## Навмисні винятки (більше не чіпати)
 
