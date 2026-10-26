@@ -108,3 +108,20 @@ adb devices
 aapt2 dump xmltree --file AndroidManifest.xml <apk> | grep APPLICATION_ID   # /c/Users/DELL/AppData/Local/Android/Sdk/build-tools/36.0.0/aapt2
 wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && export ANDROID_HOME=/opt/android-sdk ANDROID_SDK=/opt/android-sdk JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 && eas build --profile preview --platform android --non-interactive --no-wait'
 ```
+
+## 9. Code audit 2026-10-26 (проактивна перевірка — багів НЕ знайдено)
+
+| Що перевіряв | Метод | Висновок |
+|---|---|---|
+| Інваріант `sentences[].index` (ключ `skey`) | порівняння `git show 10b0627^:screens/ReaderScreen.tsx` vs `readerSentences.ts` | ✅ формула ідентична: `index = (ch.idx*1000 + si)*1000`. Тонкість: у старому коді `si++` був ПОЗА `if (s)`, у новому — всередині; але `splitIntoSegments` робить `.filter(Boolean)`, тому порожніх нема → еквівалентно |
+| Міграція `sentence_translations` (PK без `lang`) | симуляція SQLite (Python) | ✅ коректна, ідемпотентна, legacy `lang='__legacy__'`, multilingual upsert працює |
+| Читання локальних файлів у парсерах | читання всіх 8 парсерів | ✅ `fetch()` ТІЛЬКИ в гварді `^https?://`; `content://`/`file://` → `expo-file-system/legacy` + `copyAsync` + `readAsStringAsync(base64)` |
+| `require('expo-file-system/legacy')` (top-level = краш усього застосунку) | `node_modules/expo-file-system/legacy.ts` + grep бандла | ✅ `export * from './src/legacy'`; `readAsStringAsync`/`copyAsync`/`cacheDirectory` присутні у release-бандлі |
+| Тема Blackout = FLAT | `themes.ts` + `neu.ts` | ✅ `flat: true` → `{borderRadius, borderWidth:1, borderColor: primaryText}`, без boxShadow/прозорості |
+| Тема Day (регресія внутрішніх тіней) | `themes.ts` | ✅ `shadowLight: 'rgba(210,195,165,0.7)'` (теплий, НЕ білий), `base: '#EAD9BE'` |
+| Perf-фікс у бандлі | grep release-бандла | ✅ `getReaderSentences`/`segmentsByParagraph`/`paraToFirstSentence`/`fromDb` = 1 кожен; `splitIntoSegments` = 1 (було 4) |
+| Runtime-конфіг у бандлі | grep | ✅ Lingva URL, donate URL присутні; AdMob ID — у манифесті (не в JS) |
+
+**Правило:** коли код читає файл на нативі — `fetch()` не є універсальним. Гвард `^https?://` + `expo-file-system/legacy`
+для всього локального — це єдиний безпечний патерн; будь-який новий парсер мусить його дотримуватись.
+
