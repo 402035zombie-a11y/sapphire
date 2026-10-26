@@ -13,8 +13,8 @@
 "Чудове питання!". Спискі й таблиці замість суцільного тексту.
 
 # ХТО КОРИСТУВАЧ
-- 26 року, Україна, **діючий військовослужбовець** (мобілізований, високоризикований).
-  UA/RUA нативно, EN A2-C1. Графік 5/2 → вікна ~1.5 тижня/місяць. Плани в 5-денних блоках.
+- 26 року, Україна.
+  UA/RUA нативно, EN b1-b2. Графік 5/2 → вікна ~1.5 тижня/місяць. Плани в 5-денних блоках.
 - Розробка — в ІНШОМУ чаті/сесії зазвичай; тут ти береш задачі звідти й ведеш до кінця.
 - **Особиста больова точка:** вивчає англійську через САМ Sapphire (паралельний рідер
   з перекладом + словник + картки). Продукт — його особистий інструмент, не абстрактний.
@@ -77,8 +77,10 @@ cd /c/Users/DELL/Sapphire
   (iOS не налаштовано). JS-рушій — **Hermes**.
 - **Package:** `com.mike.wolfskin` (фінальний, збігається з Play Console).
 - **Slug / APP_NAME:** `sapphire` / `Sapphire`.
-- **EAS projectId:** `c6014b22-df9e-464c-903c-ffa9a5793249`. **EAS-акаунт: `mike2424`**
-  (НЕ `mike4224` — це помилка старого handoff-файла).
+- **EAS projectId:** `34cd71e8-645b-4ab5-ad87-ab7dd0243e9e` — проєкт **`@mike4224/sapphire`**
+  (створено 2026-10-26; старий `59123992-…` має slug `bookreader` і **незмінний** — перейменувати
+  через API неможливо, тому створено новий проєкт).
+- **EAS-акаунт: `mike4224`** (`eas whoami` → mike4224). Не `mike2424`.
 - **Репо:** `github.com/402035zombie-a11y/sapphire`, локально `C:\Users\DELL\Sapphire`,
   гілка `fix/ui-bugs`. Remote URL містить токен — **ніколи не виводь його в чат,
   лог чи файл**; читай через `git remote` програмно і видаляй тимп-файли.
@@ -201,8 +203,8 @@ adb devices                               # перед будь-яким вст�
 
 **Фаза 4 — Публікація в Google Play.**
 - Зібрати production AAB: `eas build --profile production --platform android`.
-- Увімкнути GitHub Pages на `402035zombie-a11y/sapphire`, перевірити живий
-  `privacyPolicyURL` (зараз 404).
+- Увімкнено 2026-10-26: репо **публічне** + Pages на `main` →
+  `https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html` = **HTTP 200**.
 - Перевірити adaptive icon (XML не в робочому дереві — генерує `expo prebuild` в EAS).
 - Скріншоти (телефон або Playwright), feature graphic 1024×500.
 - Content Rating + Data Safety — заповнити вручну в Play Console (веб-форми).
@@ -231,10 +233,14 @@ adb devices                               # перед будь-яким вст�
 - **Android SDK:** `C:/Users/DELL/AppData/Local/Android/Sdk`, build-tools 34–37.
   Перевірка маніфесту APK:
   `aapt2 dump xmltree --file AndroidManifest.xml <apk> | grep APPLICATION_ID`.
-- **Bілд тільки хмарний через WSL** (Windows EAS CLI зламаний):
+- **Білд — тільки хмарний EAS.** `JAVA_HOME`/`ANDROID_HOME` локально **не потрібні** —
+  компілює на серверах Expo:
   ```bash
-  wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && export ANDROID_HOME=/opt/android-sdk ANDROID_SDK=/opt/android-sdk JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 && eas build --profile preview --platform android --non-interactive --no-wait'
+  wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && eas build --profile preview --platform android --non-interactive --no-wait'
   ```
+- **Локальний `assembleRelease` НЕ працює** — 9p/drvfs на `/mnt/c` не відпускає Gradle-локи
+  (`Failed to release lock on Build Output Cleanup Cache`), 4 спроби = 0 успіхів.
+  Деталі: `.hermes/plans/2026-10-26_phase3-4-blockers.md` §11.
 - **metro.config.js** має ОБИДВА аліаси (`alias['react-native-web']=false` +
   `extraNodeModules['react-native-google-mobile-ads']` → mock). Не прибирати жоден.
 - **dev-client потребує mmkv 2.x** (не 3.x). `react-native-mmkv` у package.json — dead-dep,

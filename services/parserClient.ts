@@ -85,13 +85,16 @@ class ParserClient {
       arrayBuffer = buf;
     } else {
       const cacheUri = `${FileSystem.cacheDirectory}br_input_${Date.now()}.bin`;
-      await FileSystem.copyAsync({ from: uri, to: cacheUri });
-      const base64 = await FileSystem.readAsStringAsync(cacheUri, { encoding: 'base64' as any });
-      const binary = atob(base64);
-      const u8 = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) u8[i] = binary.charCodeAt(i);
-      arrayBuffer = u8.buffer;
-      try { await FileSystem.deleteAsync(cacheUri, { idempotent: true }); } catch {}
+      try {
+        await FileSystem.copyAsync({ from: uri, to: cacheUri });
+        const base64 = await FileSystem.readAsStringAsync(cacheUri, { encoding: 'base64' as any });
+        const binary = atob(base64);
+        const u8 = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) u8[i] = binary.charCodeAt(i);
+        arrayBuffer = u8.buffer;
+      } finally {
+        try { await FileSystem.deleteAsync(cacheUri, { idempotent: true }); } catch {}
+      }
     }
 
     // 2. yield — UI може відреагувати
