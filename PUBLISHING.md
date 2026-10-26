@@ -85,6 +85,27 @@ Keep support as an **external donation link** (NOWPayments) inside SupportAuthor
   `eas build:list` працює (`[]`).
 - [x] **AdMob APPLICATION_ID non-empty у реальній збірці** — ✅ 2026-10-26: `expo prebuild` + `gradlew :app:processReleaseManifest` → мержений манифест має `ca-app-pub-5113967448800652~8371247908`, deep link `exp+sapphire`, `versionCode 2`
 
+### Якісні фікси сесії 2026-10-26 (усі закомічені, `tsc` exit 0)
+| Проблема | Файл | Стан |
+|---|---|---|
+| «Export backup (JSON)» на Android = тупик («available in the web version») | `components/AppSettingsModal.tsx` | ✅ cache-файл + Sharing sheet |
+| Бренд-перейменування осиротило ВСІ persisted-дані (книги/словник/тема) | `store/createStore.ts` (+5 сторів) | ✅ one-time міграція `legacyName`, тест 12/12 |
+| Комент брехав («hard ~×1.2»), мертвий код | `services/fsrs.ts` | ✅ поведінка байт-у-байт (480 кейсів) |
+| Temp-файл парсера не видалявся при помилці | `services/parserClient.ts` | ✅ `deleteAsync` у `finally` |
+| 5 ключів i18n відсутні в `uk.ts`; `at`→`after` desync | `i18n/uk.ts`, `SpeedReadingScreen.tsx` | ✅ |
+| `SYSTEM_ALERT_WINDOW` з шаблону Expo (Play-sensitive) | `plugins/withRemoveSystemAlertWindow.js` | ✅ 0 у мерж. манифесті |
+| Положення privacy/store-listing vs код (Sentry, «no tracking») | `docs/*` | ✅ приведено до коду |
+
+### Відкрите питання для користувача (НЕ чіпав — конфлікт із протестованим флоу)
+1. **TF (700 ms) і Cloze (900 ms) авто-переходять** після відповіді — правило користувача
+   «після відповіді НЕ робити авто-перехід» стосувалось type-режиму (там `352f904` його прибрав),
+   але TF/Cloze не торкались. `git blame`: рядки недоторкані з `ce65a49`/`2e53c4a`.
+2. **У TF і Cloze немає кнопки «I know it»** — вона лише в type. Правило «видалити одним тапом»
+   у цих режимах недосяжне.
+   → Обидва пункти в `TrainingScreen.tsx:429,516` (авто-перехід) і `858-865` (кнопка).
+   Детальніше: `.hermes/plans/2026-10-26_phase3-4-blockers.md` §17.
+
+
 ### EAS-проєкт — як це вирішено (2026-10-26)
 Перейменування slug в EAS **неможливе**: проверено REST (`PATCH`/`PUT`/`POST` → `Method Not Allowed`/`Not Found`)
 і GraphQL (інтроспекція схеми: 88 mutations, `AppInfoInput` має лише `displayName` — поля `slug` нема).
