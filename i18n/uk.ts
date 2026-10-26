@@ -25,6 +25,7 @@ export const ukDict: Record<string, string> = {
   'Empty': 'Порожньо',
   'Could not extract text from this file.': 'Не вдалося видобути текст із цього файлу.',
   'Could not extract text from this FB2 file.': 'Не вдалося видобути текст із цього FB2.',
+  'Import failed': 'Не вдалося імпортувати',
   'Original language:': 'Мова оригіналу:',
   'Translation language:': 'Мова перекладу:',
   'Import book dictionary (all words)': 'Імпортувати словник книги (всі слова)',
@@ -284,4 +285,7 @@ export const ukDict: Record<string, string> = {
   'Supported formats: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML, MOBI, ZIP': 'Підтримувані формати: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML',
   'Translation services': 'Сервіси перекладу',
   'Free translation services and their current limits. Limits reset automatically.': 'Безкоштовні сервіси перекладу та їх поточні ліміти. Ліміти скидаються автоматично.',
+  'Available': 'Доступно',
+  'resets in': 'скидається через',
+  'Try again': 'Спробувати ще раз',
 };

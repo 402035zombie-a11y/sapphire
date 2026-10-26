@@ -363,7 +363,7 @@ export default function SpeedReadingScreen() {
             onPress={() => setMicroPauses((v) => !v)}
           >
             <View style={[styles.microDot, { backgroundColor: microPauses ? theme.success : theme.border }, !microPauses && { backgroundColor: theme.border }]} />
-            <Text style={[styles.microLabel, { color: theme.primaryText }]}>{t('Micro-pauses at punctuation')}</Text>
+            <Text style={[styles.microLabel, { color: theme.primaryText }]}>{t('Micro-pauses after punctuation')}</Text>
           </TouchableOpacity>
           {microPauses && (
             <View style={{ width: '100%', marginTop: 6 }}>
