@@ -1,7 +1,7 @@
 // LIBRARY PARSE VERIFICATION RUNNER — maps real file formats onto the actual parser code path (same code Metro bundles for Android).
 // Builds a CommonJS bundle from the source .ts files (babel preset-typescript), rewrites extensionless relative specifiers to real .js paths,
 // then calls each parser's *FromBytes/:Text/:FromString function on REAL generated test fixtures and prints text/title/author + U+FFFD checks.
-// Runs: node scripts/library-parse-verification-runner.js   (from BookReader root)
+// Runs: node scripts/library-parse-verification-runner.js   (from Sapphire root)
 const FS = require('fs');
 const PATH = require('path');
 const { transformSync } = require('@babel/core');

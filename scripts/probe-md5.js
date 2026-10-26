@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const JSZip = require('jszip');
-const ROOT = '/c/Users/DELL/BookReader';
+const ROOT = '/c/Users/DELL/Sapphire';
 const fixturesDir = ROOT + '/data/test_files';
 (async () => {
   const docx = fs.readFileSync(fixturesDir + '/docx.min.docx');

@@ -2,7 +2,7 @@
 # Adds 5 shortened SupportAuthorModal keys to all i18n dicts.
 import os, re
 
-ROOT = 'C:/Users/DELL/BookReader/i18n'
+ROOT = 'C:/Users/DELL/Sapphire/i18n'
 
 KEYS = [
     'Reading is free forever.',

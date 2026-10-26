@@ -1,8 +1,8 @@
-# Privacy Policy — BookReader
+# Privacy Policy — Sapphire
 
 **Last updated:** 2026-08-11
 
-BookReader ("the App") is an offline-first e-book reader. This policy explains what
+Sapphire ("the App") is an offline-first e-book reader. This policy explains what
 data the App handles and with whom it is shared.
 
 ## 1. Data we collect

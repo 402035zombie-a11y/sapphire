@@ -2,7 +2,7 @@
 """BookReader cleanup protocol.
 
 Kills STRAY expo / metro / hermes-verify / http.server dev servers bound to
-dev ports and removes session-created junk from C:/Users/DELL/BookReader.
+dev ports and removes session-created junk from C:/Users/DELL/Sapphire.
 
 Safety:
 - Only node.exe processes are ever considered for killing.
@@ -19,7 +19,7 @@ import shutil
 import subprocess
 import sys
 
-PROJECT = r"C:\Users\DELL\BookReader"
+PROJECT = r"C:\Users\DELL\Sapphire"
 
 # Patterns that mark a STRAY dev server we may kill.
 KILL_PATTERNS = ("expo", "metro", "http.server", "hermes verify")

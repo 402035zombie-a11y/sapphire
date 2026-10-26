@@ -1,7 +1,7 @@
 # SESSION SUMMARY — 2026-10-21 — T1–T12 COMPLETED
 
 > **Статус:** 12/12 задач Kanban — DONE. Телефонна перевірка пройдена.
-> **Проєкт:** Sapphire (BookReader) — `C:\Users\DELL\BookReader`, branch `fix/ui-bugs`.
+> **Проєкт:** Sapphire (BookReader) — `C:\Users\DELL\Sapphire`, branch `fix/ui-bugs`.
 > **Пакет:** `com.mike.wolfskin`. **Телефон:** Xiaomi 23124RA7EO (`1d32a2e2`).
 
 ---

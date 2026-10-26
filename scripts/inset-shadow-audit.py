@@ -3,7 +3,7 @@ from PIL import Image
 def hexs(c): return '#%02X%02X%02X' % c
 
 for name in ('Day', 'Night', 'Blackout'):
-    im = Image.open(f'C:/Users/DELL/BookReader/theme_{name}.png').convert('RGB')
+    im = Image.open(f'C:/Users/DELL/Sapphire/theme_{name}.png').convert('RGB')
     px = im.load()
     bg = px[540, 983]  # modal surface = reference background
     print(f'===== {name} =====  modal bg {hexs(bg)}')

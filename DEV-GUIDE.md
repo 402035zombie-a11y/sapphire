@@ -1,11 +1,11 @@
-# BookReader / Sapphire — DEV GUIDE (handoff для агентів)
+# Sapphire — DEV GUIDE (handoff для агентів)
 
 Додаток: **Android native** (Expo RN, NOT web). Package `com.mike.wolfskin`, назва **Sapphire** (APP_NAME у app.config.js). Акаунт EAS: `mike2424`, проєкт `bookreader`.
 
 ## Швидкий цикл (без білду)
 Після того як dev-client APK встановлений на телефон — ЗВИЧАЙНІ правки (UI/логіка/стилі/тексти) НЕ потребують білду:
 1. Телефон підключений по USB (`adb devices`).
-2. Запущено Metro: `npx expo start --host lan` (у WSL: `wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/BookReader && export ANDROID_HOME=/opt/android-sdk ANDROID_SDK=/opt/android-sdk JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 && npx expo start --host lan'`).
+2. Запущено Metro: `npx expo start --host lan` (у WSL: `wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && export ANDROID_HOME=/opt/android-sdk ANDROID_SDK=/opt/android-sdk JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 && npx expo start --host lan'`).
 3. `adb reverse tcp:8081 tcp:8081` (телефон→ПК).
 4. Відкрити apку: `adb shell am start -n host.exp.exponent/.LauncherActivity -d "exp://192.168.1.207:8081"` (LAN IP = РЕАЛЬНИЙ WiFi ПК, НЕ WSL 172.x! Дивитись `ipconfig` Ethernet IPv4).
 5. Правка коду → Hot Reload на телефоні за 1-3с.
@@ -45,7 +45,7 @@ dev-client працює на OLD architecture (ігнорує `newArchEnabled:tr
 
 ### 5. Хмарний білд (рекомендовано)
 Через WSL (cmd не бачить `eas`):
-`wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/BookReader && eas build --profile development --platform android --non-interactive --no-wait'`
+`wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && eas build --profile development --platform android --non-interactive --no-wait'`
 Дає URL білду (https://expo.dev/accounts/mike2424/projects/bookreader/builds/<id>). Коли `finished` → APK URL у "Application Archive URL".
 Скачати: `curl -L -o sapphire-dev.apk <APK_URL>` (шлях Windows `C:/...`, не MSYS!).
 Встановити: `adb install -r "C:/.../sapphire-dev.apk"`.

@@ -320,14 +320,14 @@ export default function DictionaryScreen() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'bookreader-dictionary.json';
+      a.download = 'sapphire-dictionary.json';
       a.click();
       URL.revokeObjectURL(url);
     } else {
       try {
         // @ts-ignore — legacy API типи конфліктують з tsc node_modules
         const FileSystem = require('expo-file-system/legacy');
-        const path = `${FileSystem.cacheDirectory}bookreader-dictionary.json`;
+        const path = `${FileSystem.cacheDirectory}sapphire-dictionary.json`;
         await FileSystem.writeAsStringAsync(path, json, { encoding: 'utf8' });
         const can = await Sharing.isAvailableAsync();
         if (can) {
@@ -406,14 +406,14 @@ const importAnkiApkg = async () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'bookreader-dictionary.json';
+      a.download = 'sapphire-dictionary.json';
       a.click();
       URL.revokeObjectURL(url);
     } else {
       try {
         // @ts-ignore — legacy API типи конфліктують з tsc node_modules
         const FileSystem = require('expo-file-system/legacy');
-        const path = `${FileSystem.cacheDirectory}bookreader-dictionary.json`;
+        const path = `${FileSystem.cacheDirectory}sapphire-dictionary.json`;
         await FileSystem.writeAsStringAsync(path, json, { encoding: 'utf8' });
         const can = await Sharing.isAvailableAsync();
         if (can) {

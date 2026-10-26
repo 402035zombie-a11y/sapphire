@@ -1,4 +1,4 @@
-# HANDOFF — BookReader (APP_NAME: Sapphire)
+# HANDOFF — Sapphire
 
 > Читай це ПЕРШИМ. Це єдине джерело актуальної правди. Старі `BUGS_ROUND*.md` / `ROUND5.md` /
 > `FORMATS_ROUND.md` / `ARCH_ANALYSIS.md` ВИДАЛЕНІ — вони містили застарілі PENDING, що вводили в оману.
@@ -6,8 +6,8 @@
 
 ## Що це
 - React Native + Expo SDK54, **New Architecture**, Android-only. iOS не налаштовано.
-- Package: `com.mike.wolfskin` (фінальний, збігається з Play Console). Slug: `bookreader`.
-- APP_NAME: `Sapphire` (бренд, не BookReader).
+- Package: `com.mike.wolfskin` (фінальний, збігається з Play Console). Slug: `sapphire`.
+- APP_NAME: `Sapphire`.
 - EAS projectId: `c6014b22-df9e-464c-903c-ffa9a5793249`.
 - **EAS-акаунт: `mike2424`** (НЕ `mike4224` — це помилка в старому handoff-файлі, більше не існує).
 
@@ -23,13 +23,13 @@
 ## Нативні модулі (TurboModule, JSI)
 - `NativeBookParser` (Kotlin) — EPUB/FB2 парсинг. Фасад `services/bookParser.ts` → тихий JS-fallback.
 - `NativeBookTTS` (Kotlin) — TextToSpeech.
-- Обидва реально існують в `android/app/src/main/java/com/bookreader/app/{bookparser,booktts}/`.
+- Обидва ВИДАЛЕНО (2026-10-23): `android/app/src/main/java/com/bookreader/` більше не існує. Нативний код — лише `com/mike/wolfskin/`.
 - `specs/NativeBookParser.ts` + `specs/NativeBookTTS.ts` — codegen-спеки.
 
 ## Критичні правила (інакше впаде)
 1. **Білд тільки хмарний через WSL.** Windows EAS CLI зламаний (git clone 3-слеш).
    ```bash
-   wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/BookReader && export ANDROID_HOME=/opt/android-sdk ANDROID_SDK=/opt/android-sdk JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 && eas build --profile preview --platform android --non-interactive --no-wait'
+   wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && export ANDROID_HOME=/opt/android-sdk ANDROID_SDK=/opt/android-sdk JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 && eas build --profile preview --platform android --non-interactive --no-wait'
    ```
 2. **dev-client потребує mmkv 2.x** (не 3.x) — інакше "native MMKV Module could not be found".
    `appStore.ts` вже на AsyncStorage (не mmkv). `react-native-mmkv` у package.json — dead-dep, не видаляй (рве lockfile).

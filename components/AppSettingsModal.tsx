@@ -49,7 +49,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
       const blob = new Blob([json], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const el = document.createElement('a');
-      el.href = url; el.download = 'bookreader-backup.json';
+      el.href = url; el.download = 'sapphire-backup.json';
       el.click();
       URL.revokeObjectURL(url);
     } else {

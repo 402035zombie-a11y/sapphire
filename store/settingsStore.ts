@@ -70,7 +70,7 @@ export const useSettingsStore = persist<SettingsState>(
     setReader: (patch) => set((s) => ({ reader: { ...s.reader, ...patch } })),
   }),
   {
-    name: 'bookreader-settings',
+    name: 'sapphire-settings',
     partialize: (s) => ({
       targetLang: s.targetLang,
       theme: s.theme,

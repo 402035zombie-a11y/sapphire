@@ -1,4 +1,4 @@
-# BookReader (Sapphire) — Publishing & Release Guide
+# Sapphire — Publishing & Release Guide
 
 Source of truth for going live: install on device, publish to Google Play, connect ads.
 

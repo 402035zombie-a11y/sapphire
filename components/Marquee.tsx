@@ -7,11 +7,11 @@ import { View, Text, StyleSheet, Platform, LayoutChangeEvent } from 'react-nativ
 let injected = false;
 function ensureKeyframes() {
   if (Platform.OS !== 'web' || injected || typeof document === 'undefined') return;
-  if (document.getElementById('bookreader-marquee-kf')) return;
+  if (document.getElementById('sapphire-marquee-kf')) return;
   const style = document.createElement('style');
-  style.id = 'bookreader-marquee-kf';
+  style.id = 'sapphire-marquee-kf';
   style.innerHTML =
-    '@keyframes bookreader-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }';
+    '@keyframes sapphire-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }';
   document.head.appendChild(style);
   injected = true;
 }
@@ -44,7 +44,7 @@ export default function Marquee({
   }
 
   const overflow = containerW > 0 && textW > containerW;
-  const trackAnim = { animation: `bookreader-marquee ${duration}s linear infinite` } as any;
+  const trackAnim = { animation: `sapphire-marquee ${duration}s linear infinite` } as any;
   return (
     <View style={styles.wrap} onLayout={onContainer}>
       {overflow ? (

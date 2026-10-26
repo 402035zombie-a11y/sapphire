@@ -13,7 +13,7 @@
 ## ПЕРВИЙ крок діагностики (ЗАВЖДИ)
 
 ```bash
-cd C:/Users/DELL/BookReader
+cd C:/Users/DELL/Sapphire
 /c/Users/DELL/AppData/Local/Android/Sdk/build-tools/35.0.0/aapt2 \
   dump xmltree --file AndroidManifest.xml <APK> | grep -A2 "APPLICATION_ID"
 ```

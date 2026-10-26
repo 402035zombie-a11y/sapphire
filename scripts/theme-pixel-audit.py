@@ -19,7 +19,7 @@ def row_scan(im, y, x1, x2, step=6):
     return [(x, px[x, y]) for x in range(x1, x2, step)]
 
 for name in ('Day', 'Night', 'Blackout'):
-    p = f'C:/Users/DELL/BookReader/theme_{name}.png'
+    p = f'C:/Users/DELL/Sapphire/theme_{name}.png'
     im = load(p)
     W, H = im.size
     print(f'===== {name} ===== {W}x{H}')

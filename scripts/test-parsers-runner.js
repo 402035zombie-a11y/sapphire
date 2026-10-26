@@ -3,7 +3,7 @@
 // Builds a CommonJS bundle from the source .ts files (babel preset-typescript), rewrites extensionless
 // relative specifiers to real .js, then calls each parser's *FromBytes/:Text/:FromString function
 // on real generated test fixtures and prints title/author/text + artifact checks.
-// Runs: node scripts/test-parsers-runner.js   (from BookReader root)
+// Runs: node scripts/test-parsers-runner.js   (from Sapphire root)
 global.window = globalThis;
 global.self = globalThis;
 global.global = globalThis;

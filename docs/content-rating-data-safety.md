@@ -1,4 +1,4 @@
-# Content Rating & Data Safety Checklist — Sapphire (BookReader)
+# Content Rating & Data Safety Checklist — Sapphire
 
 **Status:** Pre-publish checklist. All items must be completed in Play Console manually.
 

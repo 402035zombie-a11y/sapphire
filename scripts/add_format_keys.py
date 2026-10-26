@@ -1,5 +1,5 @@
 import os
-ROOT = 'C:/Users/DELL/BookReader/i18n'
+ROOT = 'C:/Users/DELL/Sapphire/i18n'
 T = {
  'af': ["Onondersteunde formaat", "Ondersteunde formate: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML"],
  'ar': ["تنسيق غير مدعوم", "التنسيقات المدعومة: EPUB, FB2, TXT, DOCX, ODT, RTF, HTML"],

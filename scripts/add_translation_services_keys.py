@@ -1,5 +1,5 @@
 import os
-ROOT = 'C:/Users/DELL/BookReader/i18n'
+ROOT = 'C:/Users/DELL/Sapphire/i18n'
 T = {
  'af': ["Vertaaldienste", "Gratis vertaaldienste en hul huidige limiete. Limiete word outomaties teruggestel."],
  'ar': ["خدمات الترجمة", "خدمات الترجمة المجانية وحدودها الحالية. تُعاد الحدود تلقائيًا."],

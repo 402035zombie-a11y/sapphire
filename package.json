@@ -1,5 +1,5 @@
 {
-  "name": "bookreader",
+  "name": "sapphire",
   "version": "0.1.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -58,7 +58,7 @@
     "type": "modules",
     "jsSrcsDir": "specs",
     "android": {
-      "javaPackageName": "com.bookreader.app.bookparser"
+      "javaPackageName": "com.sapphire.app.bookparser"
     }
   },
   "overrides": {
