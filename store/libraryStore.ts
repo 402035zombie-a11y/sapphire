@@ -168,6 +168,7 @@ export const useLibraryStore = persist<LibraryState>(
   }),
   {
     name: 'sapphire-library',
+    legacyName: 'bookreader-library',
     onRehydrateStorage: () => (state) => {
       if (!state?.books?.length) return;
       // НЕ схлопываем книги по названию: id уникален (makeBookId добавляет timestamp-суффикс).

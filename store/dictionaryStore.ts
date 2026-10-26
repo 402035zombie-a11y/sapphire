@@ -118,6 +118,7 @@ export const useDictionaryStore = persist<DictionaryState>(
   }),
   {
     name: 'sapphire-dictionary',
+    legacyName: 'bookreader-dictionary',
     partialize: () => ({}), // НІЧОГО не серіалізуємо в AsyncStorage — дані в БД
     onRehydrateStorage: () => () => {
       // старт екрана: підтягнути знімок із БД (async-safe)

@@ -29,5 +29,5 @@ export const useSupportStore = persist<SupportState>(
     dismissCount: 0,
     incrementDismiss: () => set((s) => ({ dismissCount: (s.dismissCount ?? 0) + 1 })),
   }),
-  { name: 'sapphire-support' },
+  { name: 'sapphire-support', legacyName: 'bookreader-support' },
 );

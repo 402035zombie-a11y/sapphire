@@ -71,6 +71,7 @@ export const useSettingsStore = persist<SettingsState>(
   }),
   {
     name: 'sapphire-settings',
+    legacyName: 'bookreader-settings',
     partialize: (s) => ({
       targetLang: s.targetLang,
       theme: s.theme,

@@ -96,6 +96,7 @@ export const useTrainingStore = persist<TrainingState>(
   }),
   {
     name: 'sapphire-training',
+    legacyName: 'bookreader-training',
     partialize: () => ({}), // дані в БД, AsyncStorage не використовується
     onRehydrateStorage: () => () => {
       try {

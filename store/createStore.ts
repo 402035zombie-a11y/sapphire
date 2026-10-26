@@ -55,15 +55,25 @@ export function persist<T extends object>(
   creator: StoreCreator<T>,
   options?: {
     name: string;
+    /** Старий ключ до бренд-перейменування — одноразово копіюється в новий, якщо новий порожній. */
+    legacyName?: string;
     partialize?: (s: T) => any;
     onRehydrateStorage?: () => (state: T | undefined) => void;
   },
 ): UseStoreFn<T> {
   const useStore = buildStore<T>(creator);
   const key = 'persist:' + (options?.name ?? 'store');
+  const legacyKey = options?.legacyName ? 'persist:' + options.legacyName : null;
   const load = async () => {
     try {
-      const raw = await AsyncStorage.getItem(key);
+      let raw = await AsyncStorage.getItem(key);
+      if (!raw && legacyKey) {
+        raw = await AsyncStorage.getItem(legacyKey);
+        if (raw) {
+          await AsyncStorage.setItem(key, raw).catch(() => {});
+          console.log('[createStore] migrated ' + legacyKey + ' -> ' + key);
+        }
+      }
       if (raw) {
         const parsed = JSON.parse(raw);
         // дедупликация словаря по word|lang при восстановлении (старые данные могли дублироваться)
