@@ -78,17 +78,23 @@ Keep support as an **external donation link** (NOWPayments) inside SupportAuthor
 - [ ] Dev build installed on phone, AdMob banner visible, rewarded ad plays on "Support"
 - [x] No hardcoded secrets in repo (grep clean)
 - [x] Privacy policy URL live (HTTP 200); package name final
-- [ ] **EAS project slug renamed to `sapphire`** — BLOCKED (30-секундна дія в дашборді, кроки нижче)
+- [x] **EAS project slug** — ✅ ВИРІШЕНО 2026-10-26: створено новий проєкт `@mike4224/sapphire`
+  (id `34cd71e8-645b-4ab5-ad87-ab7dd0243e9e`). Старий `59123992-…` (slug `bookreader`) **незмінний** —
+  slug не має REST/GraphQL endpoint для перейменування. `app.config.js` вказує на новий ID,
+  `eas build:list` працює (`[]`).
 - [x] **AdMob APPLICATION_ID non-empty у реальній збірці** — ✅ 2026-10-26: `expo prebuild` + `gradlew :app:processReleaseManifest` → мержений манифест має `ca-app-pub-5113967448800652~8371247908`, deep link `exp+sapphire`, `versionCode 2`
 
-### Кроки перейменування EAS-проєкту (зробити в браузері, ~30 с)
-1. Відкрити `https://expo.dev/accounts/mike4224/projects`
-2. Відкрити проєкт `bookreader` (id `59123992-8765-4762-87a4-9449c7384d79`).
-3. Settings → змінити **Slug** `bookreader` → `sapphire` → Save.
-4. Перевірити: `eas build:list` у `C:\Users\DELL\Sapphire` більше НЕ падає з slug mismatch.
-
-> Після перейменування КОД НЕ ЧІПАТИ: `app.config.js` вже має правильний `extra.eas.projectId`
-> і правильний `slug: "sapphire"`. Блокувався лише slug на боці EAS.
+### EAS-проєкт — як це вирішено (2026-10-26)
+Перейменування slug в EAS **неможливе**: проверено REST (`PATCH`/`PUT`/`POST` → `Method Not Allowed`/`Not Found`)
+і GraphQL (інтроспекція схеми: 88 mutations, `AppInfoInput` має лише `displayName` — поля `slug` нема).
+Тому створено **новий** проєкт зі slug з конфіга застосунку (`eas init` бере `exp.slug`):
+```
+eas init --account mike4224 --non-interactive
+→ ✔ Created @mike4224/sapphire: https://expo.dev/accounts/mike4224/projects/sapphire
+→ id 34cd71e8-645b-4ab5-ad87-ab7dd0243e9e  (записано в app.config.js extra.eas.projectId)
+```
+Старий проєкт `@mike4224/bookreader` (id `59123992-…`) лишається, але для цього застосунку **непридатний**
+(його slug назавжди `bookreader`). Перевірка: `eas build:list` → `[]` (без помилки slug mismatch).
 
 ### versionCode — для КОЖНОЇ наступної збірки
 `app.config.js` має `android.versionCode: 2`. Google Play відхиляє завантаження з уже існуючим
@@ -97,6 +103,18 @@ versionCode. Для першої публікації `2` — ок; для ко�
 - додати `"autoIncrement": true` у `production`-профіль `eas.json` (тоді EAS змінює його сам).
 
 **Не забувай про це перед ДРУГИМ `eas build --profile production`.**
+
+### Перед `eas submit` (окремі передумови)
+У репо **немає** `credentials.json` (Play service account) і локального keystore — це окремі кроки:
+1. **Play service account JSON**: Play Console → Setup → API access → створити service account →
+   завантажити JSON-ключ. Без нього `eas submit` не викорінтує AAB у Play.
+2. **EAS Android credentials**: `eas credentials:configure --platform android --profile production`
+   (EAS може згенерувати upload keystore; Play App Signing тримає release-ключ).
+3. Підтвердити, що у `eas.json` `production.credentialsSource` не конфліктує з локальним ключем.
+
+**Перше завантаження в Play робити через `eas submit --platform android` (production), не вручну** —
+так EAS один раз налаштує підписування й не доведеться ламати його в майбутньому.
+
 
 
 ## 8. Assets verified (2026-10-21)

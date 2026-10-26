@@ -24,23 +24,24 @@
 Зміна схеми (`0acb144`) + perf-код живуть ТІЛЬКИ в APK — Metro/reload не доставляє.
 **Потрібно:** телефон по USB → перезбірка release APK → встановлення → замір.
 
-## 3. БЛОКЕР 2 — EAS projectId вказує на СТАРИЙ проєкт (критично, ламає КОЖЕН білд)
+## 3. БЛОКЕР 2 — EAS projectId вказував на СТАРИЙ проєкт — ✅ ВИРІШЕНО 2026-10-26
 
-`app.config.js:33` → `extra.eas.projectId = 59123992-8765-4762-87a4-9449c7384d79`
+`app.config.js:33` вказував на `59123992-…` (проєкт `@mike4224/bookreader`). Кожен `eas build` падав:
+`Slug for project identified by "extra.eas.projectId" (bookreader) does not match the "slug" field (sapphire)`.
 
-Доведено:
-- EAS API: проєкт `59123992` має slug **`bookreader`** (старий) → `eas build:list` падає:
-  `Slug for project identified by "extra.eas.projectId" (bookreader) does not match the "slug" field (sapphire)`.
-- Проєкт `c6014b22-df9e-464c-903c-ffa9a5793249` (значення з brief) — **існує, але НЕ доступний** аккаунту `mike4224`
-  (`Entity Not Authorized: AppEntity[c6014b22-…]`).
-- **EAS НЕ резолвить проєкт по slug.** Потрібен явний `projectId`. (Перевірено: probe-проєкт з `app.json` slug=sapphire → "EAS project not configured".)
-- **EAS-акаунт — `mike4224`** (не `mike2424`, як у brief). `eas whoami` → mike4224 / 402035zombie@gmail.com.
-- Акаунти, в яких можна створювати проєкти: `mike4224`, `mike4224s-team`.
+**Перейменування slug НЕМОЖЛИВЕ** (перевірено):
+- REST: `PATCH`/`PUT`/`POST /v2/projects/<id>` → `Method Not Allowed`; `/slug`, `/rename` → `Not Found`.
+- GraphQL (`POST /graphql`, інтроспекція схеми): 88 mutations; `AppMutation` має `setAppInfo(appId, appInfo)`,
+  але `AppInfoInput` містить **лише `displayName`** — поля `slug` немає. `AccountMutation.rename` — це ім'я акаунта.
 
-**Рішення користувача (2026-10-26):** перейменувати slug проєкту `59123992` з `bookreader` → `sapphire`
-в EAS dashboard (зберігає build-історію). Точні кроки — у `PUBLISHING.md`, розділ 7.
-Перейменування НЕ вимагає правок коду: `app.config.js` уже має і правильний `extra.eas.projectId`,
-і правильний `slug: "sapphire"`.
+**Рішення:** створено новий проєкт зі slug з конфіга (`eas init` бере `exp.slug`):
+```
+eas init --account mike4224 --non-interactive
+→ Created @mike4224/sapphire  (id 34cd71e8-645b-4ab5-ad87-ab7dd0243e9e)
+```
+ID записано в `app.config.js`. Перевірено: `eas project:info` → `@mike4224/sapphire`; `eas build:list` → `[]`.
+Старий проєкт `@mike4224/bookreader` лишається, але для застосунку непридатний (slug незмінний).
+Коміт `342c889`. Для відкату: `eas project:delete` + повернути старий ID.
 
 ## 4. БЛОКЕР 3 — privacyPolicyUrl веде в 404 — ✅ ВИРІШЕНО 2026-10-26
 

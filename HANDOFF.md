@@ -12,8 +12,9 @@
 - React Native + Expo SDK54, **New Architecture**, Android-only. iOS не налаштовано.
 - Package: `com.mike.wolfskin` (фінальний, збігається з Play Console). Slug: `sapphire`.
 - APP_NAME: `Sapphire`.
-- **EAS projectId:** `59123992-8765-4762-87a4-9449c7384d79` — ⚠️ ЦЕ СТАРИЙ ПРОЄКТ (slug `bookreader`).
-  `eas build` падає: slug mismatch. Правильний ID — в EAS dashboard. Деталі: `.hermes/plans/2026-10-26_phase3-4-blockers.md`.
+- **EAS projectId:** `34cd71e8-645b-4ab5-ad87-ab7dd0243e9e` — проєкт **`@mike4224/sapphire`** (створено 2026-10-26).
+  Старий проєкт `59123992-…` має slug `bookreader` і **не може бути перейменований** — slug незмінний
+  (нема ні REST, ні GraphQL endpoint; `AppInfoInput` має лише `displayName`). Тому створено новий проєкт.
 - **EAS-акаунт: `mike4224`** (`eas whoami` → mike4224 / 402035zombie@gmail.com). Не `mike2424`.
 
 ## Потік даних (читання книги)
