@@ -33,7 +33,7 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
   const dictionary = useDictionaryStore((s) => s.entries);
   const [appLangPicker, setAppLangPicker] = useState(false);
 
-  const exportData = () => {
+  const exportData = async () => {
     const payload = {
       app: 'Sapphire',
       exportedAt: new Date().toISOString(),
@@ -53,7 +53,21 @@ export default function AppSettingsModal({ visible, onClose }: Props) {
       el.click();
       URL.revokeObjectURL(url);
     } else {
-      Alert.alert(t('Export'), t('On this platform export is available in the web version.'));
+      try {
+        // @ts-ignore — legacy API типи конфліктують з tsc node_modules
+        const FileSystem = require('expo-file-system/legacy');
+        const Sharing = require('expo-sharing');
+        const path = `${FileSystem.cacheDirectory}sapphire-backup.json`;
+        await FileSystem.writeAsStringAsync(path, json, { encoding: 'utf8' });
+        const can = await Sharing.isAvailableAsync();
+        if (can) {
+          await Sharing.shareAsync(path, { mimeType: 'application/json', dialogTitle: t('Export backup (JSON)') });
+        } else {
+          Alert.alert(t('Export'), t('Sharing not available on this device.'));
+        }
+      } catch (err: any) {
+        Alert.alert(t('Export error'), err?.message ?? String(err));
+      }
     }
   };
 

@@ -239,6 +239,25 @@ again ×0.14, hard ×0.73, good ×2.34, easy ×3.05 (d=7, s=10, R=0.9) — ро�
 обговорював FSRS-оцінку архітектурно. Тому: виправлено тільки документацію в коді та прибрано
 мертвий код (поведінка байт-у-байт та сама), а не саму математику.
 
+## 16. «Export backup (JSON)» на Android був МЕРТВИЙ (2026-10-26)
+
+**Симптом:** у Налаштування → Дані кнопка «Export backup (JSON)» на Android показувала
+`Alert` «On this platform export is available in the web version.» — тобто **тупик**: веб-версії
+не існує, застосунок Android-only.
+
+**Корінь:** `components/AppSettingsModal.tsx` → `exportData()` мала робочу гілку лише для
+`Platform.OS === 'web'`; native-гілка — заглушка.
+
+**Фікс:** перенесено робочий патерн із `DictionaryScreen.tsx` (експорт словника працює):
+`expo-file-system/legacy` → `writeAsStringAsync(cacheDirectory + 'sapphire-backup.json')` →
+`expo-sharing` → `Sharing.shareAsync(...)`. Обидва пакети вже в залежностях (`expo-sharing ~14.0.8`).
+Ключі i18n (`Export`, `Export error`, `Sharing not available on this device.`) — усі є в uk.ts.
+
+**Принцип:** кнопка, яка обіцяє дію і не робить її — гірше, ніж відсутня кнопка: вона підриває
+довіру й генерує негативні відгуки. Перевіряти не «чи код є», а «чи шлях виконується на цільовій
+платформі». Для Android-only продукту web-гілка — не «фіча», а недоробка.
+
+
 
 
 
