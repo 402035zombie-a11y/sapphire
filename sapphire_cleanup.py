@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""BookReader cleanup protocol.
+"""Sapphire cleanup protocol.
 
 Kills STRAY expo / metro / hermes-verify / http.server dev servers bound to
 dev ports and removes session-created junk from C:/Users/DELL/Sapphire.
@@ -103,7 +103,7 @@ def main():
         parts.append(f"killed {len(killed)} stray dev server(s) [{','.join(map(str, killed))}]")
     if removed:
         parts.append(f"removed junk: {', '.join(removed)}")
-    print("BookReader cleanup: " + "; ".join(parts))
+    print("Sapphire cleanup: " + "; ".join(parts))
     return 0
 
 

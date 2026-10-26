@@ -98,7 +98,7 @@
 - [ ] No hardcoded secrets: `grep -r "apiKey\|secret\|token" --include="*.ts" --include="*.js" .` → clean
 - [ ] Package name final: `com.mike.wolfskin` (cannot change after first publish)
 - [ ] Version code: 2 (increment for each Play upload)
-- [ ] Privacy policy URL set in `app.config.js`: `https://402035zombie-a11y.github.io/bookreader/docs/privacy-policy.html`
+- [ ] Privacy policy URL set in `app.config.js`: `https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html`
 - [ ] Feature graphic: `docs/sapphire-feature-graphic.png` (1024x500 ✓)
 - [ ] Icons: `assets/icon.png` (1024x1024 ✓), `adaptive-icon.png` (432x432 ✓), `icon-play-512.png` (512x512 ✓)
 - [ ] Adaptive icon wired: `android.adaptiveIcon` in `app.config.js` ✓
