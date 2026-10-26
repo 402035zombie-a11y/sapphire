@@ -8,8 +8,8 @@
 //      (завершення глави, виконана daily goal), коли альтруїзм найімовірніший.
 //   3. Interruption cost: НЕ показувати в перші хвилини занурення — flow-переривання
 //       викликає аверсію.
-//   4. Frequency capping: max 1 показ на сесію; інтервал між сесіями ЗРОСТАЄ
-//      при відмовах (1й день → 2 дні → 4 дні ... максимум 14 днів).
+//   4. Frequency capping: max 1 показ на СУТКИ; при відмовах інтервал між показами
+//      зростає (5хв → 10хв → 15хв …), але не більше одного разу на добу.
 //
 //  ТАЙМІНГ ПО ЕКРАНАХ:
 //   Reader (читалка): юзер уже занурився. Показ через 90с читання АБО одразу після
@@ -60,26 +60,28 @@ export function useSupportAutoOpen(
     // Frequency cap: один показ на сесію екрана
     if (shownThisSession.current) return;
 
-    // Внутрішньоденний повтор: якщо юзер відмовився — наступна спроба через +5 хв
-    // (5, 10, 15, 20... хв від останнього показу). Щодня скидається.
-    if (lastShownTime > 0) {
-      const stepMinutes = 5 * Math.max(1, dismissCount); // 1-й раз: 5хв, потім 10, 15...
-      const nextAllowedAt = lastShownTime + stepMinutes * 60_000;
-      const todayStart = new Date().setHours(0, 0, 0, 0);
-      // показуємо тільки якщо настав час І це ще сьогодні
-      if (Date.now() < nextAllowedAt) {
-        timerRef.current = setTimeout(() => markShown(), nextAllowedAt - Date.now());
-        return;
-      }
-      if (lastShownTime >= todayStart) return; // вже показували сьогодні
-    }
-
     let timer: ReturnType<typeof setTimeout> | undefined;
     const show = () => {
       shownThisSession.current = true;
       onShow();
       markShown();
     };
+
+    // Внутрішньоденний повтор: якщо юзер відмовився — наступна спроба через +5 хв
+    // (5, 10, 15, 20... хв від останнього показу). Щодня скидається.
+    // УВАГА: цей шлях НЕ має викликати markShown() — інакше lastShownTime зсувається,
+    // nextAllowedAt візьметься від нового часу, і таймер самопідтримується вічно.
+    if (lastShownTime > 0) {
+      const todayStart = new Date().setHours(0, 0, 0, 0);
+      // вже показували сьогодні — більше не турбуємо
+      if (lastShownTime >= todayStart) return;
+      const stepMinutes = 5 * Math.max(1, dismissCount); // 1-й раз: 5хв, потім 10, 15...
+      const nextAllowedAt = lastShownTime + stepMinutes * 60_000;
+      if (Date.now() < nextAllowedAt) {
+        timerRef.current = setTimeout(show, nextAllowedAt - Date.now());
+        return;
+      }
+    }
 
     if (trigger.surface === 'dictionary') {
       // Утилітарний екран — авто-показ вимкнено (лише ручна кнопка серця)
@@ -109,6 +111,9 @@ export function useSupportAutoOpen(
       }
     }
 
-    return () => { if (timer) clearTimeout(timer); };
+    return () => {
+      if (timer) clearTimeout(timer);
+      if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+    };
   }, [hasWatchedAd, dontShowSupport, lastShownTime, dismissCount, onShow, markShown, trigger.surface, trigger.peakMoment, trigger.sessionAnswers]);
 }
