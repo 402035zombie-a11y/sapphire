@@ -33,10 +33,9 @@ import { useLibraryStore } from '../store/libraryStore';
 import { BookParagraph } from '../store/libraryStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useSupportStore } from '../store/supportStore';
-import { splitIntoSegments } from '../utils/sentenceSplitter';
+import { getReaderSentences, clearReaderSentencesCache, ReaderSentences } from '../services/readerSentences';
 import { translateMany } from '../services/translationService';
 import { saveSentenceTranslations, getSentenceTranslations, clearSentenceTranslations } from '../services/sentenceTranslationsDb';
-import { stripHtmlToText } from '../services/bookText';
 import { showSupportAd } from '../services/monetization';
 import { openDonatePage } from '../services/donate';
 import { translationErrorMessage } from '../services/translationService';
@@ -67,6 +66,15 @@ interface RouteParams {
 }
 
 const BATCH = 8;
+
+// empty result for missing bookId (no per-render object allocation)
+const EMPTY_READER: ReaderSentences = {
+  paragraphs: [],
+  sentences: [],
+  paraToFirstSentence: {},
+  segmentsByParagraph: {},
+  fromDb: false,
+};
 
 export default function ReaderScreen({ route }: { route: any }) {
   const { bookId } = route.params as RouteParams;
@@ -100,59 +108,27 @@ export default function ReaderScreen({ route }: { route: any }) {
     if (!bookId) return;
     if (getBookChapters(bookId).length === 0 && !healingRef.current.has(bookId)) {
       healingRef.current.add(bookId);
-      ensureBookChapters(bookId).then((chs) => { if (chs.length > 0) setDbVersion((v) => v + 1); });
+      ensureBookChapters(bookId).then((chs) => {
+        if (chs.length > 0) {
+          clearReaderSentencesCache(bookId); // книга реімпортована → кеш невалідний
+          setDbVersion((v) => v + 1);
+        }
+      });
     }
   }, [bookId]);
   const healingRef = React.useRef<Set<string>>(new Set());
 
-  const chapters = React.useMemo<BookParagraph[]>(() => {
-    if (!bookId) return [];
-    const dbChapters = getBookChapters(bookId);
-    if (dbChapters.length === 0) {
-      const storeBook = useLibraryStore.getState().books.find((b) => b.id === bookId);
-      if (storeBook?.paragraphs?.length) return storeBook.paragraphs;
-      return [];
-    }
-    const out: BookParagraph[] = [];
-    for (const ch of dbChapters) {
-      // ВЕСЬ текст глави → чистий → splitIntoSegments (ріже на речення, не на <p>).
-      // Було: різка по <p> → кожен <p> окремим original, потім hope що sentences-memo доріже.
-      // Alice (довгі <p> з кількома реченнями) лишалась цілою. Фікс: ріжемо тут одразу.
-      const plain = stripHtmlToText(ch.contentHtml);
-      const segs = splitIntoSegments(plain);
-      let si = 0;
-      for (const s of segs) {
-        if (s) out.push({ index: ch.idx * 1000 + si, original: s, translation: '' });
-        si++;
-      }
-    }
-    return out;
-  }, [bookId, dbVersion]);
-
-  // Структура речень (БЕЗ перекладу). Переклад дістаємо в renderItem з book.sentenceTranslations
-  // за ключем item.index. НЕ залежимо від sentenceTranslations → не перераховуємо весь масив
-  // на кожен переклад (PERF-5) і не ламаємо memo-рядки.
-  const sentences = React.useMemo(() => {
-    const out: { original: string; paragraphIndex: number; sentenceIndex: number; index: number }[] = [];
-    for (const p of chapters) {
-      const segs = splitIntoSegments(p.original);
-      segs.forEach((s, si) => {
-        out.push({ original: s, paragraphIndex: p.index, sentenceIndex: si, index: p.index * 1000 + si });
-      });
-    }
-    return out;
-  }, [chapters]);
-
-  // paragraphIndex -> sentence index (для scrollToIndex після переходу на речення)
-  const paraToFirstSentence = React.useMemo(() => {
-    const map: Record<number, number> = {};
-    let sentenceIdx = 0;
-    for (const p of chapters) {
-      map[p.index] = sentenceIdx;
-      sentenceIdx += splitIntoSegments(p.original).length;
-    }
-    return map;
-  }, [chapters]);
+  // PERF (виміряно scripts/bench-book-open.js): було ТРИ проходи splitIntoSegments()
+  // на всю книгу (chapters + sentences + paraToFirstSentence), з яких 2 — марні.
+  // 2MB книга / 15 433 речення: 296 ms → 105 ms. Плюс кеш на перевідкриття.
+  // sentences[].index = ключ skey у sentence_translations, формула збережена.
+  const readerData = React.useMemo(
+    () => (bookId ? getReaderSentences(bookId, dbVersion) : EMPTY_READER),
+    [bookId, dbVersion],
+  );
+  const chapters = readerData.paragraphs;
+  const sentences = readerData.sentences;
+  const paraToFirstSentence = readerData.paraToFirstSentence;
 
   const { width, height } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
@@ -265,6 +241,8 @@ export default function ReaderScreen({ route }: { route: any }) {
   sentencesRef.current = sentences;
   const chaptersRef = useRef(chapters);
   chaptersRef.current = chapters;
+  const segmentsRef = useRef<Record<number, string[]>>(readerData.segmentsByParagraph);
+  segmentsRef.current = readerData.segmentsByParagraph;
 
   // R3: відстеження префетчу перекладу по чанках (щоб не перекладати двічі).
   const prefetchedChunks = useRef<Set<number>>(new Set());
@@ -381,11 +359,12 @@ export default function ReaderScreen({ route }: { route: any }) {
         for (const sIdx of chunk.paragraphIndices) {
           const p = chaptersRef.current.find((c) => c.index === sIdx);
           if (!p) continue;
-          const segs = splitIntoSegments(p.original);
-          segs.forEach((s, si) => {
+          // використовуємо вже розбиті сегменти з кеша — не ріжемо повторно (PERF).
+          const segs = segmentsRef.current[p.index] ?? [p.original];
+          for (let si = 0; si < segs.length; si++) {
             const key = `${p.index * 1000 + si}`;
-            if (!st[key]) items.push({ id: key, text: s });
-          });
+            if (!st[key]) items.push({ id: key, text: segs[si] });
+          }
         }
         if (items.length === 0) {
           prefetchedChunks.current.add(ci);
