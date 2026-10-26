@@ -30,7 +30,7 @@ module.exports = {
   ],
   extra: {
     admob: { appId: ADMOB_APP_ID, bannerId: ADMOB_BANNER_ID, rewardedId: ADMOB_REWARDED_ID },
-    eas: { projectId: process.env.EAS_PROJECT_ID || "59123992-8765-4762-87a4-9449c7384d79" },
+    eas: { projectId: process.env.EAS_PROJECT_ID || "34cd71e8-645b-4ab5-ad87-ab7dd0243e9e" },
     donateUrl: process.env.EXPO_PUBLIC_DONATE_URL || "https://nowpayments.io/donation/sapphire-reader",
   },
 };
