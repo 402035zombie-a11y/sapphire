@@ -54,3 +54,11 @@ apkpatch/patched-signed.apk/
 dev-client.apk
 Sapphire-preview.apk
 scratch/
+
+# Build artifacts (APK = build output, NOT source; rebuilt via local EAS)
+*.apk
+artifacts/
+apk/
+app-release-apk/
+build-*.apk
+dev-client.apk
