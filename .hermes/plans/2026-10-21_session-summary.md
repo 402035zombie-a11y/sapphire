@@ -1,7 +1,7 @@
 # SESSION SUMMARY — 2026-10-21 — T1–T12 COMPLETED
 
 > **Статус:** 12/12 задач Kanban — DONE. Телефонна перевірка пройдена.
-> **Проєкт:** Sapphire (BookReader) — `C:\Users\DELL\Sapphire`, branch `fix/ui-bugs`.
+> **Проєкт:** Sapphire (Sapphire) — `C:\Users\DELL\Sapphire`, branch `fix/ui-bugs`.
 > **Пакет:** `com.mike.wolfskin`. **Телефон:** Xiaomi 23124RA7EO (`1d32a2e2`).
 
 ---
@@ -24,7 +24,7 @@
 
 ### T3–T8, T10 — Телефонна перевірка ✅
 - **Підготовка:** `npx expo start --host localhost` (порт 8081), `adb reverse tcp:8081 tcp:8081`,
-  deep link `exp+bookreader://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081`.
+  deep link `exp+sapphire://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081`.
 - **Метод:** `adb shell uiautomator dump` → парс XML → координати → `adb shell input tap`.
   Скріни агент не робив; перевірка через UI-дампи + піксель-аудит (PIL).
 - **Докази:**
@@ -46,7 +46,7 @@
 
 ### T11 — Publish prep ✅ (code/config)
 - Privacy policy: реальний email `402035zombie@gmail.com` у `PRIVACY_POLICY.md` + `docs/privacy-policy.html`.
-  `privacyPolicyUrl` → `https://402035zombie-a11y.github.io/bookreader/docs/privacy-policy.html`.
+  `privacyPolicyUrl` → `https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html`.
 - Іконки: `assets/icon.png` 1024, `adaptive-icon.png` 432, `icon-play-512.png` 512.
 - Feature graphic: `docs/sapphire-feature-graphic.png` 1024×500.
 - Content rating / Data Safety: `docs/content-rating-data-safety.md`.
@@ -111,7 +111,7 @@
 6. **Blackout = FLAT**: 0 прозорості, фон surface, бордер кольору тексту. Перевірено піксельно: `#050505`.
 7. **Точка входу Metro** — `node_modules/expo/AppEntry.js` (файлу `index.js` у проєкті немає).
 8. **Deep link dev-client** працює краще за ручний вибір у Dev Menu:
-   `adb shell am start -a android.intent.action.VIEW -d "exp+bookreader://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081"`
+   `adb shell am start -a android.intent.action.VIEW -d "exp+sapphire://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081"`
 9. **uiautomator dump** — надійніший спосіб читати UI телефона без скріншотів.
 
 ---
@@ -122,8 +122,8 @@
 |---|---|---|---|
 | 1 | `git add` + commit змін | `git add -A` (після `.gitignore` для артефактів) | — |
 | 2 | Push | `git push origin fix/ui-bugs` | 6 комітів чекають |
-| 3 | GitHub Pages | Увімкнути Pages на `402035zombie-a11y/bookreader` (branch `fix/ui-bugs` / `main`, folder `docs` або `/docs`) | Ручна дія в UI |
-| 4 | Перевірити privacy URL | `curl -I https://402035zombie-a11y.github.io/bookreader/docs/privacy-policy.html` | Після Pages |
+| 3 | GitHub Pages | Увімкнути Pages на `402035zombie-a11y/sapphire` (branch `fix/ui-bugs` / `main`, folder `docs` або `/docs`) | Ручна дія в UI |
+| 4 | Перевірити privacy URL | `curl -I https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html` | Після Pages |
 | 5 | Production AAB | `EAS_NO_VCS=1 eas build --profile production --platform android` | EAS free quota |
 | 6 | Screenshots | Зібрати з телефона: Library, Reader, Dictionary, Training (1080×1920+) | Потрібні 2+ скріни |
 | 7 | Play Console | Create app → upload AAB → Content Rating + Data Safety (за `docs/content-rating-data-safety.md`) | Ручна дія |

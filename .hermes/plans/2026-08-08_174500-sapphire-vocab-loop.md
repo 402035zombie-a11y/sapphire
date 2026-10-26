@@ -1,4 +1,4 @@
-# BookReader: словарный цикл и тренировка — план
+# Sapphire: словарный цикл и тренировка — план
 
 > **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task.
 

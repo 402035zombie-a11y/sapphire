@@ -23,7 +23,7 @@
 ## Нативні модулі (TurboModule, JSI)
 - `NativeBookParser` (Kotlin) — EPUB/FB2 парсинг. Фасад `services/bookParser.ts` → тихий JS-fallback.
 - `NativeBookTTS` (Kotlin) — TextToSpeech.
-- Обидва ВИДАЛЕНО (2026-10-23): `android/app/src/main/java/com/bookreader/` більше не існує. Нативний код — лише `com/mike/wolfskin/`.
+- Обидва ВИДАЛЕНО (2026-10-23): `android/app/src/main/java/com/sapphire/` більше не існує. Нативний код — лише `com/mike/wolfskin/`.
 - `specs/NativeBookParser.ts` + `specs/NativeBookTTS.ts` — codegen-спеки.
 
 ## Критичні правила (інакше впаде)
@@ -71,7 +71,7 @@
   **НЕ комітити** `.test-parsers-bundle/` та `ui*.xml` — це змістові артефакти, додати в `.gitignore`.
 
 ## Доведено на телефоні (2026-10-21) — НЕ переписувати
-1. `adb reverse tcp:8081 tcp:8081` + deep link `exp+bookreader://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081`
+1. `adb reverse tcp:8081 tcp:8081` + deep link `exp+sapphire://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081`
    відкриває додаток у `MainActivity` (без ручного вибору сервера в Dev Menu).
 2. Бандл збирається: `Bundled 24227ms node_modules/expo/AppEntry.js (1823 modules)`, 11.3 MB, 0 помилок.
    Точка входу — `node_modules/expo/AppEntry.js` (НЕ `index.js` — такого файлу немає).

@@ -8,9 +8,9 @@
 | Файл | Роль |
 |---|---|
 | `specs/NativeBookParser.ts` | codegen-спека TurboModule (JSI), RN Codegen генерує `NativeBookParserSpec` |
-| ~~`com/bookreader/app/bookparser/`~~ | ВИДАЛЕНО 2026-10-23 — нативного парсера більше немає |
+| ~~`com/sapphire/app/bookparser/`~~ | ВИДАЛЕНО 2026-10-23 — нативного парсера більше немає |
 | `.../bookparser/BookParserPackage.kt` | `BaseReactPackage`, `isTurboModule = true` |
-| ~~`com/bookreader/app/MainApplication.kt`~~ | ВИДАЛЕНО 2026-10-23 |
+| ~~`com/sapphire/app/MainApplication.kt`~~ | ВИДАЛЕНО 2026-10-23 |
 | `services/nativeBookParser.ts` | JS-бридж + нормалізація у `ParsedBook` |
 | `package.json` → `codegenConfig` | `{ name: AppSpecs, type: modules, jsSrcsDir: specs }` |
 

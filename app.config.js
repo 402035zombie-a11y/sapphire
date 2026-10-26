@@ -5,7 +5,7 @@ const ADMOB_BANNER_ID = "ca-app-pub-5113967448800652/4712038644";
 const ADMOB_REWARDED_ID = "ca-app-pub-5113967448800652/1663349260";
 module.exports = {
   name: APP_NAME, slug: "sapphire", version: "1.0.0",
-  orientation: "user", userInterfaceStyle: "automatic", newArchEnabled: true, scheme: "bookreader",
+  orientation: "user", userInterfaceStyle: "automatic", newArchEnabled: true, scheme: "sapphire",
   privacyPolicyUrl: "https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html",
   icon: "./assets/icon.png",
   splash: { image: "./assets/splash.png", resizeMode: "contain", backgroundColor: "#1A1D22" },

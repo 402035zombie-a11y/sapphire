@@ -1,4 +1,4 @@
-# Sapphire: повне перейменування BookReader → Sapphire
+# Sapphire: повне перейменування Sapphire → Sapphire
 
 Створено: 2026-10-25
 Статус: **ВИКОНАНО ПОВНІСТЮ (кроки 2.1–2.10)** — 2026-10-26
@@ -17,7 +17,7 @@
 ## Підсумок перевірки
 
 ```
-git grep -i bookreader (живий код)  -> 1 (навмисний: scheme)
+git grep -i sapphire (живий код)  -> 1 (навмисний: scheme)
 npx tsc --noEmit                    -> exit 0
 node scripts/test-parsers-runner.js -> 15/15 OK
 git status --short                  -> чисто
@@ -40,12 +40,12 @@ Push: `fix/ui-bugs` → `d183d91`, усі теги синхронізовано.
 
 | Місце | Причина |
 |---|---|
-| `app.config.js:8` `scheme: "bookreader"` | Deep-link схема `exp+bookreader://` — зміна ламає лінки |
-| `app.config.js:9` `privacyPolicyUrl: .../bookreader/docs/...` | GitHub Pages URL прив'язаний до назви репо |
+| `app.config.js:8` `scheme: "sapphire"` | Deep-link схема `exp+sapphire://` — зміна ламає лінки |
+| `app.config.js:9` `privacyPolicyUrl: .../sapphire/docs/...` | GitHub Pages URL прив'язаний до назви репо |
 | `.hermes/plans/2026-10-25_brand-rename-plan.md` | Аудит-запис самої операції |
 | `*.apk` бінарники | Артефакти, перезбираються |
 | `skills/.archive/*` (159 файлів) | Мертві, не вантажаться |
-| `exp+bookreader://` у скилах | Документація реальної схеми |
+| `exp+sapphire://` у скилах | Документація реальної схеми |
 
 ---
 
@@ -54,7 +54,7 @@ Push: `fix/ui-bugs` → `d183d91`, усі теги синхронізовано.
 | # | Інваріант | Чому |
 |---|---|---|
 | I1 | Кожен крок завершується комітом | Відкат = `git revert <sha>` |
-| I2 | `git grep -i bookreader` не зникає раптово | Якщо крок зламав збірку — відкат відразу |
+| I2 | `git grep -i sapphire` не зникає раптово | Якщо крок зламав збірку — відкат відразу |
 | I3 | Канонічний шлях репо = `C:\Users\DELL\Sapphire` | Усе інше посилається на нього |
 | I4 | Не чіпати `android/app/src/main/java/` | Нативний код уже `com.mike.wolfskin` |
 | I5 | Не чіпати `.archive/` скіли (159 файлів) | Мертві, не вантажаться |
@@ -68,13 +68,13 @@ Push: `fix/ui-bugs` → `d183d91`, усі теги синхронізовано.
 `TESTING_CHECKLIST.md`, `native/README.md`, `docs/admob-fix-guide.md`,
 `docs/content-rating-data-safety.md`, `docs/privacy-policy.html`, `assets/privacy-policy.html`
 
-**Зміни:** `BookReader`/`bookreader` → `Sapphire`/`sapphire` (текстові згадки)
+**Зміни:** `Sapphire`/`sapphire` → `Sapphire`/`sapphire` (текстові згадки)
 
 **Перевірка:**
 ```bash
 cd C:/Users/DELL/Sapphire
 git diff --stat                     # очікувано: лише .md/.html, без .ts/.js
-git grep -i bookreader -- '*.md' '*.html' | wc -l   # очікувано: 0
+git grep -i sapphire -- '*.md' '*.html' | wc -l   # очікувано: 0
 npx tsc --noEmit                    # очікувано: exit 0
 ```
 **Відкат:** `git checkout -- <files>`
@@ -86,12 +86,12 @@ npx tsc --noEmit                    # очікувано: exit 0
 **Файли і точні рядки:**
 | Файл | Рядок | Було | Стане |
 |---|---|---|---|
-| `package.json` | 2 | `"name": "bookreader"` | `"name": "sapphire"` |
-| `public/index.html` | 7 | `<title>BookReader</title>` | `<title>Sapphire</title>` |
-| `app.config.js` | 7 | `slug: "bookreader"` | `slug: "sapphire"` |
+| `package.json` | 2 | `"name": "sapphire"` | `"name": "sapphire"` |
+| `public/index.html` | 7 | `<title>Sapphire</title>` | `<title>Sapphire</title>` |
+| `app.config.js` | 7 | `slug: "sapphire"` | `slug: "sapphire"` |
 
 **НЕ чіпати в `app.config.js`:**
-- `scheme: "bookreader"` (рядок 8) — deep-link схема, залишаємо
+- `scheme: "sapphire"` (рядок 8) — deep-link схема, залишаємо
 - `privacyPolicyUrl` (рядок 9) — GitHub Pages URL, прив'язаний до назви репо на GitHub
 
 **Перевірка:**
@@ -111,18 +111,18 @@ npx tsc --noEmit                                         # exit 0
 
 | Було | Стане |
 |---|---|
-| `'bookreader-settings'` | `'sapphire-settings'` |
-| `'bookreader-dictionary'` | `'sapphire-dictionary'` |
-| `'bookreader-library'` | `'sapphire-library'` |
-| `'bookreader-support'` | `'sapphire-support'` |
-| `'bookreader-training'` | `'sapphire-training'` |
+| `'sapphire-settings'` | `'sapphire-settings'` |
+| `'sapphire-dictionary'` | `'sapphire-dictionary'` |
+| `'sapphire-library'` | `'sapphire-library'` |
+| `'sapphire-support'` | `'sapphire-support'` |
+| `'sapphire-training'` | `'sapphire-training'` |
 
 **Відслідковування:** ключ формується в `store/createStore.ts:63` → `'persist:' + name`.
 Зміна `name` = новий AsyncStorage-ключ. **Міграція не робиться** (рішення власника).
 
 **Перевірка:**
 ```bash
-git grep -i "bookreader" -- 'store/*.ts' | wc -l   # очікувано: 0
+git grep -i "sapphire" -- 'store/*.ts' | wc -l   # очікувано: 0
 npx tsc --noEmit                                   # exit 0
 node scripts/test-parsers-runner.js < /dev/null   # очікувано: 15/15 OK
 ```
@@ -134,9 +134,9 @@ node scripts/test-parsers-runner.js < /dev/null   # очікувано: 15/15 OK
 
 **Файл:** `package.json:61`
 ```
-"javaPackageName": "com.bookreader.app.bookparser"  →  "com.sapphire.app.bookparser"
+"javaPackageName": "com.sapphire.app.bookparser"  →  "com.sapphire.app.bookparser"
 ```
-**Ґрунтування:** `android/app/src/main/java/com/bookreader` **не існує** (модуль видалений раніше).
+**Ґрунтування:** `android/app/src/main/java/com/sapphire` **не існує** (модуль видалений раніше).
 Це мертвий codegen-конфіг Expo. `specs/NativeBookParser.ts`, `specs/NativeBookTTS.ts` залишаються.
 
 **Перевірка:**
@@ -152,14 +152,14 @@ python -c "import json;d=json.load(open('package.json'));print(d['expo']['codege
 
 | Файл | Було | Стане |
 |---|---|---|
-| `components/AppSettingsModal.tsx:52` | `'bookreader-backup.json'` | `'sapphire-backup.json'` |
-| `screens/DictionaryScreen.tsx:323,409` | `'bookreader-dictionary.json'` | `'sapphire-dictionary.json'` |
-| `screens/DictionaryScreen.tsx:330,416` | `${cacheDirectory}bookreader-dictionary.json` | `${cacheDirectory}sapphire-dictionary.json` |
-| `components/Marquee.tsx:10,12,14,47` | `bookreader-marquee-kf`, `bookreader-marquee` | `sapphire-*` (CSS keyframe id) |
+| `components/AppSettingsModal.tsx:52` | `'sapphire-backup.json'` | `'sapphire-backup.json'` |
+| `screens/DictionaryScreen.tsx:323,409` | `'sapphire-dictionary.json'` | `'sapphire-dictionary.json'` |
+| `screens/DictionaryScreen.tsx:330,416` | `${cacheDirectory}sapphire-dictionary.json` | `${cacheDirectory}sapphire-dictionary.json` |
+| `components/Marquee.tsx:10,12,14,47` | `sapphire-marquee-kf`, `sapphire-marquee` | `sapphire-*` (CSS keyframe id) |
 
 **Перевірка:**
 ```bash
-git grep -i bookreader -- 'components/*.tsx' 'screens/*.tsx' | wc -l   # 0
+git grep -i sapphire -- 'components/*.tsx' 'screens/*.tsx' | wc -l   # 0
 npx tsc --noEmit                                                      # exit 0
 ```
 **Відкат:** `git checkout -- components/ screens/`
@@ -168,25 +168,25 @@ npx tsc --noEmit                                                      # exit 0
 
 ## КРОК 2.6 — Репо: скрипти (🟢 нульовий ризик)
 
-**Файли:** `bookreader_cleanup.py`, `scripts/add_format_keys.py`, `scripts/add_support_keys.py`,
+**Файли:** `sapphire_cleanup.py`, `scripts/add_format_keys.py`, `scripts/add_support_keys.py`,
 `scripts/add_translation_services_keys.py`, `scripts/inset-shadow-audit.py`,
 `scripts/library-parse-verification-runner.js`, `scripts/probe-md5.js`,
 `scripts/test-parsers-runner.js`, `scripts/theme-pixel-audit.py`
 
-**Перейменувати файл:** `bookreader_cleanup.py` → `sapphire_cleanup.py`
+**Перейменувати файл:** `sapphire_cleanup.py` → `sapphire_cleanup.py`
 
 **Перевірка:**
 ```bash
-ls bookreader_cleanup.py 2>&1        # очікувано: No such file
-git grep -i bookreader -- 'scripts/*' | wc -l   # 0
+ls sapphire_cleanup.py 2>&1        # очікувано: No such file
+git grep -i sapphire -- 'scripts/*' | wc -l   # 0
 ```
-**Відкат:** `git checkout -- scripts/ && git checkout -- bookreader_cleanup.py`
+**Відкат:** `git checkout -- scripts/ && git checkout -- sapphire_cleanup.py`
 
 ---
 
 ## КРОК 2.7 — План-файли в репо (🟢 нульовий ризик)
 
-**Файли:** `.hermes/plans/2026-08-08_174500-bookreader-vocab-loop.md`,
+**Файли:** `.hermes/plans/2026-08-08_174500-sapphire-vocab-loop.md`,
 `.hermes/plans/2026-08-26_translation-preload-queue.md`, `.hermes/plans/2026-10-21_session-summary.md`,
 `.hermes/plans/implementation-plan-log.md`, `.hermes/plans/t11-publish-prep.md`
 
@@ -194,7 +194,7 @@ git grep -i bookreader -- 'scripts/*' | wc -l   # 0
 
 **Перевірка:**
 ```bash
-ls .hermes/plans/ | grep -i bookreader   # очікувано: порожньо
+ls .hermes/plans/ | grep -i sapphire   # очікувано: порожньо
 ```
 **Відкат:** `git checkout -- .hermes/plans/`
 
@@ -202,38 +202,38 @@ ls .hermes/plans/ | grep -i bookreader   # очікувано: порожньо
 
 ## КРОК 2.8 — Live skills (🟢 нульовий ризик, 30 файлів)
 
-**Блок:** `C:\Users\DELL\AppData\Local\hermes\skills\bookreader\`
+**Блок:** `C:\Users\DELL\AppData\Local\hermes\skills\sapphire\`
 
 **Зміни:**
-- Перейменувати теку категорії `bookreader/` → `sapphire/`
-- Перейменувати скіли: `bookreader-debug` → `sapphire-debug`, `bookreader-design` → `sapphire-design`,
-  `bookreader-rn-native` → `sapphire-rn-native`, `bookreader-parser-testing` → `sapphire-parser-testing`
-- Оновити `bookreader/` → `sapphire/` всередині SKILL.md (frontmatter `name:` + текст)
-- Оновити `bookreader-debug/scripts/measure_dom.py`
+- Перейменувати теку категорії `sapphire/` → `sapphire/`
+- Перейменувати скіли: `sapphire-debug` → `sapphire-debug`, `sapphire-design` → `sapphire-design`,
+  `sapphire-rn-native` → `sapphire-rn-native`, `sapphire-parser-testing` → `sapphire-parser-testing`
+- Оновити `sapphire/` → `sapphire/` всередині SKILL.md (frontmatter `name:` + текст)
+- Оновити `sapphire-debug/scripts/measure_dom.py`
 - Оновити `.usage.json` (мапінг імен скілів)
 
 **НЕ чіпати:** `skills/.archive/` (159 файлів), `skills/devops/expo-build-cache-clean/SKILL.md`,
-`skills/devops/pre-build-cleanup/SKILL.md` (там bookreader = посилання на проєкт, легальні)
+`skills/devops/pre-build-cleanup/SKILL.md` (там sapphire = посилання на проєкт, легальні)
 
 **Перевірка:**
 ```bash
-ls "C:/Users/DELL/AppData/Local/hermes/skills/" | grep -i bookreader   # порожньо
-grep -rl -i bookreader "C:/Users/DELL/AppData/Local/hermes/skills/bookreader" 2>/dev/null | wc -l
+ls "C:/Users/DELL/AppData/Local/hermes/skills/" | grep -i sapphire   # порожньо
+grep -rl -i sapphire "C:/Users/DELL/AppData/Local/hermes/skills/sapphire" 2>/dev/null | wc -l
 ```
-**Відкат:** git-незалежна зона → зберегти бекап перед кроком: `cp -r skills/bookreader /tmp/...`
+**Відкат:** git-незалежна зона → зберегти бекап перед кроком: `cp -r skills/sapphire /tmp/...`
 
 ---
 
 ## КРОК 2.9 — Hermes-скрипти + memory (🟢 нульовий ризик)
 
 **Файли:**
-- `C:\Users\DELL\AppData\Local\hermes\scripts\bookreader_cleanup.py` → `sapphire_cleanup.py`
-- `C:\Users\DELL\AppData\Local\hermes\scripts\supervisor.py` (шлях на BookReader)
-- Memory: замінити `BookReader` → `Sapphire`, `bookreader` → `sapphire`
+- `C:\Users\DELL\AppData\Local\hermes\scripts\sapphire_cleanup.py` → `sapphire_cleanup.py`
+- `C:\Users\DELL\AppData\Local\hermes\scripts\supervisor.py` (шлях на Sapphire)
+- Memory: замінити `Sapphire` → `Sapphire`, `sapphire` → `sapphire`
 
 **Перевірка:**
 ```bash
-grep -rl -i bookreader "C:/Users/DELL/AppData/Local/hermes/scripts" | wc -l   # 0
+grep -rl -i sapphire "C:/Users/DELL/AppData/Local/hermes/scripts" | wc -l   # 0
 ```
 **Відкат:** `cp` бекап
 
@@ -241,10 +241,10 @@ grep -rl -i bookreader "C:/Users/DELL/AppData/Local/hermes/scripts" | wc -l   # 
 
 ## КРОК 2.10 — GitHub repo rename (🟠 окремо, свідомо)
 
-**Поточний:** `github.com/402035zombie-a11y/bookreader`
+**Поточний:** `github.com/402035zombie-a11y/sapphire`
 
 **Наслідки перейменування:**
-1. Pages-URL змінюється: `.../bookreader/docs/privacy-policy.html` → `.../sapphire/docs/...`
+1. Pages-URL змінюється: `.../sapphire/docs/privacy-policy.html` → `.../sapphire/docs/...`
    → **обов'язково** оновити `app.config.js:9` `privacyPolicyUrl`
 2. `git remote` у всіх клонах → поновити `git remote set-url`
 3. Посилання в docs
@@ -270,7 +270,7 @@ curl -sI https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html |
 ```bash
 cd C:/Users/DELL/Sapphire
 echo "=== A. Нуль згадок у репо (крім навмисних) ==="
-git grep -i bookreader -- . ':!node_modules' | head -20
+git grep -i sapphire -- . ':!node_modules' | head -20
 # ОЧІКУВАНО лише:
 #   app.config.js        (scheme + privacyPolicyUrl — навмисно)
 #   *.apk бінарники      (артефакти, перезбираються)
@@ -311,5 +311,5 @@ echo "=== E. Білд (опційно) ==="
 - Міграція storage-ключів (власник погодив: втрата даних не страшна)
 - `.archive/` скіли (159 файлів, мертві)
 - `android/app/src/main/java/` (нативний код уже правильний)
-- `scheme: "bookreader"` (deep links)
+- `scheme: "sapphire"` (deep links)
 - `specs/NativeBookParser.ts` / `specs/NativeBookTTS.ts` (codegen-специфікації)

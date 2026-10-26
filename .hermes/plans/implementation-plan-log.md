@@ -1,4 +1,4 @@
-# Sapphire (BookReader) — Implementation Plan & Execution Log
+# Sapphire (Sapphire) — Implementation Plan & Execution Log
 
 > **Strategy:** full autonomous (no asking). Quality over speed. Verify on phone at end of session.
 > **Rule (user-enforced):** after every completed task, append entry to this file.
@@ -72,14 +72,14 @@ Status: COMPLETED at code/config level — Real AdMob IDs verified (5 places), D
 1. **AdMob IDs:** Real prod IDs in all 5 places (`.env`, `eas.json`, `app.config.js`, `AndroidManifest.xml`, debug bundle) — identical `ca-app-pub-5113967448800652~8371247908` (App), `/4712038644` (Banner), `/1663349260` (Rewarded). No test IDs in prod config.
 2. **expo-build-properties plugin:** Correct syntax `{ "name": ..., "value": ... }` (NOT `$`), hardcoded value (not process.env). `react-native-google-mobile-ads` plugin REMOVED from plugins (HANDOFF: incompatible with expo 54/eas-cli 22).
 3. **AndroidManifest.xml fallback:** Hardcoded `meta-data` with `tools:replace="android:value"` (commit 37c25a20).
-4. **Privacy policy:** Real email `402035zombie@gmail.com` in `PRIVACY_POLICY.md` and `docs/privacy-policy.html` (mailto link). `privacyPolicyUrl` in app.config.js → `https://402035zombie-a11y.github.io/bookreader/docs/privacy-policy.html` (GitHub Pages). **Note:** GitHub Pages must be enabled on repo.
+4. **Privacy policy:** Real email `402035zombie@gmail.com` in `PRIVACY_POLICY.md` and `docs/privacy-policy.html` (mailto link). `privacyPolicyUrl` in app.config.js → `https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html` (GitHub Pages). **Note:** GitHub Pages must be enabled on repo.
 5. **Icons:** `icon.png` 1024x1024, `adaptive-icon.png` 432x432, `icon-play-512.png` 512x512 — all correct. `adaptiveIcon` config in app.config.js present.
 6. **Feature graphic:** `docs/sapphire-feature-graphic.png` 1024x500 — correct.
 7. **Donate URL:** `https://nowpayments.io/donation/sapphire-reader` in app.config.js extra.
 8. **Content rating / Data Safety:** Documented (INTERNET, READ/WRITE_EXTERNAL_STORAGE, SYSTEM_ALERT_WINDOW, VIBRATE + Advertising ID). Play Console web form filing required.
 
 **Remaining for full publish:**
-- Enable GitHub Pages on `402035zombie-a11y/bookreader` repo.
+- Enable GitHub Pages on `402035zombie-a11y/sapphire` repo.
 - Run `eas build --profile production --platform android` (requires EAS free build quota).
 - Generate device screenshots (Playwright from web target or real phone).
 - File Content Rating + Data Safety in Play Console.
@@ -89,7 +89,7 @@ Criteria: AppSettingsModal + FontSettingsSheet (NumberStepper + switches). Persi
 Status: COMPLETED 2026-10-21 — verified on phone: AppSettingsModal + FontSettingsSheet, changes persist to AsyncStorage, settings reflected in reader immediately.
 
 ### TASK 11 — Publish prep (EAS AAB production)
-Criteria: tsc 0; EAS build AAB (production profile); AdMob production IDs in .env/eas.json (not test); PRIVACY_POLICY.md with real email (currently placeholder privacy@bookreader.app → must be replaced with real email + hosted on GitHub Pages); icons (assets/icon.png 1024, adaptive-icon, icon-play-512); feature graphic docs/sapphire-feature-graphic.png; screenshots; content rating + Data Safety (Advertising ID).
+Criteria: tsc 0; EAS build AAB (production profile); AdMob production IDs in .env/eas.json (not test); PRIVACY_POLICY.md with real email (currently placeholder privacy@sapphire.app → must be replaced with real email + hosted on GitHub Pages); icons (assets/icon.png 1024, adaptive-icon, icon-play-512); feature graphic docs/sapphire-feature-graphic.png; screenshots; content rating + Data Safety (Advertising ID).
 Status: COMPLETED at code/config level 2026-10-21 — All config verified (see TASK 11 section below). Production AAB not built (EAS free builds limit / environment constraints).
 
 ### TASK 12 — Plan-execution log
@@ -100,7 +100,7 @@ Status: COMPLETED 2026-10-21 — All 12 tasks verified. This file updated with a
 
 ## Known remaining issues (before final QA)
 
-1. **Privacy policy placeholder email**: docs/privacy-policy.html has `mailto:privacy@bookreader.app` (not real). Must replace with real email and host on GitHub Pages or a public URL. (TESTING_CHECKLIST item 8)
+1. **Privacy policy placeholder email**: docs/privacy-policy.html has `mailto:privacy@sapphire.app` (not real). Must replace with real email and host on GitHub Pages or a public URL. (TESTING_CHECKLIST item 8)
 2. **AdMob production IDs**: currently `ca-app-pub-5113967448800652~8371247908` in app.config.js + AndroidManifest. Confirm these are production (not test) IDs. If test: replace.
 3. **expo-build-properties manifest format** (HANDOFF critical): the working config is:
    `["expo-build-properties", { android: { manifest: { application: { "meta-data": [{ $: { "android:name": "com.google.android.gms.ads.APPLICATION_ID", "android:value": "ca-app-pub-5113967448800652~8371247908" } }] } } } }]`
@@ -186,14 +186,14 @@ Status: COMPLETED 2026-10-21 — All 12 tasks verified. This file updated with a
 1. **AdMob IDs:** Real prod IDs in all 5 places (`.env`, `eas.json`, `app.config.js`, `AndroidManifest.xml`, debug bundle) — identical `ca-app-pub-5113967448800652~8371247908` (App), `/4712038644` (Banner), `/1663349260` (Rewarded). No test IDs in prod config.
 2. **expo-build-properties plugin:** Correct syntax `{ "name": ..., "value": ... }` (NOT `$`), hardcoded value (not process.env). `react-native-google-mobile-ads` plugin REMOVED from plugins (HANDOFF: incompatible with expo 54/eas-cli 22).
 3. **AndroidManifest.xml fallback:** Hardcoded `meta-data` with `tools:replace="android:value"` (commit 37c25a20).
-4. **Privacy policy:** Real email `402035zombie@gmail.com` in `PRIVACY_POLICY.md` and `docs/privacy-policy.html` (mailto link). `privacyPolicyUrl` in app.config.js → `https://402035zombie-a11y.github.io/bookreader/docs/privacy-policy.html` (GitHub Pages). **Note:** GitHub Pages must be enabled on repo.
+4. **Privacy policy:** Real email `402035zombie@gmail.com` in `PRIVACY_POLICY.md` and `docs/privacy-policy.html` (mailto link). `privacyPolicyUrl` in app.config.js → `https://402035zombie-a11y.github.io/sapphire/docs/privacy-policy.html` (GitHub Pages). **Note:** GitHub Pages must be enabled on repo.
 5. **Icons:** `icon.png` 1024x1024, `adaptive-icon.png` 432x432, `icon-play-512.png` 512x512 — all correct. `adaptiveIcon` config in app.config.js present.
 6. **Feature graphic:** `docs/sapphire-feature-graphic.png` 1024x500 — correct.
 7. **Donate URL:** `https://nowpayments.io/donation/sapphire-reader` in app.config.js extra.
 8. **Content rating / Data Safety:** Documented (INTERNET, READ/WRITE_EXTERNAL_STORAGE, SYSTEM_ALERT_WINDOW, VIBRATE + Advertising ID). Play Console web form filing required.
 
 **Remaining for full publish:**
-- Enable GitHub Pages on `402035zombie-a11y/bookreader` repo.
+- Enable GitHub Pages on `402035zombie-a11y/sapphire` repo.
 - Run `eas build --profile production --platform android` (requires EAS free build quota).
 - Generate device screenshots (Playwright from web target or real phone).
 - File Content Rating + Data Safety in Play Console.

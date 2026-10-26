@@ -2,7 +2,7 @@
 
 ## Статус — НЕ АКТИВНО (30.08.2026)
 
-Це план минулої сесії. Всі 12 задач T1-T12 проекту Sapphire/FBookReader виконано до ліквідації:
+Це план минулої сесії. Всі 12 задач T1-T12 проекту Sapphire/FSapphire виконано до ліквідації:
 - T1-T8: парсери, теми, ридер, словник, тренування, i18n — телефонна перевірка успішна.
 - T9: Monetization (AdMob real IDs + Donate NowPayments).
 - T10: Settings (font, theme, language persisted).
@@ -46,7 +46,7 @@
 ## ОСТАННІ ДЛЯ ПУБЛІКАЦІЇ (T11–T12)
 
 1. **EAS AAB build** — `eas build --profile production --platform android` (free quota).
-2. **GitHub Pages** — увімкнути на `402035zombie-a11y/bookreader` для privacy URL.
+2. **GitHub Pages** — увімкнути на `402035zombie-a11y/sapphire` для privacy URL.
 3. **Android screenshots** — зібрати реальні з телефону (UI мінімум: Library, Reader, Dictionary, Training).
 4. **Play Console** — Content Rating + Data Safety form (з `docs/content-rating-data-safety.md`).
 5. **Push** — `git push origin fix/ui-bugs` + `eas submit`.

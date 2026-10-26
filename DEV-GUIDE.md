@@ -1,6 +1,6 @@
 # Sapphire — DEV GUIDE (handoff для агентів)
 
-Додаток: **Android native** (Expo RN, NOT web). Package `com.mike.wolfskin`, назва **Sapphire** (APP_NAME у app.config.js). Акаунт EAS: `mike2424`, проєкт `bookreader`.
+Додаток: **Android native** (Expo RN, NOT web). Package `com.mike.wolfskin`, назва **Sapphire** (APP_NAME у app.config.js). Акаунт EAS: `mike2424`, проєкт `sapphire`.
 
 ## Швидкий цикл (без білду)
 Після того як dev-client APK встановлений на телефон — ЗВИЧАЙНІ правки (UI/логіка/стилі/тексти) НЕ потребують білду:
@@ -46,7 +46,7 @@ dev-client працює на OLD architecture (ігнорує `newArchEnabled:tr
 ### 5. Хмарний білд (рекомендовано)
 Через WSL (cmd не бачить `eas`):
 `wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && eas build --profile development --platform android --non-interactive --no-wait'`
-Дає URL білду (https://expo.dev/accounts/mike2424/projects/bookreader/builds/<id>). Коли `finished` → APK URL у "Application Archive URL".
+Дає URL білду (https://expo.dev/accounts/mike2424/projects/sapphire/builds/<id>). Коли `finished` → APK URL у "Application Archive URL".
 Скачати: `curl -L -o sapphire-dev.apk <APK_URL>` (шлях Windows `C:/...`, не MSYS!).
 Встановити: `adb install -r "C:/.../sapphire-dev.apk"`.
 
