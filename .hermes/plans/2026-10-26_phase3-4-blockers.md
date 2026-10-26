@@ -125,3 +125,15 @@ wsl.exe -e bash -lc 'cd /mnt/c/Users/DELL/Sapphire && export ANDROID_HOME=/opt/a
 **Правило:** коли код читає файл на нативі — `fetch()` не є універсальним. Гвард `^https?://` + `expo-file-system/legacy`
 для всього локального — це єдиний безпечний патерн; будь-який новий парсер мусить його дотримуватись.
 
+## 10. Меліорації (не блокують — свідомо НЕ чіпав, щоб не ламати робочий імпорт)
+
+1. **Cache leak у парсерах.** `epubParser`, `docxParser`, `odtParser`, `mobiParser`, `rtfParser`, `fb2Parser`
+   копіюють книгу у `FileSystem.cacheDirectory` (`br_epub_<ts>.epub` тощо) і **не видаляють** її після
+   парсингу. Лише `parserClient.runOnMain` робить `deleteAsync`. При багатьох імпортах кеш розростається
+   (книги — мегабайти). Фікс: `try { ... } finally { deleteAsync(cacheUri, {idempotent:true}) }` у кожному.
+   Свідомо відкладено: імпорт верифікований на телефоні, тому правити його без потреби — ризик.
+2. **`btoa(String.fromCharCode(...new Uint8Array(buf)))`** у http-гілках парсерів — spread на великих
+   масивах (2M+ елементів) дасть `RangeError`. На практиці не стреляє: http-гілка не використовується
+   (файли приходять з document picker). Якщо колись додать завантаження по URL — робити чанками.
+
+
