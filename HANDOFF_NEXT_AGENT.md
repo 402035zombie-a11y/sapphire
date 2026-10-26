@@ -64,11 +64,17 @@ cd /c/Users/DELL/Sapphire
 7. `PUBLISHING.md` — публікація в Play.
 8. `services/readerSentences.ts` + `scripts/bench-book-open.js` — ОСТАННІЙ perf-фікс
    (Фаза 3). Прочитай обидва; бенчмарк показує, як міряти цей клас проблем.
-9. `git log --oneline -12` і `git status` — актуальні коміти та стан дерева.
-10. `skills/` профілю Hermes: `sapphire-perf`, `sapphire-apk-build-windows`,
+9. **`docs/build/BUILD_PROTOCOL.md` — ПРОТОКОЛ БІЛДУ. Прочитай ДО першого білду.**
+   Білд на цій машині (15.7 GB RAM) — memory-bound. Там 8 кореневих причин 100% CPU/RAM
+   і фікс кожної: ABI-фільтр, `TMPDIR=/var/tmp` (tmpfs = RAM), swap у WSL, cleanup-скрипти,
+   лок від паралельних білдів, рекурсивні `find`, пастка `export VAR=val cmd`.
+   Без нього білд або впаде в OOM, або заклинить WSL VM.
+10. `git log --oneline -12` і `git status` — актуальні коміти та стан дерева.
+11. `skills/` профілю Hermes: `sapphire-perf`, `sapphire-apk-build-windows`,
     `sapphire-debug`, `sapphire-design`, `sapphire-parser-testing`,
     `sapphire-play-publish`, `self-cleanup`, `pre-build-cleanup`,
-    `expo-build-cache-clean`. Завантажуй ті, що релевантні задачі.
+    `expo-build-cache-clean`, **`sapphire-build-resource-safety`**. Завантажуй ті, що
+    релевантні задачі.
 
 # КРОК 2 — ЩО ТАКЕ SAPPHIRE
 - **Продукт:** білінгвальний паралельний рідер книг з перекладом по реченнях, словником
